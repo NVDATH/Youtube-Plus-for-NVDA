@@ -1,0 +1,28 @@
+# -*- coding: UTF-8 -*-
+
+import os
+import scons_nvda
+from scons_nvda import Copy, po, manifest, init, getVersion
+
+init()
+
+# Use information from the manifest.ini file
+addon_info = manifest.read_manifest('addon/manifest.ini')
+
+# Get name and version from the manifest
+# These will be used to name the output .nvda-addon file
+name = addon_info.get('name')
+version = getVersion()
+
+# Define the source folder for the add-on
+source = 'addon'
+
+# Define the build environment
+env = scons_nvda.Environment(
+    addon_name=name,
+    addon_version=version,
+    addon_source=source,
+)
+
+# Start building the add-on
+build = env.NVDAAddon()
