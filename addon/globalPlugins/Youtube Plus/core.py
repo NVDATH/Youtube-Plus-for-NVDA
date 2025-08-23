@@ -9,7 +9,6 @@ import re
 import webbrowser
 from urllib.parse import urlparse, parse_qs, unquote
 from contextlib import contextmanager, redirect_stderr
-from http.cookiejar import MozillaCookieJar
 from functools import wraps
 import ui
 import config

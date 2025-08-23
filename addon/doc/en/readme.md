@@ -7,7 +7,7 @@ Designed with accessibility and responsiveness in mind, it features automatic UR
 ## Features
 
 - **Live Chat Monitoring:** Monitor YouTube live chat in real-time.
-- **View Comments & Replays:** Download and view the full comment section or the complete live chat replay from any video.
+- **View Comments & live chat Replay:** Download and view the full comment section or the complete live chat replay from any video.
 - **Get Video Info:** Instantly get detailed information about a video, including title, channel, duration, view/like/comment counts, and description.
 - **Download Video & Audio:** Download videos directly as MP4 files or audio-only as M4A files, without requiring any additional programs.
 - **Automatic URL Detection:** Automatically finds a YouTube URL from your browser or clipboard, eliminating manual copy-pasting.
