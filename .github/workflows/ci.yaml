@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]  
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11.9 (NVDA uses 3.11.9)
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11.9"
+          architecture: "x86"
+
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build NVDA Add-on
+        run: scons
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: youtube-plus-build
+          path: "*.nvda-addon"

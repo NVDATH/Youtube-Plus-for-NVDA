@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  buildAndUpload:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11.9 (NVDA uses 3.11.9)
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11.9"
+          architecture: "x86"
+
+      - name: Install build dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build NVDA Add-on
+        run: scons
+
+      - name: Build translation template (optional)
+        run: scons pot
+
+      - name: Calculate sha256 checksum
+        run: sha256sum *.nvda-addon >> changelog.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            *.nvda-addon
+            *.json
+            *.pot
+          body_path: changelog.md
+          prerelease: ${{ endsWith(github.ref, '-dev') }}
