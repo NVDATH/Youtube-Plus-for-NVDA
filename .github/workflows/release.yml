@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          architecture: "x86"
+
+      - name: Install dependencies
+        run: |
+          pip install scons
+          pip install markdown
+
+      - name: Build NVDA add-on package
+        run: scons -c && scons
+
+      - name: Find add-on package
+        id: find_addon_package
+        run: |
+          $addon_file = Get-ChildItem -Path . -Filter "*.nvda-addon" -Recurse | Select-Object -First 1
+          if ($addon_file) {
+            Write-Host "::set-output name=file_name::$($addon_file.Name)"
+            Write-Host "::set-output name=file_path::$($addon_file.FullName)"
+          } else {
+            Write-Host "::set-output name=file_name::"
+            Write-Host "::set-output name=file_path::"
+          }
+        shell: pwsh
+
+      - name: Upload add-on package as release asset
+        if: steps.find_addon_package.outputs.file_name != ''
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ steps.find_addon_package.outputs.file_path }}
+          asset_name: ${{ steps.find_addon_package.outputs.file_name }}
+          asset_content_type: application/octet-stream

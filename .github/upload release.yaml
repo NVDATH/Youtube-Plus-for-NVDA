@@ -1,0 +1,23 @@
+name: Upload release
+
+on:
+  push:
+    tags:
+      - '*'   # ทำงานเมื่อ push tag
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
+        with:
+          files: |
+            *.nvda-addon
+            *.json
+            *.pot
