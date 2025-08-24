@@ -15,7 +15,7 @@ jobs:
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
         with:
           files: |
             *.nvda-addon
