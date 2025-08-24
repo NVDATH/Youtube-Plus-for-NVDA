@@ -1,6 +1,5 @@
 name: Build and Release NVDA Add-on
 
-# Trigger workflow เมื่อ push tag ใหม่ เช่น v2025.8.22
 on:
   push:
     tags:
@@ -11,30 +10,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. เช็คเอาโค้ด
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. ตั้งค่า Python
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
 
-      # 3. ติดตั้ง dependencies สำหรับ build
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
           pip install scons markdown
 
-      # 4. รัน SCons เพื่อสร้าง .nvda-addon
       - name: Build NVDA add-on
         run: scons
 
-      # 5. สร้าง GitHub Release
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -43,9 +37,8 @@ jobs:
           draft: false
           prerelease: false
 
-      # 6. Upload .nvda-addon ไป release
       - name: Upload NVDA add-on file
-        uses: svenstaro/upload-release-action@v1
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: '*.nvda-addon'
