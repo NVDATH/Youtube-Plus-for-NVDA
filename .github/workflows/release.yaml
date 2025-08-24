@@ -1,8 +1,9 @@
-name: Release
+name: Release NVDA Add-on
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -38,12 +39,35 @@ jobs:
             Write-Host "::set-output name=file_path::"
           }
         shell: pwsh
+      
+      - name: Get tag name
+        id: get_tag
+        run: |
+          $ref = "${{ github.ref }}"
+          $tag_name = $ref.Substring($ref.LastIndexOf('/') + 1)
+          Write-Host "::set-output name=tag::$tag_name"
+        shell: pwsh
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          body: |
+            Automatically generated release for version ${{ steps.get_tag.outputs.tag }}.
+          draft: false
+          prerelease: false
 
       - name: Upload add-on package as release asset
         if: steps.find_addon_package.outputs.file_name != ''
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.find_addon_package.outputs.file_path }}
           asset_name: ${{ steps.find_addon_package.outputs.file_name }}
           asset_content_type: application/octet-stream
