@@ -1,47 +1,49 @@
-name: Release NVDA Add-on
+name: Build and Release NVDA Add-on
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # เมื่อ push tag แบบ v1.0.0
+      - 'v*'  # trigger เมื่อมี tag แบบ v2025.8.208 เป็นต้น
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: 3.13  # NVDA ใช้ Python 3.x
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install build
 
-      - name: Build Add-on
+      - name: Build NVDA Add-on
         run: |
-          # ใส่คำสั่ง build add-on ของคุณตรงนี้
-          python setup.py sdist bdist_wheel
+          python -m build --wheel --sdist
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.pat_for_release }}
 
-      - name: Upload Release Asset
+      - name: Upload release assets
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/your-addon-file.whl
-          asset_name: your-addon-file.whl
+          asset_path: ./dist/YoutubePlusForNVDA-*.whl
+          asset_name: YoutubePlusForNVDA-${{ github.ref_name }}.whl
           asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
