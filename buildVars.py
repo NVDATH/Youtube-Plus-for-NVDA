@@ -5,7 +5,7 @@
 addon_info = {
     "addon_name": "YoutubePlus",
 
-    "addon_version": "2025.8.212",
+    "addon_version": "2025.12.08",
 
     "addon_author": "NVDA_TH <nvdainth@gmail.com>, assisted by A.I.",
 
@@ -18,12 +18,12 @@ addon_info = {
         "to keep NVDA responsive."
     ),
 
-    "addon_url": "https://nvda.in.th",
+    "addon_url": "https://nvda.in.th/youtube-plus",
 
     "addon_docFileName": "readme.html",
 
     "addon_minimumNVDAVersion": "2025.1",
-    "addon_lastTestedNVDAVersion": "2025.2",
+    "addon_lastTestedNVDAVersion": "2025.3.2",
 
     "addon_updateChannel": None,
 }

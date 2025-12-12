@@ -1,4 +1,5 @@
-# errors.py
+# -*- coding: utf-8 -*-
+# errors.py for Youtube Plus NVDA Addon
 
 class HandledError(Exception):
     """

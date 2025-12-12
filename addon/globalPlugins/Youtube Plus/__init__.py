@@ -4,8 +4,7 @@
 # This file is covered by the GNU General Public License.
 # You can read the licence by clicking Help->Licence in the NVDA menu
 # or by visiting http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-# Shortcut: NVDA+shift+y
-# Some portion have been directly copied from the youtube live  chat addon
+# Shortcut: Windows+y
 
 import os
 import sys

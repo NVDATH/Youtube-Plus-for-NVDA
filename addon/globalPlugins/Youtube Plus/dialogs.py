@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# dialogs.py for Youtube Plus NVDA Addon
+
 import wx
 import wx.lib.mixins.listctrl as listmix
 import ui
@@ -203,7 +206,6 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
             if key_code in (wx.WXK_RETURN, wx.WXK_SPACE):
                 self.on_open(event)
                 return
-                
             event.Skip()
             
     def on_open(self, event):
@@ -216,7 +218,6 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
                 ui.message(_("Opening in browser..."))
                 webbrowser.open(timestamp_url)
             except Exception as e:
-                # Topic 2: Add logging for better debugging
                 log.warning("Failed to open URL in browser.", exc_info=True)
                 ui.message(f"Error opening browser: {e}")
 
@@ -254,7 +255,6 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
                     f.write(f"{time_str} - {title_str}\n")
             ui.message(_("Export complete"))
         except (IOError, OSError) as e:
-            # Topic 2: More specific exception handling and logging
             log.error("Failed to export chapters due to an OS/IO error.", exc_info=True)
             ui.message(_("Error exporting file: ") + str(e))
         except Exception as e:
@@ -277,17 +277,13 @@ class MessagesDialog(wx.Dialog):
             return
         MessagesDialog._instance = self
         super().__init__(parent, title=title)
-
         self.core_instance = core_instance
-        
         with self.core_instance._messages_lock:
             self.messages = list(self.core_instance.messages)
-        
         # This limit is for the dialog's local view only.
         message_limit = config.conf["YoutubePlus"].get("messageLimit", 5000)
         self.messages = self.messages[-message_limit:]
         self.filteredMessages = self.messages[:]
-        
         self.last_selected_obj = None
         
         panel = wx.Panel(self)
@@ -339,7 +335,6 @@ class MessagesDialog(wx.Dialog):
         elif item_count > 0:
             self.messagesListBox.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.messagesListBox.EnsureVisible(0)
-        
         wx.CallAfter(self.messagesListBox.SetFocus)
 
     def onSearch(self, event):
@@ -363,8 +358,6 @@ class MessagesDialog(wx.Dialog):
 
         self.messagesListBox.Freeze()
         try:
-            # This logic is complex but efficient for updating the list view.
-            # It works on the local copy `self.filteredMessages`.
             current_item_count = self.messagesListBox.GetItemCount()
             new_item_count = len(self.filteredMessages)
 
@@ -404,7 +397,6 @@ class MessagesDialog(wx.Dialog):
     
     def refreshMessages(self):
         searchText = self.searchTextCtrl.GetValue().lower()
-        
         if searchText:
             self.filteredMessages = [
                 m for m in self.messages
@@ -412,7 +404,6 @@ class MessagesDialog(wx.Dialog):
             ]
         else:
             self.filteredMessages = self.messages[:]
-        
         self.updateList()
 
     def onCopy(self, event):
@@ -437,10 +428,9 @@ class MessagesDialog(wx.Dialog):
                     messages_to_export = list(self.core_instance.messages)
                 
                 for msg_obj in messages_to_export:
-                    time_str = msg_obj.get('datetime', '')
                     author = msg_obj.get('author', '')
                     message = msg_obj.get('message', '')
-                    f.write(f"[{time_str}] {author}: {message}\n")
+                    f.write(f"@{author}: {message}\n\n")
             ui.message(_("Export message complete"))
         except (IOError, OSError) as e:
             log.error("Failed to export chat messages due to an OS/IO error.", exc_info=True)
@@ -566,9 +556,7 @@ class CommentsDialog(wx.Dialog):
         from .core import GlobalPlugin
         if not self.is_replay_data:
             return
-
         total_amounts = GlobalPlugin.instance.get_total_paid_amount_from_list(self.comments_data)
-        
         if total_amounts:
             parts = []
             for currency, amount in total_amounts.items():
@@ -578,13 +566,11 @@ class CommentsDialog(wx.Dialog):
             self.totalAmountTextCtrl.Show(True)
         else:
             self.totalAmountTextCtrl.Show(False)
-        
         self.panel.Layout()
         
     def on_filter_select(self, event):
         selection = self.filterComboBox.GetStringSelection()
         keyword = ""
-
         if selection == _("Filter by Selected Author"):
             selected_index = self.commentsListBox.GetFirstSelected()
             if selected_index != -1:
@@ -600,7 +586,6 @@ class CommentsDialog(wx.Dialog):
             keyword = "Super Sticker"
         elif selection == _("Show Super Thanks Only"):
             keyword = "Super Thanks"
-        
         if self.searchTextCtrl.GetValue() != keyword:
             self.searchTextCtrl.SetValue(keyword)
         else:
@@ -616,7 +601,6 @@ class CommentsDialog(wx.Dialog):
             ]
         else:
             self.filteredComments = self.comments_data[:]
-        
         self.populateList()
 
     def onSearch(self, event):
@@ -634,7 +618,6 @@ class CommentsDialog(wx.Dialog):
                 self.commentsListBox.SetItem(i, 2, item.get('time', ''))
         finally:
             self.commentsListBox.Thaw()
-
         if self.commentsListBox.GetItemCount() > 0:
             if self.last_selected_obj and self.last_selected_obj in self.filteredComments:
                 try:
@@ -645,7 +628,6 @@ class CommentsDialog(wx.Dialog):
                     self.commentsListBox.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             else:
                 self.commentsListBox.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-        
         self.onCommentSelected(None)
 
     def onCopy(self, event):
@@ -666,7 +648,6 @@ class CommentsDialog(wx.Dialog):
         default_path = config.conf["YoutubePlus"].get("exportPath", "")
         if not default_path or not os.path.isdir(default_path):
             default_path = os.path.expanduser("~/Desktop")
-        
         safeTitle = sanitize_filename(self.GetTitle())
         filename = f"{safeTitle}.txt"
         filepath = os.path.join(default_path, filename)
@@ -681,7 +662,6 @@ class CommentsDialog(wx.Dialog):
                     f.write(f"{indent}{author}: {text}\n\n")
             ui.message(_("Export complete"))
         except (IOError, OSError) as e:
-            # Topic 2: Better exception handling
             log.error("Failed to export comments due to an OS/IO error.", exc_info=True)
             ui.message(_("Error exporting file: ") + str(e))
         except Exception:
@@ -717,7 +697,8 @@ class CommentsDialog(wx.Dialog):
         else:
             self.currentTextElement.SetValue("")
 
-    def onClose(self, event): self.Destroy()
+    def onClose(self, event):
+        self.Destroy()
 
 class VideoActionMixin:
     """A mixin to provide a standardized 'Action' menu for any video list dialog."""
@@ -729,7 +710,6 @@ class VideoActionMixin:
         if not video_id: 
             ui.message(_("Video ID not found."))
             return
-        
         url = f"https://www.youtube.com/watch?v={video_id}"
         ui.message(_("Opening in browser..."))
         try:
@@ -741,7 +721,6 @@ class VideoActionMixin:
     def create_video_action_menu(self):
         """Creates and returns a wx.Menu with common video actions."""
         menu = wx.Menu()
-        
         ID_VIEW_INFO = wx.NewIdRef()
         ID_VIEW_COMMENTS = wx.NewIdRef()
         ID_SHOW_CHAPTERS = wx.NewIdRef() 
@@ -754,7 +733,6 @@ class VideoActionMixin:
         ID_SHOW_VIDS = wx.NewIdRef()
         ID_SHOW_SHORTS = wx.NewIdRef()
         ID_SHOW_LIVE = wx.NewIdRef()
-        
         menu.Append(ID_VIEW_INFO, _("View Video &Info..."))
         menu.Append(ID_VIEW_COMMENTS, _("View &Comments / Replay..."))
         menu.Append(ID_SHOW_CHAPTERS, _("View Chap&ters/Timestamps...")) 
@@ -771,7 +749,6 @@ class VideoActionMixin:
         menu.Append(ID_SHOW_VIDS, _("Show channel &videos"))
         menu.Append(ID_SHOW_SHORTS, _("Show channel &shorts"))
         menu.Append(ID_SHOW_LIVE, _("Show channel &live"))
-
         menu.Bind(wx.EVT_MENU, self.on_view_info, id=ID_VIEW_INFO)
         menu.Bind(wx.EVT_MENU, self.on_view_comments, id=ID_VIEW_COMMENTS)
         menu.Bind(wx.EVT_MENU, self.on_show_chapters, id=ID_SHOW_CHAPTERS)  # <--- ✅ เพิ่ม Event Binding ใหม่
@@ -780,12 +757,10 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, self.on_open_video, id=ID_OPEN_VID_WEB)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_video, id=ID_ADD_FAV_VID)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_channel, id=ID_ADD_FAV_CHAN)
-        
         menu.Bind(wx.EVT_MENU, self.on_open_channel, id=ID_OPEN_CHAN_WEB)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('videos'), id=ID_SHOW_VIDS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('shorts'), id=ID_SHOW_SHORTS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('streams'), id=ID_SHOW_LIVE)
-        
         return menu
         
     def on_show_chapters(self, event):
@@ -794,7 +769,6 @@ class VideoActionMixin:
         if not video: return
         video_id = video.get('id') or video.get('video_id')
         if not video_id: return ui.message(_("Video ID not found."))
-        
         url = f"https://youtube.com/watch?v={video_id}"
         ui.message(_("Getting chapters..."))
         threading.Thread(target=self.core._show_chapters_worker, args=(url, ), daemon=True).start()
@@ -847,7 +821,6 @@ class VideoActionMixin:
         if not video: return
         video_id = video.get('id') or video.get('video_id')
         if not video_id: return ui.message(_("Video ID not found."))
-        
         url = f"https://youtube.com/watch?v={video_id}"
         threading.Thread(target=self.core._direct_download_worker, args=(url, 'audio'), daemon=True).start()
 
@@ -860,10 +833,8 @@ class VideoActionMixin:
             """Handles copying a specific piece of video data to the clipboard."""
             video = self.get_selected_video_info()
             if not video: return
-            
             video_id = video.get('id') or video.get('video_id')
             if not video_id: return
-
             text_to_copy = ""
             if copy_type == 'title':
                 text_to_copy = video.get('title', '')
@@ -879,7 +850,6 @@ class VideoActionMixin:
                     f"Channel: {video.get('channel_name', '')}\n"
                     f"URL: https://youtu.be/{video_id}"
                 )
-            
             if text_to_copy:
                 api.copyToClip(text_to_copy)
                 ui.message(_("Copied"))
@@ -913,13 +883,10 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         self.SetSizer(mainSizer)
-
         self.core.register_callback("fav_video_updated", self.refresh_favVideo)
-
         self._load_favorites()
         self._populate_list()  
         self._update_button_states()
-
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
@@ -933,7 +900,6 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             self.copyBtn = wx.Button(panel, label=_("&Copy..."))
             sizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
             sizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
-            
             self.actionBtn.Bind(wx.EVT_BUTTON, self.on_action_menu)
             self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
             
@@ -958,7 +924,6 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
                 copy_type = id_map.get(e.GetId())
                 if copy_type:
                     self.on_copy(copy_type)
-            
             menu.Bind(wx.EVT_MENU, on_select)
             self.PopupMenu(menu)
             menu.Destroy()
@@ -991,16 +956,14 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
         
     def _get_fav_file_path(self): return os.path.join(os.path.dirname(__file__), 'fav_video.json')
     def _get_add_button_label(self): return _("Add &new favorite video  from clipboard")
+    def _get_search_fields(self, item): return [item.get('title', ''), item.get('channel_name', '')]
+    def _get_item_title_for_messages(self, item): return item.get('title', 'N/A')
     
     def _create_list_columns(self, list_ctrl):
         list_ctrl.InsertColumn(0, _("Title"), width=350)
         list_ctrl.InsertColumn(1, _("Channel"), width=200)
         list_ctrl.InsertColumn(2, _("Duration"), width=120)
         
-    def _get_search_fields(self, item): return [item.get('title', ''), item.get('channel_name', '')]
-    
-    def _get_item_title_for_messages(self, item): return item.get('title', 'N/A')
-    
     def _update_button_states(self):
         is_not_empty = bool(self.favorites)
         self.removeBtn.Enable(is_not_empty)
@@ -1057,12 +1020,10 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
 
     def on_search(self, search_text):
         search_text = search_text.lower()
-
         if search_text and self.last_selected_item_before_search is None:
             selected_index = self.listCtrl.GetFirstSelected()
             if selected_index != -1:
                 self.last_selected_item_before_search = self.filtered_favorites[selected_index]
-
         if search_text:
             self.filtered_favorites = [
                 item for item in self.favorites
@@ -1070,9 +1031,7 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             ]
         else:
             self.filtered_favorites = self.favorites[:]
-
         self._populate_list()
-
         if not search_text and self.last_selected_item_before_search:
             try:
                 new_index = self.filtered_favorites.index(self.last_selected_item_before_search)
@@ -1081,9 +1040,7 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             except ValueError:
                 if self.listCtrl.GetItemCount() > 0:
                     self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            
             self.last_selected_item_before_search = None
-        
         elif search_text and self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
@@ -1096,7 +1053,6 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
                 self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
                 self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
                 self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
-            
             if self._is_first_load and self.listCtrl.GetItemCount() > 0:
                 self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self._is_first_load = False
@@ -1113,7 +1069,6 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             else:
                 event.Skip()
             return
-
         key_code = event.GetKeyCode()
         if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
             self.on_open_video(event)
@@ -1128,16 +1083,13 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
         if (direction == -1 and selected_index == 0) or \
            (direction == 1 and selected_index == len(self.filtered_favorites) - 1):
             return
-
         item_to_move = self.filtered_favorites[selected_index]
         original_master_index = self.favorites.index(item_to_move)
-
         self.favorites.pop(original_master_index)
         new_master_index = original_master_index + direction
         self.favorites.insert(new_master_index, item_to_move)
         self._save_favorites()
         self.on_search("")
-        
         try:
             new_view_index = self.filtered_favorites.index(item_to_move)
             self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
@@ -1150,7 +1102,6 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             return
         self._load_favorites()
         self.on_search("")
-
         if data and data.get("action") == "add":
             item_count = self.listCtrl.GetItemCount()
             if item_count > 0:
@@ -1196,11 +1147,9 @@ class FavChannelPanel(wx.Panel):
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.ALL, 10)
 
         self.SetSizer(mainSizer)
-
         self.core.register_callback("fav_channel_updated", self.refresh_favChannel)
         self._load_channel()
         self._populate_list()
-
         has_any_items = self.listCtrl.GetItemCount() > 0
         self.descriptionBox.GetStaticBox().Show(has_any_items)
         self._update_button_states()
@@ -1232,7 +1181,6 @@ class FavChannelPanel(wx.Panel):
             return
         self._load_channel()
         self.on_search("")
-
         if data and data.get("action") == "add":
             item_count = self.listCtrl.GetItemCount()
             if item_count > 0:
@@ -1275,7 +1223,6 @@ class FavChannelPanel(wx.Panel):
                 sub_count = item.get('subscriber_count')
                 sub_count_str = str(sub_count) if sub_count is not None else _("N/A")
                 self.listCtrl.SetItem(index, 1, sub_count_str)
-
             if self._is_first_load and self.listCtrl.GetItemCount() > 0:
                 self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self._is_first_load = False
@@ -1284,19 +1231,15 @@ class FavChannelPanel(wx.Panel):
             
     def on_search(self, search_text):
         search_text = search_text.lower()
-
         if search_text and self.last_selected_item_before_search is None:
             selected_index = self.listCtrl.GetFirstSelected()
             if selected_index != -1:
                 self.last_selected_item_before_search = self.filtered_channel[selected_index]
-
         if search_text:
             self.filtered_channel = [item for item in self.channel if search_text in item.get('channel_name', '').lower()]
         else:
             self.filtered_channel = self.channel[:]
-
         self._populate_list()
-
         if not search_text and self.last_selected_item_before_search:
             try:
                 new_index = self.filtered_channel.index(self.last_selected_item_before_search)
@@ -1305,9 +1248,7 @@ class FavChannelPanel(wx.Panel):
             except ValueError:
                 if self.listCtrl.GetItemCount() > 0:
                     self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            
             self.last_selected_item_before_search = None
-        
         elif search_text and self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
@@ -1317,7 +1258,6 @@ class FavChannelPanel(wx.Panel):
         self.openBtn.Enable(has_selection)
         self.viewContentBtn.Enable(has_selection)
         self.removeBtn.Enable(has_selection)
-
         has_any_items = self.listCtrl.GetItemCount() > 0
         if self.descriptionBox.GetStaticBox().IsShown() != has_any_items:
             self.descriptionBox.GetStaticBox().Show(has_any_items)
@@ -1328,19 +1268,14 @@ class FavChannelPanel(wx.Panel):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1:
             return
-            
         item_to_remove = self.filtered_channel[selected_index]
-        
         channel_name = item_to_remove.get('channel_name', 'this channel') # ใช้ 'this channel' เป็นค่าสำรอง
-        
         confirm_message = _("Are you sure you want to remove '{name}'?").format(name=channel_name)
         if wx.MessageBox(confirm_message, _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
             return
-            
         self.channel.remove(item_to_remove)
         self._save_channel()
         self.on_search("")
-
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
             new_selection = min(selected_index, item_count - 1)
@@ -1348,7 +1283,6 @@ class FavChannelPanel(wx.Panel):
             self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self._is_programmatic_selection = False
             self.listCtrl.EnsureVisible(new_selection)
-
         self._update_button_states()
         wx.CallAfter(self.listCtrl.SetFocus)
         self.core._notify_delete(_("Channel removed."))
@@ -1366,7 +1300,6 @@ class FavChannelPanel(wx.Panel):
         channel_url = item.get("channel_url")
         channel_name = item.get("channel_name")
         if not channel_url: return ui.message(_("Error: Channel URL not found."))
-        
         menu = wx.Menu()
         menu_choices = { wx.ID_HIGHEST + 1: (_("Videos"), "/videos"), wx.ID_HIGHEST + 2: (_("Shorts"), "/shorts"), wx.ID_HIGHEST + 3: (_("Live"), "/streams"), }
         for menu_id, (label, suffix) in menu_choices.items(): menu.Append(menu_id, label)
@@ -1394,7 +1327,6 @@ class FavChannelPanel(wx.Panel):
             else:
                 event.Skip()
             return
-
         key_code = event.GetKeyCode()
         if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE: self.on_open(event)
         elif key_code == wx.WXK_DELETE: self.on_remove(event)
@@ -1405,17 +1337,13 @@ class FavChannelPanel(wx.Panel):
         if selected_index_view == -1: return
         if direction == -1 and selected_index_view == 0: return
         if direction == 1 and selected_index_view == self.listCtrl.GetItemCount() - 1: return
-
         item_to_move = self.filtered_channel[selected_index_view]
         original_master_index = self.channel.index(item_to_move)
-
         self.channel.pop(original_master_index)
         new_master_index = original_master_index + direction
         self.channel.insert(new_master_index, item_to_move)
-        
         self._save_channel()
         self.on_search("")
-        
         try:
             new_view_index = self.filtered_channel.index(item_to_move)
             self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
@@ -1478,10 +1406,8 @@ class FavPlaylistPanel(wx.Panel):
         """Handles a targeted update for a single playlist's video count."""
         playlist_id = data.get('playlist_id')
         new_count = data.get('new_count')
-
         if not playlist_id or new_count is None:
             return
-
         for index, item in enumerate(self.filtered_playlists):
             if item.get('playlist_id') == playlist_id:
                 item['video_count'] = new_count
@@ -1498,7 +1424,6 @@ class FavPlaylistPanel(wx.Panel):
             else:
                 event.Skip()
             return
-
         key_code = event.GetKeyCode()
         if key_code == wx.WXK_RETURN:
             self.on_show_videos(event)
@@ -1512,14 +1437,11 @@ class FavPlaylistPanel(wx.Panel):
         if selected_index_view == -1: return
         if direction == -1 and selected_index_view == 0: return
         if direction == 1 and selected_index_view == self.listCtrl.GetItemCount() - 1: return
-
         item_to_move = self.filtered_playlists[selected_index_view]
         original_master_index = self.playlists.index(item_to_move)
-
         self.playlists.pop(original_master_index)
         new_master_index = original_master_index + direction
         self.playlists.insert(new_master_index, item_to_move)
-        
         self._save_playlists()
         self.on_search("")
         try:
@@ -1586,12 +1508,10 @@ class FavPlaylistPanel(wx.Panel):
 
     def on_search(self, search_text):
         search_text = search_text.lower()
-
         if search_text and self.last_selected_item_before_search is None:
             selected_index = self.listCtrl.GetFirstSelected()
             if selected_index != -1:
                 self.last_selected_item_before_search = self.filtered_playlists[selected_index]
-
         if search_text:
             self.filtered_playlists = [
                 item for item in self.playlists
@@ -1600,9 +1520,7 @@ class FavPlaylistPanel(wx.Panel):
             ]
         else:
             self.filtered_playlists = self.playlists[:]
-
         self._populate_list()
-
         if not search_text and self.last_selected_item_before_search:
             try:
                 new_index = self.filtered_playlists.index(self.last_selected_item_before_search)
@@ -1611,9 +1529,7 @@ class FavPlaylistPanel(wx.Panel):
             except ValueError:
                 if self.listCtrl.GetItemCount() > 0:
                     self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            
             self.last_selected_item_before_search = None
-        
         elif search_text and self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
@@ -1626,7 +1542,6 @@ class FavPlaylistPanel(wx.Panel):
                 self.listCtrl.InsertItem(index, item.get('playlist_title', 'N/A'))
                 self.listCtrl.SetItem(index, 1, item.get('uploader', 'N/A'))
                 self.listCtrl.SetItem(index, 2, str(item.get('video_count', 0)))
-
             if self._is_first_load and self.listCtrl.GetItemCount() > 0:
                 self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self._is_first_load = False
@@ -1637,7 +1552,6 @@ class FavPlaylistPanel(wx.Panel):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
         playlist = self.filtered_playlists[selected_index]
-        
         dialog_title_template = _("Fetching videos from '{playlist}'...").format(playlist=playlist['playlist_title'])
         threading.Thread(target=self.core._view_channel_worker, args=(playlist['playlist_url'], dialog_title_template), daemon=True).start()
         
@@ -1652,7 +1566,6 @@ class FavPlaylistPanel(wx.Panel):
             return
         self._load_playlists()
         self.on_search("")
-
         if data and data.get("action") == "add":
             item_count = self.listCtrl.GetItemCount()
             if item_count > 0:
@@ -1678,7 +1591,6 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
 
         self.core = core_instance
         self.panels = {}
-
         self.tabs_info = [
             {'id': 'videos', 'panel_class': FavVideoPanel, 'name': _("Videos")},
             {'id': 'channels', 'panel_class': FavChannelPanel, 'name': _("Channels")},
@@ -1695,7 +1607,6 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         for tab_id in saved_order_list:
             if tab_id in all_tabs_dict:
                 self.ordered_tabs.append(all_tabs_dict.pop(tab_id))
-
         self.ordered_tabs.extend(all_tabs_dict.values())
 
         panel = wx.Panel(self)
@@ -1746,20 +1657,15 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         self._update_dialog_title()
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
         ui.message(tab_title)
-
         self.searchCtrl.ChangeValue("")
-
         current_page = self.notebook.GetCurrentPage()
         if not current_page:
             if event: event.Skip()
             return
-
         if hasattr(current_page, 'on_search') and self.searchCtrl.GetValue():
             current_page.on_search("")
-
         if hasattr(current_page, 'listCtrl'):
             wx.CallAfter(current_page.SetFocus)
-        
         if event:
             event.Skip()
         
@@ -1767,7 +1673,6 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         """Helper method to update the dialog's title based on the current tab."""
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return
-
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
         full_title = _("Favorites - {tab_name} - Youtube Plus").format(tab_name=tab_title)
         self.SetTitle(full_title)
@@ -1780,12 +1685,10 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             panel = panel_class(self.notebook, self.core)
             self.notebook.AddPage(panel, tab_info['name'])
             self.panels[tab_info['id']] = panel
-
         if select_tab_id:
             visual_index = next((i for i, t in enumerate(self.ordered_tabs) if t['id'] == select_tab_id), -1)
             if visual_index != -1:
                 self.notebook.SetSelection(visual_index)
-
         wx.CallAfter(self.on_tab_changed, None)
 
     def _move_tab(self, direction):
@@ -1800,7 +1703,6 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
     def on_char_hook(self, event):
         control_down = event.ControlDown()
         key_code = event.GetKeyCode()
-
         if control_down:
             if key_code in (wx.WXK_UP, wx.WXK_LEFT):
                 self._move_tab(-1)
@@ -1813,13 +1715,11 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
                 if target_tab_index < self.notebook.GetPageCount():
                     self.notebook.SetSelection(target_tab_index)
                 return
-
         super().on_char_hook(event)
 
     def on_close(self, event):
         current_order_ids = [t['id'] for t in self.ordered_tabs]
         config.conf["YoutubePlus"]["favTabOrder"] = ",".join(current_order_ids)
-
         for panel in self.panels.values():
             if hasattr(panel, 'on_close'):
                 panel.on_close(event)
@@ -1862,7 +1762,6 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         self.searchBtn.Bind(wx.EVT_BUTTON, self.on_search)
         self.cancelBtn.Bind(wx.EVT_BUTTON, self.on_close)
         self.queryText.Bind(wx.EVT_TEXT_ENTER, self.on_search)
-
         wx.CallAfter(self.queryText.SetFocus)
 
     def on_close(self, event):
@@ -1872,13 +1771,10 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         """Gathers data, saves the count, and calls the core worker."""
         query = self.queryText.GetValue().strip()
         count = self.countSpin.GetValue()
-
         if not query:
             ui.message(_("Please enter a search term."))
             return
-
         config.conf["YoutubePlus"]["searchResultCount"] = count
-
         threading.Thread(target=self.core._Youtube_worker,
                          args=(query, count, self),
                          daemon=True).start()
@@ -2097,7 +1993,6 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         """Handles the targeted removal of a channel from the list."""
         channel_url_to_remove = data.get("channel_url")
         if not channel_url_to_remove: return
-        
         self.all_channels = [ch for ch in self.all_channels if ch[0] != channel_url_to_remove]
         self._populate_channel_list()
         
@@ -2136,10 +2031,8 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             original_index = self.channelListCtrl.GetItemData(selected_index)
             if original_index < len(self.all_channels):
                 selected_channel_url, __ = self.all_channels[original_index]
-
         self.channelListCtrl.DeleteAllItems()
         filter_selection = self.categoryFilterCombo.GetSelection()
-        
         channels_to_show = []
         if filter_selection <= 0:
             channels_to_show = self.all_channels
@@ -2165,45 +2058,35 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             self.channelListCtrl.SetItemData(index, original_index)
             if url == selected_channel_url:
                 new_selection_index = index
-
         if new_selection_index != -1:
             self.channelListCtrl.SetItemState(new_selection_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-        
         if self.channelListCtrl.GetItemCount() > 0 and self.channelListCtrl.GetFirstSelected() == -1:
             self.channelListCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.channelListCtrl.EnsureVisible(0)
             event = wx.ListEvent(wx.wxEVT_LIST_ITEM_SELECTED, self.channelListCtrl.GetId())
             event.SetIndex(0)
             wx.PostEvent(self.channelListCtrl.GetEventHandler(), event)
-
         self._update_ui_state()
     
     def _update_ui_state(self):
         """Enable/disable controls based on whether any channels are subscribed."""
         has_any_channels = bool(self.all_channels)
         is_channel_selected = self.channelListCtrl.GetFirstSelected() != -1
-
         self.categoryFilterCombo.Enable(has_any_channels)
         self.channelListCtrl.Enable(has_any_channels)
         self.rightPanel.Show(has_any_channels)
-        
         for ctrl in [self.categoryCheckList, self.contentTypesList, self.unsubBtn, self.saveBtn]:
             ctrl.Enable(is_channel_selected and has_any_channels)
-
         self.Layout()
 
     def _update_right_panel(self, event=None):
         self._update_ui_state()
         selected_index = self.channelListCtrl.GetFirstSelected()
-
         self.categoryCheckList.Clear()
         self.contentTypesList.CheckedItems = []
-
         if selected_index == -1: return
-
         original_index = self.channelListCtrl.GetItemData(selected_index)
         channel_url, __ = self.all_channels[original_index]
-
         try:
             con = sqlite3.connect(self.db_path)
             cur = con.cursor()
@@ -2212,14 +2095,12 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             cur.execute("SELECT content_types FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
             content_types_str = cur.fetchone()[0]
             con.close()
-
             checked_cats = []
             self.categoryCheckList.Set([cat[1] for cat in self.categories])
             for index, (cat_id, name) in enumerate(self.categories):
                 if cat_id in assigned_cat_ids:
                     checked_cats.append(index)
             self.categoryCheckList.CheckedItems = checked_cats
-
             internal_types = ["videos", "shorts", "streams"]
             saved_types = content_types_str.split(',')
             self.contentTypesList.CheckedItems = [i for i, t in enumerate(internal_types) if t in saved_types]
@@ -2231,25 +2112,20 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         if selected_index == -1:
             ui.message(_("No channel selected to save."))
             return
-
         original_index = self.channelListCtrl.GetItemData(selected_index)
         channel_url, __ = self.all_channels[original_index]
-        
         try:
             con = sqlite3.connect(self.db_path)
             cur = con.cursor()
-
             cur.execute("DELETE FROM channel_category_links WHERE channel_url = ?", (channel_url,))
             assigned_cat_indices = self.categoryCheckList.CheckedItems
             for index in assigned_cat_indices:
                 cat_id, __ = self.categories[index]
                 cur.execute("INSERT INTO channel_category_links (channel_url, category_id) VALUES (?, ?)", (channel_url, cat_id))
-
             internal_types = ["videos", "shorts", "streams"]
             checked_types_indices = self.contentTypesList.CheckedItems
             types_to_save = [internal_types[i] for i in checked_types_indices]
             cur.execute("UPDATE subscribed_channels SET content_types = ? WHERE channel_url = ?", (",".join(types_to_save), channel_url))
-
             con.commit()
             con.close()
             self.core._notify_callbacks("subscriptions_updated")
@@ -2264,11 +2140,9 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             if selected_index == -1: return
             original_index = self.channelListCtrl.GetItemData(selected_index)
             channel_url, channel_name = self.all_channels[original_index]
-
             if not channel_url:
                 ui.message(_("Error: Channel URL not found."))
                 return
-            
             menu = wx.Menu()
             menu_choices = {
                 wx.ID_HIGHEST + 1: (_("Videos"), "/videos"),
@@ -2282,7 +2156,6 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
                 label, suffix = menu_choices.get(e.GetId())
                 full_url = channel_url.rstrip('/') + suffix
                 title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
-
                 thread_kwargs = {
                     'url': full_url,
                     'dialog_title_template': title_template,
@@ -2291,7 +2164,6 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
                     'base_channel_name': channel_name
                 }
                 threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
-
             menu.Bind(wx.EVT_MENU, on_menu_select)
             self.PopupMenu(menu)
             menu.Destroy()
@@ -2306,7 +2178,6 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         except Exception:
             ui.message(_("Could not read from clipboard."))
             return
-        
         threading.Thread(target=self.core.subscribe_to_channel_worker, args=(url,), daemon=True).start()
         
     def on_unsubscribe(self, event):
@@ -2333,27 +2204,22 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     def __init__(self, parent, core_instance):
         if self.__class__._instance is not None:
             return
-        
         super().__init__(parent, title=_("Subscription Feed"))
         self.__class__._instance = self # Register the new instance
-        
         self.core = core_instance
         self.db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
-
         self.all_videos = []
         self.user_categories = []
         self.tab_order = []
         self.view_mode = "unseen" # unseen or all
         self.progress_dialog = None
         self.pending_focus_info = None
-        
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         
         self.notebook = wx.Notebook(panel)
         mainSizer.Add(self.notebook, 1, wx.EXPAND | wx.ALL, 5)
 
-        # <<< FIXED: จัดเรียงปุ่มกลับไปตามตำแหน่งเดิม >>>
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.addBtn = wx.Button(panel, label=_("Add &new Subscription from clipboard URL."))
         self.updateBtn = wx.Button(panel, label=_("&Update Feed"))
@@ -2387,10 +2253,8 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.progress_dialog: self.progress_dialog.Destroy()
         self.core.unregister_callback("subscriptions_updated", self._on_subscriptions_updated)
         self.core.unregister_callback("sub_feed_progress", self._on_progress_update)
-        
         current_tab_order = [str(self.notebook.GetPage(i).tab_id) for i in range(self.notebook.GetPageCount())]
         config.conf["YoutubePlus"]["subTabOrder"] = ",".join(current_tab_order)
-        
         currentPage = self.notebook.GetCurrentPage()
         if currentPage:
             config.conf["YoutubePlus"]["lastSubTabId"] = str(currentPage.tab_id)
@@ -2402,7 +2266,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.progress_dialog:
             self.progress_dialog.Update(self.progress_dialog.GetRange())
             self.progress_dialog = None
-        
         currentPage = self.notebook.GetCurrentPage()
         last_tab_id = currentPage.tab_id if currentPage else "all"
         self._build_all_tabs(select_tab_id=last_tab_id)
@@ -2413,7 +2276,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             cur = con.cursor()
             sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
             order_by_clause = "ORDER BY v.id DESC" if sort_order == 'newest' else "ORDER BY v.id ASC"
-            
             sql_query = ""
             if self.view_mode == "unseen":
                 sql_query = f"SELECT v.video_id, v.channel_name, v.title, v.duration_str, v.channel_url, v.upload_date, v.content_type FROM videos v WHERE v.video_id NOT IN (SELECT video_id FROM seen_videos) {order_by_clause}"
@@ -2421,44 +2283,35 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 sql_query = f"SELECT v.video_id, v.channel_name, v.title, v.duration_str, v.channel_url, v.upload_date, v.content_type FROM videos v {order_by_clause}"
             cur.execute(sql_query)
             self.all_videos = [{'id': r[0], 'channel_name': r[1], 'title': r[2], 'duration_str': r[3], 'channel_url': r[4], 'upload_date': r[5], 'content_type': r[6]} for r in cur.fetchall()]
-            
             cur.execute("SELECT id, name FROM categories ORDER BY position ASC")
             self.user_categories = cur.fetchall()
             con.close()
         except Exception as e:
             log.error("Failed to load data for SubDialog: %s", e)
             self.all_videos, self.user_categories = [], []
-
         fixed_tabs = [{'id': 'all', 'name': _("All")}, {'id': 'videos', 'name': _("Videos")}, {'id': 'shorts', 'name': _("Shorts")}, {'id': 'streams', 'name': _("Live")}]
         user_tabs = [{'id': cat_id, 'name': name} for cat_id, name in self.user_categories]
-        
         default_order_tabs = fixed_tabs + user_tabs
         
         saved_order = config.conf["YoutubePlus"].get("subTabOrder", "").split(',')
         all_tabs_dict = {str(t['id']): t for t in default_order_tabs}
-        
         self.tab_order = []
         if saved_order and saved_order[0]:
             for tab_id_str in saved_order:
                 if tab_id_str in all_tabs_dict:
                     self.tab_order.append(all_tabs_dict.pop(tab_id_str))
-        
         self.tab_order.extend(all_tabs_dict.values())
-        
         self.notebook.DeleteAllPages()
         for tab_info in self.tab_order:
             page = self._create_tab_panel(tab_info['id'])
             self.notebook.AddPage(page, tab_info['name'])
-            
         tab_to_select_id = str(select_tab_id) if select_tab_id is not None else config.conf["YoutubePlus"].get("lastSubTabId", "all")
-        
         initial_selection = 0
         for i, tab_info in enumerate(self.tab_order):
             if str(tab_info['id']) == tab_to_select_id:
                 initial_selection = i
                 break
         self.notebook.SetSelection(initial_selection)
-        
         if self.notebook.GetPageCount() > 0:
             self._update_dialog_title()
             self.notebook.GetCurrentPage().SetFocus()
@@ -2470,19 +2323,13 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         """
         current_index = self.notebook.GetSelection()
         new_index = current_index + direction
-        
         if new_index < 0 or new_index >= self.notebook.GetPageCount():
             return
-
-        # 1. สลับตำแหน่งใน self.tab_order (ลิสต์ข้อมูลในหน่วยความจำ)
         current_tab_info = self.tab_order.pop(current_index)
         self.tab_order.insert(new_index, current_tab_info)
-        
         try:
-            # 2. บันทึกลำดับใหม่ทั้งหมดลง config และฐานข้อมูล
             new_order_ids = [str(tab['id']) for tab in self.tab_order]
             config.conf["YoutubePlus"]["subTabOrder"] = ",".join(new_order_ids)
-            
             with sqlite3.connect(self.db_path) as con:
                 cur = con.cursor()
                 cur.execute("BEGIN TRANSACTION")
@@ -2492,11 +2339,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                         cur.execute("UPDATE categories SET position = ? WHERE id = ?", (user_cat_pos, tab_info['id']))
                         user_cat_pos += 1
                 con.commit()
-            
-            # <<< FINAL: ใช้วิธีที่ปลอดภัยที่สุด คือการสร้าง UI ใหม่ทั้งหมด >>>
-            # โดยใช้ wx.CallAfter เพื่อให้แน่ใจว่า Event ปัจจุบันทำงานจบก่อน
             wx.CallAfter(self._build_all_tabs, select_tab_id=current_tab_info['id'])
-
         except Exception as e:
             log.error("Failed to reorder tabs: %s", e)
             ui.message(_("Error reordering tabs."))
@@ -2508,13 +2351,8 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         """
         new_tab_index = event.GetSelection()
         new_tab_title = self.notebook.GetPageText(new_tab_index)
-        
-        # <<< FINAL: ใช้ทั้งสองวิธีร่วมกันเพื่อประสบการณ์ที่ดีที่สุด >>>
-        # 1. อัปเดต Title ของหน้าต่าง
         self._update_dialog_title()
-        # 2. สั่งให้อ่านชื่อแท็บใหม่ทันที (เหมือนเดิม)
         ui.message(new_tab_title)
-        
         currentPage = self.notebook.GetCurrentPage()
         if currentPage:
             self._update_tab_button_states(currentPage)
@@ -2525,7 +2363,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         """Helper method to update the dialog's title based on the current tab."""
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return
-        
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
         full_title = _("Subscription Feed - {tab_name} - Youtube Plus").format(tab_name=tab_title)
         self.SetTitle(full_title)            
@@ -2586,7 +2423,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             panel.listCtrl.SetItem(index, 1, display_type)
             panel.listCtrl.SetItem(index, 2, video.get('channel_name', 'N/A'))
             panel.listCtrl.SetItem(index, 3, video.get('duration_str', 'N/A'))
-
         item_count = panel.listCtrl.GetItemCount()
         if item_count > 0:
             focus_index = 0
@@ -2628,7 +2464,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             copy_type = id_map.get(e.GetId())
             if copy_type:
                 self.on_copy(copy_type)
-
         menu.Bind(wx.EVT_MENU, on_select)
         self.PopupMenu(menu)
         menu.Destroy()
@@ -2650,22 +2485,16 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             ID_MARK_ALL, ID_TOGGLE_VIEW, ID_MANAGE_SUBS = wx.NewIdRef(count=3)
             ID_ADD_CAT, ID_RENAME_CAT, ID_REMOVE_CAT = wx.NewIdRef(count=3)
             ID_PRUNE_ALL = wx.NewIdRef() # <--- ✅ เพิ่ม ID สำหรับเมนูใหม่
-            
             menu.Append(ID_MARK_ALL, _("Mark &all in current tab as seen (control+delete)"))
-            
             toggle_label = _("Show all &videos (including seen)") if self.view_mode == 'unseen' else _("Show only &unseen videos")
             menu.Append(ID_TOGGLE_VIEW, toggle_label)
-            
             menu.Append(ID_MANAGE_SUBS, _("&Manage subscriptions..."))
-            
             menu.AppendSeparator()
             menu.Append(ID_ADD_CAT, _("Add New &Category...\tCtrl+="))
             menu.Append(ID_RENAME_CAT, _("&Rename Current Category...\tF2"))
             menu.Append(ID_REMOVE_CAT, _("Remove Current Category...\tCtrl+-"))
-
             menu.AppendSeparator()
             menu.Append(ID_PRUNE_ALL, _("Clear All Feed Videos..."))
-
             currentPage = self.notebook.GetCurrentPage()
             is_user_category = isinstance(currentPage.tab_id, int)
             menu.Enable(ID_RENAME_CAT, is_user_category)
@@ -2680,7 +2509,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 elif evt_id == ID_RENAME_CAT: self.on_rename_category()
                 elif evt_id == ID_REMOVE_CAT: self.on_remove_category()
                 elif evt_id == ID_PRUNE_ALL: self.core.prune_all_videos_worker()
-                
             menu.Bind(wx.EVT_MENU, on_menu_select)
             self.PopupMenu(menu)
             menu.Destroy()
@@ -2736,9 +2564,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         current = data.get("current", 0)
         total = data.get("total", 1)
         message = data.get("message", "")
-        
         self.progress_dialog.Update(current, message)
-        
         if current >= total:
             self.progress_dialog = None
 
@@ -2758,12 +2584,9 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if not currentPage: return
         listCtrl = currentPage.listCtrl
         selected_index = listCtrl.GetFirstSelected()
-        
         video_to_mark = self.get_selected_video_info()
         if not video_to_mark: return
-
         self.pending_focus_info = {'tab_id': currentPage.tab_id, 'index': selected_index}
-
         self._mark_videos_as_seen_db([video_to_mark])
         self.core._notify_callbacks("subscriptions_updated")
         self.core._notify_delete(_("Marked as seen."))
@@ -2801,31 +2624,21 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         """Handles key presses on the list, including all shortcuts."""
         control_down = event.ControlDown()
         key_code = event.GetKeyCode()
-
         if control_down:
-            # --- จัดการคีย์ลัดที่มีปุ่ม Control ---
-
-            # Ctrl+Number (1-9) สำหรับกระโดดไปที่แท็บ
             if ord('1') <= key_code <= ord('9'):
                 target_tab_index = key_code - ord('1')
                 if target_tab_index < self.notebook.GetPageCount():
                     self.notebook.SetSelection(target_tab_index)
                 return
-
-            # Ctrl+= (สำหรับเพิ่มหมวดหมู่)
             if key_code == ord('='):
                 self.on_add_category()
                 return
-            # Ctrl+- (สำหรับลบหมวดหมู่)
             elif key_code == ord('-'):
                 self.on_remove_category()
                 return
-
             elif key_code == wx.WXK_DELETE:
                 self.on_mark_all_seen()
                 return
-
-            # Ctrl+Up/Down/Left/Right (สำหรับจัดลำดับแท็บ)
             elif key_code in (wx.WXK_UP, wx.WXK_LEFT):
                 self._move_tab(-1)
                 return
@@ -2834,8 +2647,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 return
             else:
                 event.Skip()
-
-        # --- จัดการคีย์ลัดที่ไม่มีปุ่ม Control ---
         elif key_code == wx.WXK_F2:
             self.on_rename_category()
         elif key_code in (wx.WXK_RETURN, wx.WXK_SPACE):
@@ -2903,10 +2714,8 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if not currentPage or not isinstance(currentPage.tab_id, int):
             ui.message(_("This is a fixed tab and cannot be renamed."))
             return
-        
         cat_id = currentPage.tab_id
         old_name = self.notebook.GetPageText(self.notebook.GetSelection())
-        
         with wx.TextEntryDialog(self, _("Enter new name for '{name}':").format(name=old_name), _("Rename Category"), value=old_name) as dlg:
             if dlg.ShowModal() == wx.ID_OK:
                 new_name = dlg.GetValue().strip()
@@ -2931,13 +2740,10 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if not currentPage or not isinstance(currentPage.tab_id, int):
             ui.message(_("This is a fixed tab and cannot be removed."))
             return
-
         cat_id = currentPage.tab_id
         name = self.notebook.GetPageText(self.notebook.GetSelection())
-        
         if wx.MessageBox(_("Are you sure you want to remove the '{name}' category?").format(name=name), _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
             return
-
         try:
             con = sqlite3.connect(self.db_path)
             cur = con.cursor()

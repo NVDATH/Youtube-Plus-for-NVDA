@@ -1,4 +1,5 @@
-# settings.py
+# settings.py for Youtube Plus NVDA Addon
+
 import wx
 import gui
 import config
@@ -72,12 +73,25 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         
         sHelper.addItem(wx.StaticText(self, label=_("&Cookie method:")))
         cookie_choices = [
-            _("Automatic (Detect from active browser)"), _("Chrome"), _("Firefox"),
-            _("Edge"), _("Do not use cookies")
+            _("Do not use cookies (Default)"),
+            _("Chrome"),
+            _("Firefox"),
+            _("Edge"),
+            _("Opera"),
+            _("Brave"),
+            _("Vivaldi")
         ]
         self.cookieModeCombo = sHelper.addItem(wx.ComboBox(self, choices=cookie_choices, style=wx.CB_READONLY))
-        cookie_map = {'auto': 0, 'chrome': 1, 'firefox': 2, 'edge': 3, 'none': 4}
-        current_cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "auto")
+        cookie_map = {
+            'none': 0,
+            'chrome': 1,
+            'firefox': 2,
+            'edge': 3,
+            'opera': 4,
+            'brave': 5,
+            'vivaldi': 6
+        }
+        current_cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
         self.cookieModeCombo.SetSelection(cookie_map.get(current_cookie_mode, 0))
         
         sHelper.addItem(wx.StaticText(self, label=_("Default download and &export folder path:")))
@@ -112,8 +126,18 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["YoutubePlus"]["autoSpeak"] = self.autoSpeak.GetValue()
         config.conf["YoutubePlus"]["refreshInteval"] = self.refreshIntevalSpin.GetValue()
         config.conf["YoutubePlus"]["messageLimit"] = self.messageLimitSpin.GetValue()
-        selection_map_cookie = {0: 'auto', 1: 'chrome', 2: 'firefox', 3: 'edge', 4: 'none'}
-        config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'auto')
+        
+        selection_map_cookie = {
+            0: 'none',
+            1: 'chrome',
+            2: 'firefox',
+            3: 'edge',
+            4: 'opera',
+            5: 'brave',
+            6: 'vivaldi'
+        }
+        config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'none')
+        
         config.conf["YoutubePlus"]["exportPath"] = self.exportPathTextCtrl.GetValue()
         
         if GlobalPlugin.instance:

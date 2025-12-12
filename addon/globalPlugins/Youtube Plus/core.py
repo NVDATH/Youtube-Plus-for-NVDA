@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+# Youtube plus for NVDA
+# Copyright (C) 2025
+# This file is covered by the GNU General Public License.
+# You can read the licence by clicking Help->Licence in the NVDA menu
+# or by visiting http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# Shortcut: NVDA+y
+
 import globalPluginHandler
 from scriptHandler import script
 import threading
@@ -9,6 +17,7 @@ import re
 import webbrowser
 from urllib.parse import urlparse, parse_qs, unquote
 from contextlib import contextmanager, redirect_stderr
+from http.cookiejar import MozillaCookieJar
 from functools import wraps
 import ui
 import config
@@ -21,6 +30,8 @@ import concurrent.futures
 import urllib.request
 from collections import OrderedDict
 from logHandler import log
+import unicodedata
+import sys
 
 # Third-party libraries
 import pytchat
@@ -41,6 +52,7 @@ from .dialogs import (
     ChannelVideoDialog,
     ManageSubscriptionsDialog
 )
+
 from .utils import retry_on_network_error
 from .errors import NetworkRetryError, HandledError
 
@@ -84,7 +96,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.update_timer = wx.Timer(gui.mainFrame)
         gui.mainFrame.Bind(wx.EVT_TIMER, self.on_auto_update_tick, self.update_timer)
         self.register_callback("settings_saved", self.manage_auto_update_timer)
-
         self._init_sub_database()
         
         threading.Thread(target=self._update_subscription_feed_worker, kwargs={'silent': True}, daemon=True).start()
@@ -125,7 +136,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 - Ctrl+Delete: Mark all videos in the current tab as seen
 
 **In any Favorites Dialog (Videos, Channels, Playlists):**
-- Ctrl+Up/Down: Reorder the selected item
+- Shift+Up/Down: Reorder the selected item
 - Delete: Remove the selected item from favorites
 
 --- Help ---
@@ -283,7 +294,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 if os.path.exists(sound_path):
                     nvwave.playWaveFile(sound_path)
                 else:
-                    tones.beep(100, 120) # Fallback
+                    tones.beep(100, 120)
             except Exception:
                 tones.beep(100, 120)
                 
@@ -295,6 +306,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             r'v=',
             r'list=',
             r'/shorts/',
+            r'/live/',
             r'youtu\.be\/',
             r'/channel/',
             r'/c/',
@@ -361,7 +373,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             )
             return None
         
-        is_video_format = 'v=' in url or 'shorts/' in url or 'youtu.be/' in url
+        is_video_format = 'v=' in url or 'shorts/' in url or 'live/' in url or 'youtu.be/' in url
         
         if self._is_specific_youtube_url(url) and not is_video_format:
              self._notify_error(
@@ -383,28 +395,73 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         }
 
-        cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "auto")
+        cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
         browser_to_use = None
+        temp_cookie_file = None
 
-        if cookie_mode == 'auto':
-            try:
-                detected_browser = api.getFocusObject().appModule.appName
-                browser_map = {'chrome': 'chrome', 'msedge': 'edge', 'firefox': 'firefox'}
-                browser_to_use = browser_map.get(detected_browser)
-            except Exception:
-                log.warning("Could not detect active browser for 'auto' cookie mode.")
-        elif cookie_mode not in ['auto', 'none']:
-            browser_to_use = cookie_mode
+        if cookie_mode != 'none':
+            browser_to_use = cookie_mode.lower() 
+            log.debug(f"Cookie mode set to: {browser_to_use}")
+        else:
+            log.debug("Cookie mode is 'none' - proceeding without cookies")
 
         if browser_to_use:
-            log.debug(f"Attempting to use yt-dlp's native cookie import from: {browser_to_use}")
-            ydl_opts['cookies_from_browser'] = (browser_to_use,)
+            try:
+                log.debug(f"Attempting to use cookies from browser: {browser_to_use}")
+                ydl_opts['cookies_from_browser'] = (browser_to_use,) 
+            except Exception as e:
+                log.warning(f"Could not set cookies_from_browser for {browser_to_use}: {e}")
+                
+                try:
+                    from yt_dlp.cookies import extract_cookies_from_browser
+                    from yt_dlp.utils import YoutubeDLError
+                    import tempfile
+                    
+                    log.debug(f"Attempting manual cookie extraction from {browser_to_use}")
+                    jar = extract_cookies_from_browser(browser_to_use)
+                    
+                    if jar and len(jar) > 0:
+                        tmp = tempfile.NamedTemporaryFile(
+                            prefix='yt_cookies_',
+                            delete=False,
+                            suffix='.txt',
+                            mode='w'
+                        )
+                        temp_cookie_file = tmp.name
+                        jar.filename = temp_cookie_file
+                        jar.save(temp_cookie_file, ignore_discard=True, ignore_expires=True)
+                        tmp.close()
+                        
+                        ydl_opts['cookiefile'] = temp_cookie_file
+                        log.info(f"Successfully wrote browser cookies to temporary file: {temp_cookie_file}")
+                    else:
+                        log.warning(f"No cookies found in {browser_to_use}")
+                        
+                except (YoutubeDLError, FileNotFoundError, PermissionError) as extract_error:
+                    log.error(f"Cookie extraction workaround failed for {browser_to_use}: {extract_error}")
+                except Exception as unexpected_error:
+                    log.exception(f"Unexpected error during cookie extraction: {unexpected_error}")
 
         if extra_opts:
             ydl_opts.update(extra_opts)
 
-        return yt_dlp.YoutubeDL(ydl_opts)
+        ydl = yt_dlp.YoutubeDL(ydl_opts)
         
+        if temp_cookie_file:
+            original_close = ydl.__exit__
+            def cleanup_close(*args, **kwargs):
+                try:
+                    result = original_close(*args, **kwargs)
+                    if temp_cookie_file and os.path.exists(temp_cookie_file):
+                        os.remove(temp_cookie_file)
+                        log.debug(f"Cleaned up temporary cookie file: {temp_cookie_file}")
+                    return result
+                except Exception as e:
+                    log.warning(f"Failed to cleanup temp cookie file: {e}")
+            ydl.__exit__ = cleanup_close
+        
+        return ydl
+
     @retry_on_network_error(retries=3, delay=5)
     def get_video_info(self, url_or_id, extra_opts=None, fetch_channel_details=False):
         """
@@ -412,7 +469,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         Now with corrected logic to prevent infinite playlist fetching.
         """
         log.debug("Attempting to get info for: %s", url_or_id)
-        
+
         channel_regex = re.compile(r"/channel/|/c/|/@")
         is_channel = isinstance(url_or_id, str) and bool(channel_regex.search(url_or_id))
 
@@ -473,22 +530,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
         video_list = []
         
-        # FIXED: Better channel name extraction from playlist_info
         determined_channel_name = channel_name_override
         if not determined_channel_name:
-            # Try to get channel name from playlist info first
             determined_channel_name = (
                 playlist_info.get('uploader') or 
                 playlist_info.get('channel') or 
                 playlist_info.get('title')  # Sometimes channel name is in title for channel URLs
             )
-            #if determined_channel_name:
                 #log.debug("Channel name from playlist_info: %s", determined_channel_name)
         
         if 'entries' in playlist_info:
             for entry in playlist_info.get('entries', []):
                 if entry and entry.get('id'):
-                    # If we still don't have channel name, try to get from first valid entry
                     if not determined_channel_name or determined_channel_name == 'Unknown Channel':
                         entry_channel_name = (
                             entry.get('uploader') or 
@@ -521,214 +574,132 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.debug("Extracted %d videos with channel name: %s", len(video_list), determined_channel_name)
         return video_list
         
-    def _unified_worker(self, url):
-        """
-        The main worker entry point for getting any video data.
-        It now correctly handles and provides feedback for playlist and channel URLs.
-        """
-        clean_url = self._validate_video_url_and_notify(url)
-        if not clean_url:
-            return
-        self._start_indicator()
-        try:
-            self.is_long_task_running = True
-            info = self.get_video_info(url)
-
-            if info.get('is_live'):
-                threading.Thread(target=self._start_monitoring_worker, args=(url, info), daemon=True).start()
+    def _progress_indicator_worker(self):
+        """Worker that provides progress feedback (beep or sound) for background tasks."""
+        log.debug("Progress indicator worker started.")
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        sound_path = None
+        if mode == 'sound':
+            sound_path = os.path.join(os.path.dirname(__file__), "sounds", "tictac.wav")
+            if not os.path.exists(sound_path):
+                log.warning("Sound file not found: %s. Falling back to beep mode.", sound_path)
+                mode = 'beep'
+        while not self._indicator_stop_event.is_set():
+            if self._pause_indicator_event.is_set():
+                self._indicator_stop_event.wait(0.5)
+                continue
+            if mode == 'beep':
+                tones.beep(440, 100)
+                self._indicator_stop_event.wait(2.5)
+            elif mode == 'sound':
+                try:
+                    nvwave.playWaveFile(sound_path)
+                except Exception as e:
+                    log.error("Failed to play wave file %s: %s", sound_path, e)
+                    mode = 'beep'
+                self._indicator_stop_event.wait(1)
             else:
-                wx.CallAfter(self._process_video_type, url, info)
-
-        except (DownloadError, NetworkRetryError) as e:
-            self._stop_indicator()
-            self._notify_error(_("Failed to get video data. The video may be private, unavailable, or there was a network issue."), log_message=f"Could not get info for URL {url} after retries: {e}")
-        except Exception as e:
-            self._stop_indicator()
-            self._notify_error(_("An unexpected error occurred."), log_message=f"An unexpected error occurred in the unified worker: {e}")
-        finally:
-            self.is_long_task_running = False
-            
-    def _process_video_type(self, url, info):
-        """Determines if a VOD has replay or just comments and starts the fetch process."""
-        log.debug("Processing VOD type for video: %s", info.get('title'))
-        self.video_title = info.get('title', 'Unknown Title')
-        has_replay = False
-        subtitles = info.get('subtitles', {})
-        auto_captions = info.get('automatic_captions', {})
+                self._indicator_stop_event.wait(1)
+        log.debug("Progress indicator worker stopped.")
         
-        if 'live_chat' in subtitles or 'live_chat' in auto_captions:
-            has_replay = True
-
-        comment_count = info.get('comment_count') or 0
-
-        if info.get('was_live') and has_replay:
-            self._pause_indicator()
-            self.choice_made_event.clear()
-            self.user_choice = None
-            #log.info("Video has a live chat replay. Showing choice dialog.")
-            wx.CallAfter(self._show_choice_dialog, self.choice_made_event, info)
-        else:
-            #log.info("Video does not have a replay, fetching comments.")
-            self.user_choice = 'comments'
-            self.choice_made_event.set()
-
-        threading.Thread(target=self._start_fetch_worker_after_choice, args=(url, comment_count), daemon=True).start()
+    def _start_indicator(self):
+        """Starts the progress indicator thread."""
+        self._indicator_stop_event.clear()
+        self._pause_indicator_event.clear()
+        threading.Thread(target=self._progress_indicator_worker, daemon=True).start()
         
-    def _start_fetch_worker_after_choice(self, url, comment_count=0):
-        """Waits for the user's choice (replay vs comments) and starts the actual fetch worker."""
-        log.debug("Waiting for user choice...")
-        self.choice_made_event.wait()
-        data_to_fetch = self.user_choice
+    def _stop_indicator(self):
+        """Stops the progress indicator thread."""
+        self._indicator_stop_event.set()
         
-        if data_to_fetch == 'cancel' or data_to_fetch is None:
-            #log.info("User cancelled data fetching.")
-            self._stop_indicator()
-            return
+    def _pause_indicator(self):
+        """Pauses the progress indicator."""
+        self._pause_indicator_event.set()
 
-        if data_to_fetch == 'comments' and comment_count == 0:
-            #log.info("Aborting fetch: Video has no comments.")
-            self._stop_indicator()
-            self._notify_error(_("This video has no comments."), log_message="Aborting fetch: Video has no comments.")            
-            return
-
-        if data_to_fetch == 'comments':
-            wx.CallAfter(ui.message, _("Loading {count} comments...").format(count=comment_count))
-        else:
-            wx.CallAfter(ui.message, "Loading live chat replay...")
-
-        self._resume_indicator()
-        threading.Thread(target=self._fetch_and_process_data_worker, args=(url, self.video_title, data_to_fetch, ), daemon=True).start()
+    def _resume_indicator(self):
+        """Resumes the progress indicator."""
+        self._pause_indicator_event.clear()
         
-    def _get_info_worker(self, url):
-        clean_url = self._validate_video_url_and_notify(url)
-        if not clean_url:
-            return
-        self._start_indicator()
-        try:
-            self.is_long_task_running = True
-            info = self.get_video_info(url)
-            
-            if info.get('is_live'):
-                wx.CallAfter(ui.message, "This is a live stream. Use the 'Get Data' (g) command to monitor live chat.")
-                return
+    def _notify_success(self, message):
+        """Plays a success sound/beep and shows a UI message based on user settings."""
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        if mode == 'beep':
+            tones.beep(880, 100)
+        elif mode == 'sound':
+            try:
+                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "finish.wav")
+                if os.path.exists(sound_path):
+                    nvwave.playWaveFile(sound_path)
+                else:
+                    # Fallback to beep if sound file is missing
+                    tones.beep(880, 100)
+            except Exception:
+                tones.beep(880, 100)
+        wx.CallAfter(ui.message, message)
 
-            title = info.get('title', 'N/A')
-            uploader = info.get('uploader', 'N/A')
-            duration = self._format_duration_verbose(info.get('duration', 0))
-            upload_date_str = info.get('upload_date')
-            upload_date = datetime.strptime(upload_date_str, '%Y%m%d').strftime('%d %B %Y') if upload_date_str else 'N/A'
-            
-            view_count_num = info.get('view_count') or 0
-            like_count_num = info.get('like_count') or 0
-            comment_count_num = info.get('comment_count') or 0
-
-            view_count = f"{view_count_num:,}"
-            like_count = f"{like_count_num:,}"
-            comment_count = f"{comment_count_num:,}"
-            
-            description = info.get('description', 'N/A')
-            
-            info_text = (f"Title: {title}\n"
-                         f"Channel: {uploader}\n"
-                         f"Duration: {duration}\n"
-                         f"Uploaded: {upload_date}\n"
-                         f"Views: {view_count}\n"
-                         f"Likes: {like_count}\n"
-                         f"Comments: {comment_count}\n"
-                         f"--------------------\n"
-                         f"Description:\n{description}")
-            
-            wx.CallAfter(self._show_info_dialog, title, info_text)
+    def _notify_error(self, message, log_message=None):
+        """Plays an error sound/beep, shows a UI message, and logs the error."""
+        log.error(log_message or message)
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        if mode == 'beep':
+            tones.beep(220, 200)
+        elif mode == 'sound':
+            try:
+                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "error.wav")
+                if os.path.exists(sound_path):
+                    nvwave.playWaveFile(sound_path)
+                else:
+                    tones.beep(220, 200)
+            except Exception:
+                tones.beep(220, 200)
+        wx.CallAfter(ui.message, message)
         
-        except (DownloadError, NetworkRetryError) as e:
-            log.error("Could not get video info for 'getInfo' command. Error: %s", e)
-            self._notify_error(_("Failed to get video info. The video may be private or the network is down."))
-        except Exception as e:
-            log.exception("Unexpected error in 'Get Info' worker.")
-            self._notify_error(_("An unexpected error occurred. Please check the log for details."))
-        finally:
-            self.is_long_task_running = False
-            self._stop_indicator()
-            
-    def _show_chapters_worker(self, url):
-        clean_url = self._validate_video_url_and_notify(url)
-        if not clean_url:
-            return
-        self._start_indicator()
-        try:
-            self.is_long_task_running = True
-            info = self.get_video_info(url)
-            
-            chapters = info.get('chapters')
-            if chapters and len(chapters) > 0:
-                title = info.get('title', 'Unknown Video')
-                dialog_title = _("Chapters for {title}").format(title=title)
-                wx.CallAfter(self.show_chapters_dialog, dialog_title, chapters, url)
-            else:
-                self._notify_error(_("No chapters found in this video."))
-
-        except (DownloadError, NetworkRetryError) as e:
-            self._notify_error(_("Failed to get chapters. The video may be private or the network is down."), log_message=f"Could not get chapters for {url}: {e}")
-        except Exception as e:
-            log.exception("Unexpected error in 'Show Chapters' worker.")
-            self._notify_error(_("An unexpected error occurred. Please check the log for details."))
-        finally:
-            self.is_long_task_running = False
-            self._stop_indicator()
-
-    def _fetch_and_process_data_worker(self, url_or_id, video_title, data_to_fetch):
-        #log.info("Fetching '%s' data for video: %s", data_to_fetch, video_title)
-        try:
-            display_list, dialog_title = None, None
-            is_replay_data = False # Flag to pass to CommentsDialog
-            
-            if data_to_fetch == 'comments':
-                log.debug("Fetching comments via yt-dlp.")
-                opts = {'getcomments': True, 'extract_flat': True}
-                with self._get_ydl_instance(extra_opts=opts) as ydl:
-                    info = ydl.extract_info(url_or_id, download=False)
-                raw_data = info.get('comments')
-                if not raw_data: raise ValueError("No comments found in video data.")
-                
-                display_list = self._format_comments_for_display(raw_data)
-                dialog_title = "{count} comments of {title}".format(count=len(display_list), title=video_title)
-
-            elif data_to_fetch == 'replay':
-                log.debug("Fetching live chat replay subtitles via yt-dlp.")
-                opts = {'skip_download': True, 'writesubtitles': True, 'subtitleslangs': ['live_chat']}
-                with self._get_ydl_instance(extra_opts=opts) as ydl:
-                    res = ydl.extract_info(url_or_id, download=True)
-                
-                requested_subs = res.get('requested_subtitles')
-                if not requested_subs or 'live_chat' not in requested_subs:
-                    raise FileNotFoundError("Live chat replay subtitles not available for this video.")
-                
-                chat_filepath = requested_subs['live_chat'].get('filepath')
-                if not chat_filepath or not os.path.exists(chat_filepath):
-                    raise FileNotFoundError("Could not find downloaded live chat replay file.")
-                
-                with open(chat_filepath, 'r', encoding='utf-8') as f: raw_data = [json.loads(line) for line in f]
-                os.remove(chat_filepath)
-                if not raw_data: raise ValueError("Live chat replay file was empty.")
-                
-                display_list = self._format_replay_for_display(raw_data)
-                dialog_title = "{count} live chat replay of {title}".format(count=len(display_list), title=video_title)
-                is_replay_data = True
-            
-            self._stop_indicator()
-            self._play_success_sound()
-            wx.CallAfter(self.show_comments_dialog, dialog_title, display_list, is_replay_data)
-
-        except (DownloadError, FileNotFoundError, ValueError) as e:
-            # Handle expected errors gracefully
-            self._stop_indicator()
-            log.error("Could not load VOD data: %s", e)
-            wx.CallAfter(ui.message, _("Could not load data: {error}").format(error=e))
-        except Exception as e:
-            # Handle unexpected errors
-            self._stop_indicator()
-            log.exception("An unexpected error occurred while fetching VOD data.")
-            wx.CallAfter(ui.message, _("An unexpected error occurred. Please check the log for details."))
+    def _notify_delete(self, message):
+        """Plays a delete sound/beep and shows a UI message."""
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        if mode == 'beep':
+            tones.beep(220, 100)
+        elif mode == 'sound':
+            try:
+                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "delete.wav")
+                if os.path.exists(sound_path):
+                    nvwave.playWaveFile(sound_path)
+                else:
+                    tones.beep(220, 100)
+            except Exception:
+                tones.beep(220, 100)
+        wx.CallAfter(ui.message, message)
+        
+    def _play_success_sound(self):
+        """Plays only the success sound/beep based on user settings."""
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        if mode == 'beep':
+            tones.beep(880, 100)
+        elif mode == 'sound':
+            try:
+                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "finish.wav")
+                if os.path.exists(sound_path):
+                    nvwave.playWaveFile(sound_path)
+                else:
+                    tones.beep(880, 100)
+            except Exception:
+                tones.beep(880, 100)
+    
+    def _notify_layer_activated(self):
+        """Plays a sound/beep for layer activation based on user settings."""
+        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+        if mode == 'beep':
+            tones.beep(440, 75)
+        elif mode == 'sound':
+            try:
+                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "start.wav")
+                if os.path.exists(sound_path):
+                    nvwave.playWaveFile(sound_path)
+                else:
+                    tones.beep(440, 75)
+            except Exception:
+                tones.beep(440, 75)
+        wx.CallAfter(ui.message, _("activate Youtube Plus"))
 
     def _format_comments_for_display(self, raw_comments):
         """
@@ -740,7 +711,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         other_comments = [c for c in raw_comments if not c.get('is_pinned')]
         log.debug("Found %d pinned and %d other comments.", len(pinned_comments), len(other_comments))
 
-        # Create a map to handle comment threading
         comments_map = {c['id']: {**c, 'replies': []} for c in other_comments if 'id' in c}
         top_level_comments = []
 
@@ -751,7 +721,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             else:
                 top_level_comments.append(c)
 
-        # Sort replies by timestamp
         for c in comments_map.values():
             c['replies'].sort(key=lambda r: r.get('timestamp', 0))
 
@@ -775,7 +744,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             message = ""
             
             if paid_info := c.get('paid'):
-                # Format Super Thanks
                 original_text = c.get('text', '')
                 message = f"Super Thanks ({paid_info}): {original_text}"
             else:
@@ -802,7 +770,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         log.debug("Formatting %d raw replay items.", len(replay_data))
         flat_list = []
         for item in replay_data:
-            # The actual content is nested deep inside the JSON structure.
             action_item = item.get('replayChatItemAction', {}).get('actions', [{}])[0].get('addChatItemAction', {}).get('item', {})
             if not action_item:
                 continue
@@ -905,163 +872,289 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
         return flat_list
 
-    def _progress_indicator_worker(self):
-        """Worker that provides progress feedback (beep or sound) for background tasks."""
-        log.debug("Progress indicator worker started.")
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
+    def _format_duration_verbose(self, seconds):
+        if not isinstance(seconds, (int, float)) or seconds <= 0: return _("")
+        seconds = int(seconds)
+        parts = []
+        h, rem = divmod(seconds, 3600)
+        m, s = divmod(rem, 60)
+        if h > 0: parts.append(_("{h} Hour").format(h=h) if h == 1 else _("{h} Hours").format(h=h))
+        if m > 0: parts.append(_("{m} Minute").format(m=m) if m == 1 else _("{m} Minutes").format(m=m))
+        if s > 0 or not parts: parts.append(_("{s} Second").format(s=s) if s == 1 else _("{s} Seconds").format(s=s))
+        return " ".join(parts)
+
+    def get_total_paid_amount_from_list(self, message_list):
+        """
+        Calculates the total amount from Super Chat and Super Sticker messages.
+        """
+        log.debug("Calculating total paid amount from a list of %d items.", len(message_list))
+        total_amounts = {}
+        for message_obj in message_list:
+            if message_obj.get('type') in ('superChat', 'superSticker'):
+                amount_string = message_obj.get('amount', '')
+                if amount_string:
+                    match = re.match(r'([^\d\s.,]+)?\s*([\d,.]+)\s*([^\d\s.,]+)?', amount_string.strip())
+                    if match:
+                        currency_part = (match.group(1) or match.group(3) or "").strip()
+                        numeric_value_str = match.group(2).replace(',', '')
+
+                        try:
+                            amount_value = float(numeric_value_str)
+                            currency_code = currency_part
+                            
+                            if currency_part == '$': currency_code = 'USD'
+                            elif currency_part == '¥': currency_code = 'JPY'
+                            elif currency_part == '€': currency_code = 'EUR'
+                            elif currency_part == '฿': currency_code = 'THB'
+                            elif not currency_code and amount_value > 0: currency_code = "UNKNOWN"
+
+                            if currency_code:
+                                total_amounts[currency_code] = total_amounts.get(currency_code, 0.0) + amount_value
+                        except ValueError:
+                            log.warning("Could not parse amount value from string: %s", numeric_value_str)
+        log.debug("Paid amount calculation result: %s", total_amounts)
+        return total_amounts
         
-        sound_path = None
-        if mode == 'sound':
-            sound_path = os.path.join(os.path.dirname(__file__), "sounds", "tictac.wav")
-            if not os.path.exists(sound_path):
-                log.warning("Sound file not found: %s. Falling back to beep mode.", sound_path)
-                mode = 'beep'
+    def _show_info_dialog(self, title, info_text):
+        gui.mainFrame.prePopup()
+        dialog_title = _("Info of {title}").format(title=title)
+        dialog = InfoDialog(gui.mainFrame, dialog_title, info_text)
+        dialog.Show()
+        self._play_success_sound()
+        gui.mainFrame.postPopup()
+        
+    def show_chapters_dialog(self, title, chapters, url):
+        gui.mainFrame.prePopup()
+        dialog = TimestampDialog(gui.mainFrame, title, chapters, url)
+        dialog.Show()
+        self._play_success_sound()
+        gui.mainFrame.postPopup()     
+       
+    def _show_choice_dialog(self, event, info):
+        comment_count = info.get('comment_count', 0)
+        dlg = wx.MessageDialog(gui.mainFrame, "This video has a live chat replay. What would you like to view?", "Choice", wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+        dlg.SetYesNoCancelLabels(f"Show {comment_count} &Comments", "Show &Live Chat Replay", "Ca&ncel")
+        result = dlg.ShowModal()
+        dlg.Destroy()
+        if result == wx.ID_YES: self.user_choice = 'comments'
+        elif result == wx.ID_NO: self.user_choice = 'replay'
+        else: self.user_choice = 'cancel'
+        event.set()
 
-        while not self._indicator_stop_event.is_set():
-            if self._pause_indicator_event.is_set():
-                self._indicator_stop_event.wait(0.5)
-                continue
+    def _process_video_type(self, url, info):
+        """Determines if a VOD has replay or just comments and starts the fetch process."""
+        log.debug("Processing VOD type for video: %s", info.get('title'))
+        self.video_title = info.get('title', 'Unknown Title')
+        has_replay = False
+        subtitles = info.get('subtitles', {})
+        auto_captions = info.get('automatic_captions', {})
+        
+        if 'live_chat' in subtitles or 'live_chat' in auto_captions:
+            has_replay = True
 
-            if mode == 'beep':
-                tones.beep(440, 100)
-                self._indicator_stop_event.wait(2.5)
-            elif mode == 'sound':
-                try:
-                    nvwave.playWaveFile(sound_path)
-                except Exception as e:
-                    log.error("Failed to play wave file %s: %s", sound_path, e)
-                    mode = 'beep'
+        comment_count = info.get('comment_count') or 0
+
+        if info.get('was_live') and has_replay:
+            self._pause_indicator()
+            self.choice_made_event.clear()
+            self.user_choice = None
+            #log.info("Video has a live chat replay. Showing choice dialog.")
+            wx.CallAfter(self._show_choice_dialog, self.choice_made_event, info)
+        else:
+            #log.info("Video does not have a replay, fetching comments.")
+            self.user_choice = 'comments'
+            self.choice_made_event.set()
+        threading.Thread(target=self._start_fetch_worker_after_choice, args=(url, comment_count), daemon=True).start()
+
+    def _unified_worker(self, url):
+        """
+        The main worker entry point for getting any video data.
+        It now correctly handles and provides feedback for playlist and channel URLs.
+        """
+        clean_url = self._validate_video_url_and_notify(url)
+        if not clean_url:
+            return
+        self._start_indicator()
+        try:
+            self.is_long_task_running = True
+            info = self.get_video_info(url)
+
+            if info.get('is_live'):
+                threading.Thread(target=self._start_monitoring_worker, args=(url, info), daemon=True).start()
+            else:
+                wx.CallAfter(self._process_video_type, url, info)
+
+        except (DownloadError, NetworkRetryError) as e:
+            self._stop_indicator()
+            self._notify_error(_("Failed to get video data. The video may be private, unavailable, or there was a network issue."), log_message=f"Could not get info for URL {url} after retries: {e}")
+        except Exception as e:
+            self._stop_indicator()
+            self._notify_error(_("An unexpected error occurred."), log_message=f"An unexpected error occurred in the unified worker: {e}")
+        finally:
+            self.is_long_task_running = False
+            
+    def _start_fetch_worker_after_choice(self, url, comment_count=0):
+        """Waits for the user's choice (replay vs comments) and starts the actual fetch worker."""
+        log.debug("Waiting for user choice...")
+        self.choice_made_event.wait()
+        data_to_fetch = self.user_choice
+        
+        if data_to_fetch == 'cancel' or data_to_fetch is None:
+            #log.info("User cancelled data fetching.")
+            self._stop_indicator()
+            return
+
+        if data_to_fetch == 'comments' and comment_count == 0:
+            #log.info("Aborting fetch: Video has no comments.")
+            self._stop_indicator()
+            self._notify_error(_("This video has no comments."), log_message="Aborting fetch: Video has no comments.")            
+            return
+
+        if data_to_fetch == 'comments':
+            wx.CallAfter(ui.message, _("Loading {count} comments...").format(count=comment_count))
+        else:
+            wx.CallAfter(ui.message, "Loading live chat replay...")
+        self._resume_indicator()
+        threading.Thread(target=self._fetch_and_process_data_worker, args=(url, self.video_title, data_to_fetch, ), daemon=True).start()
+        
+    def _get_info_worker(self, url):
+        clean_url = self._validate_video_url_and_notify(url)
+        if not clean_url:
+            return
+        self._start_indicator()
+        try:
+            self.is_long_task_running = True
+
+            info = self.get_video_info(url)
+            
+            if info.get('is_live'):
+                wx.CallAfter(ui.message, "This is a live stream. Use the 'Get Data' (g) command to monitor live chat.")
+                return
+
+            title = info.get('title', 'N/A')
+            uploader = info.get('uploader', 'N/A')
+            duration = self._format_duration_verbose(info.get('duration', 0))
+            upload_date_str = info.get('upload_date')
+            upload_date = datetime.strptime(upload_date_str, '%Y%m%d').strftime('%d %B %Y') if upload_date_str else 'N/A'
+            
+            view_count_num = info.get('view_count') or 0
+            like_count_num = info.get('like_count') or 0
+            comment_count_num = info.get('comment_count') or 0
+
+            view_count = f"{view_count_num:,}"
+            like_count = f"{like_count_num:,}"
+            comment_count = f"{comment_count_num:,}"
+            
+            description = info.get('description', 'N/A')
+            
+            info_text = (f"Title: {title}\n"
+                         f"Channel: {uploader}\n"
+                         f"Duration: {duration}\n"
+                         f"Uploaded: {upload_date}\n"
+                         f"Views: {view_count}\n"
+                         f"Likes: {like_count}\n"
+                         f"Comments: {comment_count}\n"
+                         f"--------------------\n"
+                         f"Description:\n{description}")
+            wx.CallAfter(self._show_info_dialog, title, info_text)
+        except (DownloadError, NetworkRetryError) as e:
+            log.error("Could not get video info for 'getInfo' command. Error: %s", e)
+            self._notify_error(_("Failed to get video info. The video may be private or the network is down."))
+        except Exception as e:
+            log.exception("Unexpected error in 'Get Info' worker.")
+            self._notify_error(_("An unexpected error occurred. Please check the log for details."))
+        finally:
+            self.is_long_task_running = False
+            self._stop_indicator()
+            
+    def _show_chapters_worker(self, url):
+        clean_url = self._validate_video_url_and_notify(url)
+        if not clean_url:
+            return
+        self._start_indicator()
+        try:
+            self.is_long_task_running = True
+            info = self.get_video_info(url)
+            
+            chapters = info.get('chapters')
+            if chapters and len(chapters) > 0:
+                title = info.get('title', 'Unknown Video')
+                dialog_title = _("Chapters for {title}").format(title=title)
+                wx.CallAfter(self.show_chapters_dialog, dialog_title, chapters, url)
+            else:
+                self._notify_error(_("No chapters found in this video."))
+
+        except (DownloadError, NetworkRetryError) as e:
+            self._notify_error(_("Failed to get chapters. The video may be private or the network is down."), log_message=f"Could not get chapters for {url}: {e}")
+        except Exception as e:
+            log.exception("Unexpected error in 'Show Chapters' worker.")
+            self._notify_error(_("An unexpected error occurred. Please check the log for details."))
+        finally:
+            self.is_long_task_running = False
+            self._stop_indicator()
+
+    def _fetch_and_process_data_worker(self, url_or_id, video_title, data_to_fetch):
+        #log.info("Fetching '%s' data for video: %s", data_to_fetch, video_title)
+        try:
+            display_list, dialog_title = None, None
+            is_replay_data = False # Flag to pass to CommentsDialog
+            
+            if data_to_fetch == 'comments':
+                log.debug("Fetching comments via yt-dlp.")
+                opts = {'getcomments': True, 'extract_flat': True}
+                with self._get_ydl_instance(extra_opts=opts) as ydl:
+                    info = ydl.extract_info(url_or_id, download=False)
+                raw_data = info.get('comments')
+                if not raw_data: raise ValueError("No comments found in video data.")
                 
-                self._indicator_stop_event.wait(1)
-            else: # Silent mode
-                self._indicator_stop_event.wait(1)
-        
-        log.debug("Progress indicator worker stopped.")
-        
-    def _start_indicator(self):
-        """Starts the progress indicator thread."""
-        self._indicator_stop_event.clear()
-        self._pause_indicator_event.clear()
-        threading.Thread(target=self._progress_indicator_worker, daemon=True).start()
-        
-    def _stop_indicator(self):
-        """Stops the progress indicator thread."""
-        self._indicator_stop_event.set()
-        
-    def _pause_indicator(self):
-        """Pauses the progress indicator."""
-        self._pause_indicator_event.set()
+                display_list = self._format_comments_for_display(raw_data)
+                dialog_title = "{count} comments of {title}".format(count=len(display_list), title=video_title)
 
-    def _resume_indicator(self):
-        """Resumes the progress indicator."""
-        self._pause_indicator_event.clear()
-        
-    def _notify_success(self, message):
-        """Plays a success sound/beep and shows a UI message based on user settings."""
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
-        
-        if mode == 'beep':
-            tones.beep(880, 100)
-        elif mode == 'sound':
-            try:
-                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "finish.wav")
-                if os.path.exists(sound_path):
-                    nvwave.playWaveFile(sound_path)
-                else:
-                    # Fallback to beep if sound file is missing
-                    tones.beep(880, 100)
-            except Exception:
-                tones.beep(880, 100)
-        
-        wx.CallAfter(ui.message, message)
-
-    def _notify_error(self, message, log_message=None):
-        """Plays an error sound/beep, shows a UI message, and logs the error."""
-        # Log the detailed error message if provided, otherwise log the display message
-        log.error(log_message or message)
-
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
-        
-        if mode == 'beep':
-            tones.beep(220, 200)
-        elif mode == 'sound':
-            try:
-                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "error.wav")
-                if os.path.exists(sound_path):
-                    nvwave.playWaveFile(sound_path)
-                else:
-                    tones.beep(220, 200)
-            except Exception:
-                tones.beep(220, 200)
-
-        wx.CallAfter(ui.message, message)
-        
-    def _notify_delete(self, message):
-        """Plays a delete sound/beep and shows a UI message."""
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
-        
-        if mode == 'beep':
-            tones.beep(550, 75)
-        elif mode == 'sound':
-            try:
-                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "delete.wav")
-                if os.path.exists(sound_path):
-                    nvwave.playWaveFile(sound_path)
-                else:
-                    tones.beep(550, 75)
-            except Exception:
-                tones.beep(550, 75)
-        
-        wx.CallAfter(ui.message, message)
-        
-    def _play_success_sound(self):
-        """Plays only the success sound/beep based on user settings."""
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
-        
-        if mode == 'beep':
-            tones.beep(880, 100)
-        elif mode == 'sound':
-            try:
-                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "finish.wav")
-                if os.path.exists(sound_path):
-                    nvwave.playWaveFile(sound_path)
-                else:
-                    tones.beep(880, 100)
-            except Exception:
-                tones.beep(880, 100)
-    
-    def _notify_layer_activated(self):
-        """Plays a sound/beep for layer activation based on user settings."""
-        mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
-        
-        if mode == 'beep':
-            tones.beep(660, 80)
-        elif mode == 'sound':
-            try:
-                sound_path = os.path.join(os.path.dirname(__file__), "sounds", "start.wav")
-                if os.path.exists(sound_path):
-                    nvwave.playWaveFile(sound_path)
-                else:
-                    tones.beep(660, 80) # Fallback
-            except Exception:
-                tones.beep(660, 80)
-        
-        wx.CallAfter(ui.message, _("activate Youtube Plus"))
-
+            elif data_to_fetch == 'replay':
+                log.debug("Fetching live chat replay subtitles via yt-dlp.")
+                opts = {'skip_download': True, 'writesubtitles': True, 'subtitleslangs': ['live_chat']}
+                with self._get_ydl_instance(extra_opts=opts) as ydl:
+                    res = ydl.extract_info(url_or_id, download=True)
+                
+                requested_subs = res.get('requested_subtitles')
+                if not requested_subs or 'live_chat' not in requested_subs:
+                    raise FileNotFoundError("Live chat replay subtitles not available for this video.")
+                
+                chat_filepath = requested_subs['live_chat'].get('filepath')
+                if not chat_filepath or not os.path.exists(chat_filepath):
+                    raise FileNotFoundError("Could not find downloaded live chat replay file.")
+                
+                with open(chat_filepath, 'r', encoding='utf-8') as f: raw_data = [json.loads(line) for line in f]
+                os.remove(chat_filepath)
+                if not raw_data: raise ValueError("Live chat replay file was empty.")
+                
+                display_list = self._format_replay_for_display(raw_data)
+                dialog_title = "{count} live chat replay of {title}".format(count=len(display_list), title=video_title)
+                is_replay_data = True
+            
+            self._stop_indicator()
+            self._play_success_sound()
+            wx.CallAfter(self.show_comments_dialog, dialog_title, display_list, is_replay_data)
+        except (DownloadError, FileNotFoundError, ValueError) as e:
+            self._stop_indicator()
+            log.error("Could not load VOD data: %s", e)
+            wx.CallAfter(ui.message, _("Could not load data: {error}").format(error=e))
+        except Exception as e:
+            self._stop_indicator()
+            log.exception("An unexpected error occurred while fetching VOD data.")
+            wx.CallAfter(ui.message, _("An unexpected error occurred. Please check the log for details."))
+            
     def _chat_monitor_worker(self, chat_instance):
         """The main worker loop for fetching live chat messages."""
         log.info("Chat monitor worker started for video: %s", self.video_title)
-        
         # Define the hard limit as a constant inside the worker
         HARD_MESSAGE_LIMIT = 200000
-        
         first_message_received = False
         limit_warning_sent = False
 
         while not self._stop_event.is_set():
             try:
                 if not chat_instance.is_alive():
-                    #log.info("Live stream ended or chat became unavailable.")
                     wx.CallAfter(ui.message, _("Connection to live chat lost. The stream may have ended."))
                     wx.CallAfter(self.stopChatMonitoring, silent=True)
                     break
@@ -1121,8 +1214,70 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
         if chat_instance:
             chat_instance.terminate()
-        #log.info("Chat monitor worker has finished.")
-        
+
+    def _perform_export(self):
+        """
+        Worker function to perform the actual file export.
+        This should be run in a separate thread.
+        """
+        try:
+            export_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
+            if not os.path.exists(export_path):
+                os.makedirs(export_path)
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            safe_title = unicodedata.normalize('NFC', self.video_title)
+            safe_title = "".join(c for c in safe_title if c not in '\\/*?:"<>|').strip()
+            if not safe_title:
+                safe_title = "LiveChat"
+
+            filename = f"LiveChat_{safe_title}_{timestamp}.txt"
+            filepath = os.path.join(export_path, filename)
+            with self._messages_lock:
+                with open(filepath, 'w', encoding='utf-8') as f:
+                    for msg_obj in self.messages:
+                        author = msg_obj.get('author', '')
+                        message = msg_obj.get('message', '')
+                        f.write(f"@{author}: {message}\n\n")
+
+            log.info(f"Chat exported successfully to: {filepath}")
+            wx.CallAfter(ui.message, _("Chat saved to {filename}").format(filename=filename))
+            return True
+
+        except Exception as e:
+            log.error(f"Failed to export chat: {e}")
+            log.exception("Full traceback:")
+            wx.CallAfter(ui.message, _("Failed to save chat history."))
+            return False
+
+    def _export_chat(self):
+        """
+        Ask user to confirm export in the main thread.
+        If confirmed, it spawns a new worker thread to handle the export.
+        """
+        if not self.messages:
+            log.warning("No messages to export")
+            return
+
+        # This part now runs directly in the main thread via wx.CallAfter
+        # from the original caller.
+        message_count = len(self.messages)
+        dlg = wx.MessageDialog(
+            gui.mainFrame,
+            _("The stream has ended. You have {count} chat messages.\n\nWould you like to save the chat history?").format(count=message_count),
+            _("Save Chat History?"),
+            wx.YES_NO | wx.ICON_QUESTION
+        )
+        result = dlg.ShowModal()
+        dlg.Destroy()
+
+        if result == wx.ID_YES:
+            #log.info("User agreed to export chat. Starting export thread.")
+            # Start the actual export in a new background thread
+            threading.Thread(target=self._perform_export, daemon=True).start()
+        else:
+            log.info("User declined to export chat")
+                        
     def _start_monitoring_worker(self, url, info):
         """Prepares and starts the live chat monitoring."""
         try:
@@ -1135,309 +1290,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             log.error("Could not start live chat monitoring. Error: %s", e)
             wx.CallAfter(ui.message, f"Could not receive live chat. {e}")
 
-    def _finish_chat_setup(self, video_id, title):
-        """Finalizes chat setup on the main thread and starts the worker."""
-        #log.info("Finishing chat setup for video ID: %s", video_id)
-        try:
-            self.chat = pytchat.create(video_id=video_id)
-            if not self.chat.is_alive():
-                raise RuntimeError("Chat is not active on this video (pytchat check).")
-            
-            self.video_title = title
-            self.active = True
-            with self._messages_lock:
-                self.messages = []
-            self.first_chat_message_spoken = False
-            self._stop_event.clear()
-            
-            self._worker_thread = threading.Thread(target=self._chat_monitor_worker, args=(self.chat,), daemon=True)
-            self._worker_thread.start()
-        except Exception as e:
-            self._stop_indicator()
-            log.exception("Failed to finalize chat setup.")
-            wx.CallAfter(ui.message, f"Could not receive live chat. {e}")
-            self.stopChatMonitoring(silent=True)
-
-    def stopChatMonitoring(self, silent=False):
-        if not self.active and self._worker_thread is None:
-            if not silent: ui.message("Chat monitoring is not active.")
-            return
-        
-        #log.info("Stopping chat monitoring...")
-        self._stop_event.set() # Signal the thread to stop
-        if self.chat:
-            self.chat.terminate()
-        
-        if self._worker_thread and self._worker_thread.is_alive():
-            # The thread will exit quickly due to the responsive sleep. A short join is fine.
-            self._worker_thread.join(timeout=2.0)
-
-        if not silent:
-            ui.message("Chat monitoring stopped.")
-
-        # Reset state
-        self.active = False
-        self._worker_thread = None
-        self.chat = None
-        self.last_message_index = -1
-        # No need to clear self.messages here, so users can review the chat after stopping.
-        
-        if MessagesDialog._instance:
-            wx.CallAfter(MessagesDialog._instance.SetTitle, _("Live chat of {title} (stopped)").format(title=self.video_title))
-        #log.info("Chat monitoring stopped successfully.")
-
-    def show_comments_dialog(self, title, comments_data, is_replay_data=False):
-        gui.mainFrame.prePopup()
-        # The CommentsDialog is self-contained after receiving the data.
-        dialog = CommentsDialog(gui.mainFrame, title, comments_data, is_replay_data)
-        dialog.Show()
-        self._play_success_sound()
-        gui.mainFrame.postPopup()
-
-    def openMessagesDialog(self):
-        gui.mainFrame.prePopup()
-        dialog_title = _("Live chat of {title}").format(title=self.video_title) if self.active else _("Live chat (stopped)")
-        self.dialog = MessagesDialog(gui.mainFrame, dialog_title, self)
-        self.dialog.Show()
-        self._play_success_sound()
-        gui.mainFrame.postPopup()
-
-    @script(description=_("an Youtube Plus layer commands."),
-    gesture="kb:NVDA+y")
-    def script_YoutubePlusLayer(self, gesture):
-        if self.toggling:
-            self.script_error(gesture)
-            return
-        self.bindGestures(self.__YoutubePlusGestures)
-        self.toggling = True
-        self._notify_layer_activated()
-        
-    @script(description="Show Live chat or Comments / live chat Replay from current page or clipboard URL.")
-    def script_getData(self, gesture):
-        #log.info("Script triggered: getData")
-        messy_url = self._find_youtube_url()
-        if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
-        url = self._clean_youtube_url(messy_url)
-        ui.message(f"getting info...")
-        threading.Thread(target=self._unified_worker, args=(url,), daemon=True).start()
-
-    @script(description="Show video info from current page or clipboard URL.")
-    def script_getInfo(self, gesture):
-        #log.info("Script triggered: getInfo")
-        messy_url = self._find_youtube_url()
-        if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
-        url = self._clean_youtube_url(messy_url)
-        ui.message(_("Getting video info..."))
-        threading.Thread(target=self._get_info_worker, args=(url, ), daemon=True).start()
-
-    @script(description="Show video chapters/timestamps from current page or clipboard URL.")
-    def script_showChapters(self, gesture):
-        #log.info("Script triggered: showChapters")
-        messy_url = self._find_youtube_url()
-        if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
-        url = self._clean_youtube_url(messy_url)
-        ui.message(_("Getting chapters..."))
-        threading.Thread(target=self._show_chapters_worker, args=(url, ), daemon=True).start()
-
-    @script(description="Download video or audio from current page or clipboard URL.")
-    def script_downloadClip(self, gesture):
-        #log.info("Script triggered: downloadClip")
-        messy_url = self._find_youtube_url()
-        if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
-        url = self._clean_youtube_url(messy_url)
-        ui.message(_("Getting video info for download..."))
-        threading.Thread(target=self._download_choice_worker, args=(url, ), daemon=True).start()
-
-    @script(description="Show help dialog.")
-    def script_displayHelp(self, gesture):
-        #log.info("Script triggered: displayHelp")
-        gui.mainFrame.prePopup()
-        dialog = HelpDialog(gui.mainFrame, "Help", self.help_text)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-
-    @script(description="Stop live chat monitoring.")
-    def script_stopMonitor(self, gesture):
-        #log.info("Script triggered: stopMonitor")
-        self.stopChatMonitoring()
-
-    @script(description="Show live chat messages  dialog.")
-    def script_showMessagesDialog(self, gesture):
-        #log.info("Script triggered: showMessagesDialog")
-        if not self.active:
-            ui.message("No stream is currently being monitored.")
-            return
-        self.openMessagesDialog()
-
-    @script(description="Toggle automatic speaking of incoming messages from live chat monitroring.")
-    def script_toggleAutoSpeak(self, gesture):
-        #log.info("Script triggered: toggleAutoSpeak")
-        is_enabled = not config.conf["YoutubePlus"].get("autoSpeak", True)
-        config.conf["YoutubePlus"]["autoSpeak"] = is_enabled
-        ui.message("Automatic message speaking enabled." if is_enabled else "Automatic message speaking disabled.")        
-    
-    def _show_info_dialog(self, title, info_text):
-        gui.mainFrame.prePopup()
-        dialog_title = _("Info of {title}").format(title=title)
-        dialog = InfoDialog(gui.mainFrame, dialog_title, info_text)
-        dialog.Show()
-        self._play_success_sound()
-        gui.mainFrame.postPopup()
-        
-    def show_chapters_dialog(self, title, chapters, url):
-        gui.mainFrame.prePopup()
-        dialog = TimestampDialog(gui.mainFrame, title, chapters, url)
-        dialog.Show()
-        self._play_success_sound()
-        gui.mainFrame.postPopup()     
-       
-    def _show_choice_dialog(self, event, info):
-        comment_count = info.get('comment_count', 0)
-        dlg = wx.MessageDialog(gui.mainFrame, "This video has a live chat replay. What would you like to view?", "Choice", wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
-        dlg.SetYesNoCancelLabels(f"Show {comment_count} &Comments", "Show &Live Chat Replay", "Ca&ncel")
-        result = dlg.ShowModal()
-        dlg.Destroy()
-        if result == wx.ID_YES: self.user_choice = 'comments'
-        elif result == wx.ID_NO: self.user_choice = 'replay'
-        else: self.user_choice = 'cancel'
-        event.set()
-
-    def _format_duration_verbose(self, seconds):
-        if not isinstance(seconds, (int, float)) or seconds <= 0: return _("")
-        seconds = int(seconds)
-        parts = []
-        h, rem = divmod(seconds, 3600)
-        m, s = divmod(rem, 60)
-        if h > 0: parts.append(_("{h} Hour").format(h=h) if h == 1 else _("{h} Hours").format(h=h))
-        if m > 0: parts.append(_("{m} Minute").format(m=m) if m == 1 else _("{m} Minutes").format(m=m))
-        if s > 0 or not parts: parts.append(_("{s} Second").format(s=s) if s == 1 else _("{s} Seconds").format(s=s))
-        return " ".join(parts)
-
-    def get_total_paid_amount_from_list(self, message_list):
-        """
-        Calculates the total amount from Super Chat and Super Sticker messages.
-        """
-        log.debug("Calculating total paid amount from a list of %d items.", len(message_list))
-        total_amounts = {}
-        for message_obj in message_list:
-            if message_obj.get('type') in ('superChat', 'superSticker'):
-                amount_string = message_obj.get('amount', '')
-                if amount_string:
-                    match = re.match(r'([^\d\s.,]+)?\s*([\d,.]+)\s*([^\d\s.,]+)?', amount_string.strip())
-                    if match:
-                        currency_part = (match.group(1) or match.group(3) or "").strip()
-                        numeric_value_str = match.group(2).replace(',', '')
-
-                        try:
-                            amount_value = float(numeric_value_str)
-                            currency_code = currency_part
-                            
-                            if currency_part == '$': currency_code = 'USD'
-                            elif currency_part == '¥': currency_code = 'JPY'
-                            elif currency_part == '€': currency_code = 'EUR'
-                            elif currency_part == '฿': currency_code = 'THB'
-                            elif not currency_code and amount_value > 0: currency_code = "UNKNOWN"
-
-                            if currency_code:
-                                total_amounts[currency_code] = total_amounts.get(currency_code, 0.0) + amount_value
-                        except ValueError:
-                            log.warning("Could not parse amount value from string: %s", numeric_value_str)
-        log.debug("Paid amount calculation result: %s", total_amounts)
-        return total_amounts
-        
-    @script(description=_("Show favorite videos dialog."))
-    def script_showFavVideoDialog(self, gesture):
-        #log.info("Script triggered: showFavVideoDialog")
-        gui.mainFrame.prePopup()
-        dialog = FavsDialog(gui.mainFrame, self, 0)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-    
-    @script(description=_("Show favorite channels dialog."))
-    def script_showFavChannelDialog(self, gesture):
-        #log.info("Script triggered: showFavChannelDialog")
-        gui.mainFrame.prePopup()
-        dialog = FavsDialog(gui.mainFrame, self, 1)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-        
-    @script(description=_("Show favorite playlists dialog."))
-    def script_showFavPlaylistDialog(self, gesture):
-        #log.info("Script triggered: showFavPlaylistDialog")
-        gui.mainFrame.prePopup()
-        dialog = FavsDialog(gui.mainFrame, self, 2)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-    
-    @script(description=_("Show a menu to add the current page URL to favorites or subscriptions."))
-    def script_showAddMenu(self, gesture):
-        #log.info("Script triggered: showAddMenu")
-        url = self._find_youtube_url()
-        if not url:
-            ui.message(_("No specific YouTube URL found in the current window or clipboard."))
-            return
-        gui.mainFrame.prePopup()
-        try:
-            temp_frame = wx.Frame(gui.mainFrame, -1, "AddMenu Host", size=(1,1), pos=(-100,-100))
-            temp_frame.Show()
-
-            menu = wx.Menu()
-            
-            self.add_menu_choices = {
-                wx.ID_HIGHEST + 10: (_("Add to Favorite &Videos"), lambda: self._on_add_to_video_fav(url)),
-                wx.ID_HIGHEST + 11: (_("Add to Favorite &Channels"), lambda: self._on_add_to_channel_fav(url)),
-                wx.ID_HIGHEST + 12: (_("Add to Favorite &playlist"), lambda: self._on_add_to_playlist_fav(url)),
-                wx.ID_HIGHEST + 13: (_("&Subscribe to Channel"), lambda: self._on_subscribe_to_channel(url)),
-            }
-            self._add_menu_handlers = {id: handler for id, (label, handler) in self.add_menu_choices.items()}
-
-            for menu_id, (label, handler) in self.add_menu_choices.items():
-                menu.Append(menu_id, label)
-
-            temp_frame.Bind(wx.EVT_MENU, self._on_add_menu_select)
-            temp_frame.Bind(wx.EVT_MENU_CLOSE, lambda evt: wx.CallAfter(temp_frame.Destroy))
-
-            wx.CallAfter(temp_frame.PopupMenu, menu)
-
-        finally:
-            gui.mainFrame.postPopup()
-            
-    def _on_add_menu_select(self, event):
-        """Handles the selection from the 'Add' context menu."""
-        menu_id = event.GetId()
-        label, handler = self.add_menu_choices.get(menu_id)
-        
-        if handler:
-            handler()
-
-    def _on_add_to_video_fav(self, url):
-        """Starts the worker to add the URL to video favorites."""
-        #log.info("Menu selection: Add to Favorite Videos")
-        threading.Thread(target=self.add_item_to_favorites_worker, args=(url,), daemon=True).start()
-        
-    def _on_add_to_channel_fav(self, url):
-        """Starts the worker to add the URL to channel favorites."""
-        #log.info("Menu selection: Add to Favorite Channels")
-        threading.Thread(target=self.add_channel_to_favorites_worker, args=(url,), daemon=True).start()
-        
-    def _on_add_to_playlist_fav(self, url):
-        """Starts the worker to add the URL to playlist favorites."""
-        #log.info("Menu selection: Add to Favorite playlist")
-        threading.Thread(target=self.add_playlist_to_favorites_worker, args=(url,), daemon=True).start()
-
-    def _on_subscribe_to_channel(self, url):
-        """Starts the worker for subscribing to a channel."""
-        #log.info("Menu selection: Subscribe to Channel")
-        threading.Thread(target=self.subscribe_to_channel_worker, args=(url,), daemon=True).start()
-        
     def add_item_to_favorites_worker(self, url):
         """Worker to handle adding a favorite in the background with file lock and dialog refresh."""
         ui.message(_("Adding to favorites..."))
@@ -1543,248 +1395,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
             
-    @script(description=_("Show subscription feed dialog."))
-    def script_showSubDialog(self, gesture):
-        #log.info("Script triggered: showSubDialog")
-        wx.CallAfter(self._show_subscription_feed_directly)
-
-    def _show_subscription_feed_directly(self):
-        """Directly shows the new tabbed subscription feed dialog."""
-        #log.critical("!!! _show_subscription_feed_directly was called. This is the trigger for SubDialog to appear. !!!")
-        try:
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
-            con = sqlite3.connect(db_path)
-            cur = con.cursor()
-
-            cur.execute("SELECT COUNT(*) FROM subscribed_channels")
-            if cur.fetchone()[0] == 0:
-                con.close()
-                ui.message(_("You haven't subscribed to any channels yet."))
-                return
-            
-            con.close()
-            
-            gui.mainFrame.prePopup()
-            dialog = SubDialog(gui.mainFrame, self)
-            dialog.Show()
-            gui.mainFrame.postPopup()
-
-        except Exception as e:
-            log.exception("Failed to load subscription feed from database.")
-            ui.message(_("Error loading subscription feed from database."))
-            
-    def clear_all_user_data(self):
-        """Deletes all user-generated files and database tables."""
-        log.debug("--- Starting deletion of all user data ---")
-        try:
-            addon_dir = os.path.dirname(__file__)
-            
-            files_to_delete = ['fav_video.json', 'fav_channel.json', 'subscription.db']
-            for filename in files_to_delete:
-                file_path = os.path.join(addon_dir, filename)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                    log.debug("Deleted file: %s", filename)
-            
-            # --- Re-initialize the database (creates a new, empty one) ---
-            self._init_sub_database()
-            
-            wx.CallAfter(ui.message, _("All favorite and subscription data has been cleared."))
-            log.debug("--- User data deletion complete ---")
-
-        except Exception as e:
-            log.exception("An error occurred while clearing user data.")
-            wx.CallAfter(ui.message, _("An error occurred while clearing data. Please check the log."))
-    
-    def subscribe_to_channel_worker(self, url):
-        """Worker to handle subscribing, now correctly handling playlist URLs and tagging content types."""
-        ui.message(_("Subscribing to channel..."))
-        self._start_indicator()
-        self.is_long_task_running = True
-        try:
-            ydl_opts = {
-                'quiet': True,
-                'no_warnings': True,
-                'playlist_items': '1',
-            }
-            with self._get_ydl_instance(extra_opts=ydl_opts) as ydl:
-                info = ydl.extract_info(url, download=False)
-
-            video_info = info['entries'][0] if info.get('_type') == 'playlist' and info.get('entries') else info
-            if not video_info:
-                raise ValueError("Could not retrieve valid video information from the URL.")
-
-            channel_url = video_info.get('channel_url')
-            if not channel_url:
-                raise ValueError("Channel URL could not be found from the provided link.")
-
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
-            con = sqlite3.connect(db_path)
-            cur = con.cursor()
-
-            cur.execute("SELECT channel_name FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
-            existing = cur.fetchone()
-            if existing:
-                con.close()
-                def ask_unsubscribe():
-                    if wx.MessageBox(
-                        _("You are already subscribed to '{channel}'.\nWould you like to unsubscribe instead?").format(channel=existing[0]),
-                        _("Already Subscribed"),
-                        wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
-                        self.unsubscribe_from_channel_worker(channel_url, existing[0])
-                
-                wx.CallAfter(ask_unsubscribe)
-                return
-
-            default_content_types = config.conf["YoutubePlus"].get("contentTypesToFetch", ["videos", "shorts", "streams"])
-            
-            all_videos = []
-            for content_type in default_content_types:
-                try:
-                    full_url = f"{channel_url.rstrip('/')}/{content_type}"
-                    tab_videos = self.get_channel_videos(full_url, channel_name_override=video_info.get('uploader'))
-                    if tab_videos:
-                        for v in tab_videos:
-                            v['content_type'] = content_type
-                        all_videos.extend(tab_videos)
-                except Exception as e:
-                    log.warning("Failed to get videos from %s tab: %s", content_type, e)
-
-            unique_videos = {v['id']: v for v in all_videos if v.get('id')}
-            initial_videos = list(unique_videos.values())
-            
-            channel_name = video_info.get('uploader', 'Unknown Channel')
-            content_types_str = ",".join(default_content_types)
-            cur.execute("INSERT INTO subscribed_channels (channel_url, channel_name, content_types) VALUES (?, ?, ?)", (channel_url, channel_name, content_types_str))
-            
-            if initial_videos:
-                videos_to_insert = [
-                    (v.get('id'), channel_url, channel_name, v.get('title'), v.get('duration_str'), v.get('upload_date'), v.get('content_type', 'videos'))
-                    for v in initial_videos
-                ]
-                cur.executemany("INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) VALUES (?, ?, ?, ?, ?, ?, ?)", videos_to_insert)
-            
-            con.commit()
-            con.close()
-
-            new_channel_data = (channel_url, channel_name)
-            self._notify_callbacks("subscription_added", new_channel_data)
-            self._notify_success(_("Subscribed to {channel}.").format(channel=channel_name))
-        except Exception as e:
-            self._notify_error(_("Failed to subscribe."), log_message=f"Failed to subscribe to URL {url}: {e}")
-        finally:
-            self.is_long_task_running = False
-            self._stop_indicator()
-            
-    def unsubscribe_from_channel_worker(self, channel_url, channel_name):
-        """Worker to handle unsubscribing from a channel."""
-        try:
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
-            con = sqlite3.connect(db_path)
-            cur = con.cursor()
-            
-            cur.execute("DELETE FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
-            deleted_subs = cur.rowcount
-            
-            if deleted_subs > 0:
-                cur.execute("DELETE FROM videos WHERE channel_url = ?", (channel_url,))
-                cur.execute("DELETE FROM seen_videos WHERE video_id NOT IN (SELECT DISTINCT video_id FROM videos WHERE video_id IS NOT NULL)")
-                con.commit()
-                self._notify_callbacks("subscription_removed", {"channel_url": channel_url})
-                self._notify_delete(_("Successfully unsubscribed from {channel}").format(channel=channel_name))
-            else:
-                self._notify_error(_("Failed to unsubscribe - channel not found in database"))
-
-            con.close()
-        except Exception as e:
-            self._notify_error(_("Critical error during unsubscribe."), log_message=f"Critical error unsubscribing {channel_url}: {e}")
-    def _update_subscription_feed_worker(self, progress_topic=None, silent=False):
-        """
-        Worker to check for new videos and report detailed progress back to the dialog,
-        including the final summary message.
-        """
-        self.is_long_task_running = True
-        try:
-            if not silent: self._start_indicator()
-
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
-            con = sqlite3.connect(db_path)
-            cur = con.cursor()
-            
-            cur.execute("SELECT video_id FROM videos")
-            existing_video_ids = {row[0] for row in cur.fetchall()}
-            
-            cur.execute("SELECT channel_url, channel_name, content_types FROM subscribed_channels")
-            subscribed_channels = cur.fetchall()
-
-            if not subscribed_channels:
-                con.close()
-                if progress_topic:
-                    wx.CallAfter(self._notify_callbacks, progress_topic, {"current": 1, "total": 1, "message": _("No channels to update.")})
-                elif not silent:
-                    wx.CallAfter(ui.message, _("No channels to update."))
-                self._notify_callbacks("subscriptions_updated")
-                return
-
-            total_tasks = sum(len(c[2].split(',')) for c in subscribed_channels if c[2])
-            current_task = 0
-            new_videos_to_cache = []
-            
-            # --- ✅ ส่วนที่แก้ไข: จัดย่อหน้าใหม่ทั้งหมด ---
-            # บล็อก for นี้ถูกย้ายกลับมา 1 ระดับ
-            for channel_url, channel_name, content_types_str in subscribed_channels:
-                content_types = content_types_str.split(',') if content_types_str else ["videos", "shorts", "streams"]
-
-                for content_type in content_types:
-                    current_task += 1
-                    if progress_topic:
-                        progress_message = _("Checking {channel} ({type})...").format(channel=channel_name, type=content_type)
-                        progress_data = {"current": current_task, "total": total_tasks, "message": progress_message}
-                        wx.CallAfter(self._notify_callbacks, progress_topic, progress_data)
-
-                    try:
-                        latest_videos = self.get_channel_videos(f"{channel_url}/{content_type}")
-                        if latest_videos:
-                            for video in latest_videos:
-                                video_id = video.get('id')
-                                if video_id and video_id not in existing_video_ids:
-                                    new_videos_to_cache.append((
-                                        video_id, channel_url, channel_name,
-                                        video.get('title'), video.get('duration_str'), 
-                                        video.get('upload_date'), content_type
-                                    ))
-                                    existing_video_ids.add(video_id)
-                    except Exception as e:
-                        log.warning("Could not update %s for %s: %s", content_type, channel_name, e)
-
-            if new_videos_to_cache:
-                cur.executemany("""
-                    INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, new_videos_to_cache)
-                con.commit()
-            
-            con.close()
-            
-            if progress_topic:
-                final_message = _("Update complete. Found {count} new videos.").format(count=len(new_videos_to_cache))
-                final_data = {"current": total_tasks, "total": total_tasks, "message": final_message}
-                wx.CallAfter(self._notify_callbacks, progress_topic, final_data)
-            elif not silent:
-                if len(new_videos_to_cache) > 0:
-                    wx.CallAfter(ui.message, _("Found and added {count} new videos.").format(count=len(new_videos_to_cache)))
-                else:
-                    wx.CallAfter(ui.message, _("No new videos found."))
-            self._notify_callbacks("subscriptions_updated")
-
-        except Exception as e:
-            log.error("Error updating subscription feed.", exc_info=True)
-            if progress_topic:
-                 wx.CallAfter(self._notify_callbacks, progress_topic, {"message": _("Error updating feed."), "current": 1, "total": 1})
-        finally:
-            self.is_long_task_running = False
-            if not silent: self._stop_indicator()
-            
     def add_playlist_to_favorites_worker(self, url):
         """Worker to handle adding a playlist to favorites."""
         ui.message(_("Adding playlist to favorites..."))
@@ -1841,6 +1451,42 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
             
+    def _update_playlist_count_worker(self, playlist_id, new_count):
+        """
+        Safely updates the video_count for a specific playlist and notifies the UI
+        with specific data for a targeted update.
+        """
+        if not playlist_id or new_count is None:
+            return
+        
+        with self._fav_file_lock:
+            fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_playlist.json')
+            playlists = []
+            try:
+                with open(fav_file_path, 'r', encoding='utf-8') as f:
+                    playlists = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError):
+                return
+
+            item_updated = False
+            for playlist in playlists:
+                if playlist.get('playlist_id') == playlist_id:
+                    if playlist.get('video_count') != new_count:
+                        log.info(f"Updating video count for playlist '{playlist.get('playlist_title')}' from {playlist.get('video_count')} to {new_count}.")
+                        playlist['video_count'] = new_count
+                        item_updated = True
+                    break
+            
+            if item_updated:
+                try:
+                    with open(fav_file_path, 'w', encoding='utf-8') as f:
+                        json.dump(playlists, f, indent=2, ensure_ascii=False)
+
+                    update_data = {'playlist_id': playlist_id, 'new_count': new_count}
+                    self._notify_callbacks("fav_playlist_item_updated", update_data)
+                except IOError:
+                    log.error("Could not save updated playlist file.")
+
     def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None):
         """
         Generic worker to fetch a list of videos from any URL (channel or playlist)
@@ -1926,42 +1572,195 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
     
-    def _update_playlist_count_worker(self, playlist_id, new_count):
-        """
-        Safely updates the video_count for a specific playlist and notifies the UI
-        with specific data for a targeted update.
-        """
-        if not playlist_id or new_count is None:
-            return
-        
-        with self._fav_file_lock:
-            fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_playlist.json')
-            playlists = []
-            try:
-                with open(fav_file_path, 'r', encoding='utf-8') as f:
-                    playlists = json.load(f)
-            except (FileNotFoundError, json.JSONDecodeError):
+    def subscribe_to_channel_worker(self, url):
+        """Worker to handle subscribing, now correctly handling playlist URLs and tagging content types."""
+        ui.message(_("Subscribing to channel..."))
+        self._start_indicator()
+        self.is_long_task_running = True
+        try:
+            ydl_opts = {
+                'quiet': True,
+                'no_warnings': True,
+                'playlist_items': '1',
+            }
+            with self._get_ydl_instance(extra_opts=ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+
+            video_info = info['entries'][0] if info.get('_type') == 'playlist' and info.get('entries') else info
+            if not video_info:
+                raise ValueError("Could not retrieve valid video information from the URL.")
+
+            channel_url = video_info.get('channel_url')
+            if not channel_url:
+                raise ValueError("Channel URL could not be found from the provided link.")
+
+            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+            con = sqlite3.connect(db_path)
+            cur = con.cursor()
+
+            cur.execute("SELECT channel_name FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
+            existing = cur.fetchone()
+            if existing:
+                con.close()
+                
+                def ask_unsubscribe():
+                    if wx.MessageBox(
+                        _("You are already subscribed to '{channel}'.\nWould you like to unsubscribe instead?").format(channel=existing[0]),
+                        _("Already Subscribed"),
+                        wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
+                        self.unsubscribe_from_channel_worker(channel_url, existing[0])
+                
+                wx.CallAfter(ask_unsubscribe)
                 return
 
-            item_updated = False
-            for playlist in playlists:
-                if playlist.get('playlist_id') == playlist_id:
-                    if playlist.get('video_count') != new_count:
-                        log.info(f"Updating video count for playlist '{playlist.get('playlist_title')}' from {playlist.get('video_count')} to {new_count}.")
-                        playlist['video_count'] = new_count
-                        item_updated = True
-                    break
+            default_content_types = config.conf["YoutubePlus"].get("contentTypesToFetch", ["videos", "shorts", "streams"])
             
-            if item_updated:
+            all_videos = []
+            for content_type in default_content_types:
                 try:
-                    with open(fav_file_path, 'w', encoding='utf-8') as f:
-                        json.dump(playlists, f, indent=2, ensure_ascii=False)
+                    full_url = f"{channel_url.rstrip('/')}/{content_type}"
+                    tab_videos = self.get_channel_videos(full_url, channel_name_override=video_info.get('uploader'))
+                    if tab_videos:
+                        for v in tab_videos:
+                            v['content_type'] = content_type
+                        all_videos.extend(tab_videos)
+                except Exception as e:
+                    log.warning("Failed to get videos from %s tab: %s", content_type, e)
 
-                    update_data = {'playlist_id': playlist_id, 'new_count': new_count}
-                    self._notify_callbacks("fav_playlist_item_updated", update_data)
-                except IOError:
-                    log.error("Could not save updated playlist file.")
+            unique_videos = {v['id']: v for v in all_videos if v.get('id')}
+            initial_videos = list(unique_videos.values())
+            
+            channel_name = video_info.get('uploader', 'Unknown Channel')
+            content_types_str = ",".join(default_content_types)
+            cur.execute("INSERT INTO subscribed_channels (channel_url, channel_name, content_types) VALUES (?, ?, ?)", (channel_url, channel_name, content_types_str))
+            
+            if initial_videos:
+                videos_to_insert = [
+                    (v.get('id'), channel_url, channel_name, v.get('title'), v.get('duration_str'), v.get('upload_date'), v.get('content_type', 'videos'))
+                    for v in initial_videos
+                ]
+                cur.executemany("INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) VALUES (?, ?, ?, ?, ?, ?, ?)", videos_to_insert)
+            
+            con.commit()
+            con.close()
 
+            new_channel_data = (channel_url, channel_name)
+            self._notify_callbacks("subscription_added", new_channel_data)
+            self._notify_success(_("Subscribed to {channel}.").format(channel=channel_name))
+        except Exception as e:
+            self._notify_error(_("Failed to subscribe."), log_message=f"Failed to subscribe to URL {url}: {e}")
+        finally:
+            self.is_long_task_running = False
+            self._stop_indicator()
+            
+    def unsubscribe_from_channel_worker(self, channel_url, channel_name):
+        """Worker to handle unsubscribing from a channel."""
+        try:
+            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+            con = sqlite3.connect(db_path)
+            cur = con.cursor()
+            
+            cur.execute("DELETE FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
+            deleted_subs = cur.rowcount
+            
+            if deleted_subs > 0:
+                cur.execute("DELETE FROM videos WHERE channel_url = ?", (channel_url,))
+                cur.execute("DELETE FROM seen_videos WHERE video_id NOT IN (SELECT DISTINCT video_id FROM videos WHERE video_id IS NOT NULL)")
+                con.commit()
+                self._notify_callbacks("subscription_removed", {"channel_url": channel_url})
+                self._notify_delete(_("Successfully unsubscribed from {channel}").format(channel=channel_name))
+            else:
+                self._notify_error(_("Failed to unsubscribe - channel not found in database"))
+
+            con.close()
+        except Exception as e:
+            self._notify_error(_("Critical error during unsubscribe."), log_message=f"Critical error unsubscribing {channel_url}: {e}")
+            
+    def _update_subscription_feed_worker(self, progress_topic=None, silent=False):
+        """
+        Worker to check for new videos and report detailed progress back to the dialog,
+        including the final summary message.
+        """
+        self.is_long_task_running = True
+        try:
+            if not silent: self._start_indicator()
+
+            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+            con = sqlite3.connect(db_path)
+            cur = con.cursor()
+            
+            cur.execute("SELECT video_id FROM videos")
+            existing_video_ids = {row[0] for row in cur.fetchall()}
+            
+            cur.execute("SELECT channel_url, channel_name, content_types FROM subscribed_channels")
+            subscribed_channels = cur.fetchall()
+
+            if not subscribed_channels:
+                con.close()
+                if progress_topic:
+                    wx.CallAfter(self._notify_callbacks, progress_topic, {"current": 1, "total": 1, "message": _("No channels to update.")})
+                elif not silent:
+                    wx.CallAfter(ui.message, _("No channels to update."))
+                self._notify_callbacks("subscriptions_updated")
+                return
+
+            total_tasks = sum(len(c[2].split(',')) for c in subscribed_channels if c[2])
+            current_task = 0
+            new_videos_to_cache = []
+            
+            for channel_url, channel_name, content_types_str in subscribed_channels:
+                content_types = content_types_str.split(',') if content_types_str else ["videos", "shorts", "streams"]
+
+                for content_type in content_types:
+                    current_task += 1
+                    if progress_topic:
+                        progress_message = _("Checking {channel} ({type})...").format(channel=channel_name, type=content_type)
+                        progress_data = {"current": current_task, "total": total_tasks, "message": progress_message}
+                        wx.CallAfter(self._notify_callbacks, progress_topic, progress_data)
+
+                    try:
+                        latest_videos = self.get_channel_videos(f"{channel_url}/{content_type}")
+                        if latest_videos:
+                            for video in latest_videos:
+                                video_id = video.get('id')
+                                if video_id and video_id not in existing_video_ids:
+                                    new_videos_to_cache.append((
+                                        video_id, channel_url, channel_name,
+                                        video.get('title'), video.get('duration_str'), 
+                                        video.get('upload_date'), content_type
+                                    ))
+                                    existing_video_ids.add(video_id)
+                    except Exception as e:
+                        log.warning("Could not update %s for %s: %s", content_type, channel_name, e)
+
+            if new_videos_to_cache:
+                cur.executemany("""
+                    INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, new_videos_to_cache)
+                con.commit()
+            
+            con.close()
+            
+            if progress_topic:
+                final_message = _("Update complete. Found {count} new videos.").format(count=len(new_videos_to_cache))
+                final_data = {"current": total_tasks, "total": total_tasks, "message": final_message}
+                wx.CallAfter(self._notify_callbacks, progress_topic, final_data)
+            elif not silent:
+                if len(new_videos_to_cache) > 0:
+                    wx.CallAfter(ui.message, _("Found and added {count} new videos.").format(count=len(new_videos_to_cache)))
+                else:
+                    wx.CallAfter(ui.message, _("No new videos found."))
+            self._notify_callbacks("subscriptions_updated")
+
+        except Exception as e:
+            log.error("Error updating subscription feed.", exc_info=True)
+            if progress_topic:
+                 wx.CallAfter(self._notify_callbacks, progress_topic, {"message": _("Error updating feed."), "current": 1, "total": 1})
+        finally:
+            self.is_long_task_running = False
+            if not silent: self._stop_indicator()
+            
     def _download_choice_worker(self, url):
         clean_url = self._validate_video_url_and_notify(url)
         if not clean_url:
@@ -1970,12 +1769,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             self.is_long_task_running = True
             info = self.get_video_info(url)
-            
             title = info.get('title', 'Unknown Video')
             duration = self._format_duration_verbose(info.get('duration', 0))
-            
             wx.CallAfter(self._show_download_dialog, url, title, duration)
-
         except Exception as e:  
             log.error("Could not get video info for download. Error: %s", e, exc_info=True)
             wx.CallAfter(ui.message, _("Failed to get video info for download."))
@@ -1996,12 +1792,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             wx.CallAfter(ui.message, _("Failed to start download: {error}").format(error=e))
         finally:
             self.is_long_task_running = False
-            self._stop_indicator()
             
     def _show_download_dialog(self, url, title, duration):
-        """
-        Dialog ที่แสดงตัวเลือก Video/Audio และจัดการการ Pause/Resume/Stop ของ Indicator
-        """
         self._pause_indicator()
         
         dlg = wx.MessageDialog(gui.mainFrame, _("What would you like to download?"),
@@ -2025,7 +1817,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _perform_download_worker(self, url, choice, title):
         wx.CallAfter(ui.message, _("Starting download of {title}...").format(title=title))
-        self._start_indicator()
         try:
             self.is_long_task_running = True
             save_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
@@ -2036,10 +1827,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
             opts = {}
             if choice == 'video':
-                opts['format'] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/18'
+                opts['format'] = 'best[ext=mp4]/best[ext=webm]/best'
                 opts['outtmpl'] = output_template
             elif choice == 'audio':
-                opts['format'] = '140/bestaudio[ext=m4a]/bestaudio[ext=webm]/bestaudio'
+                opts['format'] = 'bestaudio[acodec=aac]/140/bestaudio[ext=m4a]/bestaudio'
                 opts['outtmpl'] = output_template
 
             try:
@@ -2069,13 +1860,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
             
-    @script(description=_("Search YouTube for videos, channels, or playlists."))
-    def script_showSearchDialog(self, gesture):
-        gui.mainFrame.prePopup()
-        dialog = SearchDialog(gui.mainFrame, self)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-
     def _Youtube_worker(self, query, count, source_dialog):
         """
         A simplified worker that takes a raw query and the desired number of results.
@@ -2121,6 +1905,95 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
             
+    def openMessagesDialog(self):
+        gui.mainFrame.prePopup()
+        dialog_title = _("Live chat of {title}").format(title=self.video_title) if self.active else _("Live chat (stopped)")
+        self.dialog = MessagesDialog(gui.mainFrame, dialog_title, self)
+        self.dialog.Show()
+        self._play_success_sound()
+        gui.mainFrame.postPopup()
+
+    def _finish_chat_setup(self, video_id, title):
+        """Finalizes chat setup on the main thread and starts the worker."""
+        #log.info("Finishing chat setup for video ID: %s", video_id)
+        try:
+            self.chat = pytchat.create(video_id=video_id)
+            if not self.chat.is_alive():
+                raise RuntimeError("Chat is not active on this video (pytchat check).")
+            self.video_title = title
+            self.active = True
+            with self._messages_lock:
+                self.messages = []
+            self.first_chat_message_spoken = False
+            self._stop_event.clear()
+            self._worker_thread = threading.Thread(target=self._chat_monitor_worker, args=(self.chat,), daemon=True)
+            self._worker_thread.start()
+        except Exception as e:
+            self._stop_indicator()
+            log.exception("Failed to finalize chat setup.")
+            wx.CallAfter(ui.message, f"Could not receive live chat. {e}")
+            self.stopChatMonitoring(silent=True)
+
+    def stopChatMonitoring(self, silent=False):
+        if not self.active and self._worker_thread is None:
+            if not silent: ui.message("Chat monitoring is not active.")
+            return
+        #log.info("Stopping chat monitoring...")
+        self._stop_event.set() # Signal the thread to stop
+        if self.chat:
+            self.chat.terminate()
+        
+        if self._worker_thread and self._worker_thread.is_alive():
+            # The thread will exit quickly due to the responsive sleep. A short join is fine.
+            self._worker_thread.join(timeout=2.0)
+
+        if not silent:
+            ui.message("Chat monitoring stopped.")
+        if self.messages:
+            wx.CallAfter(self._export_chat)
+        # Reset state
+        self.active = False
+        self._worker_thread = None
+        self.chat = None
+        self.last_message_index = -1
+        # No need to clear self.messages here, so users can review the chat after stopping.
+        
+        if MessagesDialog._instance:
+            wx.CallAfter(MessagesDialog._instance.SetTitle, _("Live chat of {title} (stopped)").format(title=self.video_title))
+
+    def show_comments_dialog(self, title, comments_data, is_replay_data=False):
+        gui.mainFrame.prePopup()
+        # The CommentsDialog is self-contained after receiving the data.
+        dialog = CommentsDialog(gui.mainFrame, title, comments_data, is_replay_data)
+        dialog.Show()
+        self._play_success_sound()
+        gui.mainFrame.postPopup()
+
+    def _show_subscription_feed_directly(self):
+        """Directly shows the new tabbed subscription feed dialog."""
+        #log.critical("!!! _show_subscription_feed_directly was called. This is the trigger for SubDialog to appear. !!!")
+        try:
+            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+            con = sqlite3.connect(db_path)
+            cur = con.cursor()
+
+            cur.execute("SELECT COUNT(*) FROM subscribed_channels")
+            if cur.fetchone()[0] == 0:
+                con.close()
+                ui.message(_("You haven't subscribed to any channels yet."))
+                return
+            
+            con.close()
+            
+            gui.mainFrame.prePopup()
+            dialog = SubDialog(gui.mainFrame, self)
+            dialog.Show()
+            gui.mainFrame.postPopup()
+
+        except Exception as e:
+            log.exception("Failed to load subscription feed from database.")
+            ui.message(_("Error loading subscription feed from database."))
+
     def _show_search_results(self, results_list, title, parent_dialog):
         """Creates and shows the search results dialog with the correct parent."""
         gui.mainFrame.prePopup()
@@ -2129,6 +2002,29 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Destroy()
         gui.mainFrame.postPopup()
 
+    def clear_all_user_data(self):
+        """Deletes all user-generated files and database tables."""
+        log.debug("--- Starting deletion of all user data ---")
+        try:
+            addon_dir = os.path.dirname(__file__)
+            
+            files_to_delete = ['fav_video.json', 'fav_channel.json', 'subscription.db']
+            for filename in files_to_delete:
+                file_path = os.path.join(addon_dir, filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    log.debug("Deleted file: %s", filename)
+            
+            # --- Re-initialize the database (creates a new, empty one) ---
+            self._init_sub_database()
+            
+            wx.CallAfter(ui.message, _("All favorite and subscription data has been cleared."))
+            log.debug("--- User data deletion complete ---")
+
+        except Exception as e:
+            log.exception("An error occurred while clearing user data.")
+            wx.CallAfter(ui.message, _("An error occurred while clearing data. Please check the log."))
+    
     def prune_all_videos_worker(self):
             """Worker to delete ALL videos from the database after confirmation."""
             confirm_msg = _("This will permanently delete ALL videos from your subscription feed, leaving only the list of subscribed channels. This action cannot be undone.\n\nAre you sure you want to continue?")
@@ -2140,7 +2036,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 
                 ui.message(_("Clearing all feed videos..."))
                 threading.Thread(target=self._execute_pruning_all, daemon=True).start()
-
             wx.CallAfter(ask_confirmation)
 
     def _execute_pruning_all(self):
@@ -2162,6 +2057,185 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             except Exception as e:
                 log.error("Failed to prune all videos from database.", exc_info=True)
                 wx.CallAfter(ui.message, _("An error occurred while clearing all videos."))
+
+    @script(description=_("an Youtube Plus layer commands."),
+    gesture="kb:NVDA+y")
+    def script_YoutubePlusLayer(self, gesture):
+        if self.toggling:
+            self.script_error(gesture)
+            return
+        self.bindGestures(self.__YoutubePlusGestures)
+        self.toggling = True
+        self._notify_layer_activated()
+        
+    @script(description="Show Live chat or Comments / live chat Replay from current page or clipboard URL.")
+    def script_getData(self, gesture):
+        #log.info("Script triggered: getData")
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            return ui.message("YouTube URL not found in current window or clipboard.")
+        
+        url = self._clean_youtube_url(messy_url)
+        ui.message(f"getting info...")
+        threading.Thread(target=self._unified_worker, args=(url,), daemon=True).start()
+
+    @script(description="Show video info from current page or clipboard URL.")
+    def script_getInfo(self, gesture):
+        #log.info("Script triggered: getInfo")
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            return ui.message("YouTube URL not found in current window or clipboard.")
+        
+        url = self._clean_youtube_url(messy_url)
+        ui.message(_("Getting video info..."))
+        threading.Thread(target=self._get_info_worker, args=(url, ), daemon=True).start()
+
+    @script(description="Show video chapters/timestamps from current page or clipboard URL.")
+    def script_showChapters(self, gesture):
+        #log.info("Script triggered: showChapters")
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            return ui.message("YouTube URL not found in current window or clipboard.")
+        
+        url = self._clean_youtube_url(messy_url)
+        ui.message(_("Getting chapters..."))
+        threading.Thread(target=self._show_chapters_worker, args=(url, ), daemon=True).start()
+
+    @script(description="Download video or audio from current page or clipboard URL.")
+    def script_downloadClip(self, gesture):
+        #log.info("Script triggered: downloadClip")
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            return ui.message("YouTube URL not found in current window or clipboard.")
+        
+        url = self._clean_youtube_url(messy_url)
+        ui.message(_("Getting video info for download..."))
+        threading.Thread(target=self._download_choice_worker, args=(url, ), daemon=True).start()
+
+    @script(description="Show help dialog.")
+    def script_displayHelp(self, gesture):
+        #log.info("Script triggered: displayHelp")
+        gui.mainFrame.prePopup()
+        dialog = HelpDialog(gui.mainFrame, "Help", self.help_text)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
+    @script(description="Stop live chat monitoring.")
+    def script_stopMonitor(self, gesture):
+        #log.info("Script triggered: stopMonitor")
+        self.stopChatMonitoring()
+
+    @script(description="Show live chat messages  dialog.")
+    def script_showMessagesDialog(self, gesture):
+        #log.info("Script triggered: showMessagesDialog")
+        if not self.active:
+            ui.message("No stream is currently being monitored.")
+            return
+        self.openMessagesDialog()
+
+    @script(description="Toggle automatic speaking of incoming messages from live chat monitroring.")
+    def script_toggleAutoSpeak(self, gesture):
+        #log.info("Script triggered: toggleAutoSpeak")
+        is_enabled = not config.conf["YoutubePlus"].get("autoSpeak", True)
+        config.conf["YoutubePlus"]["autoSpeak"] = is_enabled
+        ui.message("Automatic message speaking enabled." if is_enabled else "Automatic message speaking disabled.")        
+
+    @script(description=_("Show favorite videos dialog."))
+    def script_showFavVideoDialog(self, gesture):
+        #log.info("Script triggered: showFavVideoDialog")
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, 0)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+    
+    @script(description=_("Show favorite channels dialog."))
+    def script_showFavChannelDialog(self, gesture):
+        #log.info("Script triggered: showFavChannelDialog")
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, 1)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+        
+    @script(description=_("Show favorite playlists dialog."))
+    def script_showFavPlaylistDialog(self, gesture):
+        #log.info("Script triggered: showFavPlaylistDialog")
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, 2)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+    
+    @script(description=_("Show a menu to add the current page URL to favorites or subscriptions."))
+    def script_showAddMenu(self, gesture):
+        #log.info("Script triggered: showAddMenu")
+        url = self._find_youtube_url()
+        if not url:
+            ui.message(_("No specific YouTube URL found in the current window or clipboard."))
+            return
+        gui.mainFrame.prePopup()
+        try:
+            temp_frame = wx.Frame(gui.mainFrame, -1, "AddMenu Host", size=(1,1), pos=(-100,-100))
+            temp_frame.Show()
+
+            menu = wx.Menu()
+            
+            self.add_menu_choices = {
+                wx.ID_HIGHEST + 10: (_("Add to Favorite &Videos"), lambda: self._on_add_to_video_fav(url)),
+                wx.ID_HIGHEST + 11: (_("Add to Favorite &Channels"), lambda: self._on_add_to_channel_fav(url)),
+                wx.ID_HIGHEST + 12: (_("Add to Favorite &playlist"), lambda: self._on_add_to_playlist_fav(url)),
+                wx.ID_HIGHEST + 13: (_("&Subscribe to Channel"), lambda: self._on_subscribe_to_channel(url)),
+            }
+            self._add_menu_handlers = {id: handler for id, (label, handler) in self.add_menu_choices.items()}
+
+            for menu_id, (label, handler) in self.add_menu_choices.items():
+                menu.Append(menu_id, label)
+
+            temp_frame.Bind(wx.EVT_MENU, self._on_add_menu_select)
+            temp_frame.Bind(wx.EVT_MENU_CLOSE, lambda evt: wx.CallAfter(temp_frame.Destroy))
+
+            wx.CallAfter(temp_frame.PopupMenu, menu)
+
+        finally:
+            gui.mainFrame.postPopup()
+            
+    def _on_add_menu_select(self, event):
+        """Handles the selection from the 'Add' context menu."""
+        menu_id = event.GetId()
+        label, handler = self.add_menu_choices.get(menu_id)
+        
+        if handler:
+            handler()
+
+    def _on_add_to_video_fav(self, url):
+        """Starts the worker to add the URL to video favorites."""
+        #log.info("Menu selection: Add to Favorite Videos")
+        threading.Thread(target=self.add_item_to_favorites_worker, args=(url,), daemon=True).start()
+        
+    def _on_add_to_channel_fav(self, url):
+        """Starts the worker to add the URL to channel favorites."""
+        #log.info("Menu selection: Add to Favorite Channels")
+        threading.Thread(target=self.add_channel_to_favorites_worker, args=(url,), daemon=True).start()
+        
+    def _on_add_to_playlist_fav(self, url):
+        """Starts the worker to add the URL to playlist favorites."""
+        #log.info("Menu selection: Add to Favorite playlist")
+        threading.Thread(target=self.add_playlist_to_favorites_worker, args=(url,), daemon=True).start()
+
+    def _on_subscribe_to_channel(self, url):
+        """Starts the worker for subscribing to a channel."""
+        #log.info("Menu selection: Subscribe to Channel")
+        threading.Thread(target=self.subscribe_to_channel_worker, args=(url,), daemon=True).start()
+        
+    @script(description=_("Show subscription feed dialog."))
+    def script_showSubDialog(self, gesture):
+        #log.info("Script triggered: showSubDialog")
+        wx.CallAfter(self._show_subscription_feed_directly)
+
+    @script(description=_("Search YouTube for videos, channels, or playlists."))
+    def script_showSearchDialog(self, gesture):
+        gui.mainFrame.prePopup()
+        dialog = SearchDialog(gui.mainFrame, self)
+        dialog.Show()
+        gui.mainFrame.postPopup()
 
     @script(description=_("Show manage subscriptions dialog."))
     def script_showManageSubDialog(self, gesture):

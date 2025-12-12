@@ -39,40 +39,25 @@ jobs:
             Write-Host "::set-output name=file_path::"
           }
         shell: pwsh
-
-      - name: Extract Changelog for Release
-        id: get_changelog
+      
+      - name: Get tag name
+        id: get_tag
         run: |
           $ref = "${{ github.ref }}"
-          $tag = $ref.Substring($ref.LastIndexOf('/') + 1)
-          
-          if (-not (Test-Path "CHANGELOG.md")) {
-            Write-Host "::set-output name=release_body::No CHANGELOG.md found."
-            exit 0
-          }
-
-          $content = Get-Content -Raw -Path "CHANGELOG.md"
-          $pattern = "## $($tag)(.*?)(?=\n##|$)"
-          $match = [regex]::Match($content, $pattern, "Singleline")
-
-          if ($match.Success) {
-            $changelog_body = $match.Groups[1].Value.Trim()
-            # Set the output variable
-            Write-Host "::set-output name=release_body::$changelog_body"
-          } else {
-            Write-Host "::set-output name=release_body::No changelog entry found for version $($tag)."
-          }
+          $tag_name = $ref.Substring($ref.LastIndexOf('/') + 1)
+          Write-Host "::set-output name=tag::$tag_name"
         shell: pwsh
 
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ steps.get_changelog.outputs.tag }}
-          body: ${{ steps.get_changelog.outputs.release_body }}
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          body: |
+            Automatically generated release for version ${{ steps.get_tag.outputs.tag }}.
           draft: false
           prerelease: false
 
@@ -80,7 +65,7 @@ jobs:
         if: steps.find_addon_package.outputs.file_name != ''
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.pat_for_release }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.find_addon_package.outputs.file_path }}

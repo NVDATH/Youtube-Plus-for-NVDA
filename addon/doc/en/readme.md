@@ -21,13 +21,13 @@ Designed with accessibility and responsiveness in mind, it features automatic UR
 
 This addon uses a layered command system for easy access without key conflicts.
 
-1.  First, press **NVDA+Shift+Y** to enter the Youtube Plus command layer.
+1.  First, press **Windows+Y** to enter the Youtube Plus command layer.
 2.  Then, press one of the following keys:
 
-    - **g:** **G**et Data - The universal command to get Live Chat, Comments, or Live Chat Replay from a detected URL.
+    - **l:** **l**et Data - The universal command to get Live Chat, Comments, or Live Chat Replay from a detected URL.
     - **i:** **I**nfo - Get detailed information about the video from a detected URL.
     - **d:** **D**ownload - Start the process to download the video or audio from a detected URL.
-    - **s:** **S**top - Stop the currently active live chat monitoring.
+    - **shift+l:** **shift+l**top - Stop the currently active live chat monitoring.
     - **v:** **V**iew - Show the live chat messages dialog if monitoring is active.
     - **r:** **R**ead Toggle - Toggle the automatic reading of incoming live chat messages.
     - **h:** **H**elp - Show the help dialog with a list of all commands.
@@ -44,6 +44,6 @@ Settings are available in the NVDA Settings dialog (`NVDA Menu -> Preferences ->
 
 ## Requirements
 
-- NVDA 2019.3 or later.
+- NVDA 2025.1 or later.
 - An active internet connection.
 - All necessary components are bundled with the addon.
