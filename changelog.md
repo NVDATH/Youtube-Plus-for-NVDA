@@ -1,7 +1,8 @@
-##2025.12.08
+\##2025.12.12
 
 * update YT-DLP to latest
 * correct cookies mode
+
 
 
 ## 2025.9.26
