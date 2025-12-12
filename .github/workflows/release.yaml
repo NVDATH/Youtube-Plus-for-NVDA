@@ -5,9 +5,6 @@ on:
     tags:
       - 'v*.*.*'
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: windows-2022
@@ -35,59 +32,42 @@ jobs:
         run: |
           $addon_file = Get-ChildItem -Path . -Filter "*.nvda-addon" -Recurse | Select-Object -First 1
           if ($addon_file) {
-            "file_name=$($addon_file.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            "file_path=$($addon_file.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            Write-Host "Found addon file: $($addon_file.Name)"
+            Write-Host "::set-output name=file_name::$($addon_file.Name)"
+            Write-Host "::set-output name=file_path::$($addon_file.FullName)"
           } else {
-            Write-Host "Error: No .nvda-addon file found"
-            exit 1
+            Write-Host "::set-output name=file_name::"
+            Write-Host "::set-output name=file_path::"
           }
         shell: pwsh
-
-      - name: Extract version tag
-        id: get_version
+      
+      - name: Get tag name
+        id: get_tag
         run: |
           $ref = "${{ github.ref }}"
-          $tag = $ref -replace 'refs/tags/', ''
-          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Host "Extracted tag: $tag"
-        shell: pwsh
-
-      - name: Extract Changelog for Release
-        id: get_changelog
-        run: |
-          $tag = "${{ steps.get_version.outputs.tag }}"
-          Write-Host "Looking for changelog entry for tag: $tag"
-          
-          if (-not (Test-Path "CHANGELOG.md")) {
-            Write-Host "CHANGELOG.md not found"
-            $changelog = "No CHANGELOG.md found."
-          } else {
-            $content = Get-Content -Raw -Path "CHANGELOG.md"
-            $pattern = "(?s)## \Q$tag\E\s*(.*?)(?=\n## |\z)"
-            $match = [regex]::Match($content, $pattern)
-
-            if ($match.Success) {
-              $changelog = $match.Groups[1].Value.Trim()
-              Write-Host "Found changelog entry"
-            } else {
-              $changelog = "No changelog entry found for version $tag."
-              Write-Host "No matching changelog section found"
-            }
-          }
-          
-          # บันทึกลงไฟล์ด้วย UTF8 without BOM
-          [System.IO.File]::WriteAllText("$PWD/release_notes.txt", $changelog, [System.Text.UTF8Encoding]::new($false))
-          Write-Host "Changelog written to release_notes.txt"
+          $tag_name = $ref.Substring($ref.LastIndexOf('/') + 1)
+          Write-Host "::set-output name=tag::$tag_name"
         shell: pwsh
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Release ${{ steps.get_version.outputs.tag }}
-          body_path: release_notes.txt
-          files: ${{ steps.find_addon_package.outputs.file_path }}
-          draft: false
-          prerelease: false
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
+          body: |
+            Automatically generated release for version ${{ steps.get_tag.outputs.tag }}.
+          draft: false
+          prerelease: false
+
+      - name: Upload add-on package as release asset
+        if: steps.find_addon_package.outputs.file_name != ''
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.find_addon_package.outputs.file_path }}
+          asset_name: ${{ steps.find_addon_package.outputs.file_name }}
+          asset_content_type: application/octet-stream
