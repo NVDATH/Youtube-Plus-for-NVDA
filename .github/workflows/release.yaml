@@ -32,57 +32,55 @@ jobs:
         run: |
           $addon_file = Get-ChildItem -Path . -Filter "*.nvda-addon" -Recurse | Select-Object -First 1
           if ($addon_file) {
-            Write-Host "::set-output name=file_name::$($addon_file.Name)"
-            Write-Host "::set-output name=file_path::$($addon_file.FullName)"
+            echo "file_name=$($addon_file.Name)" >> $env:GITHUB_OUTPUT
+            echo "file_path=$($addon_file.FullName)" >> $env:GITHUB_OUTPUT
           } else {
-            Write-Host "::set-output name=file_name::"
-            Write-Host "::set-output name=file_path::"
+            echo "file_name=" >> $env:GITHUB_OUTPUT
+            echo "file_path=" >> $env:GITHUB_OUTPUT
           }
+        shell: pwsh
+
+      - name: Extract version tag
+        id: get_version
+        run: |
+          $ref = "${{ github.ref }}"
+          $tag = $ref.Substring($ref.LastIndexOf('/') + 1)
+          echo "tag=$tag" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
       - name: Extract Changelog for Release
         id: get_changelog
         run: |
-          $ref = "${{ github.ref }}"
-          $tag = $ref.Substring($ref.LastIndexOf('/') + 1)
+          $tag = "${{ steps.get_version.outputs.tag }}"
           
           if (-not (Test-Path "CHANGELOG.md")) {
-            Write-Host "::set-output name=release_body::No CHANGELOG.md found."
+            echo "release_body=No CHANGELOG.md found." >> $env:GITHUB_OUTPUT
             exit 0
           }
 
           $content = Get-Content -Raw -Path "CHANGELOG.md"
-          $pattern = "## $($tag)(.*?)(?=\n##|$)"
+          $pattern = "## \Q$tag\E(.*?)(?=\n##|$)"
           $match = [regex]::Match($content, $pattern, "Singleline")
 
           if ($match.Success) {
             $changelog_body = $match.Groups[1].Value.Trim()
-            # Set the output variable
-            Write-Host "::set-output name=release_body::$changelog_body"
+            # แปลง newline และ escape characters ให้ถูกต้อง
+            $changelog_body = $changelog_body -replace "`r`n", "`n"
+            $changelog_body = $changelog_body -replace "`n", "%0A"
+            echo "release_body=$changelog_body" >> $env:GITHUB_OUTPUT
           } else {
-            Write-Host "::set-output name=release_body::No changelog entry found for version $($tag)."
+            echo "release_body=No changelog entry found for version $tag." >> $env:GITHUB_OUTPUT
           }
         shell: pwsh
 
       - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ steps.get_changelog.outputs.tag }}
+          name: Release ${{ steps.get_version.outputs.tag }}
           body: ${{ steps.get_changelog.outputs.release_body }}
+          files: ${{ steps.find_addon_package.outputs.file_path }}
           draft: false
           prerelease: false
-
-      - name: Upload add-on package as release asset
-        if: steps.find_addon_package.outputs.file_name != ''
-        uses: actions/upload-release-asset@v1
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find_addon_package.outputs.file_path }}
-          asset_name: ${{ steps.find_addon_package.outputs.file_name }}
-          asset_content_type: application/octet-stream
