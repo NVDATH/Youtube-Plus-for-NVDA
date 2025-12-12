@@ -34,9 +34,10 @@ jobs:
           if ($addon_file) {
             echo "file_name=$($addon_file.Name)" >> $env:GITHUB_OUTPUT
             echo "file_path=$($addon_file.FullName)" >> $env:GITHUB_OUTPUT
+            echo "found=true" >> $env:GITHUB_OUTPUT
           } else {
-            echo "file_name=" >> $env:GITHUB_OUTPUT
-            echo "file_path=" >> $env:GITHUB_OUTPUT
+            echo "found=false" >> $env:GITHUB_OUTPUT
+            Write-Host "Warning: No .nvda-addon file found"
           }
         shell: pwsh
 
@@ -44,43 +45,59 @@ jobs:
         id: get_version
         run: |
           $ref = "${{ github.ref }}"
-          $tag = $ref.Substring($ref.LastIndexOf('/') + 1)
+          $tag = $ref -replace 'refs/tags/', ''
           echo "tag=$tag" >> $env:GITHUB_OUTPUT
+          Write-Host "Extracted tag: $tag"
         shell: pwsh
 
       - name: Extract Changelog for Release
         id: get_changelog
         run: |
           $tag = "${{ steps.get_version.outputs.tag }}"
+          Write-Host "Looking for changelog entry for tag: $tag"
           
           if (-not (Test-Path "CHANGELOG.md")) {
-            echo "release_body=No CHANGELOG.md found." >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          $content = Get-Content -Raw -Path "CHANGELOG.md"
-          $pattern = "## \Q$tag\E(.*?)(?=\n##|$)"
-          $match = [regex]::Match($content, $pattern, "Singleline")
-
-          if ($match.Success) {
-            $changelog_body = $match.Groups[1].Value.Trim()
-            # แปลง newline และ escape characters ให้ถูกต้อง
-            $changelog_body = $changelog_body -replace "`r`n", "`n"
-            $changelog_body = $changelog_body -replace "`n", "%0A"
-            echo "release_body=$changelog_body" >> $env:GITHUB_OUTPUT
+            Write-Host "CHANGELOG.md not found"
+            $changelog = "No CHANGELOG.md found."
           } else {
-            echo "release_body=No changelog entry found for version $tag." >> $env:GITHUB_OUTPUT
+            $content = Get-Content -Raw -Path "CHANGELOG.md"
+            $pattern = "(?s)## \Q$tag\E\s*(.*?)(?=\n## |\z)"
+            $match = [regex]::Match($content, $pattern)
+
+            if ($match.Success) {
+              $changelog = $match.Groups[1].Value.Trim()
+              Write-Host "Found changelog entry"
+            } else {
+              $changelog = "No changelog entry found for version $tag."
+              Write-Host "No matching changelog section found"
+            }
           }
+          
+          # บันทึกลงไฟล์แทนการใช้ multiline string
+          $changelog | Out-File -FilePath "release_notes.txt" -Encoding utf8 -NoNewline
+          Write-Host "Changelog written to release_notes.txt"
         shell: pwsh
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        if: steps.find_addon_package.outputs.found == 'true'
+        uses: softprops/action-gh-release@v2
         with:
           name: Release ${{ steps.get_version.outputs.tag }}
-          body: ${{ steps.get_changelog.outputs.release_body }}
+          body_path: release_notes.txt
           files: ${{ steps.find_addon_package.outputs.file_path }}
           draft: false
           prerelease: false
           fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release (without addon file)
+        if: steps.find_addon_package.outputs.found != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ steps.get_version.outputs.tag }}
+          body_path: release_notes.txt
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
