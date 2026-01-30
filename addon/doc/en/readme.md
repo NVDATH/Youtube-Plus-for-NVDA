@@ -57,12 +57,12 @@ Most commands work with any YouTube URL. For example, if you are on a video page
 
 ### d: (Download video/audio)
 
-Prompts you to save the content as a video (.mp4) or audio (.m4a). You can set the save location in the [Settings](https://www.google.com/search?q=%23settings).
+Prompts you to save the content as a video (.mp4) or audio (.m4a). You can set the save location in the [Settings](#settings).
 *Warning: This feature is for occasional use. If you need to download a large number of videos, please use dedicated software.*
 
 ### e: (Search)
 
-Opens a search window. Enter your keywords and press Enter. You can tab to adjust the number of search results. The results are displayed in a [Video List](https://www.google.com/search?q=%23video-lists) format within the add-on interface.
+Opens a search window. Enter your keywords and press Enter. You can tab to adjust the number of search results. The results are displayed in a [Video List](#video-lists) format within the add-on interface.
 
 ### i: (Video Info)
 

@@ -1,16 +1,14 @@
-\##2026.1.29
+## 2026.1.29
 
 * update YT-DLP lib to latest version
 * rewrite a read me file
 * add new favorites category "watch list"
 * remove cookies method
 
-##2025.12.12
+## 2025.12.12
 
 * update YT-DLP to latest
 * correct cookies mode
-
-
 
 ## 2025.9.26
 
