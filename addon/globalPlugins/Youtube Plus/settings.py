@@ -71,7 +71,30 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
         
-        sHelper.addItem(wx.StaticText(self, label=_("&Cookie method:")))
+        # === COOKIE SETTINGS ===
+        # Cookie file picker (recommended method)
+        """
+        sHelper.addItem(wx.StaticText(self, label=_("&Cookie file (cookies.txt):")))
+        cookiePathSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.cookieFileTextCtrl = wx.TextCtrl(self, value=config.conf["YoutubePlus"].get("cookieFilePath", ""))
+        cookiePathSizer.Add(self.cookieFileTextCtrl, 1, wx.EXPAND | wx.RIGHT, 5)
+        self.browseCookieBtn = wx.Button(self, label=_("B&rowse..."))
+        cookiePathSizer.Add(self.browseCookieBtn, 0)
+        sHelper.addItem(cookiePathSizer, flag=wx.EXPAND)
+        self.browseCookieBtn.Bind(wx.EVT_BUTTON, self.onBrowseCookie)
+        
+        # Help text
+        cookieHelpText = wx.StaticText(
+            self,
+            label=_("Recommended: Use browser extension 'Get cookies.txt LOCALLY' to export cookies.\n"
+                   "Leave empty to proceed without cookies.")
+        )
+        sHelper.addItem(cookieHelpText)
+        """
+        
+        # Browser cookie method (experimental - commented out)
+        """
+        sHelper.addItem(wx.StaticText(self, label=_("&Cookie method (Experimental - may not work):")))
         cookie_choices = [
             _("Do not use cookies (Default)"),
             _("Chrome"),
@@ -93,6 +116,9 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         }
         current_cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
         self.cookieModeCombo.SetSelection(cookie_map.get(current_cookie_mode, 0))
+        """
+        
+        sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
         
         sHelper.addItem(wx.StaticText(self, label=_("Default download and &export folder path:")))
         pathSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -127,6 +153,11 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["YoutubePlus"]["refreshInteval"] = self.refreshIntevalSpin.GetValue()
         config.conf["YoutubePlus"]["messageLimit"] = self.messageLimitSpin.GetValue()
         
+        # Save cookie file path
+        #config.conf["YoutubePlus"]["cookieFilePath"] = self.cookieFileTextCtrl.GetValue()
+        
+        # Browser cookie mode (commented out)
+        """
         selection_map_cookie = {
             0: 'none',
             1: 'chrome',
@@ -137,12 +168,27 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             6: 'vivaldi'
         }
         config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'none')
+        """
         
         config.conf["YoutubePlus"]["exportPath"] = self.exportPathTextCtrl.GetValue()
         
         if GlobalPlugin.instance:
             GlobalPlugin.instance._notify_callbacks("settings_saved")
         logging.info("YoutubePlus settings saved.")
+    
+    def onBrowseCookie(self, event):
+        """Browse for cookies.txt file."""
+        logging.debug("Opening file dialog for cookie file.")
+        with wx.FileDialog(
+            self,
+            message=_("Select cookies.txt file"),
+            wildcard="Text files (*.txt)|*.txt|All files (*.*)|*.*",
+            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+        ) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                path = dlg.GetPath()
+                logging.info("User selected cookie file: %s", path)
+                self.cookieFileTextCtrl.SetValue(path)
         
     def onBrowse(self, event):
         logging.debug("Opening directory dialog for export path.")

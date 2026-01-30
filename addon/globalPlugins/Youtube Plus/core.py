@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Youtube plus for NVDA
+# YoutubePlus for NVDA
 # Copyright (C) 2025
 # This file is covered by the GNU General Public License.
 # You can read the licence by clicking Help->Licence in the NVDA menu
@@ -65,7 +65,7 @@ def finally_(func, final):
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     instance = None
-    scriptCategory = _("Youtube Plus")
+    scriptCategory = _("YoutubePlus")
 
     youtube_regex = re.compile(r"youtu\.?be", re.IGNORECASE)
 
@@ -101,10 +101,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         threading.Thread(target=self._update_subscription_feed_worker, kwargs={'silent': True}, daemon=True).start()
         
         self.manage_auto_update_timer()
-        self.help_text = _("""Youtube Plus Layer Commands (Press NVDA+Y to activate)
+        self.help_text = _("""YoutubePlus Layer Commands (Press NVDA+Y to activate)
 
 --- Core Actions (from a YouTube window/URL) ---
-- L: Get data from the current URL (Live Chat, Replay, or Comments)
+- L: Get comments from the current URL (Live Chat, Replay, or Comments)
 - I: Get video info
 - T: Show video chapters/timestamps
 - D: Download video/audio from the current URL
@@ -115,8 +115,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 - F: Show favorite videos dialog
 - C: Show favorite channels dialog
 - P: Show favorite playlists dialog
+- w: show watch list dialog
 - S: Show subscription feed dialog
-- M: Show the "Manage Subscriptions" dialog
+- M: Show Manage Subscriptions dialog
 
 --- Live Chat Monitoring (while active) ---
 - Shift+L: Stop live chat monitoring
@@ -391,8 +392,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
-            'socket_timeout': 20,
-            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+            #'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         }
 
         cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
@@ -699,7 +699,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     tones.beep(440, 75)
             except Exception:
                 tones.beep(440, 75)
-        wx.CallAfter(ui.message, _("activate Youtube Plus"))
+        wx.CallAfter(ui.message, _("activate YoutubePlus"))
 
     def _format_comments_for_display(self, raw_comments):
         """
@@ -2058,7 +2058,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 log.error("Failed to prune all videos from database.", exc_info=True)
                 wx.CallAfter(ui.message, _("An error occurred while clearing all videos."))
 
-    @script(description=_("an Youtube Plus layer commands."),
+    @script(description=_("an YoutubePlus layer commands."),
     gesture="kb:NVDA+y")
     def script_YoutubePlusLayer(self, gesture):
         if self.toggling:
@@ -2076,7 +2076,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return ui.message("YouTube URL not found in current window or clipboard.")
         
         url = self._clean_youtube_url(messy_url)
-        ui.message(f"getting info...")
+        #ui.message(f"getting info...")
         threading.Thread(target=self._unified_worker, args=(url,), daemon=True).start()
 
     @script(description="Show video info from current page or clipboard URL.")
@@ -2183,6 +2183,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 wx.ID_HIGHEST + 11: (_("Add to Favorite &Channels"), lambda: self._on_add_to_channel_fav(url)),
                 wx.ID_HIGHEST + 12: (_("Add to Favorite &playlist"), lambda: self._on_add_to_playlist_fav(url)),
                 wx.ID_HIGHEST + 13: (_("&Subscribe to Channel"), lambda: self._on_subscribe_to_channel(url)),
+                wx.ID_HIGHEST + 14: (_("add to &Watch list"), lambda: self._on_add_to_watchList(url)),
             }
             self._add_menu_handlers = {id: handler for id, (label, handler) in self.add_menu_choices.items()}
 
@@ -2225,6 +2226,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Menu selection: Subscribe to Channel")
         threading.Thread(target=self.subscribe_to_channel_worker, args=(url,), daemon=True).start()
         
+    def _on_add_to_watchList(self, url):
+        """Starts the worker to add the URL to watch list."""
+        #log.info("Menu selection: Add to watch list")
+        threading.Thread(target=self.add_to_watchlist_worker, args=(url,), daemon=True).start()
+
     @script(description=_("Show subscription feed dialog."))
     def script_showSubDialog(self, gesture):
         #log.info("Script triggered: showSubDialog")
@@ -2245,21 +2251,101 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Show()
         gui.mainFrame.postPopup()
 
+    def add_to_watchlist_worker(self, url, mark_seen=False):
+        self._start_indicator()
+        try:
+            info = self.get_video_info(url)
+            if not info:
+                return
+            
+            video_id = info.get('id')
+            title = info.get('title')
+            file_path = os.path.join(os.path.dirname(__file__), 'watch_list.json')
+            
+            with self._fav_file_lock:
+                watchlist = []
+                if os.path.exists(file_path):
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            watchlist = json.load(f)
+                    except (json.JSONDecodeError, TypeError):
+                        watchlist = []
+                
+                if any(item.get('video_id') == video_id for item in watchlist):
+                    ui.message(_("'{title}' is already in Watch List.").format(title=title))
+                else:
+                    new_item = {
+                        "video_id": video_id, 
+                        "title": title, 
+                        "channel_name": info.get('uploader'),
+                        "duration_str": self._format_duration_verbose(info.get('duration', 0)),
+                        "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    watchlist.append(new_item)
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        json.dump(watchlist, f, indent=2, ensure_ascii=False)
+                    self._notify_success(_("Added '{title}' to watch list.").format(title=new_item['title']))
+            if mark_seen:
+                self.mark_videos_as_seen(video_id, notify=True)
+            else:
+                self._notify_callbacks("watch_list_updated")
+        except Exception as e:
+            log.error(f"Add to watchlist worker error: {e}")
+            ui.message(_("Error: Could not add video to Watch List."))
+        finally:
+            self._stop_indicator()
+    
+    def mark_videos_as_seen(self, video_ids, notify=True):
+        """
+        Mark one or multiple videos as seen in the database.
+        video_ids: can be a string (single ID) or a list of strings.
+        """
+        if isinstance(video_ids, str):
+            video_ids = [video_ids]
+            
+        if not video_ids:
+            return
+
+        try:
+            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+            with sqlite3.connect(db_path) as con:
+                con.executemany(
+                    "INSERT OR IGNORE INTO seen_videos (video_id) VALUES (?)",
+                    [(vid,) for vid in video_ids]
+                )
+            
+            if notify:
+                self._notify_callbacks("subscriptions_updated")
+            return True
+        except Exception as e:
+            log.error(f"Error marking videos as seen: {e}")
+            return False
+            
+    @script(description=_("Show watch list dialog."))
+    def script_showWatchListDialog(self, gesture):
+        #log.info("Script triggered: showWatchListDialog")
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, 3)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+    
+    
     __YoutubePlusGestures = {
-        "kb:l": "getData",
-        "kb:m": "showManageSubDialog",
-        "kb:shift+l": "stopMonitor",
-        "kb:v": "showMessagesDialog",
         "kb:a": "showAddMenu",
         "kb:f": "showFavVideoDialog",
         "kb:c": "showFavChannelDialog",
         "kb:p": "showFavPlaylistDialog",
-        "kb:s": "showSubDialog",
-        "kb:r": "toggleAutoSpeak",
-        "kb:i": "getInfo",
+        "kb:w": "showWatchListDialog",
         "kb:d": "downloadClip",
-        "kb:t": "showChapters",
         "kb:e": "showSearchDialog",
+        "kb:i": "getInfo",
+        "kb:t": "showChapters",
+        "kb:m": "showManageSubDialog",
+        "kb:s": "showSubDialog",
+        "kb:l": "getData",
+        "kb:shift+l": "stopMonitor",
+        "kb:r": "toggleAutoSpeak",
+        "kb:v": "showMessagesDialog",
         "kb:h": "displayHelp"
     }
     

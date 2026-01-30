@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# dialogs.py for Youtube Plus NVDA Addon
+# dialogs.py for YoutubePlus NVDA Addon
 
 import wx
 import wx.lib.mixins.listctrl as listmix
@@ -26,18 +26,19 @@ def copy_to_clipboard(text):
     api.copyToClip(text)
 
 confspec = {
-    "autoSpeak": "boolean(default=True)",
+    "progressIndicatorMode": "string(default='beep')",
     "sortOrder": "string(default='newest')",
     "playlist_fetch_count": "integer(default=20, min=5, max=100)",
     "contentTypesToFetch": "string_list(default=list('videos', 'shorts', 'streams'))",
     "autoUpdateIntervalMinutes": "integer(default=0)",
+    "autoSpeak": "boolean(default=True)",
     "refreshInteval": "integer(default=5, min=1, max=60)",
     "messageLimit": "integer(default=5000, min=100, max=20000)",
+    #"cookieFilePath": "string(default='')",
+    #"cookieMode": "string(default='none')",
     "exportPath": "string()",
-    "cookieMode": "string(default='auto')",
     "subDialogViewMode": "string(default='unseen')",
-    "progressIndicatorMode": "string(default='beep')",
-    "searchResultCount": "integer(default=20, min=5, max=50)"
+    "searchResultCount": "integer(default=20, min=5, max=100)"
 }
 config.conf.spec["YoutubePlus"] = confspec
 
@@ -56,7 +57,7 @@ class BaseDialogMixin:
         else:
             event.Skip()
     
-class BaseInfoDialog(BaseDialogMixin, wx.Dialog): # << CHANGE HERE
+class BaseInfoDialog(BaseDialogMixin, wx.Dialog):
     """A base dialog for showing read-only text content."""
     def __init__(self, parent, title, text_content):
         super().__init__(parent, title=title)
@@ -729,6 +730,7 @@ class VideoActionMixin:
         ID_OPEN_VID_WEB = wx.NewIdRef()
         ID_ADD_FAV_VID = wx.NewIdRef()
         ID_ADD_FAV_CHAN = wx.NewIdRef()
+        ID_ADD_WATCHLIST = wx.NewIdRef()
         ID_OPEN_CHAN_WEB = wx.NewIdRef()
         ID_SHOW_VIDS = wx.NewIdRef()
         ID_SHOW_SHORTS = wx.NewIdRef()
@@ -742,6 +744,7 @@ class VideoActionMixin:
         menu.AppendSeparator()
         menu.Append(ID_ADD_FAV_VID, _("Add to &Favorite Videos"))
         menu.Append(ID_ADD_FAV_CHAN, _("Add to &Favorite Channels"))
+        menu.Append(ID_ADD_WATCHLIST, _("Add to &Watch List"))
         menu.AppendSeparator()
         menu.Append(ID_OPEN_VID_WEB, _("Open video in &browser"))
         menu.Append(ID_OPEN_CHAN_WEB, _("Open c&hannel in browser"))
@@ -757,6 +760,7 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, self.on_open_video, id=ID_OPEN_VID_WEB)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_video, id=ID_ADD_FAV_VID)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_channel, id=ID_ADD_FAV_CHAN)
+        menu.Bind(wx.EVT_MENU, self.on_add_to_watchlist, id=ID_ADD_WATCHLIST)
         menu.Bind(wx.EVT_MENU, self.on_open_channel, id=ID_OPEN_CHAN_WEB)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('videos'), id=ID_SHOW_VIDS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('shorts'), id=ID_SHOW_SHORTS)
@@ -790,7 +794,39 @@ class VideoActionMixin:
             return
         url = f"https://www.youtube.com/watch?v={video_id}"
         threading.Thread(target=self.core.add_channel_to_favorites_worker, args=(url,), daemon=True).start()
-    
+
+    def on_add_to_watchlist(self, event):
+        class_name = self.__class__.__name__
+        is_actually_sub_dialog = (class_name == "SubDialog")
+        if hasattr(self, 'notebook'):
+            currentPage = self.notebook.GetCurrentPage()
+            if not currentPage: return
+            listCtrl = currentPage.listCtrl
+            tab_id = getattr(currentPage, 'tab_id', None)
+        else:
+            listCtrl = getattr(self, 'listCtrl', None)
+            tab_id = None
+
+        if not listCtrl: return
+        
+        selected_index = listCtrl.GetFirstSelected()
+        video_to_mark = self.get_selected_video_info()
+        if not video_to_mark: return
+            
+        self.pending_focus_info = {'tab_id': tab_id, 'index': selected_index}
+        
+        video_id = video_to_mark.get('video_id') or video_to_mark.get('id')
+        if not video_id: return
+            
+        url = f"https://www.youtube.com/watch?v={video_id}"
+        
+        threading.Thread(
+            target=self.core.add_to_watchlist_worker, 
+            args=(url,), 
+            kwargs={'mark_seen': is_actually_sub_dialog}, 
+            daemon=True
+        ).start()
+        
     def on_view_info(self, event):
         video = self.get_selected_video_info()
         if not video: return
@@ -857,15 +893,17 @@ class VideoActionMixin:
     def _view_channel_content(self, content_type):
         pass
 
-class FavVideoPanel(wx.Panel, VideoActionMixin):
+class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     def __init__(self, parent, core_instance):
-        wx.Panel.__init__(self, parent)
+        super().__init__(parent)
         self.core = core_instance
-        self.favorites = []
-        self.filtered_favorites = []
+        self.items = []
+        self.filtered_items = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
-        self.fav_file_path = self._get_fav_file_path()
+        
+        self.file_path = self._get_file_path()
+        self.callback_topic = self._get_callback_topic()
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -876,119 +914,188 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         self._create_extra_buttons(self, btnSizer)
         btnSizer.AddStretchSpacer()
+        
         self.addBtn = wx.Button(self, label=self._get_add_button_label())
         self.removeBtn = wx.Button(self, label=_("&Remove"))
+        
         btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         self.SetSizer(mainSizer)
-        self.core.register_callback("fav_video_updated", self.refresh_favVideo)
-        self._load_favorites()
+
+        if self.callback_topic:
+            self.core.register_callback(self.callback_topic, self.refresh_data)
+            
+        self._load_data()
         self._populate_list()  
         self._update_button_states()
+
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected)
 
-    def on_close(self, event):
-        self.core.unregister_callback("fav_video_updated", self.refresh_favVideo)
-        self._save_favorites()
-
-    def _create_extra_buttons(self, panel, sizer):
-            self.actionBtn = wx.Button(panel, label=_("&Action..."))
-            self.copyBtn = wx.Button(panel, label=_("&Copy..."))
-            sizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
-            sizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
-            self.actionBtn.Bind(wx.EVT_BUTTON, self.on_action_menu)
-            self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
-            
-    def on_action_menu(self, event):
-        if self.listCtrl.GetFirstSelected() == -1: return
-        menu = self.create_video_action_menu()
-        self.PopupMenu(menu)
-        menu.Destroy()
-
-    def on_copy_menu(self, event):
-            if self.listCtrl.GetFirstSelected() == -1: return
-            menu = wx.Menu()
-            menu.Append(1, _("Copy &Title"))
-            menu.Append(2, _("Copy Video &URL"))
-            menu.Append(3, _("Copy &Channel Name"))
-            menu.Append(4, _("Copy C&hannel URL"))
-            menu.AppendSeparator()
-            menu.Append(5, _("Copy &Summary"))
-
-            def on_select(e):
-                id_map = {1: 'title', 2: 'url', 3: 'channel_name', 4: 'channel_url', 5: 'summary'}
-                copy_type = id_map.get(e.GetId())
-                if copy_type:
-                    self.on_copy(copy_type)
-            menu.Bind(wx.EVT_MENU, on_select)
-            self.PopupMenu(menu)
-            menu.Destroy()
-
-    def get_selected_video_info(self):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: return None
-        return self.filtered_favorites[selected_index]
-
-    def _view_channel_content(self, content_type):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: return
-        item = self.filtered_favorites[selected_index]
-        channel_url = item.get("channel_url")
-        channel_name = item.get("channel_name")
-        if not channel_url:
-            ui.message(_("Error: Channel URL not found for this item."))
-            return
-        suffix_map = {"videos": "/videos", "shorts": "/shorts", "streams": "/streams"}
-        label_map = {"videos": _("Videos"), "shorts": _("Shorts"), "streams": _("Live")}
-        suffix = suffix_map.get(content_type, "/videos")
-        label = label_map.get(content_type, _("Content"))
-        full_url = channel_url.rstrip('/') + suffix
-        title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
-        thread_kwargs = {
-            'url': full_url, 'dialog_title_template': title_template, 'content_type_label': label,
-            'base_channel_url': channel_url, 'base_channel_name': channel_name
-        }
-        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
-        
-    def _get_fav_file_path(self): return os.path.join(os.path.dirname(__file__), 'fav_video.json')
-    def _get_add_button_label(self): return _("Add &new favorite video  from clipboard")
-    def _get_search_fields(self, item): return [item.get('title', ''), item.get('channel_name', '')]
-    def _get_item_title_for_messages(self, item): return item.get('title', 'N/A')
+    def _get_file_path(self): 
+        raise NotImplementedError
+    
+    def _get_callback_topic(self): 
+        raise NotImplementedError
+    
+    def _get_add_button_label(self): 
+        raise NotImplementedError
+    
+    def _get_search_fields(self, item):
+        return [item.get('title', ''), item.get('channel_name', '')]
+    
+    def _get_item_title_for_messages(self, item):
+        return item.get('title', 'N/A')
     
     def _create_list_columns(self, list_ctrl):
         list_ctrl.InsertColumn(0, _("Title"), width=350)
         list_ctrl.InsertColumn(1, _("Channel"), width=200)
         list_ctrl.InsertColumn(2, _("Duration"), width=120)
-        
-    def _update_button_states(self):
-        is_not_empty = bool(self.favorites)
-        self.removeBtn.Enable(is_not_empty)
-        self.actionBtn.Enable(is_not_empty and self.listCtrl.GetFirstSelected() != -1)
-        self.copyBtn.Enable(is_not_empty and self.listCtrl.GetFirstSelected() != -1)
+    
+    def _create_extra_buttons(self, panel, sizer):
+        self.actionBtn = wx.Button(panel, label=_("&Action..."))
+        self.copyBtn = wx.Button(panel, label=_("&Copy..."))
+        sizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
+        sizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
+        self.actionBtn.Bind(wx.EVT_BUTTON, self.on_action_menu)
+        self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
 
-    def _load_favorites(self):
+    def _load_data(self):
         with self.core._fav_file_lock:
             try:
-                with open(self.fav_file_path, 'r', encoding='utf-8') as f:
-                    self.favorites = json.load(f)
+                if os.path.exists(self.file_path):
+                    with open(self.file_path, 'r', encoding='utf-8') as f:
+                        self.items = json.load(f)
+                else:
+                    self.items = []
             except (FileNotFoundError, json.JSONDecodeError, TypeError):
-                self.favorites = []
-        self.filtered_favorites = self.favorites[:]
+                self.items = []
+        self.filtered_items = self.items[:]
 
-    def _save_favorites(self):
+    def _save_data(self):
         with self.core._fav_file_lock:
             try:
-                with open(self.fav_file_path, 'w', encoding='utf-8') as f:
-                    json.dump(self.favorites, f, indent=2, ensure_ascii=False)
+                with open(self.file_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.items, f, indent=2, ensure_ascii=False)
             except (IOError, OSError):
-                ui.message(_("Error: Could not save favorites list."))
+                ui.message(_("Error: Could not save data."))
+
+    def _populate_list(self):
+        self.listCtrl.Freeze()
+        try:
+            self.listCtrl.DeleteAllItems()
+            for index, item in enumerate(self.filtered_items):
+                self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
+                self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
+                self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
+            
+            if self._is_first_load and self.listCtrl.GetItemCount() > 0:
+                self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self._is_first_load = False
+        finally:
+            self.listCtrl.Thaw()
+
+    def refresh_data(self, data=None):
+        if not self.listCtrl:
+            return
+        self._load_data()
+        self.on_search("")
+        
+        if data and data.get("action") == "add":
+            count = self.listCtrl.GetItemCount()
+            if count > 0:
+                last_index = count - 1
+                self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self.listCtrl.EnsureVisible(last_index)
+        
+        self._update_button_states()
+
+    def _update_button_states(self):
+        is_not_empty = bool(self.items)
+        is_selected = self.listCtrl.GetFirstSelected() != -1
+        self.removeBtn.Enable(is_not_empty and is_selected)
+        self.actionBtn.Enable(is_not_empty and is_selected)
+        self.copyBtn.Enable(is_not_empty and is_selected)
+
+    def on_list_item_selected(self, event):
+        self._update_button_states()
+        event.Skip()
+
+    def on_open_video(self, event):
+        item = self.get_selected_video_info()
+        if item:
+            video_id = item.get('id', item.get('video_id'))
+            if video_id:
+                url = f"https://www.youtube.com/watch?v={video_id}"
+                self.core.open_video_url(url)
+
+    def on_action_menu(self, event):
+        if self.listCtrl.GetFirstSelected() == -1: 
+            return
+        menu = self.create_video_action_menu()
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def on_copy_menu(self, event):
+        if self.listCtrl.GetFirstSelected() == -1: 
+            return
+        menu = wx.Menu()
+        menu.Append(1, _("Copy &Title"))
+        menu.Append(2, _("Copy Video &URL"))
+        menu.Append(3, _("Copy &Channel Name"))
+        menu.Append(4, _("Copy C&hannel URL"))
+        menu.AppendSeparator()
+        menu.Append(5, _("Copy &Summary"))
+
+        def on_select(e):
+            id_map = {1: 'title', 2: 'url', 3: 'channel_name', 4: 'channel_url', 5: 'summary'}
+            copy_type = id_map.get(e.GetId())
+            if copy_type:
+                self.on_copy(copy_type)
+        
+        menu.Bind(wx.EVT_MENU, on_select)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def on_remove(self, event):
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index == -1: 
+            return
+        
+        item_to_remove = self.filtered_items[selected_index]
+        title = self._get_item_title_for_messages(item_to_remove)
+        
+        if wx.MessageBox(
+            _("Are you sure you want to remove '{title}'?").format(title=title),
+            _("Confirm Removal"),
+            wx.YES_NO | wx.ICON_QUESTION,
+            self
+        ) != wx.YES:
+            return
+        
+        self.items.remove(item_to_remove)
+        self._save_data()
+        self.on_search("")
+        
+        item_count = self.listCtrl.GetItemCount()
+        if item_count > 0:
+            new_selection = min(selected_index, item_count - 1)
+            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            self.listCtrl.EnsureVisible(new_selection)
+        
+        self._update_button_states()
+        wx.CallAfter(self.listCtrl.SetFocus)
+        self.core._notify_delete(_("Item removed."))
 
     def on_add(self, event):
-        """Delegates the add action to the core worker."""
         try:
             url = api.getClipData()
             if not url or not self.core.is_youtube_url(url):
@@ -997,68 +1104,49 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
         except Exception:
             ui.message(_("Could not read from clipboard."))
             return
-        threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
         
-    def on_remove(self, event):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: return
-        item_to_remove = self.filtered_favorites[selected_index]
-        title = self._get_item_title_for_messages(item_to_remove)
-        if wx.MessageBox(_("Are you sure you want to remove '{title}'?").format(title=title), _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION, self) != wx.YES:
-            return
-        self.favorites.remove(item_to_remove)
-        self._save_favorites()
-        self.on_search("")
-        item_count = self.listCtrl.GetItemCount()
-        if item_count > 0:
-            new_selection = min(selected_index, item_count - 1)
-            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(new_selection)
-        self._update_button_states()
-        wx.CallAfter(self.listCtrl.SetFocus)
-        self.core._notify_delete(_("Item removed."))
+        threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
 
     def on_search(self, search_text):
         search_text = search_text.lower()
+        
         if search_text and self.last_selected_item_before_search is None:
             selected_index = self.listCtrl.GetFirstSelected()
             if selected_index != -1:
-                self.last_selected_item_before_search = self.filtered_favorites[selected_index]
+                self.last_selected_item_before_search = self.filtered_items[selected_index]
+        
         if search_text:
-            self.filtered_favorites = [
-                item for item in self.favorites
+            self.filtered_items = [
+                item for item in self.items
                 if any(search_text in field.lower() for field in self._get_search_fields(item))
             ]
         else:
-            self.filtered_favorites = self.favorites[:]
+            self.filtered_items = self.items[:]
+        
         self._populate_list()
+        
         if not search_text and self.last_selected_item_before_search:
             try:
-                new_index = self.filtered_favorites.index(self.last_selected_item_before_search)
-                self.listCtrl.SetItemState(new_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                new_index = self.filtered_items.index(self.last_selected_item_before_search)
+                self.listCtrl.SetItemState(new_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self.listCtrl.EnsureVisible(new_index)
             except ValueError:
                 if self.listCtrl.GetItemCount() > 0:
-                    self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                    self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                              wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.last_selected_item_before_search = None
         elif search_text and self.listCtrl.GetItemCount() > 0:
-            self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
-            
-    def _populate_list(self):
-        self.listCtrl.Freeze()
-        try:
-            self.listCtrl.DeleteAllItems()
-            for index, item in enumerate(self.filtered_favorites):
-                self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
-                self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
-                self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
-            if self._is_first_load and self.listCtrl.GetItemCount() > 0:
-                self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                self._is_first_load = False
-        finally:
-            self.listCtrl.Thaw()
-            
+
+    def get_selected_video_info(self):
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index == -1: 
+            return None
+        return self.filtered_items[selected_index]
+
     def on_list_key_down(self, event):
         if event.ShiftDown():
             key_code = event.GetKeyCode()
@@ -1069,6 +1157,7 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
             else:
                 event.Skip()
             return
+        
         key_code = event.GetKeyCode()
         if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
             self.on_open_video(event)
@@ -1079,36 +1168,64 @@ class FavVideoPanel(wx.Panel, VideoActionMixin):
 
     def move_item(self, direction):
         selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: return
+        if selected_index == -1: 
+            return
+        
         if (direction == -1 and selected_index == 0) or \
-           (direction == 1 and selected_index == len(self.filtered_favorites) - 1):
+           (direction == 1 and selected_index == len(self.filtered_items) - 1):
             return
-        item_to_move = self.filtered_favorites[selected_index]
-        original_master_index = self.favorites.index(item_to_move)
-        self.favorites.pop(original_master_index)
+        
+        item_to_move = self.filtered_items[selected_index]
+        original_master_index = self.items.index(item_to_move)
+        
+        self.items.pop(original_master_index)
         new_master_index = original_master_index + direction
-        self.favorites.insert(new_master_index, item_to_move)
-        self._save_favorites()
+        self.items.insert(new_master_index, item_to_move)
+        
+        self._save_data()
         self.on_search("")
+        
         try:
-            new_view_index = self.filtered_favorites.index(item_to_move)
-            self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            new_view_index = self.filtered_items.index(item_to_move)
+            self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
+                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(new_view_index)
-        except ValueError: pass
+        except ValueError:
+            pass
+        
         self._update_button_states()
+        wx.CallAfter(self.listCtrl.SetFocus)
 
-    def refresh_favVideo(self, data=None):
-        if not self.listCtrl:
-            return
-        self._load_favorites()
-        self.on_search("")
-        if data and data.get("action") == "add":
-            item_count = self.listCtrl.GetItemCount()
-            if item_count > 0:
-                last_index = item_count - 1
-                self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                self.listCtrl.EnsureVisible(last_index)
-        self._update_button_states()
+    def on_close(self, event):
+        if self.callback_topic:
+            self.core.unregister_callback(self.callback_topic, self.refresh_data)
+        self._save_data()
+
+class FavVideoPanel(BaseVideoListPanel):
+    def _get_file_path(self):
+        return os.path.join(os.path.dirname(__file__), 'fav_video.json')
+
+    def _get_callback_topic(self):
+        return "fav_video_updated"
+
+    def _get_add_button_label(self):
+        return _("Add &new favorite video from clipboard")
+
+    def _add_worker(self, url):
+        threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
+
+class WatchListPanel(BaseVideoListPanel):
+    def _get_file_path(self):
+        return os.path.join(os.path.dirname(__file__), 'watch_list.json')
+
+    def _get_callback_topic(self):
+        return "watch_list_updated"
+
+    def _get_add_button_label(self):
+        return _("Add &new watch list from clipboard")
+
+    def _add_worker(self, url):
+        threading.Thread(target=self.core.add_item_to_watchlist_worker, args=(url,), daemon=True).start()    
 
 class FavChannelPanel(wx.Panel):
     def __init__(self, parent, core_instance):
@@ -1577,7 +1694,7 @@ class FavPlaylistPanel(wx.Panel):
 class FavsDialog(BaseDialogMixin, wx.Dialog):
     _instance = None 
 
-    def __new__(cls, *args, **kwargs):  # <--- ✅ เพิ่มเมธอดนี้ทั้งหมด
+    def __new__(cls, *args, **kwargs): 
         if cls._instance is None:
             return super(FavsDialog, cls).__new__(cls, *args, **kwargs)
         cls._instance.Raise()
@@ -1586,7 +1703,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
     def __init__(self, parent, core_instance, initial_tab_index=0):
         if self.__class__._instance is not None:
             return
-        super().__init__(parent, title=_("Favorites - Youtube Plus"))
+        super().__init__(parent, title=_("Favorites - YoutubePlus"))
         self.__class__._instance = self
 
         self.core = core_instance
@@ -1595,6 +1712,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             {'id': 'videos', 'panel_class': FavVideoPanel, 'name': _("Videos")},
             {'id': 'channels', 'panel_class': FavChannelPanel, 'name': _("Channels")},
             {'id': 'playlists', 'panel_class': FavPlaylistPanel, 'name': _("Playlists")},
+            {'id': 'watchlist', 'panel_class': WatchListPanel, 'name': _("Watch List")},
         ]
 
         default_order = [t['id'] for t in self.tabs_info]
@@ -1674,7 +1792,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
-        full_title = _("Favorites - {tab_name} - Youtube Plus").format(tab_name=tab_title)
+        full_title = _("{tab_name} - Favorites - YoutubePlus").format(tab_name=tab_title)
         self.SetTitle(full_title)
 
     def _build_tabs(self, select_tab_id=None):
@@ -1998,6 +2116,8 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         
     def _on_subscriptions_updated(self):
         """Callback handler to refresh the dialog when data changes."""
+        if not self.IsShown():
+            return
         wx.CallAfter(self._load_all_data)
         wx.CallAfter(self._populate_category_filter)
         wx.CallAfter(self._populate_channel_list)
@@ -2364,7 +2484,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
-        full_title = _("Subscription Feed - {tab_name} - Youtube Plus").format(tab_name=tab_title)
+        full_title = _("Subscription Feed - {tab_name} - YoutubePlus").format(tab_name=tab_title)
         self.SetTitle(full_title)            
         
     def _create_tab_panel(self, tab_id):
@@ -2587,9 +2707,12 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         video_to_mark = self.get_selected_video_info()
         if not video_to_mark: return
         self.pending_focus_info = {'tab_id': currentPage.tab_id, 'index': selected_index}
-        self._mark_videos_as_seen_db([video_to_mark])
-        self.core._notify_callbacks("subscriptions_updated")
-        self.core._notify_delete(_("Marked as seen."))
+        video_id = video_to_mark.get('id')
+        if self.core.mark_videos_as_seen(video_id):
+            self.core._notify_delete(_("Marked as seen."))
+        #self._mark_videos_as_seen_db([video_to_mark])
+        #self.core._notify_callbacks("subscriptions_updated")
+        #self.core._notify_delete(_("Marked as seen."))
         
     def on_mark_all_seen(self, event=None):
         currentPage = self.notebook.GetCurrentPage()
@@ -2604,17 +2727,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self._mark_videos_as_seen_db(videos_in_current_tab)
         self.core._notify_callbacks("subscriptions_updated")
         self.core._notify_delete(_("All videos in the current tab have been marked as seen."))
-
-    def _mark_videos_as_seen_db(self, video_list):
-        if not video_list: return
-        try:
-            con = sqlite3.connect(self.db_path)
-            ids_to_mark = [(v['id'],) for v in video_list]
-            con.executemany("INSERT OR IGNORE INTO seen_videos (video_id) VALUES (?)", ids_to_mark)
-            con.commit()
-        finally:
-            if con: con.close()
-
+    
     def on_open_video(self, event):
         video = self.get_selected_video_info()
         if not video: return
