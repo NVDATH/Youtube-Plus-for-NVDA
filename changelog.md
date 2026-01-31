@@ -1,3 +1,7 @@
+## 2026.1.31
+
+- remove unuseful extractors from yt-dlp
+
 ## 2026.1.29
 
 * update YT-DLP lib to latest version

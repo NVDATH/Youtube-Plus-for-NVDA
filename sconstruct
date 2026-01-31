@@ -25,14 +25,14 @@ def md2html(source, dest):
     )
     with codecs.open(source, "r", "utf-8") as f:
         mdText = f.read()
-        htmlText = markdown.markdown(mdText)
+    htmlText = markdown.markdown(mdText) [cite: 2]
     with codecs.open(dest, "w", "utf-8") as f:
         f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
                 "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
                 "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"%s\" lang=\"%s\">\n" % (lang, lang) +
-                "<head>\n"
-                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n"
+                "<head>\n" [cite: 3]
+                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n" [cite: 4]
                 "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" media=\"screen\"/>\n"
                 "<title>%s</title>\n" % title +
                 "</head>\n<body>\n"
@@ -43,7 +43,7 @@ def md2html(source, dest):
 def mdTool(env):
     mdAction=env.Action(
         lambda target,source,env: md2html(source[0].path, target[0].path),
-        lambda target,source,env: 'Generating %s'%target[0],
+        lambda target,source,env: 'Generating %s'%target[0], [cite: 5]
     )
     mdBuilder=env.Builder(
         action=mdAction,
@@ -64,14 +64,14 @@ if env["dev"]:
     import datetime
     buildDate = datetime.datetime.now()
     year, month, day = str(buildDate.year), str(buildDate.month), str(buildDate.day)
-    env["addon_version"] = "".join([year, month.zfill(2), day.zfill(2), "-dev"])
+    env["addon_version"] = "".join([year, month.zfill(2), day.zfill(2), "-dev"]) [cite: 6]
 elif env["version"] is not None:
     env["addon_version"] = env["version"]
 
 addonFile = env.File("${addon_name}-${addon_version}.nvda-addon")
 
 # ---------- Pre-build: install pip packages to lib ----------
-lib_dir = os.path.join("addon", "globalPlugins", "Youtube Plus", "lib")
+lib_dir = os.path.join("addon", "globalPlugins", "Youtube Plus", "lib") [cite: 1]
 if not os.path.exists(lib_dir):
     os.makedirs(lib_dir)
 
@@ -82,20 +82,37 @@ subprocess.check_call([
     "-r", "requirements.txt",
     "--target", lib_dir,
     "--no-deps"
-])
+]) [cite: 1]
 
 # remove .dist-info folders
 for item in os.listdir(lib_dir):
     item_path = os.path.join(lib_dir, item)
     if item.endswith(".dist-info") and os.path.isdir(item_path):
-        shutil.rmtree(item_path)
+        shutil.rmtree(item_path) [cite: 1]
 
 # post-install cleanup: remove unwanted folders
-unwanted_dirs = ["bin", "share", "testrun"]
+unwanted_dirs = ["bin", "share", "testrun"] [cite: 7]
 for dir_name in unwanted_dirs:
     dir_path = os.path.join(lib_dir, dir_name)
     if os.path.isdir(dir_path):
-        shutil.rmtree(dir_path)
+        shutil.rmtree(dir_path) [cite: 7]
+
+# ---------- NEW: Prune yt-dlp extractors ----------
+# เลือกเก็บเฉพาะไฟล์ที่จำเป็นเพื่อความปลอดภัยและลดขนาด
+extractor_dir = os.path.join(lib_dir, "yt_dlp", "extractor")
+if os.path.exists(extractor_dir):
+    keep_files = [
+        '__init__.py', 'common.py', 'generic.py', 'extractors.py', 
+        'openload.py', 'adobepass.py', 'lazy_extractors.py', 'youtube'
+    ]
+    for item in os.listdir(extractor_dir):
+        item_path = os.path.join(extractor_dir, item)
+        # ตรวจสอบว่าไม่อยู่ในรายการที่ต้องเก็บ และไม่ใช่ไฟล์ตระกูล youtube_ อื่นๆ
+        if item not in keep_files and not item.startswith("youtube_"):
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            else:
+                os.remove(item_path)
 
 # ---------- Add-on builder ----------
 def createAddonBundleFromPath(path, dest):
@@ -104,7 +121,7 @@ def createAddonBundleFromPath(path, dest):
         for dir, dirnames, filenames in os.walk(basedir):
             relativePath = os.path.relpath(dir, basedir)
             for filename in filenames:
-                pathInBundle = os.path.join(relativePath, filename)
+                pathInBundle = os.path.join(relativePath, filename) [cite: 8]
                 absPath = os.path.join(dir, filename)
                 if pathInBundle not in buildVars.excludedFiles:
                     z.write(absPath, pathInBundle)
@@ -112,7 +129,7 @@ def createAddonBundleFromPath(path, dest):
 
 def addonGenerator(target, source, env, for_signature):
     action = env.Action(lambda target, source, env: createAddonBundleFromPath(source[0].abspath, target[0].abspath) and None,
-                        lambda target, source, env: "Generating Addon %s" % target[0])
+                        lambda target, source, env: "Generating Addon %s" % target[0]) [cite: 9]
     return action
 
 env['BUILDERS']['NVDAAddon'] = Builder(generator=addonGenerator)
@@ -128,7 +145,7 @@ def createAddonHelp(dir):
         cssTarget = env.Command(cssPath, "style.css", Copy("$TARGET", "$SOURCE"))
         env.Depends(addon, cssTarget)
     if os.path.isfile("readme.md"):
-        readmePath = os.path.join(docsDir, "en", "readme.md")
+        readmePath = os.path.join(docsDir, "en", "readme.md") [cite: 10]
         readmeTarget = env.Command(readmePath, "readme.md", Copy("$TARGET", "$SOURCE"))
         env.Depends(addon, readmeTarget)
 
@@ -150,7 +167,7 @@ for file in pythonFiles:
 def generateManifest(source, dest):
     addon_info = buildVars.addon_info
     addon_info["addon_version"] = env["addon_version"]
-    with codecs.open(source, "r", "utf-8") as f:
+    with codecs.open(source, "r", "utf-8") as f: [cite: 11]
         manifest_template = f.read()
     manifest = manifest_template.format(**addon_info)
     with codecs.open(dest, "w", "utf-8") as f:
@@ -158,10 +175,10 @@ def generateManifest(source, dest):
 
 env['BUILDERS']['NVDAManifest'] = Builder(generator=lambda target, source, env, for_signature:
                                            env.Action(lambda target, source, env: generateManifest(source[0].abspath, target[0].abspath) and None,
-                                                      lambda target, source, env: "Generating manifest %s" % target[0])
+                                                       lambda target, source, env: "Generating manifest %s" % target[0]) [cite: 12]
                                            )
 
-manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join("manifest.ini.tpl"))
+manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join("manifest.ini.tpl")) [cite: 13]
 env.Depends(addon, manifest)
 
 # ---------- Default ----------
