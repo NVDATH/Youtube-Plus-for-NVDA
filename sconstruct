@@ -25,7 +25,7 @@ def md2html(source, dest):
     )
     with codecs.open(source, "r", "utf-8") as f:
         mdText = f.read()
-        htmlText = markdown.markdown(mdText)
+    htmlText = markdown.markdown(mdText)
     with codecs.open(dest, "w", "utf-8") as f:
         f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
@@ -88,14 +88,44 @@ subprocess.check_call([
 for item in os.listdir(lib_dir):
     item_path = os.path.join(lib_dir, item)
     if item.endswith(".dist-info") and os.path.isdir(item_path):
-        shutil.rmtree(item_path)
+        try:
+            shutil.rmtree(item_path)
+        except Exception:
+            pass
 
 # post-install cleanup: remove unwanted folders
 unwanted_dirs = ["bin", "share", "testrun"]
 for dir_name in unwanted_dirs:
     dir_path = os.path.join(lib_dir, dir_name)
     if os.path.isdir(dir_path):
-        shutil.rmtree(dir_path)
+        try:
+            shutil.rmtree(dir_path)
+        except Exception:
+            pass
+
+# ---------- NEW & STABLE: Prune yt-dlp extractors ----------
+extractor_dir = os.path.join(lib_dir, "yt_dlp", "extractor")
+if os.path.isdir(extractor_dir):
+    # รายการที่คุณต้องการเก็บไว้ตามที่ตกลงกัน
+    keep = {
+        '__init__.py', 'common.py', 'generic.py', 'extractors.py', 
+        'openload.py', 'adobepass.py', 'lazy_extractors.py', 'youtube'
+    }
+    print(f"Pruning yt-dlp extractors in: {extractor_dir}")
+    for item in os.listdir(extractor_dir):
+        # ถ้าอยู่ในรายการที่ต้องเก็บ หรือเป็นไฟล์ตระกูล youtube_ ให้ข้ามไป
+        if item in keep or item.startswith("youtube_"):
+            continue
+            
+        item_path = os.path.join(extractor_dir, item)
+        try:
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            else:
+                os.remove(item_path)
+        except Exception as e:
+            # พิมพ์เตือนแต่ไม่หยุดการทำงาน เพื่อให้ Workflow รันต่อจนจบได้
+            print(f"Warning: Could not remove {item}: {e}")
 
 # ---------- Add-on builder ----------
 def createAddonBundleFromPath(path, dest):
@@ -158,7 +188,7 @@ def generateManifest(source, dest):
 
 env['BUILDERS']['NVDAManifest'] = Builder(generator=lambda target, source, env, for_signature:
                                            env.Action(lambda target, source, env: generateManifest(source[0].abspath, target[0].abspath) and None,
-                                                      lambda target, source, env: "Generating manifest %s" % target[0])
+                                                       lambda target, source, env: "Generating manifest %s" % target[0])
                                            )
 
 manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join("manifest.ini.tpl"))
