@@ -100,7 +100,7 @@ for dir_name in unwanted_dirs:
 extractor_dir = os.path.join(lib_dir, "yt_dlp", "extractor")
 if os.path.exists(extractor_dir):
     keep_files = [
-        '__init__.py', 'common.py', 'generic.py', 'extractors.py', 
+        '__init__.py', 'afreecatv.py', 'common.py', 'generic.py', 'extractors.py', 
         'openload.py', 'adobepass.py', 'lazy_extractors.py', 'youtube'
     ]
     for item in os.listdir(extractor_dir):

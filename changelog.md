@@ -1,5 +1,6 @@
 ## 2026.2.1
 
+* update yt-dlp to latest 2026.1.31
 * update some description format
 * fix lost library
 
