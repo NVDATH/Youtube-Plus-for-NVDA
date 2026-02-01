@@ -4,7 +4,7 @@
 # Add-on information variables
 addon_info = {
     "addon_name": "YoutubePlus",
-    "addon_version": "2026.1.31",
+    "addon_version": "2026.2.1",
     "addon_author": "NVDA_TH <nvdainth@gmail.com>, assisted by A.I.",
     "addon_summary": "YouTubePlus",
     "addon_description": (
