@@ -1,3 +1,8 @@
+## 2026.2.1
+
+* update some description format
+* fix lost library
+
 ## 2026.1.31
 
 - remove unuseful extractors from yt-dlp
