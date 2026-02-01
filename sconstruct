@@ -71,7 +71,7 @@ elif env["version"] is not None:
 addonFile = env.File("${addon_name}-${addon_version}.nvda-addon")
 
 # ---------- Pre-build: install pip packages to lib ----------
-lib_dir = os.path.join("addon", "globalPlugins", "Youtube Plus", "lib")
+lib_dir = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib")
 if not os.path.exists(lib_dir):
     os.makedirs(lib_dir)
 
