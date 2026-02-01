@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-# NVDA add-on SConstruct (English-only)
-# Auto-install lib from requirements.txt to addon/lib
-# No dependencies installed, remove .dist-info
+# NVDA add-on SConstruct (อ้างอิง sconstruct_old เป็นฐาน 100%)
 
 import codecs
 import os
@@ -15,44 +13,44 @@ sys.dont_write_bytecode = True
 import buildVars
 from SCons.Script import Variables, BoolVariable, Environment, Builder, Copy
 
-# ---------- Markdown to HTML ----------
+# ---------- Markdown to HTML (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 def md2html(source, dest):
-    import markdown
-    lang = os.path.basename(os.path.dirname(source)).replace('_', '-')
-    title="{addonSummary} {addonVersion}".format(
-        addonSummary=buildVars.addon_info["addon_summary"],
-        addonVersion=buildVars.addon_info["addon_version"]
-    )
-    with codecs.open(source, "r", "utf-8") as f:
-        mdText = f.read()
-    htmlText = markdown.markdown(mdText)
-    with codecs.open(dest, "w", "utf-8") as f:
-        f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
-                "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
-                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"%s\" lang=\"%s\">\n" % (lang, lang) +
-                "<head>\n"
-                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n"
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" media=\"screen\"/>\n"
-                "<title>%s</title>\n" % title +
-                "</head>\n<body>\n"
-        )
-        f.write(htmlText)
-        f.write("\n</body>\n</html>")
+	import markdown
+	lang = os.path.basename(os.path.dirname(source)).replace('_', '-')
+	title="{addonSummary} {addonVersion}".format(
+		addonSummary=buildVars.addon_info["addon_summary"],
+		addonVersion=buildVars.addon_info["addon_version"]
+	)
+	with codecs.open(source, "r", "utf-8") as f:
+		mdText = f.read()
+		htmlText = markdown.markdown(mdText)
+	with codecs.open(dest, "w", "utf-8") as f:
+		f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
+				"    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+				"<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"%s\" lang=\"%s\">\n" % (lang, lang) +
+				"<head>\n"
+				"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n"
+				"<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" media=\"screen\"/>\n"
+				"<title>%s</title>\n" % title +
+				"</head>\n<body>\n"
+		)
+		f.write(htmlText)
+		f.write("\n</body>\n</html>")
 
 def mdTool(env):
-    mdAction=env.Action(
-        lambda target,source,env: md2html(source[0].path, target[0].path),
-        lambda target,source,env: 'Generating %s'%target[0],
-    )
-    mdBuilder=env.Builder(
-        action=mdAction,
-        suffix='.html',
-        src_suffix='.md',
-    )
-    env['BUILDERS']['markdown']=mdBuilder
+	mdAction=env.Action(
+		lambda target,source,env: md2html(source[0].path, target[0].path),
+		lambda target,source,env: 'Generating %s'%target[0],
+	)
+	mdBuilder=env.Builder(
+		action=mdAction,
+		suffix='.html',
+		src_suffix='.md',
+	)
+	env['BUILDERS']['markdown']=mdBuilder
 
-# ---------- Environment ----------
+# ---------- Environment (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 vars = Variables()
 vars.Add("version", "The version of this build", buildVars.addon_info["addon_version"])
 vars.Add(BoolVariable("dev", "Whether this is a daily development version", False))
@@ -61,139 +59,125 @@ env = Environment(variables=vars, ENV=os.environ, tools=[mdTool])
 env.Append(**buildVars.addon_info)
 
 if env["dev"]:
-    import datetime
-    buildDate = datetime.datetime.now()
-    year, month, day = str(buildDate.year), str(buildDate.month), str(buildDate.day)
-    env["addon_version"] = "".join([year, month.zfill(2), day.zfill(2), "-dev"])
+	import datetime
+	buildDate = datetime.datetime.now()
+	year, month, day = str(buildDate.year), str(buildDate.month), str(buildDate.day)
+	env["addon_version"] = "".join([year, month.zfill(2), day.zfill(2), "-dev"])
 elif env["version"] is not None:
-    env["addon_version"] = env["version"]
+	env["addon_version"] = env["version"]
 
 addonFile = env.File("${addon_name}-${addon_version}.nvda-addon")
 
-# ---------- Pre-build: install pip packages to lib ----------
+# ---------- ติดตั้ง Lib (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 lib_dir = os.path.join("addon", "globalPlugins", "Youtube Plus", "lib")
 if not os.path.exists(lib_dir):
-    os.makedirs(lib_dir)
+	os.makedirs(lib_dir)
 
-# install requirements.txt to lib folder, no dependencies
+# ขั้นตอนนี้จะติดตั้งทับลงไปในโฟลเดอร์เดิม โดยไม่ลบไฟล์ที่มีอยู่แล้วใน GitHub ของคุณ
 subprocess.check_call([
-    sys.executable, "-m", "pip", "install",
-    "--upgrade",
-    "-r", "requirements.txt",
-    "--target", lib_dir,
-    "--no-deps"
+	sys.executable, "-m", "pip", "install",
+	"--upgrade",
+	"-r", "requirements.txt",
+	"--target", lib_dir,
+	"--no-deps"
 ])
 
-# remove .dist-info folders
+# ลบ .dist-info และโฟลเดอร์ขยะ (ยกมาจาก sconstruct_old เป๊ะๆ)
 for item in os.listdir(lib_dir):
-    item_path = os.path.join(lib_dir, item)
-    if item.endswith(".dist-info") and os.path.isdir(item_path):
-        try:
-            shutil.rmtree(item_path)
-        except Exception:
-            pass
+	item_path = os.path.join(lib_dir, item)
+	if item.endswith(".dist-info") and os.path.isdir(item_path):
+		shutil.rmtree(item_path)
 
-# post-install cleanup: remove unwanted folders
 unwanted_dirs = ["bin", "share", "testrun"]
 for dir_name in unwanted_dirs:
-    dir_path = os.path.join(lib_dir, dir_name)
-    if os.path.isdir(dir_path):
-        try:
-            shutil.rmtree(dir_path)
-        except Exception:
-            pass
+	dir_path = os.path.join(lib_dir, dir_name)
+	if os.path.isdir(dir_path):
+		shutil.rmtree(dir_path)
 
-# ---------- NEW & STABLE: Prune yt-dlp extractors ----------
+# ============================================================
+# แทรก: การลบ Extractors ที่ไม่จำเป็น (ปรับตามโครงสร้างใหม่)
+# ============================================================
 extractor_dir = os.path.join(lib_dir, "yt_dlp", "extractor")
 if os.path.isdir(extractor_dir):
-    # รายการที่คุณต้องการเก็บไว้ตามที่ตกลงกัน
-    keep = {
-        '__init__.py', 'common.py', 'generic.py', 'extractors.py', 
-        'openload.py', 'adobepass.py', 'lazy_extractors.py', 'youtube'
-    }
-    print(f"Pruning yt-dlp extractors in: {extractor_dir}")
+    # เก็บไฟล์ระบบ และโฟลเดอร์ 'youtube' เอาไว้
+    keep_items = ['__init__.py', 'common.py', 'generic.py', 'extractors.py', 'adobepass.py', 'lazy_extractors.py', 'openload.py', 'youtube']
     for item in os.listdir(extractor_dir):
-        # ถ้าอยู่ในรายการที่ต้องเก็บ หรือเป็นไฟล์ตระกูล youtube_ ให้ข้ามไป
-        if item in keep or item.startswith("youtube_"):
+        if item in keep_items:
             continue
-            
+        
         item_path = os.path.join(extractor_dir, item)
         try:
             if os.path.isdir(item_path):
                 shutil.rmtree(item_path)
             else:
                 os.remove(item_path)
-        except Exception as e:
-            # พิมพ์เตือนแต่ไม่หยุดการทำงาน เพื่อให้ Workflow รันต่อจนจบได้
-            print(f"Warning: Could not remove {item}: {e}")
+        except:
+            pass
+# ============================================================
 
-# ---------- Add-on builder ----------
+# ---------- Add-on builder (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 def createAddonBundleFromPath(path, dest):
-    basedir = os.path.abspath(path)
-    with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as z:
-        for dir, dirnames, filenames in os.walk(basedir):
-            relativePath = os.path.relpath(dir, basedir)
-            for filename in filenames:
-                pathInBundle = os.path.join(relativePath, filename)
-                absPath = os.path.join(dir, filename)
-                if pathInBundle not in buildVars.excludedFiles:
-                    z.write(absPath, pathInBundle)
-    return dest
+	basedir = os.path.abspath(path)
+	with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as z:
+		for dir, dirnames, filenames in os.walk(basedir):
+			relativePath = os.path.relpath(dir, basedir)
+			for filename in filenames:
+				pathInBundle = os.path.join(relativePath, filename)
+				absPath = os.path.join(dir, filename)
+				if pathInBundle not in buildVars.excludedFiles:
+					z.write(absPath, pathInBundle)
+	return dest
 
 def addonGenerator(target, source, env, for_signature):
-    action = env.Action(lambda target, source, env: createAddonBundleFromPath(source[0].abspath, target[0].abspath) and None,
-                        lambda target, source, env: "Generating Addon %s" % target[0])
-    return action
+	action = env.Action(lambda target, source, env: createAddonBundleFromPath(source[0].abspath, target[0].abspath) and None,
+						lambda target, source, env: "Generating Addon %s" % target[0])
+	return action
 
 env['BUILDERS']['NVDAAddon'] = Builder(generator=addonGenerator)
 
-# ---------- Build add-on ----------
+# ---------- สร้างส่วนเสริมและเอกสาร (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 addon = env.NVDAAddon(addonFile, env.Dir('addon'))
 
-# ---------- Convert markdown files to HTML ----------
 def createAddonHelp(dir):
-    docsDir = os.path.join(dir, "doc")
-    if os.path.isfile("style.css"):
-        cssPath = os.path.join(docsDir, "style.css")
-        cssTarget = env.Command(cssPath, "style.css", Copy("$TARGET", "$SOURCE"))
-        env.Depends(addon, cssTarget)
-    if os.path.isfile("readme.md"):
-        readmePath = os.path.join(docsDir, "en", "readme.md")
-        readmeTarget = env.Command(readmePath, "readme.md", Copy("$TARGET", "$SOURCE"))
-        env.Depends(addon, readmeTarget)
+	docsDir = os.path.join(dir, "doc")
+	if os.path.isfile("style.css"):
+		cssPath = os.path.join(docsDir, "style.css")
+		cssTarget = env.Command(cssPath, "style.css", Copy("$TARGET", "$SOURCE"))
+		env.Depends(addon, cssTarget)
+	if os.path.isfile("readme.md"):
+		readmePath = os.path.join(docsDir, "en", "readme.md")
+		readmeTarget = env.Command(readmePath, "readme.md", Copy("$TARGET", "$SOURCE"))
+		env.Depends(addon, readmeTarget)
 
 createAddonHelp("addon")
 for mdFile in env.Glob(os.path.join('addon', 'doc', '*', '*.md')):
-    htmlFile = env.markdown(mdFile)
-    env.Depends(htmlFile, mdFile)
-    env.Depends(addon, htmlFile)
+	htmlFile = env.markdown(mdFile)
+	env.Depends(htmlFile, mdFile)
+	env.Depends(addon, htmlFile)
 
-# ---------- Dependencies for Python files ----------
 def expandGlobs(files):
-    return [f for pattern in files for f in env.Glob(pattern)]
+	return [f for pattern in files for f in env.Glob(pattern)]
 
 pythonFiles = expandGlobs(buildVars.pythonSources)
 for file in pythonFiles:
-    env.Depends(addon, file)
+	env.Depends(addon, file)
 
-# ---------- Manifest ----------
+# ---------- สร้าง Manifest (ยกมาจาก sconstruct_old เป๊ะๆ) ----------
 def generateManifest(source, dest):
-    addon_info = buildVars.addon_info
-    addon_info["addon_version"] = env["addon_version"]
-    with codecs.open(source, "r", "utf-8") as f:
-        manifest_template = f.read()
-    manifest = manifest_template.format(**addon_info)
-    with codecs.open(dest, "w", "utf-8") as f:
-        f.write(manifest)
+	addon_info = buildVars.addon_info
+	addon_info["addon_version"] = env["addon_version"]
+	with codecs.open(source, "r", "utf-8") as f:
+		manifest_template = f.read()
+	manifest = manifest_template.format(**addon_info)
+	with codecs.open(dest, "w", "utf-8") as f:
+		f.write(manifest)
 
 env['BUILDERS']['NVDAManifest'] = Builder(generator=lambda target, source, env, for_signature:
-                                           env.Action(lambda target, source, env: generateManifest(source[0].abspath, target[0].abspath) and None,
-                                                       lambda target, source, env: "Generating manifest %s" % target[0])
-                                           )
+	env.Action(lambda target, source, env: generateManifest(source[0].abspath, target[0].abspath) and None,
+	lambda target, source, env: "Generating manifest %s" % target[0]))
 
 manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join("manifest.ini.tpl"))
 env.Depends(addon, manifest)
 
-# ---------- Default ----------
 env.Default(addon)
 env.Clean(addon, ['.sconsign.dblite', 'addon/doc/en/'])
