@@ -272,7 +272,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             script_name = self.__YoutubePlusGestures.get(gesture.mainKeyName)
             if script_name:
                 script = getattr(self, "script_" + script_name)
-        if not script: script = finally_(self.script_error, self.finish)
+        if not script: script = finally_(self.handle_error, self.finish)
         return finally_(script, self.finish)
 
     def finish(self):
@@ -280,7 +280,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.clearGestureBindings()
         self.bindGestures(self.__gestures)
 
-    def script_error(self, gesture):
+    def handle_error(self, gesture):
         """
         Handles all non-successful layer actions, including invalid keys
         and cancelling the layer. Now respects the user's notification mode.
@@ -2062,7 +2062,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     gesture="kb:NVDA+y")
     def script_YoutubePlusLayer(self, gesture):
         if self.toggling:
-            self.script_error(gesture)
+            self.handle_error(gesture)
             return
         self.bindGestures(self.__YoutubePlusGestures)
         self.toggling = True

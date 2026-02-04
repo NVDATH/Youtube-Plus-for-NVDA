@@ -1,3 +1,8 @@
+## 2026.2.4
+
+* update yt-dlp to latest 2026.2.4
+* Removed potentially confusing commands from the input gesture settings.
+
 ## 2026.2.1
 
 * update yt-dlp to latest 2026.1.31
