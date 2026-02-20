@@ -51,10 +51,17 @@ from .dialogs import (
     SubDialog,
     SearchDialog,
     ChannelVideoDialog,
-    ManageSubscriptionsDialog
+    ManageSubscriptionsDialog,
+    ProfileManagementDialog
 )
 from .utils import retry_on_network_error
 from .errors import NetworkRetryError, HandledError
+import config
+import globalVars
+
+
+
+"""
 import globalVars
 NVDA_CONFIG_PATH = globalVars.appArgs.configPath
 ADDON_DATA_DIR = os.path.join(NVDA_CONFIG_PATH, "youtubePlus")
@@ -64,6 +71,7 @@ if not os.path.exists(ADDON_DATA_DIR):
     except Exception:
         ADDON_DATA_DIR = NVDA_CONFIG_PATH
 db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
+"""
 import addonHandler
 addonHandler.initTranslation()
 
@@ -160,12 +168,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 - H: Show this help dialog
 """)
 
+    def get_profile_path(self, filename=None):
+        profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+        base_path = os.path.join(globalVars.appArgs.configPath, "YoutubePlus", profile)
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        if filename:
+            return os.path.join(base_path, filename)
+        return base_path
+    
+
     def _init_sub_database(self):
         """
         Initializes the subscription database and creates/updates tables
         to support the new comprehensive category system.
         """
         try:
+            db_path = self.get_profile_path("subscription.db")
             con = sqlite3.connect(db_path)
             cur = con.cursor()
             
@@ -1269,10 +1288,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
             video_id = info.get('id')
             with self._fav_file_lock:
-                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_video.json')
                 favorites = []
                 try:
-                    with open(fav_file_path, 'r', encoding='utf-8') as f:
+                    fav_video__path = self.get_profile_path("fav_video.json")
+                    with open(fav_video_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
@@ -1287,7 +1306,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "was_live": info.get('was_live', False), "has_replay": has_replay
                 }
                 favorites.append(new_item)
-                with open(fav_file_path, 'w', encoding='utf-8') as f:
+                with open(fav_video_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
             self._notify_callbacks("fav_video_updated", {"action": "add"})
             # Translators: Success message shown after a video has been successfully added to the favorites list.
@@ -1323,10 +1342,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             description = channel_info.get('description', '')
             subscriber_count = channel_info.get('channel_follower_count')
             with self._fav_file_lock:
-                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_channel.json')
                 favorites = []
                 try:
-                    with open(fav_file_path, 'r', encoding='utf-8') as f:
+                    fav_channel__path = self.get_profile_path("fav_channel.json")
+                    with open(fav_channel_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
@@ -1341,7 +1360,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "description": description
                 }
                 favorites.append(new_item)
-                with open(fav_file_path, 'w', encoding='utf-8') as f:
+                with open(fav_channel_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
             self._notify_callbacks("fav_channel_updated", {"action": "add"})
             # Translators: Success message shown after a YouTube channel has been successfully added to the favorites list.
@@ -1371,10 +1390,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             with self._get_ydl_instance(extra_opts=ydl_opts) as ydl:
                 info = ydl.extract_info(clean_playlist_url, download=False)
             with self._fav_file_lock:
-                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
                 favorites = []
                 try:
-                    with open(fav_file_path, 'r', encoding='utf-8') as f:
+                    fav_playlist__path = self.get_profile_path("fav_playlist.json")
+                    with open(fav_playlist_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
@@ -1394,7 +1413,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "description": (info.get('description', '')[:500] if info.get('description') else ""),
                 }
                 favorites.append(new_item)
-                with open(fav_file_path, 'w', encoding='utf-8') as f:
+                with open(fav_playlist_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
             self._notify_callbacks("fav_playlist_updated", {"action": "add"})
             # Translators: Success message shown after a playlist has been added to favorites. {playlist} is the title of the playlist.
@@ -1414,10 +1433,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not playlist_id or new_count is None:
             return
         with self._fav_file_lock:
-            fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
             playlists = []
             try:
-                with open(fav_file_path, 'r', encoding='utf-8') as f:
+                with open(fav_playlist_path, 'r', encoding='utf-8') as f:
                     playlists = json.load(f)
             except (FileNotFoundError, json.JSONDecodeError):
                 return
@@ -1431,7 +1449,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     break
             if item_updated:
                 try:
-                    with open(fav_file_path, 'w', encoding='utf-8') as f:
+                    with open(fav_playlist_path, 'w', encoding='utf-8') as f:
                         json.dump(playlists, f, indent=2, ensure_ascii=False)
                     update_data = {'playlist_id': playlist_id, 'new_count': new_count}
                     self._notify_callbacks("fav_playlist_item_updated", update_data)
@@ -1446,12 +1464,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
             video_id = info.get('id')
             title = info.get('title')
-            file_path = os.path.join(ADDON_DATA_DIR, 'watch_list.json')
             with self._fav_file_lock:
                 watchlist = []
-                if os.path.exists(file_path):
+                watchlist_path = self.get_profile_path("watch_list.json")
+                if os.path.exists(watchlist_path):
                     try:
-                        with open(file_path, 'r', encoding='utf-8') as f:
+                        with open(watchlist_path, 'r', encoding='utf-8') as f:
                             watchlist = json.load(f)
                     except (json.JSONDecodeError, TypeError):
                         watchlist = []
@@ -1467,7 +1485,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     }
                     watchlist.append(new_item)
-                    with open(file_path, 'w', encoding='utf-8') as f:
+                    with open(watchlist_path, 'w', encoding='utf-8') as f:
                         json.dump(watchlist, f, indent=2, ensure_ascii=False)
                     # Translators: Success message shown when a video is successfully added to the Watch List. {title} is the video title.
                     self._notify_success(_("Added '{title}' to Watch List.").format(title=new_item['title']))
@@ -1647,6 +1665,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def unsubscribe_from_channel_worker(self, channel_url, channel_name):
         """Worker to handle unsubscribing from a channel."""
         try:
+            db_path = self.get_profile_path("subscription.db")
             con = sqlite3.connect(db_path)
             cur = con.cursor()
             cur.execute("DELETE FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
@@ -1975,6 +1994,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """Directly shows the new tabbed subscription feed dialog."""
         #log.critical("!!! _show_subscription_feed_directly was called. This is the trigger for SubDialog to appear. !!!")
         try:
+            db_path = self.get_profile_path("subscription.db")
             con = sqlite3.connect(db_path)
             cur = con.cursor()
             cur.execute("SELECT COUNT(*) FROM subscribed_channels")
@@ -2041,6 +2061,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def _execute_pruning_all(self):
             """The actual database deletion part for clearing ALL videos."""
             try:
+                db_path = self.get_profile_path("subscription.db")
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
                 cur.execute("DELETE FROM videos")
@@ -2271,6 +2292,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not video_ids:
             return
         try:
+            db_path = self.get_profile_path("subscription.db")
             with sqlite3.connect(db_path) as con:
                 con.executemany(
                     "INSERT OR IGNORE INTO seen_videos (video_id) VALUES (?)",
@@ -2282,6 +2304,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         except Exception as e:
             log.error(f"Error marking videos as seen: {e}")
             return False
+
+    @script(description=_("Show user profile manager dialog."))
+    def script_showUserProfileManagerDialog(self, gesture):
+        #log.info("Script triggered: showUserProfileManagerDialog")
+        gui.mainFrame.prePopup()
+        dialog = ProfileManagementDialog(gui.mainFrame)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
 
     __YoutubePlusGestures = {
         "kb:a": "showAddMenu",
@@ -2299,5 +2330,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:shift+l": "stopMonitor",
         "kb:r": "toggleAutoSpeak",
         "kb:v": "showMessagesDialog",
+        "kb:u": "showUserProfileManagerDialog",
         "kb:h": "displayHelp"
     }

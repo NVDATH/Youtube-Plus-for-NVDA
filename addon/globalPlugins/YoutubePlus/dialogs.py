@@ -18,14 +18,13 @@ import threading
 import controlTypes 
 import sqlite3
 from logHandler import log
+import shutil
 import globalVars
-NVDA_CONFIG_PATH = globalVars.appArgs.configPath
-ADDON_DATA_DIR = os.path.join(NVDA_CONFIG_PATH, "youtubePlus")
-if not os.path.exists(ADDON_DATA_DIR):
-    try:
-        os.makedirs(ADDON_DATA_DIR)
-    except Exception:
-        ADDON_DATA_DIR = NVDA_CONFIG_PATH
+import globalCommands
+
+
+
+
 
 # Initialize translations for this file
 addonHandler.initTranslation()
@@ -34,6 +33,8 @@ def copy_to_clipboard(text):
     api.copyToClip(text)
 
 confspec = {
+    "activeProfile": "string(default='default')",
+    "quickAction": "string(default='open_video')", 
     "progressIndicatorMode": "string(default='beep')",
     "sortOrder": "string(default='newest')",
     "playlist_fetch_count": "integer(default=20, min=5, max=100)",
@@ -814,20 +815,14 @@ class VideoActionMixin:
         else:
             listCtrl = getattr(self, 'listCtrl', None)
             tab_id = None
-
         if not listCtrl: return
-        
         selected_index = listCtrl.GetFirstSelected()
         video_to_mark = self.get_selected_video_info()
         if not video_to_mark: return
-            
         self.pending_focus_info = {'tab_id': tab_id, 'index': selected_index}
-        
         video_id = video_to_mark.get('video_id') or video_to_mark.get('id')
         if not video_id: return
-            
         url = f"https://www.youtube.com/watch?v={video_id}"
-        
         threading.Thread(
             target=self.core.add_to_watchlist_worker, 
             args=(url,), 
@@ -897,9 +892,78 @@ class VideoActionMixin:
             if text_to_copy:
                 api.copyToClip(text_to_copy)
                 ui.message(_("Copied"))
-                
+            
     def _view_channel_content(self, content_type):
-        pass
+        video = self.get_selected_video_info()
+        if not video: return
+        channel_url = video.get("channel_url")
+        channel_name = video.get("channel_name")
+        if not channel_url or not channel_name:
+            ui.message(_("Error: Channel information not found for this item."))
+            return
+        suffix_map = {"videos": "/videos", "shorts": "/shorts", "streams": "/streams"}
+        label_map = {"videos": _("Videos"), "shorts": _("Shorts"), "streams": _("Live")}
+        suffix = suffix_map.get(content_type, "/videos")
+        label = label_map.get(content_type, _("Content"))
+        full_url = channel_url.rstrip('/') + suffix
+        title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
+        thread_kwargs = {
+            'url': full_url, 'dialog_title_template': title_template, 'content_type_label': label,
+            'base_channel_url': channel_url, 'base_channel_name': channel_name
+        }
+        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
+
+    def handle_video_list_keys(self, event):
+        """
+        Universal handler for Enter and Space keys.
+        """
+        key_code = event.GetKeyCode()
+        if key_code == wx.WXK_RETURN:
+            self.on_open_video(event)
+            return
+        elif key_code == wx.WXK_SPACE:
+            self.run_quick_action(event)
+            return
+        event.Skip()
+
+    def run_quick_action(self, event=None):
+        action = config.conf["YoutubePlus"].get("quickAction", "open_video")
+        if action == "open_video":
+            self.on_open_video(None)
+        elif action == "info":
+            self.on_view_info(None)
+        elif action == "comments":
+            self.on_view_comments(None)
+        elif action == "chapters":
+            self.on_show_chapters(None)
+        elif action == "download_video":
+            self.on_download_video(None)
+        elif action == "download_audio":
+            self.on_download_audio(None)
+        elif action == "add_to_fav_video":
+            self.on_add_to_fav_video(None)
+        elif action == "add_to_fav_channel":
+            self.on_add_to_fav_channel(None)
+        elif action == "add__to_watchlist":
+            self.on_add_to_watchlist(None)
+        elif action == "copy_url":
+            self.on_copy("url")
+        elif action == "copy_title":
+            self.on_copy("title")
+        elif action == "copy_channel_name":
+            self.on_copy("channel_name")
+        elif action == "copy_channel_url":
+            self.on_copy("channel_url")
+        elif action == "copy_summary":
+            self.on_copy("summary")
+        elif action == "open_channel":
+            self.on_open_channel(None)
+        elif action == "show_channel_videos":
+            self._view_channel_content("videos")
+        elif action == "show_channel_shorts":
+            self._view_channel_content("shorts")
+        elif action == "show_channel_lives":
+            self._view_channel_content("streams")
 
 class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     def __init__(self, parent, core_instance):
@@ -1036,14 +1100,6 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self._update_button_states()
         event.Skip()
 
-    def on_open_video(self, event):
-        item = self.get_selected_video_info()
-        if item:
-            video_id = item.get('id', item.get('video_id'))
-            if video_id:
-                url = f"https://www.youtube.com/watch?v={video_id}"
-                self.core.open_video_url(url)
-
     def on_action_menu(self, event):
         if self.listCtrl.GetFirstSelected() == -1: 
             return
@@ -1111,8 +1167,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 return
         except Exception:
             ui.message(_("Could not read from clipboard."))
-            return
-        
+            return        
         threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
 
     def on_search(self, search_text):
@@ -1156,23 +1211,20 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         return self.filtered_items[selected_index]
 
     def on_list_key_down(self, event):
+        key_code = event.GetKeyCode()
         if event.ShiftDown():
-            key_code = event.GetKeyCode()
             if key_code == wx.WXK_UP:
                 self.move_item(-1)
+                return
             elif key_code == wx.WXK_DOWN:
                 self.move_item(1)
-            else:
-                event.Skip()
-            return
-        
-        key_code = event.GetKeyCode()
-        if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
-            self.on_open_video(event)
-        elif key_code == wx.WXK_DELETE:
-            self.on_remove(event)
-        else:
+                return
             event.Skip()
+            return
+        if key_code == wx.WXK_DELETE:
+            self.on_remove(event)
+            return
+        self.handle_video_list_keys(event)
 
     def move_item(self, direction):
         selected_index = self.listCtrl.GetFirstSelected()
@@ -1209,9 +1261,10 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
             self.core.unregister_callback(self.callback_topic, self.refresh_data)
         self._save_data()
 
+
 class FavVideoPanel(BaseVideoListPanel):
     def _get_file_path(self):
-        return os.path.join(ADDON_DATA_DIR, 'fav_video.json')
+        return self.core.get_profile_path("fav_video.json")
 
     def _get_callback_topic(self):
         return "fav_video_updated"
@@ -1224,7 +1277,7 @@ class FavVideoPanel(BaseVideoListPanel):
 
 class WatchListPanel(BaseVideoListPanel):
     def _get_file_path(self):
-        return os.path.join(ADDON_DATA_DIR, 'watch_list.json')
+        return self.core.get_profile_path("watch_list.json")
 
     def _get_callback_topic(self):
         return "watch_list_updated"
@@ -1244,7 +1297,7 @@ class FavChannelPanel(wx.Panel):
         self._is_first_load = True
         self.last_selected_item_before_search = None
         self._is_programmatic_selection = False
-        self.fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_channel.json')
+        self.fav_file_path = self.core.get_profile_path("fav_channel.json")
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -1484,7 +1537,7 @@ class FavPlaylistPanel(wx.Panel):
         self.filtered_playlists = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
-        self.fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
+        self.fav_file_path = self.core.get_profile_path("fav_playlist.json")
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2001,6 +2054,7 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         for index, video in enumerate(self.videos):
             self.listCtrl.InsertItem(index, video.get('title', 'N/A'))
             self.listCtrl.SetItem(index, 1, video.get('duration_str', ''))
+
 class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
     """
     A comprehensive dialog to manage subscribed channels, their categories,
@@ -2021,7 +2075,7 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         self.__class__._instance = self
  
         self.core = core_instance
-        self.db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
+        self.db_path = self.core.get_profile_path("subscription.db")
 
         self.all_channels = []
         self.categories = []
@@ -2335,7 +2389,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         super().__init__(parent, title=_("Subscription Feed"))
         self.__class__._instance = self # Register the new instance
         self.core = core_instance
-        self.db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
+        self.db_path = self.core.get_profile_path("subscription.db")
         self.all_videos = []
         self.user_categories = []
         self.tab_order = []
@@ -2736,11 +2790,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.core._notify_callbacks("subscriptions_updated")
         self.core._notify_delete(_("All videos in the current tab have been marked as seen."))
     
-    def on_open_video(self, event):
-        video = self.get_selected_video_info()
-        if not video: return
-        webbrowser.open(f"https://youtube.com/watch?v={video.get('id')}")
-
     def on_list_key_down(self, event):
         """Handles key presses on the list, including all shortcuts."""
         control_down = event.ControlDown()
@@ -2768,14 +2817,18 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 return
             else:
                 event.Skip()
-        elif key_code == wx.WXK_F2:
+                return
+        if key_code == wx.WXK_F2:
             self.on_rename_category()
-        elif key_code in (wx.WXK_RETURN, wx.WXK_SPACE):
-            self.on_open_video(event)
+            return
         elif key_code == wx.WXK_DELETE: # Delete ธรรมดา
             self.on_mark_seen(event)
+            return
+        elif key_code in (wx.WXK_RETURN, wx.WXK_SPACE):
+            self.handle_video_list_keys(event)
+            return
         else:
-            event.Skip()
+            event.Skip()            
             
     def on_unsubscribe(self, event):
         video = self.get_selected_video_info()
@@ -2786,25 +2839,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             return
         threading.Thread(target=self.core.unsubscribe_from_channel_worker, args=(video['channel_url'], video['channel_name']), daemon=True).start()
 
-    def _view_channel_content(self, content_type):
-        video = self.get_selected_video_info()
-        if not video: return
-        channel_url = video.get("channel_url")
-        channel_name = video.get("channel_name")
-        if not channel_url or not channel_name:
-            ui.message(_("Error: Channel information not found for this item."))
-            return
-        suffix_map = {"videos": "/videos", "shorts": "/shorts", "streams": "/streams"}
-        label_map = {"videos": _("Videos"), "shorts": _("Shorts"), "streams": _("Live")}
-        suffix = suffix_map.get(content_type, "/videos")
-        label = label_map.get(content_type, _("Content"))
-        full_url = channel_url.rstrip('/') + suffix
-        title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
-        thread_kwargs = {
-            'url': full_url, 'dialog_title_template': title_template, 'content_type_label': label,
-            'base_channel_url': channel_url, 'base_channel_name': channel_name
-        }
-        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
         
     def on_add_category(self):
         """Handles adding a new user-defined category."""
@@ -2878,3 +2912,156 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             self.core._notify_error(_("Error removing category."))
         wx.CallAfter(self.notebook.GetCurrentPage().SetFocus)
         
+
+class ProfileManagementDialog(wx.Dialog):
+    def __init__(self, parent):
+        # Translators: Title of the profile management dialog
+        super().__init__(parent, title=_("Manage User Profiles"))
+        self.base_data_path = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
+        self.needs_restart = False
+        
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        sHelper = gui.guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
+        
+        # Translators: Label for the profiles list
+        self.profilesList = sHelper.addItem(wx.ListBox(self, choices=self._get_profiles(), style=wx.LB_SINGLE))
+        
+        buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to add a new profile
+        self.addButton = wx.Button(self, label=_("&Add"))
+        # Translators: Button to rename a profile
+        self.renameButton = wx.Button(self, label=_("&Rename"))
+        # Translators: Button to delete a profile
+        self.deleteButton = wx.Button(self, label=_("&Delete"))
+        
+        buttonSizer.Add(self.addButton)
+        buttonSizer.Add(self.renameButton)
+        buttonSizer.Add(self.deleteButton)
+        
+        mainSizer.Add(sHelper.sizer, proportion=1, flag=wx.ALL | wx.EXPAND, border=10)
+        mainSizer.Add(buttonSizer, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=10)
+        
+        # Standard Buttons - เพิ่ม & ให้กับ Close เพื่อให้กด Alt+C ได้
+        # Translators: Button to close the dialog
+        closeBtn = wx.Button(self, id=wx.ID_CLOSE, label=_("&Close"))
+        mainSizer.Add(closeBtn, flag=wx.ALIGN_RIGHT | wx.ALL, border=10)
+        
+        self.SetSizer(mainSizer)
+        mainSizer.Fit(self)
+
+        if self.profilesList.GetCount() > 0:
+            self.profilesList.SetSelection(0)
+        self.profilesList.SetFocus()
+
+        # Bind Events
+        self.addButton.Bind(wx.EVT_BUTTON, self.on_add)
+        self.renameButton.Bind(wx.EVT_BUTTON, self.on_rename)
+        self.deleteButton.Bind(wx.EVT_BUTTON, self.on_delete)
+        closeBtn.Bind(wx.EVT_BUTTON, self.on_close)
+        self.profilesList.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+
+    def on_list_key_down(self, event):
+        key_code = event.GetKeyCode()
+        if key_code == wx.WXK_F2:
+            self.on_rename(None)
+        elif key_code == wx.WXK_DELETE:
+            self.on_delete(None)
+        else:
+            event.Skip()
+
+    def _get_profiles(self):
+        if not os.path.exists(self.base_data_path):
+            return ["default"]
+        profiles = [f for f in os.listdir(self.base_data_path) if os.path.isdir(os.path.join(self.base_data_path, f))]
+        return sorted(profiles) if profiles else ["default"]
+
+    def on_add(self, event):
+        # Translators: Title and message for adding a profile
+        with wx.TextEntryDialog(self, _("Enter new profile name:"), _("Add Profile")) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                name = dlg.GetValue().strip()
+                if name:
+                    safe_name = "".join([c for c in name if c.isalnum() or c in (' ', '_', '-')]).strip()
+                    path = os.path.join(self.base_data_path, safe_name)
+                    if not os.path.exists(path):
+                        os.makedirs(path)
+                        self.profilesList.Set(self._get_profiles())
+                        idx = self.profilesList.FindString(safe_name)
+                        if idx != wx.NOT_FOUND:
+                            self.profilesList.SetSelection(idx)
+                        self.profilesList.SetFocus()
+                    else:
+                        # Translators: Error when profile exists
+                        gui.messageBox(_("Profile already exists."), _("Error"), wx.OK | wx.ICON_ERROR)
+
+    def on_rename(self, event):
+        old_name = self.profilesList.GetStringSelection()
+        if not old_name: return
+        
+        # Translators: Rename dialog message and title
+        with wx.TextEntryDialog(self, _("Rename profile '{name}' to:").format(name=old_name), _("Rename Profile"), value=old_name) as dlg:
+            if dlg.ShowModal() == wx.ID_OK:
+                new_name = dlg.GetValue().strip()
+                if not new_name or new_name == old_name: return
+                
+                new_name = "".join([c for c in new_name if c.isalnum() or c in (' ', '_', '-')]).strip()
+                old_path = os.path.join(self.base_data_path, old_name)
+                new_path = os.path.join(self.base_data_path, new_name)
+                
+                if os.path.exists(new_path):
+                    # Translators: Error message
+                    gui.messageBox(_("A profile with this name already exists."), _("Error"), wx.OK | wx.ICON_ERROR)
+                    return
+                
+                try:
+                    os.rename(old_path, new_path)
+                    current_active = config.conf["YoutubePlus"].get("activeProfile", "default")
+                    if old_name == current_active:
+                        config.conf["YoutubePlus"]["activeProfile"] = new_name
+                        self.needs_restart = True
+                    
+                    self.profilesList.Set(self._get_profiles())
+                    idx = self.profilesList.FindString(new_name)
+                    if idx != wx.NOT_FOUND:
+                        self.profilesList.SetSelection(idx)
+                    self.profilesList.SetFocus()
+                except Exception as e:
+                    gui.messageBox(_("Failed to rename profile: {e}").format(e=e), _("Error"), wx.OK | wx.ICON_ERROR)
+
+    def on_delete(self, event):
+        name = self.profilesList.GetStringSelection()
+        if not name: return
+        if name == "default":
+            # Translators: Error message for default profile
+            gui.messageBox(_("The default profile cannot be deleted."), _("Error"), wx.OK | wx.ICON_ERROR)
+            return
+            
+        current_active = config.conf["YoutubePlus"].get("activeProfile", "default")
+        if name == current_active:
+            # Translators: Error when trying to delete active profile
+            gui.messageBox(_("Cannot delete the profile currently in use."), _("Error"), wx.OK | wx.ICON_ERROR)
+            return
+
+        # Translators: Confirmation before delete
+        if gui.messageBox(_("Delete profile '{name}' and all its data?").format(name=name),
+                          _("Confirm Delete"), wx.YES_NO | wx.ICON_WARNING) == wx.YES:
+            try:
+                shutil.rmtree(os.path.join(self.base_data_path, name))
+                self.profilesList.Set(self._get_profiles())
+                if self.profilesList.GetCount() > 0:
+                    self.profilesList.SetSelection(0)
+                self.profilesList.SetFocus()
+            except Exception as e:
+                gui.messageBox(_("Failed to delete profile: {e}").format(e=e), _("Error"), wx.OK | wx.ICON_ERROR)
+
+    def on_close(self, event):
+        if self.needs_restart:
+            wx.CallAfter(self._do_restart)
+        self.Destroy()
+
+    def _do_restart(self):
+        # Translators: Message asking to restart NVDA after profile modification
+        msg = _("The active profile has been modified. NVDA must be restarted to apply changes. Restart now?")
+        # Translators: Restart confirmation title
+        if gui.messageBox(msg, _("Restart NVDA"), wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
+            globalCommands.commands.script_restart(None)

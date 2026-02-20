@@ -1,3 +1,9 @@
+## 2026.2.21
+
+- fix some buck on video list
+- add quickAction 
+- add user profile 
+
 ## 2026.2.20
 
 - Resolved a missing dependency error; the add-on now correctly imports required internal components without relying on other installed add-ons.

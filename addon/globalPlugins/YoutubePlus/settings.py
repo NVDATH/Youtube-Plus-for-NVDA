@@ -4,10 +4,11 @@ import wx
 import gui
 import config
 import os
+import globalVars
 import logging
 import addonHandler
 from .core import GlobalPlugin
-
+import globalCommands
 # Initialize translations for this file
 addonHandler.initTranslation()
 
@@ -17,6 +18,75 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
     def makeSettings(self, sizer):
         sHelper = gui.guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
+
+        # Translators: Label for the active profile selection.
+        sHelper.addItem(wx.StaticText(self, label=_("Active &Profile (Requires Restart):")))
+        
+        profiles = self._get_available_profiles()
+        self.profileCombo = sHelper.addItem(wx.ComboBox(self, choices=profiles, style=wx.CB_READONLY))
+        
+        # Translators: Default profile name.
+        current_profile = config.conf["YoutubePlus"].get("activeProfile", _("default"))
+        self.profileCombo.SetStringSelection(current_profile)
+        self.old_profile = current_profile # เก็บค่าไว้เปรียบเทียบตอน Save
+
+        # Translators: Button to open the profile management dialog.
+        self.manageProfilesBtn = sHelper.addItem(wx.Button(self, label=_("&Manage Profiles...")))
+        self.manageProfilesBtn.Bind(wx.EVT_BUTTON, self.on_manage_profiles)
+
+        # Translators: Label for a setting to choose the action performed when pressing the space bar.
+        sHelper.addItem(wx.StaticText(self, label=_("&Quick Action (Space bar):")))
+        self.quickActionChoices = [
+        # Translators: Option to open the video URL in a web browser.
+            _("Open video URL"),
+            # Translators: Option to view detailed information about the video.
+            _("View video info"),
+            # Translators: Option to view video comments.
+            _("View comments"),
+            # Translators: Option to view video chapters.
+            _("View chapters"),
+            # Translators: Option to download the video file.
+            _("Download video"),
+            # Translators: Option to download only the audio from the video.
+            _("Download audio"),
+            # Translators: Option to add the video to favorites.
+            _("Add to Favorites video"),
+            # Translators: Option to add the video channel to favorites.
+            _("Add to Favorites channel"),
+            # Translators: Option to add the video to the watch list.
+            _("Add to Watch List"),
+            # Translators: Option to copy the video URL to the clipboard.
+            _("Copy video URL"),
+            # Translators: Option to copy the video title to the clipboard.
+            _("Copy video title"),
+            # Translators: Option to copy the channel name to the clipboard.
+            _("Copy channel name"),
+            # Translators: Option to copy the channel URL to the clipboard.
+            _("Copy channel URL"),
+            # Translators: Option to copy the video summary to the clipboard.
+            _("Copy video summary"),
+            # Translators: Option to open video channel in a webbrowser.
+            _("Open video channel"),
+            # Translators: Option to show channel videos.
+            _("Show channel videos"),
+        # Translators: Option to show channel shorts.
+            _("Show channel shorts"),
+        # Translators: Option to show channel lives.
+            _("Show channel lives"),
+        ]
+        self.quickActionCombo = sHelper.addItem(wx.ComboBox(self, choices=self.quickActionChoices, style=wx.CB_READONLY))
+        
+        self.qa_values = [
+            'open_video', 'info', 'comments', 'chapters', 
+            'download_video', 'download_audio', 'add_to_fav_video', 'add_to_fav_channel', 'add_to_watchlist',
+            'copy_url', 'copy_title', 'copy_channel_name', 'copy_channel_url', 'copy_summary',
+            'open_channel', 'show_channel_videos', 'show_channel_shorts', 'show_channel_lives'
+        ]
+        current_qa = config.conf["YoutubePlus"].get("quickAction", "open_video")
+        try:
+            self.quickActionCombo.SetSelection(self.qa_values.index(current_qa))
+        except ValueError:
+            self.quickActionCombo.SetSelection(0)
 
         # Translators: Label for a setting to choose how the add-on notifies progress.
         sHelper.addItem(wx.StaticText(self, label=_("&Notification mode:")))
@@ -152,8 +222,55 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.clearDataBtn = wx.Button(self, label=_("Clear All Favorite and Subscription Data..."))
         sHelper.addItem(self.clearDataBtn, flag=wx.ALIGN_CENTER)
         self.clearDataBtn.Bind(wx.EVT_BUTTON, self.on_clear_data)
+        
+
+
+    def _get_available_profiles(self):
+        """Helper to scan directories for profiles."""
+        base_path = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
+        if not os.path.exists(base_path):
+            try:
+                os.makedirs(base_path)
+            except OSError:
+                return [_("default")]
+        
+        profiles = [f for f in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, f))]
+        # Translators: Ensure 'default' is always in the list.
+        if not profiles:
+            profiles = [_("default")]
+        return sorted(profiles)
+
+    def on_manage_profiles(self, event):
+        # เรียกใช้ ProfileManagementDialog ที่อยู่ใน dialogs.py
+        from .dialogs import ProfileManagementDialog
+        with ProfileManagementDialog(self) as dlg:
+            dlg.ShowModal()
+        
+        current_sel = self.profileCombo.GetStringSelection()
+        profiles = self._get_available_profiles()
+        self.profileCombo.Set(profiles)
+        if current_sel in profiles:
+            self.profileCombo.SetStringSelection(current_sel)
+        else:
+            self.profileCombo.SetSelection(0)
+
+    def ask_for_restart(self, profile_name):
+        # Translators: Message shown when user changes the active profile.
+        msg = _("The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply this change. Restart now?").format(profile_name=profile_name)
+        # Translators: Title of the restart confirmation dialog.
+        title = _("Restart NVDA")
+        
+        if gui.messageBox(msg, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
+            globalCommands.commands.script_restart(None)
 
     def onSave(self):
+        new_profile = self.profileCombo.GetStringSelection()
+        if new_profile != self.old_profile:
+            config.conf["YoutubePlus"]["activeProfile"] = new_profile
+            wx.CallAfter(self.ask_for_restart, new_profile)
+
+        selection = self.quickActionCombo.GetSelection()
+        config.conf["YoutubePlus"]["quickAction"] = self.qa_values[selection]
         selection_map_indicator = {0: 'beep', 1: 'sound', 2: 'silent'}
         config.conf["YoutubePlus"]["progressIndicatorMode"] = selection_map_indicator.get(self.indicatorModeCombo.GetSelection(), 'beep')
         config.conf["YoutubePlus"]["sortOrder"] = 'newest' if self.sortOrderCombo.GetSelection() == 0 else 'oldest'

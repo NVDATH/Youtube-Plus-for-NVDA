@@ -10,7 +10,7 @@ addonHandler.initTranslation()
 
 def onInstall():
     addon_name = "YoutubePlus"
-    destination_dir = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
+    destination_dir = os.path.join(globalVars.appArgs.configPath, "YoutubePlus","default")
     
     old_addon = None
     for addon in addonHandler.getAvailableAddons():
