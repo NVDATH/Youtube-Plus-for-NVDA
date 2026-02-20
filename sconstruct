@@ -75,7 +75,6 @@ if not os.path.exists(lib_dir):
     os.makedirs(lib_dir)
 
 # install requirements.txt to lib folder, no dependencies
-"""
 subprocess.check_call([
     sys.executable, "-m", "pip", "install",
     "--upgrade",
@@ -83,7 +82,7 @@ subprocess.check_call([
     "--target", lib_dir,
     "--no-deps"
 ])
-"""
+
 # remove .dist-info folders
 for item in os.listdir(lib_dir):
     item_path = os.path.join(lib_dir, item)
@@ -125,6 +124,19 @@ if os.path.exists(extractor_dir):
                 else:
                     f.write(line)
         print("Security patch applied successfully.")
+
+def generatePot(target, source, env):
+    addon_id = "youtubePlus"
+    pot_file = os.path.join("addon", "locale", f"{addon_id}.pot")
+    if not os.path.exists(os.path.join("addon", "locale")):
+        os.makedirs(os.path.join("addon", "locale"))
+    
+    cmd = f'xgettext --package-name={addon_id} --add-comments=Translators --output={pot_file} --language=Python --keyword=_ --from-code=utf-8 addon/*.py'
+    
+    print(f"Generating POT file: {pot_file}")
+    return os.system(cmd)
+
+env.Alias('pot', [], generatePot)
 
 # ---------- Add-on builder ----------
 def createAddonBundleFromPath(path, dest):
@@ -195,33 +207,4 @@ env.Depends(addon, manifest)
 
 # ---------- Default ----------
 env.Default(addon)
-
-def run_xgettext(target, source, env):
-    addon_id = "youtubePlus"
-    # ใช้ Path ที่คุณยืนยันว่าถูกต้อง
-    xgettext_exe = r"C:\Users\virus\AppData\Roaming\nvda\test\youtube-plus\addon\globalPlugins\YoutubePlus\bin\xgettext.exe"
-    
-    # เตรียมโฟลเดอร์ปลายทาง
-    pot_file = os.path.abspath(target[0].path)
-    locale_dir = os.path.dirname(pot_file)
-    if not os.path.exists(locale_dir):
-        os.makedirs(locale_dir)
-
-    # รวบรวมรายชื่อไฟล์และครอบฟันหนูให้แต่ละไฟล์
-    file_list_str = " ".join([f'"{os.path.abspath(s.path)}"' for s in source])
-    
-    # สร้างคำสั่งแบบ String เดียวที่ CMD ของ Windows เข้าใจได้แน่นอน
-    # เราครอบฟันหนูที่ตัวแปร xgettext_exe และ pot_file ไว้ด้วย
-    cmd = f'"{xgettext_exe}" --package-name={addon_id} --add-comments=Translators --output="{pot_file}" --language=Python --keyword=_ --from-code=utf-8 {file_list_str}'
-
-    print(f"\n--- Generating POT File ---\nTarget: {pot_file}\n")
-    
-    # ใช้ os.system ซึ่งจะส่งคำสั่งนี้ไปที่ CMD โดยตรงเหมือนที่คุณพิมพ์เอง
-    result = os.system(cmd)
-    
-    if result == 0:
-        print("--- SUCCESS! POT file generated ---\n")
-    else:
-        print(f"--- ERROR: xgettext returned exit code {result} ---\n")
-        
-    return result
+env.Clean(addon, ['.sconsign.dblite', 'addon/doc/en/'])
