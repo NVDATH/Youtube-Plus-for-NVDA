@@ -12,28 +12,38 @@ from .core import GlobalPlugin
 addonHandler.initTranslation()
 
 class SettingsPanel(gui.settingsDialogs.SettingsPanel):
+    # Translators: The title of the category in the NVDA Settings dialog.
     title = _("Youtube Plus")
 
     def makeSettings(self, sizer):
         sHelper = gui.guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
-        
+
+        # Translators: Label for a setting to choose how the add-on notifies progress.
         sHelper.addItem(wx.StaticText(self, label=_("&Notification mode:")))
+        # Translators: Options for notification mode. 
+        # Beep: use system beeps; Sound: use audio files; Silent: no notification.
         indicator_choices = [_("Beep"), _("Sound"), _("Silent")]
         self.indicatorModeCombo = sHelper.addItem(wx.ComboBox(self, choices=indicator_choices, style=wx.CB_READONLY))
         mode_map = {'beep': 0, 'sound': 1, 'silent': 2}
         current_mode = config.conf["YoutubePlus"].get("progressIndicatorMode", "beep")
         self.indicatorModeCombo.SetSelection(mode_map.get(current_mode, 0))
 
+        # Translators: Label for a setting to choose the default sort order of videos.
         sHelper.addItem(wx.StaticText(self, label=_("Default &sort order:")))
+        # Translators: Options for video sorting order.
         sort_choices = [_("Newest First"), _("Oldest First")]
         self.sortOrderCombo = sHelper.addItem(wx.ComboBox(self, choices=sort_choices, style=wx.CB_READONLY))
         current_sort = config.conf["YoutubePlus"].get("sortOrder", "newest")
         self.sortOrderCombo.SetSelection(0 if current_sort == 'newest' else 1)
 
-        sHelper.addItem(wx.StaticText(self, label=_("&items to fetch for each content type:")))
+
+        # Translators: Label for a setting to set how many items (videos/shorts) to fetch per channel.
+        sHelper.addItem(wx.StaticText(self, label=_("&Items to fetch for each content type:")))
         self.playlistFetchCountSpin = sHelper.addItem(wx.SpinCtrl(self, min=5, max=100, initial=config.conf["YoutubePlus"].get("playlist_fetch_count", 20)))
 
+        # Translators: Label for a setting to choose which content types to fetch when adding a new subscription.
         contentTypesLabel = _("Default content &types for new subscriptions:")
+        # Translators: Options for content types to fetch.
         contentChoices = [_("Videos"), _("Shorts"), _("Live")]
         self.contentTypesList = sHelper.addLabeledControl(
             contentTypesLabel, gui.nvdaControls.CustomCheckListBox, choices=contentChoices)
@@ -44,12 +54,14 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             if value in internalValues:
                 checkedItems.append(internalValues.index(value))
         self.contentTypesList.CheckedItems = checkedItems
-        
+
+        # Translators: Options for the background update interval.
         self.interval_choices = [
             _("Disabled"), _("15 minutes"), _("30 minutes"), _("1 hour"), _("2 hours"),
             _("4 hours"), _("6 hours"), _("12 hours"), _("24 hours")
         ]
         self.interval_values = [0, 15, 30, 60, 120, 240, 360, 720, 1440]
+        # Translators: Label for a setting to choose how often the add-on checks for new videos in the background.
         sHelper.addItem(wx.StaticText(self, label=_("Background &update interval:")))
         self.intervalCombo = sHelper.addItem(wx.ComboBox(self, choices=self.interval_choices, style=wx.CB_READONLY))
         current_interval = config.conf["YoutubePlus"].get("autoUpdateIntervalMinutes", 0)
@@ -60,12 +72,15 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
 
+        # Translators: Label for a checkbox to toggle automatic reading of new live chat messages.
         self.autoSpeak = sHelper.addItem(wx.CheckBox(self, label=_("&Automatically speak incoming live chat")))
         self.autoSpeak.SetValue(config.conf["YoutubePlus"].get("autoSpeak", True))
 
-        sHelper.addItem(wx.StaticText(self, label=_("&Live chat refresh inteval (seconds):")))
+        # Translators: Label for a setting to set the live chat refresh rate in seconds.
+        sHelper.addItem(wx.StaticText(self, label=_("&Live chat refresh interval (seconds):")))
         self.refreshIntevalSpin = sHelper.addItem(wx.SpinCtrl(self, min=1, max=60, initial=config.conf["YoutubePlus"].get("refreshInteval", 5)))
 
+        # Translators: Label for a setting to set the maximum number of messages stored in the chat history.
         sHelper.addItem(wx.StaticText(self, label=_("Message &history limit (live chat):")))
         self.messageLimitSpin = sHelper.addItem(wx.SpinCtrl(self, min=100, max=20000, initial=config.conf["YoutubePlus"].get("messageLimit", 5000)))
         
@@ -119,21 +134,25 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         """
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
-        
+
+        # Translators: Label for the setting to choose the default folder for downloads and exported files.
         sHelper.addItem(wx.StaticText(self, label=_("Default download and &export folder path:")))
         pathSizer = wx.BoxSizer(wx.HORIZONTAL)
         self.exportPathTextCtrl = wx.TextCtrl(self, value=config.conf["YoutubePlus"].get("exportPath", ""))
         pathSizer.Add(self.exportPathTextCtrl, 1, wx.EXPAND | wx.RIGHT, 5)
+        # Translators: Button to browse for a folder.
         self.browseBtn = wx.Button(self, label=_("&Browse..."))
         pathSizer.Add(self.browseBtn, 0)
         sHelper.addItem(pathSizer, flag=wx.EXPAND)
         self.browseBtn.Bind(wx.EVT_BUTTON, self.onBrowse)
-        
+
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=10)
+
+        # Translators: A button in the settings dialog that allows the user to delete all saved data.
         self.clearDataBtn = wx.Button(self, label=_("Clear All Favorite and Subscription Data..."))
         sHelper.addItem(self.clearDataBtn, flag=wx.ALIGN_CENTER)
         self.clearDataBtn.Bind(wx.EVT_BUTTON, self.on_clear_data)
-    
+
     def onSave(self):
         selection_map_indicator = {0: 'beep', 1: 'sound', 2: 'silent'}
         config.conf["YoutubePlus"]["progressIndicatorMode"] = selection_map_indicator.get(self.indicatorModeCombo.GetSelection(), 'beep')

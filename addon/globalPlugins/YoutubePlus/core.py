@@ -32,6 +32,7 @@ from collections import OrderedDict
 from logHandler import log
 import unicodedata
 import sys
+import extensionPoints
 
 # Third-party libraries
 import pytchat
@@ -52,9 +53,23 @@ from .dialogs import (
     ChannelVideoDialog,
     ManageSubscriptionsDialog
 )
-
 from .utils import retry_on_network_error
 from .errors import NetworkRetryError, HandledError
+import globalVars
+NVDA_CONFIG_PATH = globalVars.appArgs.configPath
+ADDON_DATA_DIR = os.path.join(NVDA_CONFIG_PATH, "youtubePlus")
+if not os.path.exists(ADDON_DATA_DIR):
+    try:
+        os.makedirs(ADDON_DATA_DIR)
+    except Exception:
+        ADDON_DATA_DIR = NVDA_CONFIG_PATH
+db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
+import addonHandler
+addonHandler.initTranslation()
+
+def getCurrentURL():
+    return globalVars.currentURL
+api.getCurrentURL = getCurrentURL
 
 def finally_(func, final):
     @wraps(func)
@@ -101,6 +116,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         threading.Thread(target=self._update_subscription_feed_worker, kwargs={'silent': True}, daemon=True).start()
         
         self.manage_auto_update_timer()
+        # Translators: help dialog
         self.help_text = _("""YoutubePlus Layer Commands (Press NVDA+Y to activate)
 
 --- Core Actions (from a YouTube window/URL) ---
@@ -149,7 +165,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         Initializes the subscription database and creates/updates tables
         to support the new comprehensive category system.
         """
-        db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
         try:
             con = sqlite3.connect(db_path)
             cur = con.cursor()
@@ -228,10 +243,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     
     def manage_auto_update_timer(self):
         interval_minutes = config.conf["YoutubePlus"].get("autoUpdateIntervalMinutes", 0)
-        
         if self.update_timer.IsRunning():
             self.update_timer.Stop()
-            
         if interval_minutes > 0:
             interval_ms = interval_minutes * 60 * 1000
             log.info(f"Starting/restarting auto-update timer with interval: {interval_minutes} minutes.")
@@ -244,7 +257,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if self.is_long_task_running:
             log.debug("Skipping auto-update because another long task is running.")
             return
-            
         log.info("Starting scheduled background feed update.")
         threading.Thread(target=self._update_subscription_feed_worker, kwargs={'silent': True}, daemon=True).start()
         
@@ -258,10 +270,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         log.info("YoutubePlus addon terminating.")
         self.stopChatMonitoring(silent=True)
         self._stop_indicator()
-
         if MessagesDialog._instance:
             wx.CallAfter(MessagesDialog._instance.Close)
-            
         super().terminate()
         log.info("YoutubePlus addon terminated.")
 
@@ -321,28 +331,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         but falling back to the clipboard if the window's URL is not specific.
         """
         log.debug("Searching for YouTube URL with window-first (but specific) priority.")
-
         def _search_source(source_func):
             """Internal helper to get text from a source function."""
             try:
                 return source_func()
             except Exception:
                 return None
-
         url_from_window = _search_source(api.getCurrentURL)
-
         if url_from_window and self.is_youtube_url(url_from_window):
             if self._is_specific_youtube_url(url_from_window):
                 log.debug("Found specific YouTube URL in current window. Using it.")
                 return url_from_window
             else:
                 log.debug("Window URL is a generic YouTube page. Checking clipboard as a fallback.")
-
         url_from_clipboard = _search_source(api.getClipData)
         if url_from_clipboard and self._is_specific_youtube_url(url_from_clipboard):
             log.debug("Found specific YouTube URL in clipboard.")
             return url_from_clipboard
-
         log.info("No specific YouTube URL found in either window or clipboard.")
         return None
     
@@ -369,15 +374,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         if 'list=' in url and 'v=' not in url:
             self._notify_error(
+                # Translators: error in Youtube playlist page
                 _("This command is for videos, but the current page is a playlist."),
                 log_message=f"Command blocked on pure playlist URL: {url}"
             )
             return None
-        
         is_video_format = 'v=' in url or 'shorts/' in url or 'live/' in url or 'youtu.be/' in url
-        
         if self._is_specific_youtube_url(url) and not is_video_format:
              self._notify_error(
+                # Translators: error in not video page
                 _("This command is for videos, but the current page appears to be a channel or playlist."),
                 log_message=f"Command blocked on non-video URL (channel/playlist): {url}"
             )
@@ -392,34 +397,28 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
-            #'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
         }
-
         cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
         browser_to_use = None
         temp_cookie_file = None
-
         if cookie_mode != 'none':
             browser_to_use = cookie_mode.lower() 
             log.debug(f"Cookie mode set to: {browser_to_use}")
         else:
             log.debug("Cookie mode is 'none' - proceeding without cookies")
-
         if browser_to_use:
             try:
                 log.debug(f"Attempting to use cookies from browser: {browser_to_use}")
                 ydl_opts['cookies_from_browser'] = (browser_to_use,) 
             except Exception as e:
                 log.warning(f"Could not set cookies_from_browser for {browser_to_use}: {e}")
-                
                 try:
                     from yt_dlp.cookies import extract_cookies_from_browser
                     from yt_dlp.utils import YoutubeDLError
                     import tempfile
-                    
                     log.debug(f"Attempting manual cookie extraction from {browser_to_use}")
                     jar = extract_cookies_from_browser(browser_to_use)
-                    
                     if jar and len(jar) > 0:
                         tmp = tempfile.NamedTemporaryFile(
                             prefix='yt_cookies_',
@@ -431,22 +430,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         jar.filename = temp_cookie_file
                         jar.save(temp_cookie_file, ignore_discard=True, ignore_expires=True)
                         tmp.close()
-                        
                         ydl_opts['cookiefile'] = temp_cookie_file
                         log.info(f"Successfully wrote browser cookies to temporary file: {temp_cookie_file}")
                     else:
                         log.warning(f"No cookies found in {browser_to_use}")
-                        
                 except (YoutubeDLError, FileNotFoundError, PermissionError) as extract_error:
                     log.error(f"Cookie extraction workaround failed for {browser_to_use}: {extract_error}")
                 except Exception as unexpected_error:
                     log.exception(f"Unexpected error during cookie extraction: {unexpected_error}")
-
         if extra_opts:
             ydl_opts.update(extra_opts)
-
         ydl = yt_dlp.YoutubeDL(ydl_opts)
-        
         if temp_cookie_file:
             original_close = ydl.__exit__
             def cleanup_close(*args, **kwargs):
@@ -459,7 +453,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 except Exception as e:
                     log.warning(f"Failed to cleanup temp cookie file: {e}")
             ydl.__exit__ = cleanup_close
-        
         return ydl
 
     @retry_on_network_error(retries=3, delay=5)
@@ -469,13 +462,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         Now with corrected logic to prevent infinite playlist fetching.
         """
         log.debug("Attempting to get info for: %s", url_or_id)
-
         channel_regex = re.compile(r"/channel/|/c/|/@")
         is_channel = isinstance(url_or_id, str) and bool(channel_regex.search(url_or_id))
-
         if extra_opts is None:
             extra_opts = {}
-
         if is_channel:
             if fetch_channel_details:
                 extra_opts['playlistend'] = 1
@@ -483,11 +473,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 extra_opts['playlist_items'] = '0'
         else:
             extra_opts['noplaylist'] = True
-
         try:
             with self._get_ydl_instance(extra_opts=extra_opts) as ydl:
                 info = ydl.extract_info(url_or_id, download=False)
-            
             return info
         except DownloadError as e:
             log.warning("get_video_info failed an attempt: %s", e)
@@ -504,7 +492,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         #log.debug("Fetching videos for channel: %s (Detailed: %s)", channel_url, detailed_fetch)
         fetch_count = config.conf["YoutubePlus"].get("playlist_fetch_count", 20)
-        
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
@@ -513,10 +500,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 'youtubetab': {'skip': ['authcheck']}
             }
         }
-        
         if not detailed_fetch:
             ydl_opts['extract_flat'] = 'in_playlist'
-        
         try:
             with open(os.devnull, 'w') as devnull:
                 with redirect_stderr(devnull):
@@ -527,9 +512,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 #log.debug("Channel is not live or missing tab, which can be normal.")
                 return []
             raise
-        
         video_list = []
-        
         determined_channel_name = channel_name_override
         if not determined_channel_name:
             determined_channel_name = (
@@ -538,7 +521,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 playlist_info.get('title')  # Sometimes channel name is in title for channel URLs
             )
                 #log.debug("Channel name from playlist_info: %s", determined_channel_name)
-        
         if 'entries' in playlist_info:
             for entry in playlist_info.get('entries', []):
                 if entry and entry.get('id'):
@@ -560,9 +542,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     }
                     if detailed_fetch:
                         video_data['upload_date'] = entry.get('upload_date')
-                        
                     video_list.append(video_data)
-        
         if detailed_fetch:
             sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
             reverse_flag = (sort_order == 'newest')
@@ -699,6 +679,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     tones.beep(440, 75)
             except Exception:
                 tones.beep(440, 75)
+        # Translators: anouce for YoutubePlus main layer command
         wx.CallAfter(ui.message, _("activate YoutubePlus"))
 
     def _format_comments_for_display(self, raw_comments):
@@ -710,25 +691,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         pinned_comments = [c for c in raw_comments if c.get('is_pinned')]
         other_comments = [c for c in raw_comments if not c.get('is_pinned')]
         log.debug("Found %d pinned and %d other comments.", len(pinned_comments), len(other_comments))
-
         comments_map = {c['id']: {**c, 'replies': []} for c in other_comments if 'id' in c}
         top_level_comments = []
-
         for cid, c in comments_map.items():
             parent_id = c.get('parent')
             if parent_id and parent_id != 'root' and parent_id in comments_map:
                 comments_map[parent_id]['replies'].append(c)
             else:
                 top_level_comments.append(c)
-
         for c in comments_map.values():
             c['replies'].sort(key=lambda r: r.get('timestamp', 0))
-
         sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
         reverse_flag = (sort_order == 'newest')
         top_level_comments.sort(key=lambda c: c.get('timestamp', 0), reverse=reverse_flag)
         log.debug("Sorted top-level comments by '%s' order.", sort_order)
-
         final_list = self._flatten_comments(pinned_comments)
         final_list.extend(self._flatten_comments(top_level_comments))
         return final_list
@@ -742,16 +718,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         for c in comments:
             author = c.get('author')
             message = ""
-            
             if paid_info := c.get('paid'):
                 original_text = c.get('text', '')
                 message = f"Super Thanks ({paid_info}): {original_text}"
             else:
                 message = c.get('text', '')
-
             if parent_author and not paid_info:
                 message = "reply to {author}: ".format(author=parent_author) + message
-
             flat_list.append({
                 'author': author,
                 'message': message.strip(),
@@ -773,14 +746,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             action_item = item.get('replayChatItemAction', {}).get('actions', [{}])[0].get('addChatItemAction', {}).get('item', {})
             if not action_item:
                 continue
-
             author = ""
             message = ""
-            
             if text_renderer := action_item.get('liveChatTextMessageRenderer'):
                 log.debug("Processing a liveChatTextMessageRenderer item.")
                 author = text_renderer.get('authorName', {}).get('simpleText', '')
-                
                 message_parts = []
                 for run in text_renderer.get('message', {}).get('runs', []):
                     if 'text' in run:
@@ -803,13 +773,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     'type': 'textMessage',
                     'amount': ''
                 })
-
             elif paid_renderer := action_item.get('liveChatPaidMessageRenderer'):
                 log.debug("Processing a liveChatPaidMessageRenderer item (Super Chat).")
                 author = paid_renderer.get('authorName', {}).get('simpleText', '')
                 amount = paid_renderer.get('purchaseAmountText', {}).get('simpleText', '')
                 paid_message = "".join(p.get('text', '') for p in paid_renderer.get('message', {}).get('runs', []))
-                message = f"Super Chat ({amount}): {paid_message}"
+                # Translators: Message shown when a Super Chat is received, indicating the amount and the sender's message.
+                message = _("Super Chat ({amount}): {paid_message}").format(amount=amount, paid_message=paid_message)
                 flat_list.append({
                     'author': author,
                     'message': message,
@@ -818,12 +788,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     'type': 'superChat',
                     'amount': amount
                 })
-
             elif sticker_renderer := action_item.get('liveChatPaidStickerRenderer'):
                 log.debug("Processing a liveChatPaidStickerRenderer item (Super Sticker).")
                 author = sticker_renderer.get('authorName', {}).get('simpleText', '')
                 amount = sticker_renderer.get('purchaseAmountText', {}).get('simpleText', '')
-                message = f"Super Sticker ({amount})"
+                # Translators: Message shown when a Super Sticker is received, indicating the amount.
+                message = _("Super Sticker ({amount})").format(amount=amount)
                 flat_list.append({
                     'author': author,
                     'message': message,
@@ -832,7 +802,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     'type': 'superSticker',
                     'amount': amount
                 })
-
             elif membership_renderer := action_item.get('liveChatMembershipItemRenderer'):
                 log.debug("Processing a liveChatMembershipItemRenderer item.")
                 message_runs = membership_renderer.get('headerSubtext', {}).get('runs', [])
@@ -848,14 +817,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         'type': 'membership',
                         'amount': ''
                     })
-
             elif mode_change_renderer := action_item.get('liveChatModeChangeMessageRenderer'):
                 log.debug("Processing a liveChatModeChangeMessageRenderer item.")
                 message_runs = mode_change_renderer.get('text', {}).get('runs', [])
                 icon_type = mode_change_renderer.get('icon', {}).get('iconType', '')
                 full_message = "".join(run.get('text', '') for run in message_runs)
                 if full_message:
-                    author = f"YouTube System ({icon_type})"
+                    # Translators: Label for a system-generated message or author from YouTube, with the type of icon/badge in parentheses.
+                    author = _("YouTube System ({icon_type})").format(icon_type=icon_type)
                     message = full_message
                     flat_list.append({
                         'author': author,
@@ -865,21 +834,28 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         'type': 'modeChange',
                         'amount': ''
                     })
-        
         sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
         if sort_order == 'newest':
             flat_list.reverse()
-            
         return flat_list
 
     def _format_duration_verbose(self, seconds):
-        if not isinstance(seconds, (int, float)) or seconds <= 0: return _("")
+        if not isinstance(seconds, (int, float)) or seconds <= 0: return ""
         seconds = int(seconds)
         parts = []
         h, rem = divmod(seconds, 3600)
         m, s = divmod(rem, 60)
-        if h > 0: parts.append(_("{h} Hour").format(h=h) if h == 1 else _("{h} Hours").format(h=h))
+        # Translators: Label for duration in hours when the value is exactly 1.
+        hour_singular = _("{h} Hour").format(h=h)
+        # Translators: Label for duration in hours when the value is greater than 1.
+        hour_plural = _("{h} Hours").format(h=h)
+        if h > 0: 
+            parts.append(hour_singular if h == 1 else hour_plural)
+        # Translators: Label for duration in minutes when the value is exactly 1.
+        # Translators: Label for duration in minutes when the value is other than 1.
         if m > 0: parts.append(_("{m} Minute").format(m=m) if m == 1 else _("{m} Minutes").format(m=m))
+        # Translators: Label for duration in seconds when the value is exactly 1.
+        # Translators: Label for duration in seconds when the value is 0 or more than 1.
         if s > 0 or not parts: parts.append(_("{s} Second").format(s=s) if s == 1 else _("{s} Seconds").format(s=s))
         return " ".join(parts)
 
@@ -897,17 +873,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     if match:
                         currency_part = (match.group(1) or match.group(3) or "").strip()
                         numeric_value_str = match.group(2).replace(',', '')
-
                         try:
                             amount_value = float(numeric_value_str)
                             currency_code = currency_part
-                            
                             if currency_part == '$': currency_code = 'USD'
                             elif currency_part == '¥': currency_code = 'JPY'
                             elif currency_part == '€': currency_code = 'EUR'
                             elif currency_part == '฿': currency_code = 'THB'
                             elif not currency_code and amount_value > 0: currency_code = "UNKNOWN"
-
                             if currency_code:
                                 total_amounts[currency_code] = total_amounts.get(currency_code, 0.0) + amount_value
                         except ValueError:
@@ -917,6 +890,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
     def _show_info_dialog(self, title, info_text):
         gui.mainFrame.prePopup()
+        # Translators: Title of a dialog box that displays information about a specific video.
         dialog_title = _("Info of {title}").format(title=title)
         dialog = InfoDialog(gui.mainFrame, dialog_title, info_text)
         dialog.Show()
@@ -929,11 +903,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Show()
         self._play_success_sound()
         gui.mainFrame.postPopup()     
-       
+
     def _show_choice_dialog(self, event, info):
         comment_count = info.get('comment_count', 0)
-        dlg = wx.MessageDialog(gui.mainFrame, "This video has a live chat replay. What would you like to view?", "Choice", wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
-        dlg.SetYesNoCancelLabels(f"Show {comment_count} &Comments", "Show &Live Chat Replay", "Ca&ncel")
+        # Translators: The message in a dialog box asking the user whether they want to view the live chat replay.
+        # Translators: The title (caption) of the choice dialog box.
+        dlg = wx.MessageDialog(gui.mainFrame, _("This video has a live chat replay. What would you like to view?"), _("Choice"), wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+        # Translators: Label for a button to show comments, including the total count. The '&' indicates the keyboard shortcut.
+        # Translators: Label for a button to show the live chat replay. The '&' indicates the keyboard shortcut.
+        # Translators: Label for the cancel button. The '&' indicates the keyboard shortcut.
+        dlg.SetYesNoCancelLabels(_("Show {comment_count} &Comments").format(comment_count=comment_count), _("Show &Live Chat Replay"), _("Ca&ncel"))
         result = dlg.ShowModal()
         dlg.Destroy()
         if result == wx.ID_YES: self.user_choice = 'comments'
@@ -948,12 +927,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         has_replay = False
         subtitles = info.get('subtitles', {})
         auto_captions = info.get('automatic_captions', {})
-        
         if 'live_chat' in subtitles or 'live_chat' in auto_captions:
             has_replay = True
-
         comment_count = info.get('comment_count') or 0
-
         if info.get('was_live') and has_replay:
             self._pause_indicator()
             self.choice_made_event.clear()
@@ -978,42 +954,42 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             self.is_long_task_running = True
             info = self.get_video_info(url)
-
             if info.get('is_live'):
                 threading.Thread(target=self._start_monitoring_worker, args=(url, info), daemon=True).start()
             else:
                 wx.CallAfter(self._process_video_type, url, info)
-
         except (DownloadError, NetworkRetryError) as e:
             self._stop_indicator()
+            # Translators: Error message shown to the user when the add-on fails to retrieve video information.
             self._notify_error(_("Failed to get video data. The video may be private, unavailable, or there was a network issue."), log_message=f"Could not get info for URL {url} after retries: {e}")
         except Exception as e:
             self._stop_indicator()
+            # Translators: General error message shown to the user when an unknown or unhandled problem occurs.
             self._notify_error(_("An unexpected error occurred."), log_message=f"An unexpected error occurred in the unified worker: {e}")
         finally:
             self.is_long_task_running = False
-            
+
     def _start_fetch_worker_after_choice(self, url, comment_count=0):
         """Waits for the user's choice (replay vs comments) and starts the actual fetch worker."""
         log.debug("Waiting for user choice...")
         self.choice_made_event.wait()
         data_to_fetch = self.user_choice
-        
         if data_to_fetch == 'cancel' or data_to_fetch is None:
             #log.info("User cancelled data fetching.")
             self._stop_indicator()
             return
-
         if data_to_fetch == 'comments' and comment_count == 0:
             #log.info("Aborting fetch: Video has no comments.")
             self._stop_indicator()
+            # Translators: Notification shown when the add-on finds that the selected video has zero comments.
             self._notify_error(_("This video has no comments."), log_message="Aborting fetch: Video has no comments.")            
             return
-
         if data_to_fetch == 'comments':
+            # Translators: Status message shown when the add-on starts loading a specific number of comments.
             wx.CallAfter(ui.message, _("Loading {count} comments...").format(count=comment_count))
         else:
-            wx.CallAfter(ui.message, "Loading live chat replay...")
+            # Translators: Status message shown when the add-on starts loading the live chat replay.
+            wx.CallAfter(ui.message, _("Loading live chat replay..."))
         self._resume_indicator()
         threading.Thread(target=self._fetch_and_process_data_worker, args=(url, self.video_title, data_to_fetch, ), daemon=True).start()
         
@@ -1024,44 +1000,43 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self._start_indicator()
         try:
             self.is_long_task_running = True
-
             info = self.get_video_info(url)
-            
             if info.get('is_live'):
-                wx.CallAfter(ui.message, "This is a live stream. Use the 'Get Data' (g) command to monitor live chat.")
+                # Translators: Message shown when a user tries to get video info for a live stream, 
+                wx.CallAfter(ui.message, _("Live stream detected. Please use the 'Monitor live chat' command instead."))
                 return
-
             title = info.get('title', 'N/A')
             uploader = info.get('uploader', 'N/A')
             duration = self._format_duration_verbose(info.get('duration', 0))
             upload_date_str = info.get('upload_date')
             upload_date = datetime.strptime(upload_date_str, '%Y%m%d').strftime('%d %B %Y') if upload_date_str else 'N/A'
-            
             view_count_num = info.get('view_count') or 0
             like_count_num = info.get('like_count') or 0
             comment_count_num = info.get('comment_count') or 0
-
             view_count = f"{view_count_num:,}"
             like_count = f"{like_count_num:,}"
             comment_count = f"{comment_count_num:,}"
-            
             description = info.get('description', 'N/A')
-            
-            info_text = (f"Title: {title}\n"
-                         f"Channel: {uploader}\n"
-                         f"Duration: {duration}\n"
-                         f"Uploaded: {upload_date}\n"
-                         f"Views: {view_count}\n"
-                         f"Likes: {like_count}\n"
-                         f"Comments: {comment_count}\n"
-                         f"--------------------\n"
-                         f"Description:\n{description}")
+            # Translators: Labels for video information details.
+            info_text = (
+                _("Title: {title}").format(title=title) + "\n" +
+                _("Channel: {uploader}").format(uploader=uploader) + "\n" +
+                _("Duration: {duration}").format(duration=duration) + "\n" +
+                _("Uploaded: {upload_date}").format(upload_date=upload_date) + "\n" +
+                _("Views: {view_count}").format(view_count=view_count) + "\n" +
+                _("Likes: {like_count}").format(like_count=like_count) + "\n" +
+                _("Comments: {comment_count}").format(comment_count=comment_count) + "\n" +
+                "--------------------\n" +
+                _("Description:\n{description}").format(description=description)
+            )
             wx.CallAfter(self._show_info_dialog, title, info_text)
         except (DownloadError, NetworkRetryError) as e:
             log.error("Could not get video info for 'getInfo' command. Error: %s", e)
+            # Translators: Error message shown when the add-on cannot retrieve video details, possibly due to privacy settings or no internet connection.
             self._notify_error(_("Failed to get video info. The video may be private or the network is down."))
         except Exception as e:
             log.exception("Unexpected error in 'Get Info' worker.")
+            # Translators: General error message encouraging the user to check the log file for more technical information.
             self._notify_error(_("An unexpected error occurred. Please check the log for details."))
         finally:
             self.is_long_task_running = False
@@ -1075,19 +1050,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             self.is_long_task_running = True
             info = self.get_video_info(url)
-            
             chapters = info.get('chapters')
             if chapters and len(chapters) > 0:
                 title = info.get('title', 'Unknown Video')
+                # Translators: Title of the dialog that displays a list of chapters for the current video.
                 dialog_title = _("Chapters for {title}").format(title=title)
                 wx.CallAfter(self.show_chapters_dialog, dialog_title, chapters, url)
             else:
+                # Translators: Error message shown when the user tries to list chapters but the video doesn't have any.
                 self._notify_error(_("No chapters found in this video."))
-
         except (DownloadError, NetworkRetryError) as e:
+            # Translators: Error message shown when chapters cannot be retrieved, possibly due to privacy settings or connection issues.
             self._notify_error(_("Failed to get chapters. The video may be private or the network is down."), log_message=f"Could not get chapters for {url}: {e}")
         except Exception as e:
             log.exception("Unexpected error in 'Show Chapters' worker.")
+            # Translators: General error message encouraging the user to check the log file for more technical information.
             self._notify_error(_("An unexpected error occurred. Please check the log for details."))
         finally:
             self.is_long_task_running = False
@@ -1098,7 +1075,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             display_list, dialog_title = None, None
             is_replay_data = False # Flag to pass to CommentsDialog
-            
             if data_to_fetch == 'comments':
                 log.debug("Fetching comments via yt-dlp.")
                 opts = {'getcomments': True, 'extract_flat': True}
@@ -1106,42 +1082,39 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     info = ydl.extract_info(url_or_id, download=False)
                 raw_data = info.get('comments')
                 if not raw_data: raise ValueError("No comments found in video data.")
-                
                 display_list = self._format_comments_for_display(raw_data)
-                dialog_title = "{count} comments of {title}".format(count=len(display_list), title=video_title)
-
+                # Translators: Title of the dialog showing a list of comments, including the number of comments and the video title.
+                dialog_title = _("{count} comments of {title}").format(count=len(display_list), title=video_title)
             elif data_to_fetch == 'replay':
                 log.debug("Fetching live chat replay subtitles via yt-dlp.")
                 opts = {'skip_download': True, 'writesubtitles': True, 'subtitleslangs': ['live_chat']}
                 with self._get_ydl_instance(extra_opts=opts) as ydl:
                     res = ydl.extract_info(url_or_id, download=True)
-                
                 requested_subs = res.get('requested_subtitles')
                 if not requested_subs or 'live_chat' not in requested_subs:
                     raise FileNotFoundError("Live chat replay subtitles not available for this video.")
-                
                 chat_filepath = requested_subs['live_chat'].get('filepath')
                 if not chat_filepath or not os.path.exists(chat_filepath):
                     raise FileNotFoundError("Could not find downloaded live chat replay file.")
-                
                 with open(chat_filepath, 'r', encoding='utf-8') as f: raw_data = [json.loads(line) for line in f]
                 os.remove(chat_filepath)
                 if not raw_data: raise ValueError("Live chat replay file was empty.")
-                
                 display_list = self._format_replay_for_display(raw_data)
-                dialog_title = "{count} live chat replay of {title}".format(count=len(display_list), title=video_title)
+                # Translators: Title of the dialog showing a list of live chat replay messages, including the count and the video title.
+                dialog_title = _("{count} live chat replay of {title}").format(count=len(display_list), title=video_title)
                 is_replay_data = True
-            
             self._stop_indicator()
             self._play_success_sound()
             wx.CallAfter(self.show_comments_dialog, dialog_title, display_list, is_replay_data)
         except (DownloadError, FileNotFoundError, ValueError) as e:
             self._stop_indicator()
             log.error("Could not load VOD data: %s", e)
+            # Translators: Message shown when data loading fails, including the specific error message.
             wx.CallAfter(ui.message, _("Could not load data: {error}").format(error=e))
         except Exception as e:
             self._stop_indicator()
             log.exception("An unexpected error occurred while fetching VOD data.")
+            # Translators: General error message encouraging the user to check the log file for more technical information.
             wx.CallAfter(ui.message, _("An unexpected error occurred. Please check the log for details."))
             
     def _chat_monitor_worker(self, chat_instance):
@@ -1151,14 +1124,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         HARD_MESSAGE_LIMIT = 200000
         first_message_received = False
         limit_warning_sent = False
-
         while not self._stop_event.is_set():
             try:
                 if not chat_instance.is_alive():
+                    # Translators: Message shown when the connection to a YouTube live chat is lost, often because the stream has ended.
                     wx.CallAfter(ui.message, _("Connection to live chat lost. The stream may have ended."))
                     wx.CallAfter(self.stopChatMonitoring, silent=True)
                     break
-                
                 new_messages_batch = []
                 for c in chat_instance.get().sync_items():
                     message_obj = None
@@ -1169,49 +1141,42 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         prefix = "Super Chat" if c.type == "superChat" else "Super Sticker"
                         full_message = f"{prefix} ({c.amountString}): {message_content}".strip()
                         message_obj = {'datetime': c.datetime, 'author': c.author.name, 'message': full_message, 'type': c.type, 'amount': c.amountString}
-
                     if message_obj:
                         new_messages_batch.append(message_obj)
-
                 if new_messages_batch:
                     if not self.is_long_task_running:
                         self._stop_indicator()
-                    
                     with self._messages_lock:
                         self.messages.extend(new_messages_batch)
-                        
                         # Memory Safety Net using the hard-coded constant
                         if len(self.messages) > HARD_MESSAGE_LIMIT:
                             self.messages = self.messages[-HARD_MESSAGE_LIMIT:]
                             if not limit_warning_sent:
                                 log.warning("Hard message limit (%d) reached. Older messages are being discarded.", HARD_MESSAGE_LIMIT)
+                                # Translators: Notification shown when the add-on deletes older chat messages from memory to maintain performance.
                                 wx.CallAfter(ui.message, _("To conserve memory, older chat messages have been discarded."))
                                 limit_warning_sent = True
-                    
                     if MessagesDialog._instance and MessagesDialog._instance.IsShown():
                         wx.CallAfter(MessagesDialog._instance.add_new_messages, new_messages_batch)
-                    
                     if not first_message_received:
                         first_message_received = True
                         if config.conf["YoutubePlus"]["autoSpeak"]:
-                            wx.CallAfter(ui.message, "Receiving live chat of {video_title}".format(video_title=self.video_title))
+                            # Translators: Message shown when the add-on starts receiving and displaying live chat messages for a specific video.
+                            wx.CallAfter(ui.message, _("Receiving live chat of {video_title}").format(video_title=self.video_title))
                         else:
                             wx.CallAfter(self.openMessagesDialog)
-                    
                     if config.conf["YoutubePlus"]["autoSpeak"]:
                         for msg_obj in new_messages_batch:
                             speak_text = f"{msg_obj['author']}: {msg_obj['message']}"
                             wx.CallAfter(ui.message, speak_text)
-
             except Exception as e:
                 log.exception("Error in chat monitor worker loop. The monitor will stop.")
+                # Translators: Error message shown when the live chat monitoring process encounters an issue and has to stop.
                 wx.CallAfter(ui.message, _("An error occurred while receiving live chat. Monitoring stopped."))
                 wx.CallAfter(self.stopChatMonitoring, silent=True)
                 break
-            
             refresh_interval = config.conf["YoutubePlus"].get("refreshInteval", 5)
             self._stop_event.wait(timeout=refresh_interval)
-        
         if chat_instance:
             chat_instance.terminate()
 
@@ -1224,13 +1189,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             export_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
             if not os.path.exists(export_path):
                 os.makedirs(export_path)
-
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             safe_title = unicodedata.normalize('NFC', self.video_title)
             safe_title = "".join(c for c in safe_title if c not in '\\/*?:"<>|').strip()
             if not safe_title:
                 safe_title = "LiveChat"
-
             filename = f"LiveChat_{safe_title}_{timestamp}.txt"
             filepath = os.path.join(export_path, filename)
             with self._messages_lock:
@@ -1239,14 +1202,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         author = msg_obj.get('author', '')
                         message = msg_obj.get('message', '')
                         f.write(f"@{author}: {message}\n\n")
-
             log.info(f"Chat exported successfully to: {filepath}")
-            wx.CallAfter(ui.message, _("Chat saved to {filename}").format(filename=filename))
+            # Translators: Notification shown when the live chat history has been successfully saved to a file.
+            wx.CallAfter(ui.message, _("Live chat saved to {filename}").format(filename=filename))
             return True
-
         except Exception as e:
             log.error(f"Failed to export chat: {e}")
             log.exception("Full traceback:")
+            # Translators: Error message shown when the add-on fails to write the live chat history to a file.
             wx.CallAfter(ui.message, _("Failed to save chat history."))
             return False
 
@@ -1258,19 +1221,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not self.messages:
             log.warning("No messages to export")
             return
-
         # This part now runs directly in the main thread via wx.CallAfter
         # from the original caller.
         message_count = len(self.messages)
         dlg = wx.MessageDialog(
             gui.mainFrame,
+            # Translators: A prompt asking the user if they want to save the chat history after a live stream ends.
+            # {count} is the number of messages collected.
+            # The second string is the title of the confirmation dialog.
             _("The stream has ended. You have {count} chat messages.\n\nWould you like to save the chat history?").format(count=message_count),
             _("Save Chat History?"),
             wx.YES_NO | wx.ICON_QUESTION
         )
         result = dlg.ShowModal()
         dlg.Destroy()
-
         if result == wx.ID_YES:
             #log.info("User agreed to export chat. Starting export thread.")
             # Start the actual export in a new background thread
@@ -1288,35 +1252,34 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         except Exception as e:
             self._stop_indicator()
             log.error("Could not start live chat monitoring. Error: %s", e)
-            wx.CallAfter(ui.message, f"Could not receive live chat. {e}")
+            # Translators: Error message shown when the add-on fails to start or continue receiving live chat messages.
+            wx.CallAfter(ui.message, _("Could not receive live chat: {error}").format(error=e))
 
     def add_item_to_favorites_worker(self, url):
         """Worker to handle adding a favorite in the background with file lock and dialog refresh."""
+        # Translators: Status message shown when a video is being added to the favorites list.
         ui.message(_("Adding to favorites..."))
         self._start_indicator()
         self.is_long_task_running = True
         try:
             info = self.get_video_info(url)
-            
             if not info or info.get('_type', 'video') != 'video':
+                # Translators: Error message shown when the user provides a link that is not a direct video URL (e.g., a playlist or channel link).
                 wx.CallAfter(ui.message, _("The provided link is not for a single video."))
                 return
-
             video_id = info.get('id')
-
             with self._fav_file_lock:
-                fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_video.json')
+                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_video.json')
                 favorites = []
                 try:
                     with open(fav_file_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
-
                 if any(item['video_id'] == video_id for item in favorites):
+                    # Translators: Message shown when the user tries to add a video to favorites that is already present in the list.
                     wx.CallAfter(ui.message, _("This video is already in your favorites."))
                     return
-
                 has_replay = 'live_chat' in info.get('subtitles', {}) or 'live_chat' in info.get('automatic_captions', {})
                 new_item = {
                     "video_id": video_id, "title": info.get('title'), "channel_name": info.get('uploader'),
@@ -1324,24 +1287,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "was_live": info.get('was_live', False), "has_replay": has_replay
                 }
                 favorites.append(new_item)
-
                 with open(fav_file_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
-
             self._notify_callbacks("fav_video_updated", {"action": "add"})
+            # Translators: Success message shown after a video has been successfully added to the favorites list.
+            # {title} is the name of the video.
             self._notify_success(_("Added '{title}' to favorites.").format(title=new_item['title']))
-
         except Exception as e:
+            # Translators: Error message shown to the user when a video could not be added to the favorites list.
             self._notify_error(_("Failed to add favorite."), log_message=f"Failed to add favorite for URL {url}: {e}")
         finally:
             self.is_long_task_running = False
             self._stop_indicator()
-            
+
     def add_channel_to_favorites_worker(self, url):
         """
         Worker to handle adding a channel to favorites.
         Now performs a two-step fetch to ensure correct channel description.
         """
+        # Translators: Status message shown when a channel is being added to the favorites list.
         ui.message(_("Adding to favorite channels..."))
         self._start_indicator()
         self.is_long_task_running = True
@@ -1349,32 +1313,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             initial_info = self.get_video_info(url, extra_opts={'playlist_items': '1'})
             if isinstance(initial_info, dict) and initial_info.get('entries'):
                 initial_info = initial_info['entries'][0]
-            
             channel_url = initial_info.get('channel_url')
             if not channel_url:
                 raise ValueError("Could not determine a valid channel URL from the provided link.")
-
             channel_info = self.get_video_info(channel_url, fetch_channel_details=True)
             if not channel_info:
                 raise ValueError("Could not retrieve detailed information for the channel.")
-
             channel_name = channel_info.get('channel') or channel_info.get('uploader')
             description = channel_info.get('description', '')
             subscriber_count = channel_info.get('channel_follower_count')
-
             with self._fav_file_lock:
-                fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_channel.json')
+                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_channel.json')
                 favorites = []
                 try:
                     with open(fav_file_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
-
                 if any(item.get('channel_url') == channel_url for item in favorites):
+                    # Translators: Message shown when the user tries to add a channel to favorites that is already present in the list.
                     wx.CallAfter(ui.message, _("This channel is already in your favorites."))
                     return
-
                 new_item = {
                     "channel_name": channel_name,
                     "channel_url": channel_url,
@@ -1382,14 +1341,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "description": description
                 }
                 favorites.append(new_item)
-
                 with open(fav_file_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
-            
             self._notify_callbacks("fav_channel_updated", {"action": "add"})
+            # Translators: Success message shown after a YouTube channel has been successfully added to the favorites list.
+            # {channel} is the name of the channel.
             self._notify_success(_("Added '{channel}' to favorites.").format(channel=new_item['channel_name']))
-
         except Exception as e:
+            # Translators: Error message shown to the user when a channel could not be added to the favorites list.
             self._notify_error(_("Failed to add favorite."), log_message=f"Failed to add favorite for URL {url}: {e}")
         finally:
             self.is_long_task_running = False
@@ -1397,38 +1356,35 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
     def add_playlist_to_favorites_worker(self, url):
         """Worker to handle adding a playlist to favorites."""
+        # Translators: Status message shown when the add-on starts the process of adding a playlist to favorites.
         ui.message(_("Adding playlist to favorites..."))
         self._start_indicator()
         self.is_long_task_running = True
-        
         try:
             list_match = re.search(r'[?&]list=([^&]+)', url)
             if not list_match or 'youtube.com' not in url.lower():
                 raise ValueError("URL does not contain a valid YouTube playlist ID.")
-
             playlist_id = list_match.group(1)
             clean_playlist_url = f"https://www.youtube.com/playlist?list={playlist_id}"
             log.debug(f"Cleaned mixed URL to pure playlist URL: {clean_playlist_url}")
-            
             ydl_opts = {'quiet': True, 'no_warnings': True, 'extract_flat': True}
             with self._get_ydl_instance(extra_opts=ydl_opts) as ydl:
                 info = ydl.extract_info(clean_playlist_url, download=False)
-                
             with self._fav_file_lock:
-                fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_playlist.json')
+                fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
                 favorites = []
                 try:
                     with open(fav_file_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
                     favorites = []
-                
                 if any(item.get('playlist_id') == playlist_id for item in favorites):
+                    # Translators: Message shown when the user tries to add a playlist that is already in their favorites list.
                     wx.CallAfter(ui.message, _("This playlist is already in your favorites."))
                     return
-
                 new_item = {
-                    "playlist_title": info.get('title', 'Unknown Playlist'),
+                # Translators: Fallback title used when the actual name of the playlist cannot be retrieved.
+                    "playlist_title": info.get('title', _("Unknown Playlist")),
                     "playlist_url": f"https://www.youtube.com/playlist?list={playlist_id}",
                     "playlist_id": playlist_id,
                     "video_count": info.get('playlist_count') or len(info.get('entries', [])),
@@ -1438,14 +1394,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "description": (info.get('description', '')[:500] if info.get('description') else ""),
                 }
                 favorites.append(new_item)
-                
                 with open(fav_file_path, 'w', encoding='utf-8') as f:
                     json.dump(favorites, f, indent=2, ensure_ascii=False)
-            
             self._notify_callbacks("fav_playlist_updated", {"action": "add"})
+            # Translators: Success message shown after a playlist has been added to favorites. {playlist} is the title of the playlist.
             self._notify_success(_("Added '{playlist}' to favorites.").format(playlist=new_item['playlist_title']))
-            
         except Exception as e:
+            # Translators: Error message shown when the process of adding a playlist to favorites fails for any reason.
             self._notify_error(_("Failed to add favorite playlist."), log_message=f"Failed to add playlist for URL {url}: {e}")
         finally:
             self.is_long_task_running = False
@@ -1458,16 +1413,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         if not playlist_id or new_count is None:
             return
-        
         with self._fav_file_lock:
-            fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_playlist.json')
+            fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
             playlists = []
             try:
                 with open(fav_file_path, 'r', encoding='utf-8') as f:
                     playlists = json.load(f)
             except (FileNotFoundError, json.JSONDecodeError):
                 return
-
             item_updated = False
             for playlist in playlists:
                 if playlist.get('playlist_id') == playlist_id:
@@ -1476,17 +1429,59 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         playlist['video_count'] = new_count
                         item_updated = True
                     break
-            
             if item_updated:
                 try:
                     with open(fav_file_path, 'w', encoding='utf-8') as f:
                         json.dump(playlists, f, indent=2, ensure_ascii=False)
-
                     update_data = {'playlist_id': playlist_id, 'new_count': new_count}
                     self._notify_callbacks("fav_playlist_item_updated", update_data)
                 except IOError:
                     log.error("Could not save updated playlist file.")
 
+    def add_to_watchlist_worker(self, url, mark_seen=False):
+        self._start_indicator()
+        try:
+            info = self.get_video_info(url)
+            if not info:
+                return
+            video_id = info.get('id')
+            title = info.get('title')
+            file_path = os.path.join(ADDON_DATA_DIR, 'watch_list.json')
+            with self._fav_file_lock:
+                watchlist = []
+                if os.path.exists(file_path):
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            watchlist = json.load(f)
+                    except (json.JSONDecodeError, TypeError):
+                        watchlist = []
+                if any(item.get('video_id') == video_id for item in watchlist):
+                    # Translators: Message shown when a video cannot be added because it already exists in the Watch List. {title} is the video title.
+                    ui.message(_("'{title}' is already in Watch List.").format(title=title))
+                else:
+                    new_item = {
+                        "video_id": video_id, 
+                        "title": title, 
+                        "channel_name": info.get('uploader'),
+                        "duration_str": self._format_duration_verbose(info.get('duration', 0)),
+                        "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    watchlist.append(new_item)
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        json.dump(watchlist, f, indent=2, ensure_ascii=False)
+                    # Translators: Success message shown when a video is successfully added to the Watch List. {title} is the video title.
+                    self._notify_success(_("Added '{title}' to Watch List.").format(title=new_item['title']))
+            if mark_seen:
+                self.mark_videos_as_seen(video_id, notify=True)
+            else:
+                self._notify_callbacks("watch_list_updated")
+        except Exception as e:
+            log.error(f"Add to watchlist worker error: {e}")
+            # Translators: Error message shown when the add-on fails to save the video to the Watch List file.
+            ui.message(_("Error: Could not add video to Watch List."))
+        finally:
+            self._stop_indicator()
+    
     def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None):
         """
         Generic worker to fetch a list of videos from any URL (channel or playlist)
@@ -1505,14 +1500,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 'no_warnings': True,
                 'extract_flat': 'in_playlist',
             }
-
             is_playlist = 'list=' in url
             if is_playlist:
                 log.info("Fetching all videos from playlist.")
             else:
                 fetch_count = config.conf["YoutubePlus"].get("playlist_fetch_count", 20)
                 ydl_opts['playlistend'] = fetch_count
-
             with open(os.devnull, 'w') as devnull:
                 with redirect_stderr(devnull):
                     try:
@@ -1524,36 +1517,37 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                             info = {'entries': []}
                         else:
                             raise e
-
             video_list = []
             if 'entries' in info:
                 info_channel_name = info.get('uploader') or info.get('channel')
                 info_channel_url = info.get('uploader_url') or info.get('channel_url')
-
                 for entry in info.get('entries', []):
                     if entry and entry.get('id'):
                         video_list.append({
                             'id': entry.get('id'),
-                            'title': entry.get('title', 'N/A'),
+                            # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
+                            'title': entry.get('title', _("N/A")),
                             'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
                             'channel_url': base_channel_url or info_channel_url, 
                             'channel_name': base_channel_name or info_channel_name
                         })
-            
             sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
             if sort_order == 'oldest':
                 video_list.reverse()
-            
             if not video_list:
+                # Translators: Error message shown when a channel or playlist is empty or no videos can be retrieved.
                 self._notify_error(_("No videos found."), log_message=f"No videos found for URL: {url}")
                 return
-
             if is_playlist:
                 playlist_id_to_update = info.get('id')
                 new_count_to_update = info.get('playlist_count') or len(info.get('entries', []))
-                dialog_title = _("{count} videos in {playlist}").format(count=len(video_list), playlist=info.get('title', 'Playlist'))
+                # Translators: Title of the video list dialog for a playlist. 
+                # {count} is the number of videos, {playlist} is the playlist name.
+                dialog_title = _("{count} videos in {playlist}").format(count=len(video_list), playlist=info.get('title', _("Playlist")))
             else:
-                dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', 'Channel'))
+                # Translators: Title of the video list dialog for a channel. 
+                # {count} is the number of videos, {type} is the content type (e.g., videos/shorts), {channel} is the channel name.
+                dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
 
             def show_dialog():
                 dialog = ChannelVideoDialog(
@@ -1567,6 +1561,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
         except Exception as e:
             log.error("Failed to fetch video list for %s", url, exc_info=True)
+            # Translators: Error message shown when the add-on fails to download the list of videos from YouTube.
             self._notify_error(_("Failed to fetch video list."), log_message=f"Failed to fetch video list for {url}: {e}")
         finally:
             self.is_long_task_running = False
@@ -1574,6 +1569,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     
     def subscribe_to_channel_worker(self, url):
         """Worker to handle subscribing, now correctly handling playlist URLs and tagging content types."""
+        # Translators: Status message shown when the add-on begins the process of subscribing to a YouTube channel.
         ui.message(_("Subscribing to channel..."))
         self._start_indicator()
         self.is_long_task_running = True
@@ -1585,19 +1581,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             }
             with self._get_ydl_instance(extra_opts=ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-
             video_info = info['entries'][0] if info.get('_type') == 'playlist' and info.get('entries') else info
             if not video_info:
                 raise ValueError("Could not retrieve valid video information from the URL.")
-
             channel_url = video_info.get('channel_url')
             if not channel_url:
                 raise ValueError("Channel URL could not be found from the provided link.")
-
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
             con = sqlite3.connect(db_path)
             cur = con.cursor()
-
             cur.execute("SELECT channel_name FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
             existing = cur.fetchone()
             if existing:
@@ -1605,16 +1596,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 
                 def ask_unsubscribe():
                     if wx.MessageBox(
+                    # Translators: A confirmation prompt shown when the user tries to subscribe to a channel they are already subscribed to. 
+                    # {channel} is the name of the YouTube channel.
                         _("You are already subscribed to '{channel}'.\nWould you like to unsubscribe instead?").format(channel=existing[0]),
+                        # Translators: The title of the confirmation dialog when a user is already subscribed to a channel.
                         _("Already Subscribed"),
                         wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
                         self.unsubscribe_from_channel_worker(channel_url, existing[0])
                 
                 wx.CallAfter(ask_unsubscribe)
                 return
-
             default_content_types = config.conf["YoutubePlus"].get("contentTypesToFetch", ["videos", "shorts", "streams"])
-            
             all_videos = []
             for content_type in default_content_types:
                 try:
@@ -1626,28 +1618,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         all_videos.extend(tab_videos)
                 except Exception as e:
                     log.warning("Failed to get videos from %s tab: %s", content_type, e)
-
             unique_videos = {v['id']: v for v in all_videos if v.get('id')}
             initial_videos = list(unique_videos.values())
-            
-            channel_name = video_info.get('uploader', 'Unknown Channel')
+            # Translators: Fallback name used when the YouTube channel name cannot be identified.
+            channel_name = video_info.get('uploader', _("Unknown Channel"))
             content_types_str = ",".join(default_content_types)
             cur.execute("INSERT INTO subscribed_channels (channel_url, channel_name, content_types) VALUES (?, ?, ?)", (channel_url, channel_name, content_types_str))
-            
             if initial_videos:
                 videos_to_insert = [
                     (v.get('id'), channel_url, channel_name, v.get('title'), v.get('duration_str'), v.get('upload_date'), v.get('content_type', 'videos'))
                     for v in initial_videos
                 ]
                 cur.executemany("INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) VALUES (?, ?, ?, ?, ?, ?, ?)", videos_to_insert)
-            
             con.commit()
             con.close()
-
             new_channel_data = (channel_url, channel_name)
             self._notify_callbacks("subscription_added", new_channel_data)
+            # Translators: Success message shown after successfully subscribing to a YouTube channel. 
+            # {channel} is the name of the channel.
             self._notify_success(_("Subscribed to {channel}.").format(channel=channel_name))
         except Exception as e:
+            # Translators: Error message shown when the subscription process fails.
             self._notify_error(_("Failed to subscribe."), log_message=f"Failed to subscribe to URL {url}: {e}")
         finally:
             self.is_long_task_running = False
@@ -1656,24 +1647,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def unsubscribe_from_channel_worker(self, channel_url, channel_name):
         """Worker to handle unsubscribing from a channel."""
         try:
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
             con = sqlite3.connect(db_path)
             cur = con.cursor()
-            
             cur.execute("DELETE FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
             deleted_subs = cur.rowcount
-            
             if deleted_subs > 0:
                 cur.execute("DELETE FROM videos WHERE channel_url = ?", (channel_url,))
                 cur.execute("DELETE FROM seen_videos WHERE video_id NOT IN (SELECT DISTINCT video_id FROM videos WHERE video_id IS NOT NULL)")
                 con.commit()
                 self._notify_callbacks("subscription_removed", {"channel_url": channel_url})
+                # Translators: Success message shown after successfully unsubscribing from a YouTube channel.
+                # {channel} is the name of the channel.
                 self._notify_delete(_("Successfully unsubscribed from {channel}").format(channel=channel_name))
             else:
+                # Translators: Error message shown when trying to unsubscribe from a channel that isn't in the database.
                 self._notify_error(_("Failed to unsubscribe - channel not found in database"))
-
             con.close()
         except Exception as e:
+            # Translators: Error message shown when an unexpected database or system error occurs during unsubscription.
             self._notify_error(_("Critical error during unsubscribe."), log_message=f"Critical error unsubscribing {channel_url}: {e}")
             
     def _update_subscription_feed_worker(self, progress_topic=None, silent=False):
@@ -1684,40 +1675,34 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.is_long_task_running = True
         try:
             if not silent: self._start_indicator()
-
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
             con = sqlite3.connect(db_path)
             cur = con.cursor()
-            
             cur.execute("SELECT video_id FROM videos")
             existing_video_ids = {row[0] for row in cur.fetchall()}
-            
             cur.execute("SELECT channel_url, channel_name, content_types FROM subscribed_channels")
             subscribed_channels = cur.fetchall()
-
             if not subscribed_channels:
                 con.close()
                 if progress_topic:
                     wx.CallAfter(self._notify_callbacks, progress_topic, {"current": 1, "total": 1, "message": _("No channels to update.")})
                 elif not silent:
+                    # Translators: Message shown when the user tries to update the feed but hasn't subscribed to any channels.
                     wx.CallAfter(ui.message, _("No channels to update."))
                 self._notify_callbacks("subscriptions_updated")
                 return
-
             total_tasks = sum(len(c[2].split(',')) for c in subscribed_channels if c[2])
             current_task = 0
             new_videos_to_cache = []
-            
             for channel_url, channel_name, content_types_str in subscribed_channels:
                 content_types = content_types_str.split(',') if content_types_str else ["videos", "shorts", "streams"]
-
                 for content_type in content_types:
                     current_task += 1
                     if progress_topic:
+                        # Translators: Progress message shown while checking a specific channel for new content. 
+                        # {channel} is the channel name, {type} is the type of content (videos, shorts, or streams).
                         progress_message = _("Checking {channel} ({type})...").format(channel=channel_name, type=content_type)
                         progress_data = {"current": current_task, "total": total_tasks, "message": progress_message}
                         wx.CallAfter(self._notify_callbacks, progress_topic, progress_data)
-
                     try:
                         latest_videos = self.get_channel_videos(f"{channel_url}/{content_type}")
                         if latest_videos:
@@ -1732,35 +1717,37 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                                     existing_video_ids.add(video_id)
                     except Exception as e:
                         log.warning("Could not update %s for %s: %s", content_type, channel_name, e)
-
             if new_videos_to_cache:
                 cur.executemany("""
                     INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, new_videos_to_cache)
                 con.commit()
-            
             con.close()
-            
             if progress_topic:
+                # Translators: Summary message shown in the progress dialog after successfully checking all subscribed channels. 
+                # {count} is the number of new videos discovered.
                 final_message = _("Update complete. Found {count} new videos.").format(count=len(new_videos_to_cache))
                 final_data = {"current": total_tasks, "total": total_tasks, "message": final_message}
                 wx.CallAfter(self._notify_callbacks, progress_topic, final_data)
             elif not silent:
                 if len(new_videos_to_cache) > 0:
+                    # Translators: Message spoken by NVDA when new videos are found and added to the database. 
+                    # {count} is the number of new videos.
                     wx.CallAfter(ui.message, _("Found and added {count} new videos.").format(count=len(new_videos_to_cache)))
                 else:
+                    # Translators: Message spoken by NVDA when the update process completes but no new videos were found.
                     wx.CallAfter(ui.message, _("No new videos found."))
             self._notify_callbacks("subscriptions_updated")
-
         except Exception as e:
             log.error("Error updating subscription feed.", exc_info=True)
             if progress_topic:
-                 wx.CallAfter(self._notify_callbacks, progress_topic, {"message": _("Error updating feed."), "current": 1, "total": 1})
+                # Translators: Error message shown in the progress dialog if the update process fails.
+                wx.CallAfter(self._notify_callbacks, progress_topic, {"message": _("Error updating feed."), "current": 1, "total": 1})
         finally:
             self.is_long_task_running = False
             if not silent: self._stop_indicator()
-            
+
     def _download_choice_worker(self, url):
         clean_url = self._validate_video_url_and_notify(url)
         if not clean_url:
@@ -1769,46 +1756,52 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             self.is_long_task_running = True
             info = self.get_video_info(url)
-            title = info.get('title', 'Unknown Video')
+            # Translators: Fallback title used when the name of the video to be downloaded cannot be retrieved.
+            title = info.get('title', _("Unknown Video"))
             duration = self._format_duration_verbose(info.get('duration', 0))
             wx.CallAfter(self._show_download_dialog, url, title, duration)
         except Exception as e:  
             log.error("Could not get video info for download. Error: %s", e, exc_info=True)
+            # Translators: Error message shown when the add-on cannot fetch video details (like title or formats) before downloading.
             wx.CallAfter(ui.message, _("Failed to get video info for download."))
             self._stop_indicator()
         finally:
             self.is_long_task_running = False
 
     def _direct_download_worker(self, url, choice):
+        # Translators: Status message shown when the add-on is fetching video details before starting a direct download.
         ui.message(_("Getting video info for download..."))
         self._start_indicator()
         try:
             self.is_long_task_running = True
             info = self.get_video_info(url)
-            title = info.get('title', 'Unknown Video')
+            # Translators: Fallback title used when the name of the video cannot be retrieved during direct download.
+            title = info.get('title', _("Unknown Video"))
             self._perform_download_worker(url, choice, title)
         except Exception as e:
             log.error("Failed to initiate direct download for %s", url, exc_info=True)
+            # Translators: Error message shown when a direct download fails to start. {error} is the technical error message.
             wx.CallAfter(ui.message, _("Failed to start download: {error}").format(error=e))
         finally:
             self.is_long_task_running = False
             
     def _show_download_dialog(self, url, title, duration):
         self._pause_indicator()
-        
+        # Translators: Question shown in the dialog when asking the user to choose between downloading video or audio.
         dlg = wx.MessageDialog(gui.mainFrame, _("What would you like to download?"),
-                                _("Download: {title} ({duration})").format(title=title, duration=duration),
-                                wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+            # Translators: Title of the download selection dialog. {title} is the video title, {duration} is the length of the video.
+            _("Download: {title} ({duration})").format(title=title, duration=duration),
+            wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+            # Translators: Labels for buttons in the download dialog. 
+        # The ampersand (&) precedes the character used as a keyboard shortcut.
         dlg.SetYesNoCancelLabels(_("Download &Video"), _("Download &Audio"), _("Ca&ncel"))
         result = dlg.ShowModal()
         dlg.Destroy()
-        
         choice = None
         if result == wx.ID_YES:
             choice = 'video'
         elif result == wx.ID_NO:
             choice = 'audio'
-        
         if choice:
             self._resume_indicator()
             threading.Thread(target=self._perform_download_worker, args=(url, choice, title, ), daemon=True).start()
@@ -1816,15 +1809,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self._stop_indicator()
 
     def _perform_download_worker(self, url, choice, title):
+        # Translators: Status message shown when a download process begins. {title} is the video title.
         wx.CallAfter(ui.message, _("Starting download of {title}...").format(title=title))
         try:
             self.is_long_task_running = True
             save_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
             output_template = os.path.join(save_path, '%(title)s.%(ext)s')
-            
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
-
             opts = {}
             if choice == 'video':
                 opts['format'] = 'best[ext=mp4]/best[ext=webm]/best'
@@ -1832,29 +1824,30 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             elif choice == 'audio':
                 opts['format'] = 'bestaudio[acodec=aac]/140/bestaudio[ext=m4a]/bestaudio'
                 opts['outtmpl'] = output_template
-
             try:
                 with self._get_ydl_instance(extra_opts=opts) as ydl:
                     ydl.download([url])
+                # Translators: Success message shown when a video or audio file has finished downloading. {title} is the file name.
                 self._notify_success(_("Download complete: {title}").format(title=title))
-
             except DownloadError as e:
                 if "Requested format is not available" in str(e) and choice == 'audio':
+                    # Translators: Warning message shown when the requested audio-only format isn't available, 
+                    # and the add-on is switching to download a video file instead.
                     wx.CallAfter(ui.message, _("Audio-only format not found. Attempting to download a video file with audio instead..."))
                     log.warning("Audio-only format not found. Falling back to video format 18.")
-                    
                     fallback_opts = opts.copy()
-                    fallback_opts['format'] = '18' # เปลี่ยน format เป็น 18 (mp4 360p)
-                    
+                    fallback_opts['format'] = '18'
                     with self._get_ydl_instance(extra_opts=fallback_opts) as ydl:
                         ydl.download([url])
+                    # Translators: Success message shown when the download finished by using a video format as a fallback for audio.
                     self._notify_success(_("Download complete (as MP4 video file): {title}").format(title=title))
                 else:
                     raise e
-
         except DownloadError as e:
+            # Translators: Error message shown when the download process fails.
             self._notify_error(_("Download failed."), log_message=f"Download failed for {title}: {e}")
         except Exception as e:
+            # Translators: Error message shown when the download process fails.
             self._notify_error(_("Download failed."), log_message=f"Download failed for {title}: {e}")
         finally:
             self.is_long_task_running = False
@@ -1864,42 +1857,45 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         A simplified worker that takes a raw query and the desired number of results.
         """
+        # Translators: Status message shown when the add-on starts searching YouTube. {query} is the search text.
         ui.message(_("Searching for '{query}'...").format(query=query))
         self._start_indicator()
         self.is_long_task_running = True
         try:
             opts = {'quiet': True, 'no_warnings': True, 'extract_flat': 'in_playlist'}
             search_prefix = f"ytsearch{count}:{query}"
-
             with self._get_ydl_instance(extra_opts=opts) as ydl:
                 info = ydl.extract_info(search_prefix, download=False)
-
             results_list = []
             if 'entries' in info:
                 for entry in info.get('entries', []):
                     if entry and entry.get('id'):
                         item = {
                             'id': entry.get('id'),
-                            'title': entry.get('title', 'N/A'),
+                            # Translators: Abbreviation for "Not Available".
+                            'title': entry.get('title', _("N/A")),
                             'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
                             'channel_name': entry.get('channel'),
                             'channel_url': entry.get('channel_url')
                         }
                         _type = entry.get('_type')
                         if _type == 'channel':
+                            # Translators: Label shown in search results to indicate the item is a YouTube channel.
                             item['duration_str'] = _("Channel")
                         elif _type == 'playlist':
+                            # Translators: Label for search results indicating a playlist. {count} is the number of videos in it.
                             item['duration_str'] = _("Playlist ({count})").format(count=entry.get('playlist_count', 0))
                         results_list.append(item)
-            
             if not results_list:
+                # Translators: Message shown when a YouTube search returns no results. {query} is the search text.
                 wx.CallAfter(ui.message, _("No results found for '{query}'.").format(query=query))
             else:
+                # Translators: Title of the dialog that displays YouTube search results. {query} is the search text.
                 dialog_title = _("Search Results for '{query}'").format(query=query)
                 wx.CallAfter(self._show_search_results, results_list, dialog_title, source_dialog)
-
         except Exception as e:
             log.error("Failed to perform Youtube for '%s'", query, exc_info=True)
+            # Translators: Error message shown when an error occurs during the YouTube search process.
             wx.CallAfter(ui.message, _("Failed to perform search."))
         finally:
             self.is_long_task_running = False
@@ -1907,6 +1903,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
     def openMessagesDialog(self):
         gui.mainFrame.prePopup()
+        # Translators: Title of the live chat window. 
+        # The first string is used when the chat is active ({title} is the video title). 
+        # The second string "(stopped)" is used when the chat session has ended or is disconnected.
         dialog_title = _("Live chat of {title}").format(title=self.video_title) if self.active else _("Live chat (stopped)")
         self.dialog = MessagesDialog(gui.mainFrame, dialog_title, self)
         self.dialog.Show()
@@ -1931,24 +1930,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         except Exception as e:
             self._stop_indicator()
             log.exception("Failed to finalize chat setup.")
-            wx.CallAfter(ui.message, f"Could not receive live chat. {e}")
+            # Translators: Error message shown when the add-on fails to connect to the YouTube live chat. 
+            # {error} is the technical details of the failure.
+            wx.CallAfter(ui.message, _("Could not receive live chat: {error}").format(error=e))
             self.stopChatMonitoring(silent=True)
 
     def stopChatMonitoring(self, silent=False):
         if not self.active and self._worker_thread is None:
-            if not silent: ui.message("Chat monitoring is not active.")
+            if not silent:
+                # Translators: Message shown when the user tries to stop live chat monitoring, but it's not currently running.
+                ui.message(_("Chat monitoring is not active."))
             return
         #log.info("Stopping chat monitoring...")
         self._stop_event.set() # Signal the thread to stop
         if self.chat:
             self.chat.terminate()
-        
         if self._worker_thread and self._worker_thread.is_alive():
             # The thread will exit quickly due to the responsive sleep. A short join is fine.
             self._worker_thread.join(timeout=2.0)
-
         if not silent:
-            ui.message("Chat monitoring stopped.")
+            # Translators: Status message shown when the live chat monitoring has been successfully stopped.
+            ui.message(_("Chat monitoring stopped."))
         if self.messages:
             wx.CallAfter(self._export_chat)
         # Reset state
@@ -1957,10 +1959,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.chat = None
         self.last_message_index = -1
         # No need to clear self.messages here, so users can review the chat after stopping.
-        
         if MessagesDialog._instance:
+            # Translators: The title of the live chat window after it has been stopped. 
+            # {title} is the name of the YouTube video.
             wx.CallAfter(MessagesDialog._instance.SetTitle, _("Live chat of {title} (stopped)").format(title=self.video_title))
-
     def show_comments_dialog(self, title, comments_data, is_replay_data=False):
         gui.mainFrame.prePopup()
         # The CommentsDialog is self-contained after receiving the data.
@@ -1973,25 +1975,22 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """Directly shows the new tabbed subscription feed dialog."""
         #log.critical("!!! _show_subscription_feed_directly was called. This is the trigger for SubDialog to appear. !!!")
         try:
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
             con = sqlite3.connect(db_path)
             cur = con.cursor()
-
             cur.execute("SELECT COUNT(*) FROM subscribed_channels")
             if cur.fetchone()[0] == 0:
                 con.close()
+                # Translators: Message shown when the user tries to open the subscription feed but has not added any channels yet.
                 ui.message(_("You haven't subscribed to any channels yet."))
                 return
-            
             con.close()
-            
             gui.mainFrame.prePopup()
             dialog = SubDialog(gui.mainFrame, self)
             dialog.Show()
             gui.mainFrame.postPopup()
-
         except Exception as e:
             log.exception("Failed to load subscription feed from database.")
+            # Translators: Error message shown when the add-on cannot read the subscription data from the local database.
             ui.message(_("Error loading subscription feed from database."))
 
     def _show_search_results(self, results_list, title, parent_dialog):
@@ -2006,34 +2005,35 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """Deletes all user-generated files and database tables."""
         log.debug("--- Starting deletion of all user data ---")
         try:
-            addon_dir = os.path.dirname(__file__)
-            
-            files_to_delete = ['fav_video.json', 'fav_channel.json', 'subscription.db']
+            addon_dir = ADDON_DATA_DIR
+            files_to_delete = ['fav_video.json', 'fav_channel.json', 'fav_playlist.json', 'watch_list.json', 'subscription.db']
             for filename in files_to_delete:
                 file_path = os.path.join(addon_dir, filename)
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     log.debug("Deleted file: %s", filename)
-            
             # --- Re-initialize the database (creates a new, empty one) ---
             self._init_sub_database()
-            
+            # Translators: Success message shown after the user has successfully cleared all their favorites, playlists, and subscription databases.
             wx.CallAfter(ui.message, _("All favorite and subscription data has been cleared."))
             log.debug("--- User data deletion complete ---")
-
         except Exception as e:
             log.exception("An error occurred while clearing user data.")
+            # Translators: Error message shown if the add-on fails to delete user data files (e.g., due to file permissions).
             wx.CallAfter(ui.message, _("An error occurred while clearing data. Please check the log."))
-    
+
     def prune_all_videos_worker(self):
             """Worker to delete ALL videos from the database after confirmation."""
+            # Translators: A heavy warning message shown before deleting all videos from the local database. 
+            # It warns that the action is permanent but keeps the subscribed channels.
             confirm_msg = _("This will permanently delete ALL videos from your subscription feed, leaving only the list of subscribed channels. This action cannot be undone.\n\nAre you sure you want to continue?")
             
             def ask_confirmation():
+                # Translators: Title of the confirmation dialog for clearing all videos in the database.
                 confirm = wx.MessageBox(confirm_msg, _("Confirm Clearing All Videos"), wx.YES_NO | wx.ICON_EXCLAMATION)
                 if confirm != wx.YES:
                     return
-                
+                # Translators: Status message shown when the process of deleting all videos begins.
                 ui.message(_("Clearing all feed videos..."))
                 threading.Thread(target=self._execute_pruning_all, daemon=True).start()
             wx.CallAfter(ask_confirmation)
@@ -2041,21 +2041,19 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def _execute_pruning_all(self):
             """The actual database deletion part for clearing ALL videos."""
             try:
-                db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
-                
                 cur.execute("DELETE FROM videos")
                 rows_deleted = cur.rowcount
-                
                 con.commit()
                 con.close()
-                
+                # Translators: Success message shown after finishing the process of clearing videos from the database. 
+                # {count} is the total number of video records that were removed.
                 self.core._notify_delete(_("Clearing complete. All {count} videos were deleted.").format(count=rows_deleted))
                 self._notify_callbacks("subscriptions_updated")
-
             except Exception as e:
                 log.error("Failed to prune all videos from database.", exc_info=True)
+                # Translators: Error message shown if the process of deleting all videos from the database fails due to a technical issue.
                 wx.CallAfter(ui.message, _("An error occurred while clearing all videos."))
 
     @script(description=_("an YoutubePlus layer commands."),
@@ -2073,10 +2071,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Script triggered: getData")
         messy_url = self._find_youtube_url()
         if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
         url = self._clean_youtube_url(messy_url)
-        #ui.message(f"getting info...")
         threading.Thread(target=self._unified_worker, args=(url,), daemon=True).start()
 
     @script(description="Show video info from current page or clipboard URL.")
@@ -2084,9 +2081,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Script triggered: getInfo")
         messy_url = self._find_youtube_url()
         if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
         url = self._clean_youtube_url(messy_url)
+        # Translators: Generic status message shown when the add-on is fetching data about a video from YouTube.
         ui.message(_("Getting video info..."))
         threading.Thread(target=self._get_info_worker, args=(url, ), daemon=True).start()
 
@@ -2095,9 +2093,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Script triggered: showChapters")
         messy_url = self._find_youtube_url()
         if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
         url = self._clean_youtube_url(messy_url)
+        # Translators: Status message shown when the add-on is fetching the list of timestamps or chapters from a video's description.
         ui.message(_("Getting chapters..."))
         threading.Thread(target=self._show_chapters_worker, args=(url, ), daemon=True).start()
 
@@ -2106,9 +2105,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Script triggered: downloadClip")
         messy_url = self._find_youtube_url()
         if not messy_url:
-            return ui.message("YouTube URL not found in current window or clipboard.")
-        
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
         url = self._clean_youtube_url(messy_url)
+        # Translators: Status message shown when the add-on is fetching technical details (like available formats) specifically for starting a download.
         ui.message(_("Getting video info for download..."))
         threading.Thread(target=self._download_choice_worker, args=(url, ), daemon=True).start()
 
@@ -2129,7 +2129,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_showMessagesDialog(self, gesture):
         #log.info("Script triggered: showMessagesDialog")
         if not self.active:
-            ui.message("No stream is currently being monitored.")
+            # Translators: Message shown when the user tries to perform a live chat action, but no chat monitoring session is active.
+            ui.message(_("No stream is currently being monitored."))
             return
         self.openMessagesDialog()
 
@@ -2138,7 +2139,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         #log.info("Script triggered: toggleAutoSpeak")
         is_enabled = not config.conf["YoutubePlus"].get("autoSpeak", True)
         config.conf["YoutubePlus"]["autoSpeak"] = is_enabled
-        ui.message("Automatic message speaking enabled." if is_enabled else "Automatic message speaking disabled.")        
+        # Translators: Status messages shown when toggling the automatic reading of live chat messages.
+        # The first string is for when it's turned on, the second for when it's turned off.
+        ui.message(_("Automatic message speaking enabled.") if is_enabled else _("Automatic message speaking disabled."))
 
     @script(description=_("Show favorite videos dialog."))
     def script_showFavVideoDialog(self, gesture):
@@ -2163,38 +2166,46 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog = FavsDialog(gui.mainFrame, self, 2)
         dialog.Show()
         gui.mainFrame.postPopup()
-    
+
+    @script(description=_("Show watch list dialog."))
+    def script_showWatchListDialog(self, gesture):
+        #log.info("Script triggered: showWatchListDialog")
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, 3)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
     @script(description=_("Show a menu to add the current page URL to favorites or subscriptions."))
     def script_showAddMenu(self, gesture):
         #log.info("Script triggered: showAddMenu")
         url = self._find_youtube_url()
         if not url:
+            # Translators: Message shown when the add-on finds a URL, but it is not a valid YouTube link, or no link is found at all.
             ui.message(_("No specific YouTube URL found in the current window or clipboard."))
             return
         gui.mainFrame.prePopup()
         try:
             temp_frame = wx.Frame(gui.mainFrame, -1, "AddMenu Host", size=(1,1), pos=(-100,-100))
             temp_frame.Show()
-
             menu = wx.Menu()
-            
             self.add_menu_choices = {
+                # Translators: Menu item to add a video to the favorites list.
                 wx.ID_HIGHEST + 10: (_("Add to Favorite &Videos"), lambda: self._on_add_to_video_fav(url)),
+                # Translators: Menu item to add a channel to the favorite channels list.
                 wx.ID_HIGHEST + 11: (_("Add to Favorite &Channels"), lambda: self._on_add_to_channel_fav(url)),
-                wx.ID_HIGHEST + 12: (_("Add to Favorite &playlist"), lambda: self._on_add_to_playlist_fav(url)),
+                # Translators: Menu item to add a playlist to the favorite playlists list.
+                wx.ID_HIGHEST + 12: (_("Add to Favorite &Playlists"), lambda: self._on_add_to_playlist_fav(url)),
+                # Translators: Menu item to subscribe to the current YouTube channel.
                 wx.ID_HIGHEST + 13: (_("&Subscribe to Channel"), lambda: self._on_subscribe_to_channel(url)),
-                wx.ID_HIGHEST + 14: (_("add to &Watch list"), lambda: self._on_add_to_watchList(url)),
+                # Translators: Menu item to add a video to the watch later/watch list.
+                wx.ID_HIGHEST + 14: (_("Add to &Watch List"), lambda: self._on_add_to_watchList(url)),
             }
             self._add_menu_handlers = {id: handler for id, (label, handler) in self.add_menu_choices.items()}
-
             for menu_id, (label, handler) in self.add_menu_choices.items():
                 menu.Append(menu_id, label)
-
             temp_frame.Bind(wx.EVT_MENU, self._on_add_menu_select)
             temp_frame.Bind(wx.EVT_MENU_CLOSE, lambda evt: wx.CallAfter(temp_frame.Destroy))
-
             wx.CallAfter(temp_frame.PopupMenu, menu)
-
         finally:
             gui.mainFrame.postPopup()
             
@@ -2202,7 +2213,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """Handles the selection from the 'Add' context menu."""
         menu_id = event.GetId()
         label, handler = self.add_menu_choices.get(menu_id)
-        
         if handler:
             handler()
 
@@ -2251,50 +2261,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Show()
         gui.mainFrame.postPopup()
 
-    def add_to_watchlist_worker(self, url, mark_seen=False):
-        self._start_indicator()
-        try:
-            info = self.get_video_info(url)
-            if not info:
-                return
-            
-            video_id = info.get('id')
-            title = info.get('title')
-            file_path = os.path.join(os.path.dirname(__file__), 'watch_list.json')
-            
-            with self._fav_file_lock:
-                watchlist = []
-                if os.path.exists(file_path):
-                    try:
-                        with open(file_path, 'r', encoding='utf-8') as f:
-                            watchlist = json.load(f)
-                    except (json.JSONDecodeError, TypeError):
-                        watchlist = []
-                
-                if any(item.get('video_id') == video_id for item in watchlist):
-                    ui.message(_("'{title}' is already in Watch List.").format(title=title))
-                else:
-                    new_item = {
-                        "video_id": video_id, 
-                        "title": title, 
-                        "channel_name": info.get('uploader'),
-                        "duration_str": self._format_duration_verbose(info.get('duration', 0)),
-                        "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    }
-                    watchlist.append(new_item)
-                    with open(file_path, 'w', encoding='utf-8') as f:
-                        json.dump(watchlist, f, indent=2, ensure_ascii=False)
-                    self._notify_success(_("Added '{title}' to watch list.").format(title=new_item['title']))
-            if mark_seen:
-                self.mark_videos_as_seen(video_id, notify=True)
-            else:
-                self._notify_callbacks("watch_list_updated")
-        except Exception as e:
-            log.error(f"Add to watchlist worker error: {e}")
-            ui.message(_("Error: Could not add video to Watch List."))
-        finally:
-            self._stop_indicator()
-    
     def mark_videos_as_seen(self, video_ids, notify=True):
         """
         Mark one or multiple videos as seen in the database.
@@ -2302,34 +2268,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         if isinstance(video_ids, str):
             video_ids = [video_ids]
-            
         if not video_ids:
             return
-
         try:
-            db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
             with sqlite3.connect(db_path) as con:
                 con.executemany(
                     "INSERT OR IGNORE INTO seen_videos (video_id) VALUES (?)",
                     [(vid,) for vid in video_ids]
                 )
-            
             if notify:
                 self._notify_callbacks("subscriptions_updated")
             return True
         except Exception as e:
             log.error(f"Error marking videos as seen: {e}")
             return False
-            
-    @script(description=_("Show watch list dialog."))
-    def script_showWatchListDialog(self, gesture):
-        #log.info("Script triggered: showWatchListDialog")
-        gui.mainFrame.prePopup()
-        dialog = FavsDialog(gui.mainFrame, self, 3)
-        dialog.Show()
-        gui.mainFrame.postPopup()
-    
-    
+
     __YoutubePlusGestures = {
         "kb:a": "showAddMenu",
         "kb:f": "showFavVideoDialog",
@@ -2348,4 +2301,3 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:v": "showMessagesDialog",
         "kb:h": "displayHelp"
     }
-    

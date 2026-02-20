@@ -134,7 +134,7 @@ Displays videos from channels you follow **within this add-on**. This is indepen
 * **F2**: Rename category.
 * **Ctrl+= / Ctrl+-**: Add or Delete categories.
 * **Delete / Alt+s**: Mark as Seen (hides the video).
-* **Alt+u**: Update Feed. by default The script will automatically update the feed every time NVDA started.
+* **Alt+u**: Update Feed.
 * **Alt+m (More)**: Access "Mark all as seen," "Show seen videos," and "Clear all feed data."
 
 
@@ -183,7 +183,7 @@ Access via `NVDA menu -> Preferences -> Settings -> YoutubePlus`:
 * **Notification mode**: Beep, Sound, or Silent.
 * **Sort order**: Newest First or Oldest First.
 * **Items to fetch**: How many videos/comments to load per request (Default: 20).
-* **Background update**: How often to check for new videos (Disabled to 24 hours). by default The script will automatically update the feed every time NVDA started.
+* **Background update**: How often to check for new videos (Disabled to 24 hours).
 * **Chat settings**: Auto-speak, refresh interval, and history limits.
 * **Paths**: Default folder for downloads and exported text files.
 * **Clear Data**: Wipe all favorites and subscriptions.

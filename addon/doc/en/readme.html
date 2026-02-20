@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" type="text/css" href="../style.css" media="screen"/>
+<title>YouTubePlus 2026.2.5</title>
+</head>
+<body>
+<h1>YoutubePlus for NVDA</h1>
+<blockquote>
+<p>YoutubePlus is an add-on for those who enjoy YouTube but find many web features difficult to access, such as reading video comments.
+We bring these features to you through the NVDA user interface in an accessible, shortcut-driven, and customizable format. Users do not need to deal with API keys or link any personal data to the add-on.
+You can follow your favorite channels and be certain that you will see every video they post without being filtered out by YouTube's algorithm.
+Additionally, we offer a Favorites system for videos, channels, playlists, and a "Watch List" for saving videos you're interested in but don't have time to watch yet.
+There is a built-in search system that displays results within the same accessible UI as other features, rather than just providing a search box that opens the web results.
+A download feature is included for saving videos or audio files, though it is a secondary feature. If your primary goal is downloading, there are other add-ons specifically designed for that purpose.
+The only thing this add-on does <strong>not</strong> do is play the video within its own interface. We believe the YouTube web player is already quite accessible. If you still find it difficult, you can use features from other add-ons like <a href="https://addonstore.nvaccess.org/?channel=stable&amp;language=en&amp;apiVersion=2025.3.2&amp;addonId=browsernav">browserNav</a> to enhance your experience.</p>
+</blockquote>
+<hr />
+<h2>Shortcuts and Sub-commands</h2>
+<p>This add-on uses a <strong>Layered Shortcut System</strong> to prevent shortcut conflicts with other add-ons or NVDA's core commands.
+First, press <strong>NVDA+y</strong> to enter the YoutubePlus command mode.
+Then, press the following letters to access specific features or windows:</p>
+<p><strong>Note:</strong> If the main shortcut (<strong>NVDA+Y</strong>) conflicts with another add-on, you can change it via the NVDA menu: <code>Preferences -&gt; Input Gestures...</code> under the "YoutubePlus" category.</p>
+<h3>Shortcuts used in the YoutubePlus layer</h3>
+<ul>
+<li><strong>a</strong>: (Add to...) - Opens a sub-menu to choose which list to add the video/channel to.</li>
+<li><strong>f</strong>: (Open favorite videos) - Opens your favorite videos window.</li>
+<li><strong>c</strong>: (Open favorite channels) - Opens your favorite channels window.</li>
+<li><strong>p</strong>: (Open favorite playlists) - Opens your favorite playlists window.</li>
+<li><strong>w</strong>: (Show watch list) - Displays the Watch List window.</li>
+<li><strong>d</strong>: (Download) - Prompts to download the video/audio.</li>
+<li><strong>e</strong>: (Search) - Opens the search window.</li>
+<li><strong>i</strong>: (Info) - Opens the video details window.</li>
+<li><strong>t</strong>: (Show timestamp) - Displays timestamps or chapters if available.</li>
+<li><strong>m</strong>: (Open manage subscriptions) - Opens the subscription management window.</li>
+<li><strong>s</strong>: (Open subscription feed) - Displays a feed of videos from your subscribed channels.</li>
+<li><strong>l</strong>: (Show comments) - Displays comments (details explained below).</li>
+<li><strong>Shift+l</strong>: (Stop monitoring live chat) - Stops live chat detection.</li>
+<li><strong>r</strong>: (Toggle automatic reading live chat) - Toggles whether NVDA reads new live chat messages automatically.</li>
+<li><strong>v</strong>: (Show live chat) - Re-opens the live chat window if it was previously closed.</li>
+<li><strong>h</strong>: (Help) - Opens a window listing all shortcuts.</li>
+</ul>
+<p><strong>Note</strong>: For commands targeting a specific video, the add-on first checks your active browser window. If no YouTube video is open, it checks your clipboard for a YouTube URL.</p>
+<hr />
+<h2>Feature Details</h2>
+<h3>a: (Add to...)</h3>
+<p>This command sends video or channel data to your selected list:</p>
+<ul>
+<li>Add to Favorite Videos (v)</li>
+<li>Add to Favorite Channels (c)</li>
+<li>Add to Favorite Playlists (p)</li>
+<li>Subscribe to Channel (s)</li>
+<li>Add to Watch List (w)</li>
+</ul>
+<p>Most commands work with any YouTube URL. For example, if you are on a video page but select "Add to Favorite Channel," the add-on will automatically extract the channel URL. However, "Add to Playlist" requires you to be on a playlist page or have a playlist URL in your clipboard.</p>
+<h3>d: (Download video/audio)</h3>
+<p>Prompts you to save the content as a video (.mp4) or audio (.m4a). You can set the save location in the <a href="#settings">Settings</a>.
+<em>Warning: This feature is for occasional use. If you need to download a large number of videos, please use dedicated software.</em></p>
+<h3>e: (Search)</h3>
+<p>Opens a search window. Enter your keywords and press Enter. You can tab to adjust the number of search results. The results are displayed in a <a href="#video-lists">Video List</a> format within the add-on interface.</p>
+<h3>i: (Video Info)</h3>
+<p>Displays the following details:</p>
+<ul>
+<li>Title, Channel, Duration, Upload Date, Views, Likes, Comments, and Description.</li>
+</ul>
+<h3>t: (Timestamp / Chapters)</h3>
+<p>Displays chapters or timestamps. If the video has none, you will see "No chapters found in this video."</p>
+<ul>
+<li><strong>Search box</strong>: Filter chapters instantly.</li>
+<li><strong>Open Chapter</strong>: Press Space or Enter to open the video at that specific time in your browser.</li>
+<li><strong>Copy title/URL</strong>: Copy the chapter name (Alt+c) or the URL with a timestamp (Alt+u).</li>
+<li><strong>Export</strong>: Save all timestamps to a text file (Alt+e).</li>
+</ul>
+<hr />
+<h3>Favorites</h3>
+<p>A window with four tabs:</p>
+<ul>
+<li><strong>Video</strong>: Displays your favorite videos with action and copy buttons.</li>
+<li><strong>Channel</strong>: Lists channels with descriptions and options to view specific content types (Videos, Shorts, Live).</li>
+<li><strong>Playlist</strong>: Lists saved playlists. Press Space/Enter to expand the playlist videos or Alt+w to open on the web.</li>
+<li><strong>Watch List</strong>: Functions exactly like the Video tab.</li>
+</ul>
+<h4>Managing Favorites</h4>
+<ul>
+<li><strong>Ctrl+1-4</strong>: Switch between tabs.</li>
+<li><strong>Ctrl+Up/Down</strong>: Reorder tabs.</li>
+<li><strong>Shift+Up/Down</strong>: Reorder items within a tab.</li>
+<li><strong>Alt+r / Delete</strong>: Remove an item.</li>
+<li><strong>Alt+n</strong>: Add a new item from a clipboard URL.</li>
+<li><strong>Search</strong>: Filter items in real-time.</li>
+</ul>
+<hr />
+<h3>Video Lists</h3>
+<p>Found in Favorites, Watch List, and Search results. Every video entry has <strong>Action</strong> and <strong>Copy</strong> buttons.</p>
+<h4>Action Button (Alt+a)</h4>
+<ul>
+<li>View Video Info (i)</li>
+<li>View Comments / Replay (c)</li>
+<li>View Chapters/Timestamps (t)</li>
+<li>Download Video/Audio (d/a)</li>
+<li>Add to favorites video (f)</li>
+<li>Add to favorites channel (f)</li>
+<li>Add to watch list (w)</li>
+<li>Open in browser (b)</li>
+<li>Show channel content (v/s/l)</li>
+</ul>
+<h4>Copy Button (Alt+c)</h4>
+<ul>
+<li>Copy Title (t), Video URL (u), Channel Name (c), Channel URL (h), or Summary (s).</li>
+</ul>
+<hr />
+<h3>Subscription Feed</h3>
+<p>Displays videos from channels you follow <strong>within this add-on</strong>. This is independent of your actual YouTube account.</p>
+<ul>
+<li><strong>Categories</strong>: Default categories include All, Video, Shorts, and Live.</li>
+<li><strong>Customization</strong>: You can create your own categories and assign channels to them.</li>
+<li><strong>Shortcuts</strong>:</li>
+<li><strong>Ctrl+1-0</strong>: Jump to the first 10 categories.</li>
+<li><strong>F2</strong>: Rename category.</li>
+<li><strong>Ctrl+= / Ctrl+-</strong>: Add or Delete categories.</li>
+<li><strong>Delete / Alt+s</strong>: Mark as Seen (hides the video).</li>
+<li><strong>Alt+u</strong>: Update Feed.</li>
+<li><strong>Alt+m (More)</strong>: Access "Mark all as seen," "Show seen videos," and "Clear all feed data."</li>
+</ul>
+<hr />
+<h3>Manage Subscriptions</h3>
+<p>A dedicated window to manage your followed channels.</p>
+<ul>
+<li><strong>Filter by Category</strong>: View channels in specific groups.</li>
+<li><strong>Assign to Categories</strong>: Select which category a channel belongs to.</li>
+<li><strong>Content Types</strong>: Choose what to fetch (Videos, Shorts, Live).</li>
+<li><strong>Save Change</strong>: <strong>Important!</strong> You must click this button to save your modifications before closing the window.</li>
+</ul>
+<hr />
+<h3>l: (Showing Comments)</h3>
+<p>Supports three types of feedback:</p>
+<ol>
+<li><strong>Comments</strong>: Standard video comments.</li>
+<li><strong>Live Chat</strong>: Real-time chat during a live stream.</li>
+<li><strong>Live Chat Replay</strong>: Chat history for past live streams.</li>
+</ol>
+<h4>Live Chat</h4>
+<ul>
+<li>The add-on monitors chat <strong>only after you start it</strong>.</li>
+<li><strong>r</strong>: Toggles automatic reading of new messages.</li>
+<li><strong>Message Limit</strong>: Displays the last 5,000 messages to save memory, but can keep up to 200,000 in the background for export.</li>
+<li>When a stream ends, the add-on will ask if you want to export the chat history.</li>
+</ul>
+<h4>Comments / Replay</h4>
+<p>Displays standard comments or replay chat. For large comment sections, it may take a moment to load. Pinned comments appear first.</p>
+<ul>
+<li><strong>Filters</strong>: Filter by specific user, Super Chats, Super Stickers, or Super Thanks.</li>
+<li><strong>Export</strong>: Save all comments to a text file (Alt+e).</li>
+</ul>
+<hr />
+<h2>Settings</h2>
+<p>Access via <code>NVDA menu -&gt; Preferences -&gt; Settings -&gt; YoutubePlus</code>:</p>
+<ul>
+<li><strong>Notification mode</strong>: Beep, Sound, or Silent.</li>
+<li><strong>Sort order</strong>: Newest First or Oldest First.</li>
+<li><strong>Items to fetch</strong>: How many videos/comments to load per request (Default: 20).</li>
+<li><strong>Background update</strong>: How often to check for new videos (Disabled to 24 hours).</li>
+<li><strong>Chat settings</strong>: Auto-speak, refresh interval, and history limits.</li>
+<li><strong>Paths</strong>: Default folder for downloads and exported text files.</li>
+<li><strong>Clear Data</strong>: Wipe all favorites and subscriptions.</li>
+</ul>
+<hr />
+<h2>Additional Information</h2>
+<p>This add-on utilizes:</p>
+<ul>
+<li><a href="https://pypi.org/project/pytchat/">pytchat</a>: For live chat monitoring.</li>
+<li><a href="https://pypi.org/project/yt-dlp/">yt-dlp</a>: For accessing YouTube metadata and downloading.</li>
+</ul>
+<h3>Note on yt-dlp and Fair Use</h3>
+<p><strong>yt-dlp</strong> is a powerful open-source tool. Please follow these guidelines:</p>
+<ol>
+<li><strong>Fair Use</strong>: Avoid making excessive requests in a short time to prevent your IP from being temporarily blocked by YouTube.</li>
+<li><strong>Copyright</strong>: Content should be for personal viewing or analysis. Respect the Terms of Service of the platform.</li>
+<li><strong>Responsibility</strong>: The user is responsible for the data they fetch. The add-on developer only provides the interface.</li>
+</ol>
+</body>
+</html>

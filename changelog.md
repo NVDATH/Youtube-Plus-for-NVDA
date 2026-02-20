@@ -1,3 +1,7 @@
+## 2026.2.20
+
+- Resolved a missing dependency error; the add-on now correctly imports required internal components without relying on other installed add-ons.
+
 ## 2026.2.4
 
 * update yt-dlp to latest 2026.2.4

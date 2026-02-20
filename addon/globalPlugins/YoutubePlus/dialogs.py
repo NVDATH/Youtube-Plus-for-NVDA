@@ -18,6 +18,14 @@ import threading
 import controlTypes 
 import sqlite3
 from logHandler import log
+import globalVars
+NVDA_CONFIG_PATH = globalVars.appArgs.configPath
+ADDON_DATA_DIR = os.path.join(NVDA_CONFIG_PATH, "youtubePlus")
+if not os.path.exists(ADDON_DATA_DIR):
+    try:
+        os.makedirs(ADDON_DATA_DIR)
+    except Exception:
+        ADDON_DATA_DIR = NVDA_CONFIG_PATH
 
 # Initialize translations for this file
 addonHandler.initTranslation()
@@ -241,10 +249,10 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
     
     def on_export(self, event):
         default_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.expanduser("~/Desktop")
-        safeTitle = sanitize_filename(f"Chapters for {self.GetTitle()}")
+        safeTitle = sanitize_filename(f"{self.GetTitle()}")
         filename = f"{safeTitle}.txt"
         filepath = os.path.join(default_path, filename)
-        log.info("Exporting chapters for '%s' to %s", self.GetTitle(), filepath)
+        log.info("Exporting '%s' to %s", self.GetTitle(), filepath)
         try:
             with open(filepath, "w", encoding="utf-8") as f:
                 for chapter in self.chapters:
@@ -1203,7 +1211,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
 
 class FavVideoPanel(BaseVideoListPanel):
     def _get_file_path(self):
-        return os.path.join(os.path.dirname(__file__), 'fav_video.json')
+        return os.path.join(ADDON_DATA_DIR, 'fav_video.json')
 
     def _get_callback_topic(self):
         return "fav_video_updated"
@@ -1216,7 +1224,7 @@ class FavVideoPanel(BaseVideoListPanel):
 
 class WatchListPanel(BaseVideoListPanel):
     def _get_file_path(self):
-        return os.path.join(os.path.dirname(__file__), 'watch_list.json')
+        return os.path.join(ADDON_DATA_DIR, 'watch_list.json')
 
     def _get_callback_topic(self):
         return "watch_list_updated"
@@ -1236,7 +1244,7 @@ class FavChannelPanel(wx.Panel):
         self._is_first_load = True
         self.last_selected_item_before_search = None
         self._is_programmatic_selection = False
-        self.fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_channel.json')
+        self.fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_channel.json')
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -1476,7 +1484,7 @@ class FavPlaylistPanel(wx.Panel):
         self.filtered_playlists = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
-        self.fav_file_path = os.path.join(os.path.dirname(__file__), 'fav_playlist.json')
+        self.fav_file_path = os.path.join(ADDON_DATA_DIR, 'fav_playlist.json')
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2013,7 +2021,7 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         self.__class__._instance = self
  
         self.core = core_instance
-        self.db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+        self.db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
 
         self.all_channels = []
         self.categories = []
@@ -2327,7 +2335,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         super().__init__(parent, title=_("Subscription Feed"))
         self.__class__._instance = self # Register the new instance
         self.core = core_instance
-        self.db_path = os.path.join(os.path.dirname(__file__), 'subscription.db')
+        self.db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
         self.all_videos = []
         self.user_categories = []
         self.tab_order = []
