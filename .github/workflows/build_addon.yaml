@@ -8,14 +8,14 @@ jobs:
   build_and_release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # สำคัญมากสำหรับการสร้าง Release
+      contents: write
 
     steps:
       - name: Checkout repository
-        uses: [actions/checkout](https://github.com)@v4
+        uses: actions/checkout@v4 # แก้ไข: ลิงก์ออก
 
       - name: Set up Python
-        uses: [actions/setup-python](https://github.com)@v5
+        uses: actions/setup-python@v5 # แก้ไข: ลิงก์ออก
         with:
           python-version: "3.11"
 
@@ -25,21 +25,22 @@ jobs:
           pip install scons markdown
 
       - name: Build Add-on and Pot file
-        # รัน scons เพื่อสร้างไฟล์ติดตั้ง และ scons pot เพื่อสร้างไฟล์แม่แบบแปลภาษา
         run: scons && scons pot
 
-      - name: Extract Changelog for Current Version
+      - name: Extract Changelog
         id: extract_changelog
         run: |
-          # ดึงเลขเวอร์ชันจาก Tag (เช่น 1.2.3)
           VERSION=${GITHUB_REF#refs/tags/v}
-          # ค้นหาเนื้อหาใน changelog.md ตั้งแต่ ## version จนถึง ## ถัดไป
-          sed -n "/^## $VERSION/,/^## /p" changelog.md | sed '1d;$d' > release_notes.md
-          # ถ้าไฟล์ว่างเปล่า ให้ใส่ข้อความ Default
-          if [ ! -s release_notes.md ]; then echo "Release for version $VERSION" > release_notes.md; fi
+          # ป้องกัน error ถ้าไม่มีไฟล์ changelog
+          if [ -f "changelog.md" ]; then
+            sed -n "/^## $VERSION/,/^## /p" changelog.md | sed '1d;$d' > release_notes.md
+          fi
+          if [ ! -s release_notes.md ]; then 
+            echo "Release for version $VERSION" > release_notes.md
+          fi
 
       - name: Create GitHub Release
-        uses: [softprops/action-gh-release](https://github.com)@v2
+        uses: softprops/action-gh-release@v2 # แก้ไข: ลิงก์ออก
         with:
           body_path: release_notes.md
           files: |
@@ -47,5 +48,3 @@ jobs:
             *.pot
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
