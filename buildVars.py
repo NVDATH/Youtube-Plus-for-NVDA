@@ -17,20 +17,36 @@ features:
 • we offer a Favorites system for videos, channels, playlists, and a Watch List for saving videos you're interested in but don't have time to watch yet.
 • built-in search system that displays results within the same accessible UI as other features, rather than just providing a search box that opens the web results.
 • included download feature for saving videos or audio files."""
-),
+    ),
     "addon_url": "https://nvda.in.th/youtube-plus",
     "addon_docFileName": "readme.html",
     "addon_minimumNVDAVersion": "2025.1",
     "addon_lastTestedNVDAVersion": "2025.3.2",
-    "addon_updateChannel": None,
+    # [1] เปลี่ยนจาก None เป็น "stable" เพื่อให้ SConstruct อ่านค่าได้ถูกต้อง
+    # ใช้ "dev" สำหรับ nightly build, "stable" สำหรับ release ปกติ
+    "addon_updateChannel": "stable",
 }
 
 pythonSources = [
     "addon/globalPlugins",
 ]
 
-i18nSources = []
+# [2] เพิ่ม i18nSources — ชี้ไปยัง Python files ที่มี translatable strings
+# SConstruct ใช้ list นี้เพื่อ extract strings ออกมาเป็น .pot file (สำหรับนักแปล)
+i18nSources = [
+    "addon/globalPlugins/*.py",
+    "addon/globalPlugins/YoutubePlus/*.py",
+]
+
 docFiles = ["readme.html"]
 
 tests = []
-excludedFiles = [] 
+excludedFiles = []
+
+# [3] เพิ่ม baseLanguage — ภาษาหลักของ add-on (ใช้สำหรับ readme.md และ doc folder)
+# SConstruct จะ copy readme.md ไปไว้ใน addon/doc/<baseLanguage>/readme.md
+baseLanguage = "en"
+
+# [4] เพิ่ม markdownExtensions — list ว่างหมายถึงใช้ markdown มาตรฐาน
+# สามารถเพิ่ม extension ได้ เช่น ["extra", "toc"] ถ้าต้องการ
+markdownExtensions = []

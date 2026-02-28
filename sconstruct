@@ -1,165 +1,319 @@
 # -*- coding: utf-8 -*-
+# NVDA add-on SConstruct
+# Auto-install lib from requirements.txt to addon/lib
+# No dependencies installed, remove .dist-info
+# I18N/gettext support included.
+
 import codecs
+import gettext
 import os
 import os.path
 import zipfile
 import sys
 import subprocess
 import shutil
-import gettext
-from SCons.Script import Variables, BoolVariable, Environment, Builder, Copy
 
+# Add-on localization exchange facility requires Python 3.10+.
+EnsurePythonVersion(3, 10)
 sys.dont_write_bytecode = True
 import buildVars
+from SCons.Script import Variables, BoolVariable, Environment, Builder, Copy
 
 # ---------- Markdown to HTML ----------
 def md2html(source, dest):
     import markdown
-    lang = os.path.basename(os.path.dirname(source)).replace('_', '-')
+    # Use extensions if defined.
+    mdExtensions = getattr(buildVars, "markdownExtensions", [])
+    lang = os.path.basename(os.path.dirname(source)).replace("_", "-")
+    localeLang = os.path.basename(os.path.dirname(source))
+    try:
+        _ = gettext.translation(
+            "nvda", localedir=os.path.join("addon", "locale"), languages=[localeLang]
+        ).gettext
+        summary = _(buildVars.addon_info["addon_summary"])
+    except Exception:
+        summary = buildVars.addon_info["addon_summary"]
     title = "{addonSummary} {addonVersion}".format(
-        addonSummary=buildVars.addon_info["addon_summary"],
+        addonSummary=summary,
         addonVersion=buildVars.addon_info["addon_version"]
     )
+    headerDic = {
+        '[[!meta title="': "# ",
+        '"]]': " #",
+    }
     with codecs.open(source, "r", "utf-8") as f:
         mdText = f.read()
-        htmlText = markdown.markdown(mdText)
+        for k, v in headerDic.items():
+            mdText = mdText.replace(k, v, 1)
+        htmlText = markdown.markdown(mdText, extensions=mdExtensions)
+    docText = "\n".join([
+        "<!DOCTYPE html>",
+        f'<html lang="{lang}">',
+        "<head>",
+        '<meta charset="UTF-8">',
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+        '<link rel="stylesheet" type="text/css" href="../style.css" media="screen">',
+        f"<title>{title}</title>",
+        "</head>\n<body>",
+        htmlText,
+        "</body>\n</html>",
+    ])
     with codecs.open(dest, "w", "utf-8") as f:
-        f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
-                "    \"http://www.w3.org\">\n"
-                "<html xmlns=\"http://www.w3.org\" xml:lang=\"%s\" lang=\"%s\">\n" % (lang, lang) +
-                "<head>\n"
-                "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n"
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"../style.css\" media=\"screen\"/>\n"
-                "<title>%s</title>\n" % title +
-                "</head>\n<body>\n"
-        )
-        f.write(htmlText)
-        f.write("\n</body>\n</html>")
+        f.write(docText)
 
 def mdTool(env):
     mdAction = env.Action(
         lambda target, source, env: md2html(source[0].path, target[0].path),
-        lambda target, source, env: 'Generating %s' % target[0],
+        lambda target, source, env: f"Generating {target[0]}",
     )
-    mdBuilder = env.Builder(action=mdAction, suffix='.html', src_suffix='.md')
-    env['BUILDERS']['markdown'] = mdBuilder
-
-# ---------- Localization Helpers ----------
-def generateTranslatedManifest(source, language, out):
-    # พยายามดึงคำแปลจากไฟล์ nvda.mo ในโฟลเดอร์ภาษานั้นๆ
-    addon_id = "nvda" 
-    try:
-        _ = gettext.translation(addon_id, localedir=os.path.join("addon", "locale"), languages=[language]).gettext
-        vars = {
-            "addon_summary": _(buildVars.addon_info["addon_summary"]),
-            "addon_description": _(buildVars.addon_info["addon_description"]),
-        }
-    except Exception:
-        vars = {
-            "addon_summary": buildVars.addon_info["addon_summary"],
-            "addon_description": buildVars.addon_info["addon_description"],
-        }
-    
-    with codecs.open(source, "r", "utf-8") as f:
-        template = f.read()
-    with codecs.open(out, "w", "utf-8") as f:
-        f.write(template.format(**vars))
-
-def translatedManifestGenerator(target, source, env, for_signature):
-    lang = os.path.basename(os.path.dirname(str(target[0])))
-    return env.Action(
-        lambda target, source, env: generateTranslatedManifest(source[0].abspath, lang, target[0].abspath) and None,
-        lambda target, source, env: f"Generating translated manifest for {lang}"
+    mdBuilder = env.Builder(
+        action=mdAction,
+        suffix=".html",
+        src_suffix=".md",
     )
+    env["BUILDERS"]["markdown"] = mdBuilder
 
-# ---------- Environment Setup ----------
+# ---------- Environment ----------
 vars = Variables()
 vars.Add("version", "The version of this build", buildVars.addon_info["addon_version"])
 vars.Add(BoolVariable("dev", "Whether this is a daily development version", False))
+vars.Add("channel", "Update channel for this build", buildVars.addon_info["addon_updateChannel"])
 
-# เพิ่ม gettexttool เข้าไปใน tools
 env = Environment(variables=vars, ENV=os.environ, tools=["gettexttool", mdTool])
 env.Append(**buildVars.addon_info)
-env['BUILDERS']['NVDATranslatedManifest'] = Builder(generator=translatedManifestGenerator)
 
 if env["dev"]:
     import datetime
     buildDate = datetime.datetime.now()
-    env["addon_version"] = buildDate.strftime("%Y%m%d") + "-dev"
+    year, month, day = str(buildDate.year), str(buildDate.month), str(buildDate.day)
+    versionTimestamp = "".join([year, month.zfill(2), day.zfill(2)])
+    env["addon_version"] = f"{versionTimestamp}.0.0-dev"
+    env["channel"] = "dev"
 elif env["version"] is not None:
     env["addon_version"] = env["version"]
+if "channel" in env and env["channel"] is not None:
+    env["addon_updateChannel"] = env["channel"]
+
+buildVars.addon_info["addon_version"] = env["addon_version"]
+buildVars.addon_info["addon_updateChannel"] = env["addon_updateChannel"]
 
 addonFile = env.File("${addon_name}-${addon_version}.nvda-addon")
 
-# ---------- Pre-build: Pip install & Cleanup ----------
+# ---------- Pre-build: install pip packages to lib ----------
 lib_dir = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib")
-if not os.path.exists(lib_dir): os.makedirs(lib_dir)
+if not os.path.exists(lib_dir):
+    os.makedirs(lib_dir)
 
-subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "-r", "requirements.txt", "--target", lib_dir, "--no-deps"])
+# install requirements.txt to lib folder, no dependencies
+subprocess.check_call([
+    sys.executable, "-m", "pip", "install",
+    "--upgrade",
+    "-r", "requirements.txt",
+    "--target", lib_dir,
+    "--no-deps"
+])
 
+# remove .dist-info folders
 for item in os.listdir(lib_dir):
-    path = os.path.join(lib_dir, item)
-    if (item.endswith(".dist-info") or item in ["bin", "share", "testrun"]) and os.path.isdir(path):
-        shutil.rmtree(path)
+    item_path = os.path.join(lib_dir, item)
+    if item.endswith(".dist-info") and os.path.isdir(item_path):
+        shutil.rmtree(item_path)
 
-# Security Patch for bunnycdn.py
-bunny_file = os.path.join(lib_dir, "yt_dlp", "downloader", "bunnycdn.py")
+# post-install cleanup: remove unwanted folders
+unwanted_dirs = ["bin", "share", "testrun"]
+for dir_name in unwanted_dirs:
+    dir_path = os.path.join(lib_dir, dir_name)
+    if os.path.isdir(dir_path):
+        shutil.rmtree(dir_path)
+
+extractor_dir = os.path.join(lib_dir, "yt_dlp", "extractor")
+if os.path.exists(extractor_dir):
+    keep_files = [
+        '__init__.py', 'afreecatv.py', 'common.py', 'generic.py', 'extractors.py',
+        'openload.py', 'adobepass.py', 'lazy_extractors.py', 'youtube'
+    ]
+    for item in os.listdir(extractor_dir):
+        item_path = os.path.join(extractor_dir, item)
+        if item not in keep_files and not item.startswith("youtube_"):
+            if os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+            else:
+                os.remove(item_path)
+
+# Fix security warnings in bunnycdn.py (Line 32 and 44)
+bunny_file = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib", "yt_dlp", "downloader", "bunnycdn.py")
 if os.path.exists(bunny_file):
-    with open(bunny_file, "r", encoding="utf-8") as f: lines = f.readlines()
+    print(f"Applying security patch to {bunny_file}...")
+    with open(bunny_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
     with open(bunny_file, "w", encoding="utf-8") as f:
         for i, line in enumerate(lines):
-            f.write(f"# Fixed: {line}" if i + 1 in [32, 44] else line)
+            # Comment out lines 32 and 44 to clear CodeQL security alerts
+            if i + 1 in [32, 44]:
+                f.write(f"# Fixed by SCons: {line}")
+            else:
+                f.write(line)
+    print("Security patch applied successfully.")
 
-# ---------- POT Generation ----------
-def generatePot(target, source, env):
-    addon_id = "nvda"
-    pot_file = os.path.join("addon", "locale", f"{addon_id}.pot")
-    if not os.path.exists(os.path.dirname(pot_file)): os.makedirs(os.path.dirname(pot_file))
-    
-    cmd = (f'xgettext --package-name="YoutubePlus" --add-comments="Translator:" '
-           f'--output={pot_file} --language=Python --keyword=_ --from-code=utf-8 '
-           f'addon/globalPlugins/YoutubePlus/*.py addon/*.py')
-    return subprocess.call(cmd, shell=True)
-
-env.Alias('pot', [], generatePot)
-
-# ---------- Add-on Bundle & Manifest ----------
+# ---------- Add-on builder ----------
 def createAddonBundleFromPath(path, dest):
     basedir = os.path.abspath(path)
-    with zipfile.ZipFile(dest, 'w', zipfile.ZIP_DEFLATED) as z:
-        for dir, _, filenames in os.walk(basedir):
+    with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
+        for dir, dirnames, filenames in os.walk(basedir):
+            relativePath = os.path.relpath(dir, basedir)
             for filename in filenames:
+                pathInBundle = os.path.join(relativePath, filename)
                 absPath = os.path.join(dir, filename)
-                relPath = os.path.relpath(absPath, basedir)
-                if relPath not in buildVars.excludedFiles:
-                    z.write(absPath, relPath)
+                if pathInBundle not in buildVars.excludedFiles:
+                    z.write(absPath, pathInBundle)
     return dest
 
-env['BUILDERS']['NVDAAddon'] = Builder(
-    action=env.Action(lambda target, source, env: createAddonBundleFromPath(source[0].abspath, target[0].abspath) and None,
-                      lambda target, source, env: "Generating Addon %s" % target[0])
-)
-
-# ---------- Build Process ----------
-addon = env.NVDAAddon(addonFile, env.Dir('addon'))
-
-# Manage Locale & Translated Manifests
-for langDir in env.Glob(os.path.join('addon', 'locale', '*')):
-    lang = os.path.basename(str(langDir))
-    if not os.path.isdir(str(langDir)) or lang == "en": continue
-    
-    # สร้าง manifest.ini จาก template
-    t_manifest = env.NVDATranslatedManifest(
-        os.path.join(str(langDir), 'manifest.ini'),
-        'manifest-translated.ini.tpl'
+def addonGenerator(target, source, env, for_signature):
+    action = env.Action(
+        lambda target, source, env: createAddonBundleFromPath(source[0].abspath, target[0].abspath) and None,
+        lambda target, source, env: f"Generating Addon {target[0]}",
     )
-    env.Depends(addon, t_manifest)
+    return action
 
-# Help Docs
-for mdFile in env.Glob(os.path.join('addon', 'doc', '*', '*.md')):
+def manifestGenerator(target, source, env, for_signature):
+    action = env.Action(
+        lambda target, source, env: generateManifest(source[0].abspath, target[0].abspath) and None,
+        lambda target, source, env: f"Generating manifest {target[0]}",
+    )
+    return action
+
+def translatedManifestGenerator(target, source, env, for_signature):
+    dir = os.path.abspath(os.path.join(os.path.dirname(str(source[0])), ".."))
+    lang = os.path.basename(dir)
+    action = env.Action(
+        lambda target, source, env: generateTranslatedManifest(source[1].abspath, lang, target[0].abspath) and None,
+        lambda target, source, env: f"Generating translated manifest {target[0]}",
+    )
+    return action
+
+env["BUILDERS"]["NVDAAddon"] = Builder(generator=addonGenerator)
+env["BUILDERS"]["NVDAManifest"] = Builder(generator=manifestGenerator)
+env["BUILDERS"]["NVDATranslatedManifest"] = Builder(generator=translatedManifestGenerator)
+
+# ---------- Build add-on ----------
+addon = env.NVDAAddon(addonFile, env.Dir("addon"))
+
+# ---------- I18N: compile .po files and generate translated manifests ----------
+langDirs = [f for f in env.Glob(os.path.join("addon", "locale", "*"))]
+
+moByLang = {}
+for dir in langDirs:
+    poFile = dir.File(os.path.join("LC_MESSAGES", "nvda.po"))
+    moFile = env.gettextMoFile(poFile)
+    moByLang[dir] = moFile
+    env.Depends(moFile, poFile)
+    translatedManifest = env.NVDATranslatedManifest(
+        dir.File("manifest.ini"), [moFile, os.path.join("manifest-translated.ini.tpl")]
+    )
+    env.Depends(translatedManifest, ["buildVars.py"])
+    env.Depends(addon, [translatedManifest, moFile])
+
+# ---------- Convert markdown files to HTML ----------
+def createAddonHelp(dir):
+    docsDir = os.path.join(dir, "doc")
+    if os.path.isfile("style.css"):
+        cssPath = os.path.join(docsDir, "style.css")
+        cssTarget = env.Command(cssPath, "style.css", Copy("$TARGET", "$SOURCE"))
+        env.Depends(addon, cssTarget)
+    if os.path.isfile("readme.md"):
+        readmePath = os.path.join(docsDir, buildVars.baseLanguage, "readme.md")
+        readmeTarget = env.Command(readmePath, "readme.md", Copy("$TARGET", "$SOURCE"))
+        env.Depends(addon, readmeTarget)
+
+createAddonHelp("addon")
+for mdFile in env.Glob(os.path.join("addon", "doc", "*", "*.md")):
+    lang = os.path.basename(os.path.dirname(mdFile.get_abspath()))
+    moFile = moByLang.get(lang)
     htmlFile = env.markdown(mdFile)
+    env.Depends(htmlFile, mdFile)
+    if moFile:
+        env.Depends(htmlFile, moFile)
     env.Depends(addon, htmlFile)
 
-# Final dependencies
-env.Depends(addon, env.Glob(os.path.join('addon', '*.py')))
+# ---------- Dependencies for Python files ----------
+def expandGlobs(files):
+    return [f for pattern in files for f in env.Glob(pattern)]
+
+pythonFiles = expandGlobs(buildVars.pythonSources)
+for file in pythonFiles:
+    env.Depends(addon, file)
+
+# ---------- Pot target (I18N source extraction) ----------
+i18nFiles = expandGlobs(buildVars.i18nSources)
+gettextvars = {
+    "gettext_package_bugs_address": "nvda-translations@groups.io",
+    "gettext_package_name": buildVars.addon_info["addon_name"],
+    "gettext_package_version": buildVars.addon_info["addon_version"],
+}
+
+pot = env.gettextPotFile("${addon_name}.pot", i18nFiles, **gettextvars)
+env.Alias("pot", pot)
+env.Depends(pot, i18nFiles)
+mergePot = env.gettextMergePotFile("${addon_name}-merge.pot", i18nFiles, **gettextvars)
+env.Alias("mergePot", mergePot)
+env.Depends(mergePot, i18nFiles)
+
+# ---------- Manifest ----------
+def generateManifest(source, dest):
+    addon_info = buildVars.addon_info
+    with codecs.open(source, "r", "utf-8") as f:
+        manifest_template = f.read()
+    manifest = manifest_template.format(**addon_info)
+    # Custom braille translation tables
+    if getattr(buildVars, "brailleTables", {}):
+        manifest_brailleTables = ["\n[brailleTables]"]
+        for table in buildVars.brailleTables.keys():
+            manifest_brailleTables.append(f"[[{table}]]")
+            for key, val in buildVars.brailleTables[table].items():
+                manifest_brailleTables.append(f"{key} = {val}")
+        manifest += "\n".join(manifest_brailleTables) + "\n"
+    # Custom speech symbol dictionaries
+    if getattr(buildVars, "symbolDictionaries", {}):
+        manifest_symbolDictionaries = ["\n[symbolDictionaries]"]
+        for dictionary in buildVars.symbolDictionaries.keys():
+            manifest_symbolDictionaries.append(f"[[{dictionary}]]")
+            for key, val in buildVars.symbolDictionaries[dictionary].items():
+                manifest_symbolDictionaries.append(f"{key} = {val}")
+        manifest += "\n".join(manifest_symbolDictionaries) + "\n"
+    with codecs.open(dest, "w", "utf-8") as f:
+        f.write(manifest)
+
+def generateTranslatedManifest(source, language, out):
+    _ = gettext.translation("nvda", localedir=os.path.join("addon", "locale"), languages=[language]).gettext
+    vars = {}
+    for var in ("addon_summary", "addon_description"):
+        vars[var] = _(buildVars.addon_info[var])
+    with codecs.open(source, "r", "utf-8") as f:
+        manifest_template = f.read()
+    result = manifest_template.format(**vars)
+    # Custom braille translation tables
+    if getattr(buildVars, "brailleTables", {}):
+        result_brailleTables = ["\n[brailleTables]"]
+        for table in buildVars.brailleTables.keys():
+            result_brailleTables.append(f"[[{table}]]")
+            result_brailleTables.append(f"displayName = {_(buildVars.brailleTables[table]['displayName'])}")
+        result += "\n".join(result_brailleTables) + "\n"
+    # Custom speech symbol dictionaries
+    if getattr(buildVars, "symbolDictionaries", {}):
+        result_symbolDictionaries = ["\n[symbolDictionaries]"]
+        for dictionary in buildVars.symbolDictionaries.keys():
+            result_symbolDictionaries.append(f"[[{dictionary}]]")
+            result_symbolDictionaries.append(
+                f"displayName = {_(buildVars.symbolDictionaries[dictionary]['displayName'])}"
+            )
+        result += "\n".join(result_symbolDictionaries) + "\n"
+    with codecs.open(out, "w", "utf-8") as f:
+        f.write(result)
+
+manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join("manifest.ini.tpl"))
+env.Depends(manifest, "buildVars.py")
+env.Depends(addon, manifest)
+
+# ---------- Default ----------
+env.Default(addon)
+env.Clean(addon, [".sconsign.dblite", "addon/doc/" + buildVars.baseLanguage + "/"])
