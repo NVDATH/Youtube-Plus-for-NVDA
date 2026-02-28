@@ -1,12 +1,14 @@
-## 2026.2.21
+## 2026.2.28
 
-- fix some buck on video list
-- add quickAction 
-- add user profile 
+### ✨ New Features
+- **User Profiles:** Introduced a dedicated user profile system, allowing users to customize and save their preferences for a more personalized experience.
+- **Quick Actions:** Added a new quick access menu to trigger frequently used functions instantly.
+- **Full I18n Support:** Refactored the entire codebase to support Internationalization (I18n), enabling seamless translation via Gettext and supporting translator notes.
 
-## 2026.2.20
-
-- Resolved a missing dependency error; the add-on now correctly imports required internal components without relying on other installed add-ons.
+### 🛠️ Improvements & Fixes
+- **Core Engine Update:** Upgraded internal **yt-dlp to v2026.2.21** for enhanced video extraction performance and stability.
+- **Dependency Resolution:** Fixed critical internal import errors; the add-on is now fully self-contained and functions correctly without relying on other installed add-ons.
+- **General Bug Fixes:** Resolved multiple bugs across various modules, including video list rendering. All features are now expected to be fully operational and stable.
 
 ## 2026.2.4
 

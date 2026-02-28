@@ -1,0 +1,51 @@
+name: Release NVDA Add-on
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # สำคัญมากสำหรับการสร้าง Release
+
+    steps:
+      - name: Checkout repository
+        uses: [actions/checkout](https://github.com)@v4
+
+      - name: Set up Python
+        uses: [actions/setup-python](https://github.com)@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y gettext
+          pip install scons markdown
+
+      - name: Build Add-on and Pot file
+        # รัน scons เพื่อสร้างไฟล์ติดตั้ง และ scons pot เพื่อสร้างไฟล์แม่แบบแปลภาษา
+        run: scons && scons pot
+
+      - name: Extract Changelog for Current Version
+        id: extract_changelog
+        run: |
+          # ดึงเลขเวอร์ชันจาก Tag (เช่น 1.2.3)
+          VERSION=${GITHUB_REF#refs/tags/v}
+          # ค้นหาเนื้อหาใน changelog.md ตั้งแต่ ## version จนถึง ## ถัดไป
+          sed -n "/^## $VERSION/,/^## /p" changelog.md | sed '1d;$d' > release_notes.md
+          # ถ้าไฟล์ว่างเปล่า ให้ใส่ข้อความ Default
+          if [ ! -s release_notes.md ]; then echo "Release for version $VERSION" > release_notes.md; fi
+
+      - name: Create GitHub Release
+        uses: [softprops/action-gh-release](https://github.com)@v2
+        with:
+          body_path: release_notes.md
+          files: |
+            *.nvda-addon
+            *.pot
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

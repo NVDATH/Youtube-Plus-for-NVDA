@@ -218,13 +218,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=10)
 
-        # Translators: A button in the settings dialog that allows the user to delete all saved data.
-        self.clearDataBtn = wx.Button(self, label=_("Clear All Favorite and Subscription Data..."))
-        sHelper.addItem(self.clearDataBtn, flag=wx.ALIGN_CENTER)
-        self.clearDataBtn.Bind(wx.EVT_BUTTON, self.on_clear_data)
         
-
-
     def _get_available_profiles(self):
         """Helper to scan directories for profiles."""
         base_path = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
@@ -241,7 +235,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         return sorted(profiles)
 
     def on_manage_profiles(self, event):
-        # เรียกใช้ ProfileManagementDialog ที่อยู่ใน dialogs.py
         from .dialogs import ProfileManagementDialog
         with ProfileManagementDialog(self) as dlg:
             dlg.ShowModal()

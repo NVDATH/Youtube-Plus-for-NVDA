@@ -48,6 +48,33 @@ jobs:
           Write-Host "::set-output name=tag::$tag_name"
         shell: pwsh
 
+      - name: Extract Changelog
+        id: extract_changelog
+        run: |
+          # ดึง Version จาก Tag (ตัด 'v' ข้างหน้าออก)
+          $tag = "${{ steps.get_tag.outputs.tag }}"
+          $version = $tag -replace '^v', ''
+          
+          # อ่านไฟล์ Changelog
+          if (Test-Path changelog.md) {
+            $content = Get-Content changelog.md -Raw
+            # Regex ค้นหาบรรทัดที่ขึ้นต้นด้วย ## ตามด้วย version และดึงเนื้อหาจนถึง ## ถัดไป
+            if ($content -match "(?ms)^##\s*$version\r?\n(.*?)(^##|\Z)") {
+              $body = $matches[1].Trim()
+            } else {
+              $body = "Release for version $version"
+            }
+          } else {
+            $body = "Release for version $version"
+          }
+
+          # เขียนลง Environment Variable เพื่อรองรับ Multiline string
+          $delimiter = "EOF"
+          "RELEASE_BODY<<$delimiter" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $body | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "$delimiter" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        shell: pwsh
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -56,8 +83,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_tag.outputs.tag }}
           release_name: Release ${{ steps.get_tag.outputs.tag }}
-          body: |
-            Automatically generated release for version ${{ steps.get_tag.outputs.tag }}.
+          body: ${{ env.RELEASE_BODY }}
           draft: false
           prerelease: false
 

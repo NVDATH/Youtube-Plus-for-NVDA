@@ -61,17 +61,6 @@ import globalVars
 
 
 
-"""
-import globalVars
-NVDA_CONFIG_PATH = globalVars.appArgs.configPath
-ADDON_DATA_DIR = os.path.join(NVDA_CONFIG_PATH, "youtubePlus")
-if not os.path.exists(ADDON_DATA_DIR):
-    try:
-        os.makedirs(ADDON_DATA_DIR)
-    except Exception:
-        ADDON_DATA_DIR = NVDA_CONFIG_PATH
-db_path = os.path.join(ADDON_DATA_DIR, 'subscription.db')
-"""
 import addonHandler
 addonHandler.initTranslation()
 
@@ -88,7 +77,7 @@ def finally_(func, final):
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     instance = None
-    scriptCategory = _("YoutubePlus")
+    scriptCategory = "YoutubePlus"
 
     youtube_regex = re.compile(r"youtu\.?be", re.IGNORECASE)
 
@@ -124,50 +113,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         threading.Thread(target=self._update_subscription_feed_worker, kwargs={'silent': True}, daemon=True).start()
         
         self.manage_auto_update_timer()
-        # Translators: help dialog
-        self.help_text = _("""YoutubePlus Layer Commands (Press NVDA+Y to activate)
-
---- Core Actions (from a YouTube window/URL) ---
-- L: Get comments from the current URL (Live Chat, Replay, or Comments)
-- I: Get video info
-- T: Show video chapters/timestamps
-- D: Download video/audio from the current URL
-- E: Search YouTube
-
---- Favorites & Subscriptions ---
-- A: Show the "Add to..." menu (for favorites/subscriptions)
-- F: Show favorite videos dialog
-- C: Show favorite channels dialog
-- P: Show favorite playlists dialog
-- w: show watch list dialog
-- S: Show subscription feed dialog
-- M: Show Manage Subscriptions dialog
-
---- Live Chat Monitoring (while active) ---
-- Shift+L: Stop live chat monitoring
-- V: Show live chat messages dialog
-- R: Toggle automatic speaking of incoming messages
-
---- Additional Keyboard Shortcuts (within addon dialogs) ---
-**In Favorites and Subscription Feed Dialogs:**
-- Ctrl+1 through 9: Jump to a specific tab
-- Ctrl+Up/Down or Left/Right: Reorder tabs
-
-**In the Subscription Feed Dialog:**
-- F2: Rename the current category
-- Ctrl+Equals: Add a new category
-- Ctrl+Minus: Remove the current category
-- Delete: Mark the selected video as seen
-- Ctrl+Delete: Mark all videos in the current tab as seen
-
-**In any Favorites Dialog (Videos, Channels, Playlists):**
-- Shift+Up/Down: Reorder the selected item
-- Delete: Remove the selected item from favorites
-
---- Help ---
-- H: Show this help dialog
-""")
-
+        
     def get_profile_path(self, filename=None):
         profile = config.conf["YoutubePlus"].get("activeProfile", "default")
         base_path = os.path.join(globalVars.appArgs.configPath, "YoutubePlus", profile)
@@ -400,9 +346,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return None
         is_video_format = 'v=' in url or 'shorts/' in url or 'live/' in url or 'youtu.be/' in url
         if self._is_specific_youtube_url(url) and not is_video_format:
-             self._notify_error(
                 # Translators: error in not video page
-                _("This command is for videos, but the current page appears to be a channel or playlist."),
+             self._notify_error(_("This command is for videos, but the current page appears to be a channel or playlist."),
                 log_message=f"Command blocked on non-video URL (channel/playlist): {url}"
             )
              return None
@@ -1290,7 +1235,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             with self._fav_file_lock:
                 favorites = []
                 try:
-                    fav_video__path = self.get_profile_path("fav_video.json")
+                    fav_video_path = self.get_profile_path("fav_video.json")
                     with open(fav_video_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
@@ -1344,7 +1289,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             with self._fav_file_lock:
                 favorites = []
                 try:
-                    fav_channel__path = self.get_profile_path("fav_channel.json")
+                    fav_channel_path = self.get_profile_path("fav_channel.json")
                     with open(fav_channel_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
@@ -1392,7 +1337,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             with self._fav_file_lock:
                 favorites = []
                 try:
-                    fav_playlist__path = self.get_profile_path("fav_playlist.json")
+                    fav_playlist_path = self.get_profile_path("fav_playlist.json")
                     with open(fav_playlist_path, 'r', encoding='utf-8') as f:
                         favorites = json.load(f)
                 except (FileNotFoundError, json.JSONDecodeError):
@@ -1435,6 +1380,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         with self._fav_file_lock:
             playlists = []
             try:
+                fav_playlist_path = self.get_profile_path("fav_playlist.json")
                 with open(fav_playlist_path, 'r', encoding='utf-8') as f:
                     playlists = json.load(f)
             except (FileNotFoundError, json.JSONDecodeError):
@@ -1689,10 +1635,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def _update_subscription_feed_worker(self, progress_topic=None, silent=False):
         """
         Worker to check for new videos and report detailed progress back to the dialog,
-        including the final summary message.
+        including the final summary message. Supports aborting mid-process.
         """
         self.is_long_task_running = True
+        self._update_aborted = False
         try:
+            db_path = self.get_profile_path("subscription.db")
             if not silent: self._start_indicator()
             con = sqlite3.connect(db_path)
             cur = con.cursor()
@@ -1703,6 +1651,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not subscribed_channels:
                 con.close()
                 if progress_topic:
+                    # Translators: Progress message shown when no channels are available for update.
                     wx.CallAfter(self._notify_callbacks, progress_topic, {"current": 1, "total": 1, "message": _("No channels to update.")})
                 elif not silent:
                     # Translators: Message shown when the user tries to update the feed but hasn't subscribed to any channels.
@@ -1713,8 +1662,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             current_task = 0
             new_videos_to_cache = []
             for channel_url, channel_name, content_types_str in subscribed_channels:
+                if self._update_aborted:
+                    break
                 content_types = content_types_str.split(',') if content_types_str else ["videos", "shorts", "streams"]
                 for content_type in content_types:
+                    if self._update_aborted:
+                        break
                     current_task += 1
                     if progress_topic:
                         # Translators: Progress message shown while checking a specific channel for new content. 
@@ -1736,6 +1689,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                                     existing_video_ids.add(video_id)
                     except Exception as e:
                         log.warning("Could not update %s for %s: %s", content_type, channel_name, e)
+                if self._update_aborted:
+                    break
             if new_videos_to_cache:
                 cur.executemany("""
                     INSERT OR IGNORE INTO videos (video_id, channel_url, channel_name, title, duration_str, upload_date, content_type) 
@@ -1743,30 +1698,41 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 """, new_videos_to_cache)
                 con.commit()
             con.close()
-            if progress_topic:
-                # Translators: Summary message shown in the progress dialog after successfully checking all subscribed channels. 
-                # {count} is the number of new videos discovered.
-                final_message = _("Update complete. Found {count} new videos.").format(count=len(new_videos_to_cache))
-                final_data = {"current": total_tasks, "total": total_tasks, "message": final_message}
-                wx.CallAfter(self._notify_callbacks, progress_topic, final_data)
-            elif not silent:
-                if len(new_videos_to_cache) > 0:
-                    # Translators: Message spoken by NVDA when new videos are found and added to the database. 
-                    # {count} is the number of new videos.
-                    wx.CallAfter(ui.message, _("Found and added {count} new videos.").format(count=len(new_videos_to_cache)))
-                else:
-                    # Translators: Message spoken by NVDA when the update process completes but no new videos were found.
-                    wx.CallAfter(ui.message, _("No new videos found."))
+            if self._update_aborted:
+                if progress_topic:
+                    # Translators: Message shown in the progress dialog when the update is cancelled by the user.
+                    wx.CallAfter(self._notify_callbacks, progress_topic, {"current": current_task, "total": total_tasks, "message": _("Update cancelled.")})
+                elif not silent:
+                    # Translators: Announcement when the update is aborted.
+                    wx.CallAfter(ui.message, _("Update cancelled."))
+            else:
+                if progress_topic:
+                    final_message = _("Update complete. Found {count} new videos.").format(count=len(new_videos_to_cache))
+                    final_data = {"current": total_tasks, "total": total_tasks, "message": final_message}
+                    wx.CallAfter(self._notify_callbacks, progress_topic, final_data)
+                elif not silent:
+                    if len(new_videos_to_cache) > 0:
+                        # Translators: Message spoken when the update process completes and new videos are found. 
+# {count} is the number of new videos discovered.
+                        wx.CallAfter(ui.message, _("Found and added {count} new videos.").format(count=len(new_videos_to_cache)))
+                    else:
+                        # Translators: Message spoken when the update process completes but no new videos were found.
+                        wx.CallAfter(ui.message, _("No new videos found."))
             self._notify_callbacks("subscriptions_updated")
         except Exception as e:
             log.error("Error updating subscription feed.", exc_info=True)
             if progress_topic:
-                # Translators: Error message shown in the progress dialog if the update process fails.
+                # Translators: Error message shown if the update process fails due to an unexpected error.
                 wx.CallAfter(self._notify_callbacks, progress_topic, {"message": _("Error updating feed."), "current": 1, "total": 1})
         finally:
             self.is_long_task_running = False
+            self._update_aborted = False
             if not silent: self._stop_indicator()
 
+    def stop_subscription_update(self):
+        """เรียกใช้งานจาก Dialog เพื่อสั่งหยุด Worker"""
+        self._update_aborted = True
+        
     def _download_choice_worker(self, url):
         clean_url = self._validate_video_url_and_notify(url)
         if not clean_url:
@@ -2021,27 +1987,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Destroy()
         gui.mainFrame.postPopup()
 
-    def clear_all_user_data(self):
-        """Deletes all user-generated files and database tables."""
-        log.debug("--- Starting deletion of all user data ---")
-        try:
-            addon_dir = ADDON_DATA_DIR
-            files_to_delete = ['fav_video.json', 'fav_channel.json', 'fav_playlist.json', 'watch_list.json', 'subscription.db']
-            for filename in files_to_delete:
-                file_path = os.path.join(addon_dir, filename)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                    log.debug("Deleted file: %s", filename)
-            # --- Re-initialize the database (creates a new, empty one) ---
-            self._init_sub_database()
-            # Translators: Success message shown after the user has successfully cleared all their favorites, playlists, and subscription databases.
-            wx.CallAfter(ui.message, _("All favorite and subscription data has been cleared."))
-            log.debug("--- User data deletion complete ---")
-        except Exception as e:
-            log.exception("An error occurred while clearing user data.")
-            # Translators: Error message shown if the add-on fails to delete user data files (e.g., due to file permissions).
-            wx.CallAfter(ui.message, _("An error occurred while clearing data. Please check the log."))
-
+    
     def prune_all_videos_worker(self):
             """Worker to delete ALL videos from the database after confirmation."""
             # Translators: A heavy warning message shown before deleting all videos from the local database. 
@@ -2070,7 +2016,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 con.close()
                 # Translators: Success message shown after finishing the process of clearing videos from the database. 
                 # {count} is the total number of video records that were removed.
-                self.core._notify_delete(_("Clearing complete. All {count} videos were deleted.").format(count=rows_deleted))
+                self._notify_delete(_("Clearing complete. All {count} videos were deleted.").format(count=rows_deleted))
                 self._notify_callbacks("subscriptions_updated")
             except Exception as e:
                 log.error("Failed to prune all videos from database.", exc_info=True)
@@ -2137,7 +2083,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_displayHelp(self, gesture):
         #log.info("Script triggered: displayHelp")
         gui.mainFrame.prePopup()
-        dialog = HelpDialog(gui.mainFrame, "Help", self.help_text)
+        dialog = HelpDialog(gui.mainFrame)
         dialog.Show()
         gui.mainFrame.postPopup()
 

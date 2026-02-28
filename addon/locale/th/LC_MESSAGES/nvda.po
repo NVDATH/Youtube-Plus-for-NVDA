@@ -1,0 +1,1761 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2026-02-28 22:48+0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.8\n"
+"X-Poedit-Basepath: ../../../globalPlugins/YoutubePlus\n"
+"X-Poedit-KeywordsList: Translators:\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: core.py:343
+msgid "This command is for videos, but the current page is a playlist."
+msgstr "คำสั่งนี้ใช้สำหรับวิดีโอ แต่หน้าปัจจุบันคือเพลย์ลิสต์"
+
+#: core.py:350
+msgid "This command is for videos, but the current page appears to be a channel or playlist."
+msgstr "คำสั่งนี้ใช้สำหรับวิดีโอ แต่หน้าปัจจุบันดูเหมือนจะเป็นช่องหรือเพลย์ลิสต์"
+
+#: core.py:647
+msgid "activate YoutubePlus"
+msgstr "เปิดใช้งาน YoutubePlus"
+
+#: core.py:746
+#, python-brace-format
+msgid "Super Chat ({amount}): {paid_message}"
+msgstr "ซูเปอร์แชท ({amount}):{paid_message}"
+
+#: core.py:760
+#, python-brace-format
+msgid "Super Sticker ({amount})"
+msgstr "ซุปเปอร์สติ๊กเกอร์ ({amount})"
+
+#: core.py:791
+#, python-brace-format
+msgid "YouTube System ({icon_type})"
+msgstr "ระบบ YouTube ({icon_type})"
+
+#: core.py:813
+#, python-brace-format
+msgid "{h} Hour"
+msgstr "{h}ชั่วโมง"
+
+#: core.py:815
+#, python-brace-format
+msgid "{h} Hours"
+msgstr "{h}ชั่วโมง"
+
+#: core.py:820
+#, python-brace-format
+msgid "{m} Minute"
+msgstr "{m}นาที"
+
+#: core.py:820
+#, python-brace-format
+msgid "{m} Minutes"
+msgstr "{m}นาที"
+
+#: core.py:823
+#, python-brace-format
+msgid "{s} Second"
+msgstr "{s}วินาที"
+
+#: core.py:823
+#, python-brace-format
+msgid "{s} Seconds"
+msgstr "{s}วินาที"
+
+#: core.py:858
+#, python-brace-format
+msgid "Info of {title}"
+msgstr "ข้อมูลของ{title}"
+
+#: core.py:875
+msgid "This video has a live chat replay. What would you like to view?"
+msgstr "วิดีโอนี้มีการเล่นแชทสดซ้ำคุณอยากจะดูอะไร?"
+
+#: core.py:875
+msgid "Choice"
+msgstr "ทางเลือก"
+
+#: core.py:879
+#, python-brace-format
+msgid "Show {comment_count} &Comments"
+msgstr "แสดง &ความคิดเห็น{comment_count}"
+
+#: core.py:879
+msgid "Show &Live Chat Replay"
+msgstr "แสดง &เล่นแชทสดซ้ำ"
+
+#: core.py:879 core.py:1782 dialogs.py:2070
+msgid "Ca&ncel"
+msgstr "ยกเลิก"
+
+#: core.py:928
+msgid ""
+"Failed to get video data. The video may be private, unavailable, or there was a network "
+"issue."
+msgstr "ไม่สามารถรับข้อมูลวิดีโอวิดีโออาจเป็นส่วนตัว ไม่พร้อมใช้งาน หรือมีปัญหาเครือข่าย"
+
+#: core.py:932
+msgid "An unexpected error occurred."
+msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด"
+
+#: core.py:949
+msgid "This video has no comments."
+msgstr "วิดีโอนี้ไม่มีความคิดเห็น"
+
+#: core.py:953
+#, python-brace-format
+msgid "Loading {count} comments..."
+msgstr "กำลังโหลดความคิดเห็น{count}รายการ..."
+
+#: core.py:956
+msgid "Loading live chat replay..."
+msgstr "กำลังโหลดการเล่นแชทสดซ้ำ..."
+
+#: core.py:970
+msgid "Live stream detected. Please use the 'Monitor live chat' command instead."
+msgstr "ตรวจพบสตรีมสดโปรดใช้คำสั่ง 'ตรวจสอบแชทสด' แทน"
+
+#: core.py:986
+#, python-brace-format
+msgid "Title: {title}"
+msgstr "ชื่อเรื่อง:{title}"
+
+#: core.py:987
+#, python-brace-format
+msgid "Channel: {uploader}"
+msgstr "ช่องทาง:{uploader}"
+
+#: core.py:988
+#, python-brace-format
+msgid "Duration: {duration}"
+msgstr "ระยะเวลา:{duration}"
+
+#: core.py:989
+#, python-brace-format
+msgid "Uploaded: {upload_date}"
+msgstr "อัปโหลดแล้ว:{upload_date}"
+
+#: core.py:990
+#, python-brace-format
+msgid "Views: {view_count}"
+msgstr "การดู:{view_count}"
+
+#: core.py:991
+#, python-brace-format
+msgid "Likes: {like_count}"
+msgstr "ชอบ:{like_count}"
+
+#: core.py:992
+#, python-brace-format
+msgid "Comments: {comment_count}"
+msgstr "ความคิดเห็น:{comment_count}"
+
+#: core.py:994
+#, python-brace-format
+msgid ""
+"Description:\n"
+"{description}"
+msgstr "คำอธิบาย:{description}"
+
+#: core.py:1000
+msgid "Failed to get video info. The video may be private or the network is down."
+msgstr "ไม่สามารถรับข้อมูลวิดีโอวิดีโออาจเป็นแบบส่วนตัวหรือเครือข่ายล่ม"
+
+#: core.py:1004 core.py:1032 core.py:1082
+msgid "An unexpected error occurred. Please check the log for details."
+msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดโปรดตรวจสอบบันทึกเพื่อดูรายละเอียด"
+
+#: core.py:1021
+#, python-brace-format
+msgid "Chapters for {title}"
+msgstr "บทสำหรับ{title}"
+
+#: core.py:1025
+msgid "No chapters found in this video."
+msgstr "ไม่พบบทในวิดีโอนี้"
+
+#: core.py:1028
+msgid "Failed to get chapters. The video may be private or the network is down."
+msgstr "ไม่สามารถรับบทได้วิดีโออาจเป็นแบบส่วนตัวหรือเครือข่ายล่ม"
+
+#: core.py:1051
+#, python-brace-format
+msgid "{count} comments of {title}"
+msgstr "{count}ความคิดเห็นของ{title}"
+
+#: core.py:1068
+#, python-brace-format
+msgid "{count} live chat replay of {title}"
+msgstr "{count}เล่นแชทสดซ้ำของ{title}"
+
+#: core.py:1077
+#, python-brace-format
+msgid "Could not load data: {error}"
+msgstr "ไม่สามารถโหลดข้อมูล:{error}"
+
+#: core.py:1095
+msgid "Connection to live chat lost. The stream may have ended."
+msgstr "การเชื่อมต่อกับแชทสดขาดหายไปกระแสอาจจะจบลงแล้ว"
+
+#: core.py:1121
+msgid "To conserve memory, older chat messages have been discarded."
+msgstr "เพื่อเป็นการประหยัดหน่วยความจำ ข้อความแชทเก่าๆ จึงถูกละทิ้ง"
+
+#: core.py:1129
+#, python-brace-format
+msgid "Receiving live chat of {video_title}"
+msgstr "กำลังรับแชทสดของ{video_title}"
+
+#: core.py:1139
+msgid "An error occurred while receiving live chat. Monitoring stopped."
+msgstr "เกิดข้อผิดพลาดขณะรับแชทสดหยุดการตรวจสอบแล้ว"
+
+#: core.py:1171
+#, python-brace-format
+msgid "Live chat saved to {filename}"
+msgstr "บันทึกแชทสดไปที่{filename}"
+
+#: core.py:1177
+msgid "Failed to save chat history."
+msgstr "ไม่สามารถบันทึกประวัติการแชทได้"
+
+#: core.py:1196
+#, python-brace-format
+msgid ""
+"The stream has ended. You have {count} chat messages.\n"
+"\n"
+"Would you like to save the chat history?"
+msgstr ""
+"สตรีมสิ้นสุดลงแล้วคุณมีข้อความแชท{count}\n"
+"คุณต้องการบันทึกประวัติการแชทหรือไม่?"
+
+#: core.py:1197
+msgid "Save Chat History?"
+msgstr "บันทึกประวัติการแชทไหม"
+
+#: core.py:1220 core.py:1920
+#, python-brace-format
+msgid "Could not receive live chat: {error}"
+msgstr "ไม่สามารถรับแชทสด:{error}"
+
+#: core.py:1225
+msgid "Adding to favorites..."
+msgstr "กำลังเพิ่มในรายการโปรด..."
+
+#: core.py:1232
+msgid "The provided link is not for a single video."
+msgstr "ลิงก์ที่ให้มาไม่ใช่สำหรับวิดีโอเดียว"
+
+#: core.py:1245
+msgid "This video is already in your favorites."
+msgstr "วิดีโอนี้อยู่ในรายการโปรดของคุณแล้ว"
+
+#: core.py:1259
+#, python-brace-format
+msgid "Added '{title}' to favorites."
+msgstr "เพิ่ม '{title}' ลงในรายการโปรด"
+
+#: core.py:1262 core.py:1316
+msgid "Failed to add favorite."
+msgstr "ไม่สามารถเพิ่มรายการโปรดได้"
+
+#: core.py:1273
+msgid "Adding to favorite channels..."
+msgstr "กำลังเพิ่มไปยังช่องโปรด..."
+
+#: core.py:1299
+msgid "This channel is already in your favorites."
+msgstr "ช่องนี้อยู่ในรายการโปรดของคุณแล้ว"
+
+#: core.py:1313
+#, python-brace-format
+msgid "Added '{channel}' to favorites."
+msgstr "เพิ่ม '{channel}' ลงในรายการโปรด"
+
+#: core.py:1324
+msgid "Adding playlist to favorites..."
+msgstr "กำลังเพิ่มเพลย์ลิสต์ในรายการโปรด..."
+
+#: core.py:1347
+msgid "This playlist is already in your favorites."
+msgstr "เพลย์ลิสต์นี้อยู่ในรายการโปรดของคุณแล้ว"
+
+#: core.py:1351
+msgid "Unknown Playlist"
+msgstr "เพลย์ลิสต์ที่ไม่รู้จัก"
+
+#: core.py:1365
+#, python-brace-format
+msgid "Added '{playlist}' to favorites."
+msgstr "เพิ่ม '{playlist}' ลงในรายการโปรด"
+
+#: core.py:1368
+msgid "Failed to add favorite playlist."
+msgstr "ไม่สามารถเพิ่มเพลย์ลิสต์โปรด"
+
+#: core.py:1424
+#, python-brace-format
+msgid "'{title}' is already in Watch List."
+msgstr "'{title}' อยู่ในรายการเฝ้าดูแล้ว"
+
+#: core.py:1437
+#, python-brace-format
+msgid "Added '{title}' to Watch List."
+msgstr "เพิ่ม '{title}' ในรายการเฝ้าดู"
+
+#: core.py:1445
+msgid "Error: Could not add video to Watch List."
+msgstr "ข้อผิดพลาด: ไม่สามารถเพิ่มวิดีโอลงในรายการเฝ้าดูได้"
+
+#: core.py:1493 core.py:1861 dialogs.py:1449 dialogs.py:1504 dialogs.py:1850 dialogs.py:2196
+#: dialogs.py:2798
+msgid "N/A"
+msgstr "ไม่มี"
+
+#: core.py:1503
+msgid "No videos found."
+msgstr "ไม่พบวิดีโอ"
+
+#: core.py:1510
+#, python-brace-format
+msgid "{count} videos in {playlist}"
+msgstr "{count}วิดีโอใน{playlist}"
+
+#: core.py:1510
+msgid "Playlist"
+msgstr "เพลย์ลิสต์"
+
+#: core.py:1514
+#, python-brace-format
+msgid "Recent {count} {type} from {channel}"
+msgstr "{count}{type}ล่าสุดจาก{channel}"
+
+#: core.py:1514 core.py:1869 dialogs.py:1129 dialogs.py:1399 dialogs.py:1663
+msgid "Channel"
+msgstr "ช่อง"
+
+#: core.py:1529
+msgid "Failed to fetch video list."
+msgstr "ไม่สามารถเรียกรายการวิดีโอ"
+
+#: core.py:1537
+msgid "Subscribing to channel..."
+msgstr "กำลังติดตามช่อง..."
+
+#: core.py:1565
+#, python-brace-format
+msgid ""
+"You are already subscribed to '{channel}'.\n"
+"Would you like to unsubscribe instead?"
+msgstr ""
+"คุณได้สมัครรับข้อมูลจาก '{channel}' แล้ว\n"
+"คุณต้องการยกเลิกการสมัครแทนหรือไม่?"
+
+#: core.py:1567
+msgid "Already Subscribed"
+msgstr "สมัครสมาชิกแล้ว"
+
+#: core.py:1588
+msgid "Unknown Channel"
+msgstr "ช่องที่ไม่รู้จัก"
+
+#: core.py:1603
+#, python-brace-format
+msgid "Subscribed to {channel}."
+msgstr "ติดตาม{channel}"
+
+#: core.py:1606
+msgid "Failed to subscribe."
+msgstr "สมัครสมาชิกไม่สำเร็จ"
+
+#: core.py:1626
+#, python-brace-format
+msgid "Successfully unsubscribed from {channel}"
+msgstr "ยกเลิกการสมัครจาก{channel}สำเร็จแล้ว"
+
+#: core.py:1629
+msgid "Failed to unsubscribe - channel not found in database"
+msgstr "ไม่สามารถยกเลิกการสมัคร - ไม่พบช่องในฐานข้อมูล"
+
+#: core.py:1633
+msgid "Critical error during unsubscribe."
+msgstr "เกิดข้อผิดพลาดร้ายแรงระหว่างการยกเลิกการสมัคร"
+
+#: core.py:1655 core.py:1658
+msgid "No channels to update."
+msgstr "ไม่มีช่องให้อัพเดต"
+
+#: core.py:1675
+#, python-brace-format
+msgid "Checking {channel} ({type})..."
+msgstr "กำลังตรวจสอบ{channel}({type})..."
+
+#: core.py:1704 core.py:1707 dialogs.py:2970
+msgid "Update cancelled."
+msgstr "การอัปเดตถูกยกเลิก"
+
+#: core.py:1710
+#, python-brace-format
+msgid "Update complete. Found {count} new videos."
+msgstr "การอัปเดตเสร็จสมบูรณ์พบวิดีโอใหม่{count}รายการ"
+
+#: core.py:1717
+#, python-brace-format
+msgid "Found and added {count} new videos."
+msgstr "พบและเพิ่มวิดีโอใหม่{count}รายการ"
+
+#: core.py:1720
+msgid "No new videos found."
+msgstr "ไม่พบวิดีโอใหม่"
+
+#: core.py:1726
+msgid "Error updating feed."
+msgstr "เกิดข้อผิดพลาดในการอัปเดตฟีด"
+
+#: core.py:1745 core.py:1764
+msgid "Unknown Video"
+msgstr "วิดีโอที่ไม่รู้จัก"
+
+#: core.py:1751
+msgid "Failed to get video info for download."
+msgstr "ไม่สามารถรับข้อมูลวิดีโอสำหรับการดาวน์โหลด"
+
+#: core.py:1758 core.py:2079
+msgid "Getting video info for download..."
+msgstr "กำลังรับข้อมูลวิดีโอสำหรับการดาวน์โหลด..."
+
+#: core.py:1769
+#, python-brace-format
+msgid "Failed to start download: {error}"
+msgstr "ไม่สามารถเริ่มการดาวน์โหลด:{error}"
+
+#: core.py:1776
+msgid "What would you like to download?"
+msgstr "คุณต้องการดาวน์โหลดอะไร"
+
+#: core.py:1778
+#, python-brace-format
+msgid "Download: {title} ({duration})"
+msgstr "ดาวน์โหลด:{title}({duration})"
+
+#: core.py:1782
+msgid "Download &Video"
+msgstr "ดาวน์โหลด&วีดีโอ"
+
+#: core.py:1782 dialogs.py:840
+msgid "Download &Audio"
+msgstr "ดาวน์โหลด&เสียง"
+
+#: core.py:1798
+#, python-brace-format
+msgid "Starting download of {title}..."
+msgstr "กำลังเริ่มดาวน์โหลด{title}..."
+
+#: core.py:1816
+#, python-brace-format
+msgid "Download complete: {title}"
+msgstr "ดาวน์โหลดเสร็จสมบูรณ์:{title}"
+
+#: core.py:1821
+msgid "Audio-only format not found. Attempting to download a video file with audio instead..."
+msgstr "ไม่พบรูปแบบเสียงเท่านั้นกำลังพยายามดาวน์โหลดไฟล์วิดีโอพร้อมเสียงแทน..."
+
+#: core.py:1828
+#, python-brace-format
+msgid "Download complete (as MP4 video file): {title}"
+msgstr "ดาวน์โหลดเสร็จสมบูรณ์ (เป็นไฟล์วิดีโอ MP4):{title}"
+
+#: core.py:1833 core.py:1836
+msgid "Download failed."
+msgstr "การดาวน์โหลดล้มเหลว"
+
+#: core.py:1846
+#, python-brace-format
+msgid "Searching for '{query}'..."
+msgstr "กำลังค้นหา '{query}'..."
+
+#: core.py:1872
+#, python-brace-format
+msgid "Playlist ({count})"
+msgstr "เพลย์ลิสต์ ({count})"
+
+#: core.py:1876
+#, python-brace-format
+msgid "No results found for '{query}'."
+msgstr "ไม่พบผลลัพธ์สำหรับ '{query}'"
+
+#: core.py:1879
+#, python-brace-format
+msgid "Search Results for '{query}'"
+msgstr "ผลลัพธ์การค้นหาสำหรับ '{query}'"
+
+#: core.py:1884
+msgid "Failed to perform search."
+msgstr "การค้นหาล้มเหลว"
+
+#: core.py:1894
+#, python-brace-format
+msgid "Live chat of {title}"
+msgstr "แชทสดของ{title}"
+
+#: core.py:1894
+msgid "Live chat (stopped)"
+msgstr "แชทสด (หยุดแล้ว)"
+
+#: core.py:1927
+msgid "Chat monitoring is not active."
+msgstr "การตรวจสอบการแชทไม่ทำงาน"
+
+#: core.py:1938
+msgid "Chat monitoring stopped."
+msgstr "การตรวจสอบการแชทหยุดลง"
+
+#: core.py:1950
+#, python-brace-format
+msgid "Live chat of {title} (stopped)"
+msgstr "แชทสดของ{title}(หยุดแล้ว)"
+
+#: core.py:1970
+msgid "You haven't subscribed to any channels yet."
+msgstr "คุณยังไม่ได้ติดตามช่องใดๆ"
+
+#: core.py:1980
+msgid "Error loading subscription feed from database."
+msgstr "เกิดข้อผิดพลาดในการโหลดฟีดการสมัครจากฐานข้อมูล"
+
+#: core.py:1995
+msgid ""
+"This will permanently delete ALL videos from your subscription feed, leaving only the list "
+"of subscribed channels. This action cannot be undone.\n"
+"\n"
+"Are you sure you want to continue?"
+msgstr ""
+"การดำเนินการนี้จะลบวิดีโอทั้งหมดออกจากฟีดการติดตามของคุณอย่างถาวร "
+"เหลือเพียงรายการช่องที่ติดตามการดำเนินการนี้ไม่สามารถยกเลิกได้\n"
+"\n"
+"คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?"
+
+#: core.py:1999
+msgid "Confirm Clearing All Videos"
+msgstr "ยืนยันการล้างวิดีโอทั้งหมด"
+
+#: core.py:2003
+msgid "Clearing all feed videos..."
+msgstr "กำลังล้างวิดีโอฟีดทั้งหมด..."
+
+#: core.py:2019
+#, python-brace-format
+msgid "Clearing complete. All {count} videos were deleted."
+msgstr "การเคลียร์เสร็จสมบูรณ์ลบวิดีโอ{count}ทั้งหมดแล้ว"
+
+#: core.py:2024
+msgid "An error occurred while clearing all videos."
+msgstr "เกิดข้อผิดพลาดขณะล้างวิดีโอทั้งหมด"
+
+#: core.py:2026
+msgid "an YoutubePlus layer commands."
+msgstr "คำสั่งเลเยอร์ YoutubePlus"
+
+#: core.py:2042 core.py:2052 core.py:2064 core.py:2076
+msgid "YouTube URL not found in current window or clipboard."
+msgstr "ไม่พบ URL ของ YouTube ในหน้าต่างหรือคลิปบอร์ดปัจจุบัน"
+
+#: core.py:2055
+msgid "Getting video info..."
+msgstr "กำลังรับข้อมูลวิดีโอ..."
+
+#: core.py:2067 dialogs.py:877
+msgid "Getting chapters..."
+msgstr "กำลังรับบท..."
+
+#: core.py:2100
+msgid "No stream is currently being monitored."
+msgstr "ไม่มีกระแสใดที่ถูกตรวจสอบอยู่ในขณะนี้"
+
+#: core.py:2111
+msgid "Automatic message speaking enabled."
+msgstr "เปิดใช้งานการพูดข้อความอัตโนมัติแล้ว"
+
+#: core.py:2111
+msgid "Automatic message speaking disabled."
+msgstr "ปิดใช้งานการพูดข้อความอัตโนมัติ"
+
+#: core.py:2113
+msgid "Show favorite videos dialog."
+msgstr "แสดงกล่องโต้ตอบวิดีโอโปรด"
+
+#: core.py:2121
+msgid "Show favorite channels dialog."
+msgstr "แสดงกล่องโต้ตอบช่องโปรด"
+
+#: core.py:2129
+msgid "Show favorite playlists dialog."
+msgstr "แสดงกล่องโต้ตอบเพลย์ลิสต์ที่ชื่นชอบ"
+
+#: core.py:2137
+msgid "Show watch list dialog."
+msgstr "แสดงกล่องโต้ตอบรายการเฝ้าดู"
+
+#: core.py:2145
+msgid "Show a menu to add the current page URL to favorites or subscriptions."
+msgstr "แสดงเมนูเพื่อเพิ่ม URL ของหน้าปัจจุบันในรายการโปรดหรือการสมัครรับข้อมูล"
+
+#: core.py:2151
+msgid "No specific YouTube URL found in the current window or clipboard."
+msgstr "ไม่พบ URL ของ YouTube เฉพาะเจาะจงในหน้าต่างหรือคลิปบอร์ดปัจจุบัน"
+
+#: core.py:2160
+msgid "Add to Favorite &Videos"
+msgstr "เพิ่มลงในรายการโปรด & วิดีโอ"
+
+#: core.py:2162
+msgid "Add to Favorite &Channels"
+msgstr "เพิ่มในรายการโปรด &ช่อง"
+
+#: core.py:2164
+msgid "Add to Favorite &Playlists"
+msgstr "เพิ่มในรายการโปรด &เพลย์ลิสต์"
+
+#: core.py:2166
+msgid "&Subscribe to Channel"
+msgstr "&ติดตามช่อง"
+
+#: core.py:2168 dialogs.py:844
+msgid "Add to &Watch List"
+msgstr "เพิ่มในรายการเฝ้าดู"
+
+#: core.py:2211
+msgid "Show subscription feed dialog."
+msgstr "แสดงกล่องโต้ตอบฟีดการสมัครรับข้อมูล"
+
+#: core.py:2216
+msgid "Search YouTube for videos, channels, or playlists."
+msgstr "ค้นหาวิดีโอ ช่อง หรือเพลย์ลิสต์ใน YouTube"
+
+#: core.py:2223
+msgid "Show manage subscriptions dialog."
+msgstr "แสดงกล่องโต้ตอบจัดการการสมัครรับข้อมูล"
+
+#: core.py:2254
+msgid "Show user profile manager dialog."
+msgstr "แสดงกล่องโต้ตอบตัวจัดการโปรไฟล์ผู้ใช้"
+
+#: dialogs.py:78 dialogs.py:214 dialogs.py:394 dialogs.py:617 dialogs.py:1945 dialogs.py:2125
+#: dialogs.py:2288 dialogs.py:2582 dialogs.py:3189
+msgid "C&lose"
+msgstr "ปิด"
+
+#: dialogs.py:97
+msgid "YouTubePlus Help & Shortcuts"
+msgstr "ความช่วยเหลือและทางลัดของ YouTubePlus"
+
+#: dialogs.py:105
+#, fuzzy
+msgid ""
+"YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
+"\n"
+"--- Core Actions (from a YouTube window/URL) ---\n"
+"- L: Get comments from the current URL (Live Chat, Replay, or Comments)\n"
+"- I: Get video info\n"
+"- T: Show video chapters/timestamps\n"
+"- D: Download video/audio from the current URL\n"
+"- E: Search YouTube\n"
+"\n"
+"--- Favorites & Subscriptions ---\n"
+"- A: Show the \"Add to...\" menu (for favorites/subscriptions)\n"
+"- F: Show favorite videos dialog\n"
+"- C: Show favorite channels dialog\n"
+"- P: Show favorite playlists dialog\n"
+"- W: Show watch list dialog\n"
+"- S: Show subscription feed dialog\n"
+"- M: Show Manage Subscriptions dialog\n"
+"- U: Show User Profile Manager Dialog\n"
+"\n"
+"--- Live Chat Monitoring (while active) ---\n"
+"- Shift+L: Stop live chat monitoring\n"
+"- V: Show live chat messages dialog\n"
+"- R: Toggle automatic speaking of incoming messages\n"
+"\n"
+"--- Additional Keyboard Shortcuts (within addon dialogs) ---\n"
+"**In Favorites and Subscription Feed Dialogs:**\n"
+"- Ctrl+1 through 9: Jump to a specific tab\n"
+"- Ctrl+Up/Down or Left/Right: Reorder tabs\n"
+"\n"
+"**In the Subscription Feed Dialog:**\n"
+"- F2: Rename the current category\n"
+"- Ctrl+Equals: Add a new category\n"
+"- Ctrl+Minus: Remove the current category\n"
+"- Delete: Mark the selected video as seen\n"
+"- Ctrl+Delete: Mark all videos in the current tab as seen\n"
+"\n"
+"**In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**\n"
+"- Shift+Up/Down: Reorder the selected item\n"
+"- Delete: Remove the selected item from favorites\n"
+"\n"
+"--- Help ---\n"
+"- H: Show this help dialog\n"
+msgstr ""
+"คำสั่งเลเยอร์ YouTubePlus (กด NVDA+Y เพื่อเปิดใช้งาน)\n"
+"\n"
+"--- การดำเนินการหลัก (จากหน้าต่าง/URL ของ YouTube) ---\n"
+"- L: รับความคิดเห็นจาก URL ปัจจุบัน (แชทสด เล่นซ้ำ หรือแสดงความคิดเห็น)\n"
+"- ฉัน: รับข้อมูลวิดีโอ\n"
+"- T: แสดงตอน/การประทับเวลาของวิดีโอ\n"
+"- D: ดาวน์โหลดวิดีโอ/เสียงจาก URL ปัจจุบัน\n"
+"- E: ค้นหา YouTube\n"
+"\n"
+"--- รายการโปรดและการสมัครสมาชิก ---\n"
+"- A: แสดงเมนู \"เพิ่มใน...\" (สำหรับรายการโปรด/สมัครสมาชิก)\n"
+"- F: แสดงกล่องโต้ตอบวิดีโอโปรด\n"
+"- C: แสดงกล่องโต้ตอบช่องโปรด\n"
+"- P: แสดงกล่องโต้ตอบรายการเพลงโปรด\n"
+"- W: แสดงกล่องโต้ตอบรายการเฝ้าดู\n"
+"- S: แสดงกล่องโต้ตอบฟีดการสมัครสมาชิก\n"
+"- M: แสดงกล่องโต้ตอบจัดการการสมัครสมาชิก\n"
+"- U: แสดงกล่องโต้ตอบตัวจัดการโปรไฟล์ผู้ใช้\n"
+"\n"
+"--- การตรวจสอบแชทสด (ขณะใช้งาน) ---\n"
+"- Shift+L: หยุดการตรวจสอบแชทสด\n"
+"- V: แสดงกล่องโต้ตอบข้อความแชทสด\n"
+"- R: สลับการพูดข้อความขาเข้าโดยอัตโนมัติ\n"
+"\n"
+"--- แป้นพิมพ์ลัดเพิ่มเติม (ภายในกล่องโต้ตอบ addon) ---\n"
+"**ในกล่องโต้ตอบรายการโปรดและฟีดการสมัครสมาชิก:**\n"
+"- Ctrl+1 ถึง 9: ข้ามไปยังแท็บที่ต้องการ\n"
+"- Ctrl+ขึ้น/ลง หรือ ซ้าย/ขวา: เรียงลำดับแท็บใหม่\n"
+"\n"
+"**ในกล่องโต้ตอบฟีดการติดตาม:**\n"
+"- F2: เปลี่ยนชื่อหมวดหมู่ปัจจุบัน\n"
+"- Ctrl+Equals: เพิ่มหมวดหมู่ใหม่\n"
+"- Ctrl+Minus: ลบหมวดหมู่ปัจจุบัน\n"
+"- ลบ: ทำเครื่องหมายวิดีโอที่เลือกว่าเห็นแล้ว\n"
+"- Ctrl+Delete: ทำเครื่องหมายวิดีโอทั้งหมดในแท็บปัจจุบันว่าเห็นแล้ว\n"
+"\n"
+"**ในกล่องโต้ตอบรายการโปรด (วิดีโอ ช่อง เพลย์ลิสต์ รายการดู):**\n"
+"- Shift+Up/Down: เรียงลำดับรายการที่เลือกใหม่\n"
+"- ลบ: ลบรายการที่เลือกออกจากรายการโปรด\n"
+"\n"
+"--- ช่วย ---\n"
+"- H: แสดงกล่องโต้ตอบความช่วยเหลือนี้\n"
+
+#: dialogs.py:159 dialogs.py:170
+msgid "Author"
+msgstr "ผู้เขียน"
+
+#: dialogs.py:161 dialogs.py:172
+msgid "Message"
+msgstr "ข้อความ"
+
+#: dialogs.py:163 dialogs.py:174 dialogs.py:198
+msgid "Time"
+msgstr "เวลา"
+
+#: dialogs.py:188 dialogs.py:376 dialogs.py:582 dialogs.py:1930
+msgid "&Search:"
+msgstr "&ค้นหา:"
+
+#: dialogs.py:196 dialogs.py:1127 dialogs.py:2115
+msgid "Title"
+msgstr "ชื่อ"
+
+#: dialogs.py:206
+msgid "&Open Chapter"
+msgstr "&เปิดบท"
+
+#: dialogs.py:208
+msgid "&Copy Title"
+msgstr "&คัดลอกชื่อเรื่อง"
+
+#: dialogs.py:210
+msgid "Copy &URL"
+msgstr "คัดลอก&URL"
+
+#: dialogs.py:212 dialogs.py:392 dialogs.py:609
+msgid "&Export"
+msgstr "&ส่งออก"
+
+#: dialogs.py:294 dialogs.py:810
+msgid "Opening in browser..."
+msgstr "กำลังเปิดในเบราว์เซอร์..."
+
+#: dialogs.py:299 dialogs.py:816
+#, python-brace-format
+msgid "Error opening browser: {error}"
+msgstr "เกิดข้อผิดพลาดในการเปิดเบราว์เซอร์:{error}"
+
+#: dialogs.py:309
+#, python-brace-format
+msgid "Copied timestamp: {text}"
+msgstr "เวลาที่คัดลอก:{text}"
+
+#: dialogs.py:318
+#, python-brace-format
+msgid "Copied URL: {url}"
+msgstr "URL ที่คัดลอก:{url}"
+
+#: dialogs.py:336 dialogs.py:755
+msgid "Export complete"
+msgstr "ส่งออกเสร็จสมบูรณ์"
+
+#: dialogs.py:340 dialogs.py:521 dialogs.py:759
+#, python-brace-format
+msgid "Error exporting file: {error}"
+msgstr "เกิดข้อผิดพลาดในการส่งออกไฟล์:{error}"
+
+#: dialogs.py:344 dialogs.py:525 dialogs.py:763
+msgid "An unexpected error occurred during export."
+msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดระหว่างการส่งออก"
+
+#: dialogs.py:390 dialogs.py:607
+msgid "&Copy"
+msgstr "&สำเนา"
+
+#: dialogs.py:497
+msgid "message copied"
+msgstr "คัดลอกข้อความแล้ว"
+
+#: dialogs.py:500
+msgid "No message selected"
+msgstr "ไม่มีข้อความที่เลือก"
+
+#: dialogs.py:517
+msgid "Export message complete"
+msgstr "ส่งออกข้อความเรียบร้อยแล้ว"
+
+#: dialogs.py:589 dialogs.py:596 dialogs.py:670
+msgid "No Filter"
+msgstr "ไม่มีตัวกรอง"
+
+#: dialogs.py:590 dialogs.py:663
+msgid "Filter by Selected Author"
+msgstr "กรองตามผู้เขียนที่เลือก"
+
+#: dialogs.py:591 dialogs.py:672
+msgid "Show Super Chats Only"
+msgstr "แสดง Super Chat เท่านั้น"
+
+#: dialogs.py:592 dialogs.py:674
+msgid "Show Super Stickers Only"
+msgstr "แสดง Super Stickers เท่านั้น"
+
+#: dialogs.py:593 dialogs.py:676
+msgid "Show Super Thanks Only"
+msgstr "แสดง Super Thanks เท่านั้น"
+
+#: dialogs.py:653
+#, fuzzy
+msgid "Total Paid Amount:\n"
+msgstr "จำนวนเงินที่ชำระทั้งหมด:\n"
+
+#: dialogs.py:733 dialogs.py:998
+msgid "Copied"
+msgstr "คัดลอกแล้ว"
+
+#: dialogs.py:736
+msgid "Nothing selected"
+msgstr "ไม่ได้เลือกอะไร"
+
+#: dialogs.py:806 dialogs.py:872 dialogs.py:874 dialogs.py:932 dialogs.py:942 dialogs.py:954
+#: dialogs.py:964
+msgid "Video ID not found."
+msgstr "ไม่พบรหัสวิดีโอ"
+
+#: dialogs.py:835
+msgid "View Video &Info..."
+msgstr "ดูวิดีโอ &ข้อมูล..."
+
+#: dialogs.py:836
+msgid "View &Comments / Replay..."
+msgstr "ดู&แสดงความคิดเห็น / เล่นซ้ำ..."
+
+#: dialogs.py:837
+msgid "View Chap&ters/Timestamps..."
+msgstr "ดูบท&เตอร์/ประทับเวลา..."
+
+#: dialogs.py:839
+msgid "&Download Video"
+msgstr "&ดาวน์โหลดวิดีโอ"
+
+#: dialogs.py:842
+msgid "Add to &Favorite Videos"
+msgstr "เพิ่มลงในวิดีโอโปรด"
+
+#: dialogs.py:843
+msgid "Add to &Favorite Channels"
+msgstr "เพิ่มในช่อง &รายการโปรด"
+
+#: dialogs.py:846
+msgid "Open video in &browser"
+msgstr "เปิดวิดีโอใน&เบราว์เซอร์"
+
+#: dialogs.py:847
+msgid "Open c&hannel in browser"
+msgstr "เปิด c&hannel ในเบราว์เซอร์"
+
+#: dialogs.py:849
+msgid "Show channel &videos"
+msgstr "แสดงช่องและวิดีโอ"
+
+#: dialogs.py:850
+msgid "Show channel &shorts"
+msgstr "แสดงช่อง&สั้น"
+
+#: dialogs.py:851
+msgid "Show channel &live"
+msgstr "แสดงช่อง&ถ่ายทอดสด"
+
+#: dialogs.py:885
+msgid "Could not get video ID to add to favorites."
+msgstr "ไม่สามารถรับ ID วิดีโอเพื่อเพิ่มลงในรายการโปรด"
+
+#: dialogs.py:895
+msgid "Could not get video ID to find the channel."
+msgstr "ไม่สามารถรับรหัสวิดีโอเพื่อค้นหาช่อง"
+
+#: dialogs.py:945
+#, python-brace-format
+msgid "Getting data for '{title}'..."
+msgstr "กำลังรับข้อมูลสำหรับ '{title}'..."
+
+#: dialogs.py:991
+#, python-brace-format
+msgid "Title: {title}\n"
+msgstr "ชื่อเรื่อง:{title}\n"
+
+#: dialogs.py:992
+#, python-brace-format
+msgid "Channel: {channel}\n"
+msgstr "ช่อง:{channel}\n"
+
+#: dialogs.py:993
+#, fuzzy
+msgid "URL: "
+msgstr "URL:"
+
+#: dialogs.py:1007
+msgid "Error: Channel information not found for this item."
+msgstr "ข้อผิดพลาด: ไม่พบข้อมูลช่องสำหรับรายการนี้"
+
+#: dialogs.py:1010 dialogs.py:1592 dialogs.py:1665 dialogs.py:1907 dialogs.py:2265
+#: dialogs.py:2491 dialogs.py:2650 settings.py:117
+msgid "Videos"
+msgstr "วิดีโอ"
+
+#: dialogs.py:1010 dialogs.py:1593 dialogs.py:2265 dialogs.py:2492 dialogs.py:2651
+#: dialogs.py:2793 settings.py:117
+msgid "Shorts"
+msgstr "กางเกงขาสั้น"
+
+#: dialogs.py:1010 dialogs.py:1594 dialogs.py:2265 dialogs.py:2493 dialogs.py:2652
+#: dialogs.py:2794 settings.py:117
+msgid "Live"
+msgstr "สด"
+
+#: dialogs.py:1012
+msgid "Content"
+msgstr "เนื้อหา"
+
+#: dialogs.py:1016 dialogs.py:1602 dialogs.py:2502
+#, python-brace-format
+msgid "Fetching {type} from {channel}..."
+msgstr "กำลังดึงข้อมูล{type}จาก{channel}..."
+
+#: dialogs.py:1094 dialogs.py:1417 dialogs.py:1676
+msgid "&Remove"
+msgstr "&ลบ"
+
+#: dialogs.py:1131 dialogs.py:2117 dialogs.py:2746
+msgid "Duration"
+msgstr "ระยะเวลา"
+
+#: dialogs.py:1135 dialogs.py:2121 dialogs.py:2750
+msgid "&Action..."
+msgstr "&การกระทำ..."
+
+#: dialogs.py:1137 dialogs.py:2123 dialogs.py:2752
+msgid "&Copy..."
+msgstr "&สำเนา..."
+
+#: dialogs.py:1162
+msgid "Error: Could not save data."
+msgstr "ข้อผิดพลาด: ไม่สามารถบันทึกข้อมูลได้"
+
+#: dialogs.py:1216 dialogs.py:2163 dialogs.py:2835
+msgid "Copy &Title"
+msgstr "คัดลอก &ชื่อเรื่อง"
+
+#: dialogs.py:1217 dialogs.py:2165 dialogs.py:2837
+msgid "Copy Video &URL"
+msgstr "คัดลอกวิดีโอ &URL"
+
+#: dialogs.py:1218 dialogs.py:2167 dialogs.py:2839
+msgid "Copy &Channel Name"
+msgstr "คัดลอก&ชื่อช่อง"
+
+#: dialogs.py:1219 dialogs.py:2169 dialogs.py:2841
+msgid "Copy C&hannel URL"
+msgstr "คัดลอก&ช่องทาง URL"
+
+#: dialogs.py:1221 dialogs.py:2172 dialogs.py:2844
+msgid "Copy &Summary"
+msgstr "คัดลอก &สรุป"
+
+#: dialogs.py:1239 dialogs.py:1765
+#, python-brace-format
+msgid "Are you sure you want to remove '{title}'?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '{title}'"
+
+#: dialogs.py:1241 dialogs.py:1557 dialogs.py:1769 dialogs.py:3142
+msgid "Confirm Removal"
+msgstr "ยืนยันการลบ"
+
+#: dialogs.py:1261
+msgid "Item removed."
+msgstr "นำรายการออกแล้ว"
+
+#: dialogs.py:1268 dialogs.py:1475 dialogs.py:2521 dialogs.py:2860
+msgid "No valid YouTube URL found in clipboard."
+msgstr "ไม่พบ URL ของ YouTube ที่ถูกต้องในคลิปบอร์ด"
+
+#: dialogs.py:1272 dialogs.py:1479 dialogs.py:1812 dialogs.py:2525 dialogs.py:2864
+msgid "Could not read from clipboard."
+msgstr "ไม่สามารถอ่านจากคลิปบอร์ดได้"
+
+#: dialogs.py:1366
+msgid "Add &new favorite video from clipboard"
+msgstr "เพิ่ม&วิดีโอโปรดใหม่จากคลิปบอร์ด"
+
+#: dialogs.py:1379
+msgid "Add &new watch list from clipboard"
+msgstr "เพิ่มรายการเฝ้าดูใหม่จากคลิปบอร์ด"
+
+#: dialogs.py:1401
+msgid "Subscribers"
+msgstr "สมาชิก"
+
+#: dialogs.py:1404
+msgid "Channel Description"
+msgstr "คำอธิบายช่อง"
+
+#: dialogs.py:1411
+msgid "&Open"
+msgstr "&เปิด"
+
+#: dialogs.py:1413
+msgid "View &channel Content..."
+msgstr "ดู &เนื้อหาช่อง..."
+
+#: dialogs.py:1415
+msgid "Add &new favorite channel from clipboard"
+msgstr "เพิ่มช่องโปรดใหม่จากคลิปบอร์ด"
+
+#: dialogs.py:1553
+msgid "this channel"
+msgstr "ช่องนี้"
+
+#: dialogs.py:1555
+#, python-brace-format
+msgid "Are you sure you want to remove '{name}'?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '{name}'"
+
+#: dialogs.py:1572
+msgid "Channel removed."
+msgstr "ลบช่องแล้ว"
+
+#: dialogs.py:1588 dialogs.py:2486
+msgid "Error: Channel URL not found."
+msgstr "ข้อผิดพลาด: ไม่พบ URL ของช่อง"
+
+#: dialogs.py:1661
+msgid "Playlist Title"
+msgstr "ชื่อเพลย์ลิสต์"
+
+#: dialogs.py:1670
+msgid "Show &Videos..."
+msgstr "แสดงและวิดีโอ..."
+
+#: dialogs.py:1672
+msgid "Open on &Web"
+msgstr "เปิดบน&เว็บ"
+
+#: dialogs.py:1674
+msgid "Add &new favorite playlist from clipboard"
+msgstr "เพิ่มเพลย์ลิสต์โปรดใหม่จากคลิปบอร์ด"
+
+#: dialogs.py:1782
+msgid "Playlist removed."
+msgstr "ลบเพลย์ลิสต์แล้ว"
+
+#: dialogs.py:1800
+msgid "Error: Could not save playlist list."
+msgstr "ข้อผิดพลาด: ไม่สามารถบันทึกรายการเพลย์ลิสต์ได้"
+
+#: dialogs.py:1808
+msgid "No valid YouTube playlist URL found in clipboard."
+msgstr "ไม่พบ URL เพลย์ลิสต์ YouTube ที่ถูกต้องในคลิปบอร์ด"
+
+#: dialogs.py:1865
+#, python-brace-format
+msgid "Fetching videos from '{playlist}'..."
+msgstr "กำลังเรียกวิดีโอจาก '{playlist}'..."
+
+#: dialogs.py:1901
+msgid "Favorites - YoutubePlus"
+msgstr "รายการโปรด - YoutubePlus"
+
+#: dialogs.py:1908
+msgid "Channels"
+msgstr "ช่อง"
+
+#: dialogs.py:1909
+msgid "Playlists"
+msgstr "เพลย์ลิสต์"
+
+#: dialogs.py:1910
+msgid "Watch List"
+msgstr "รายการเฝ้าดู"
+
+#: dialogs.py:1994
+#, python-brace-format
+msgid "{tab_name} - Favorites - YoutubePlus"
+msgstr "{tab_name}- รายการโปรด - YoutubePlus"
+
+#: dialogs.py:2052
+msgid "Search YouTube"
+msgstr "ค้นหา YouTube"
+
+#: dialogs.py:2059
+msgid "&Search for:"
+msgstr "&ค้นหา:"
+
+#: dialogs.py:2062
+msgid "Number of &results to fetch:"
+msgstr "จำนวน &ผลลัพธ์ที่จะดึงข้อมูล:"
+
+#: dialogs.py:2068
+msgid "&Search"
+msgstr "&ค้นหา"
+
+#: dialogs.py:2096
+msgid "Please enter a search term."
+msgstr "กรุณากรอกคำค้นหา"
+
+#: dialogs.py:2224
+msgid "Manage Subscriptions"
+msgstr "จัดการการสมัครสมาชิก"
+
+#: dialogs.py:2240
+msgid "Subscribed &Channels:"
+msgstr "สมัครรับข้อมูล&ช่อง:"
+
+#: dialogs.py:2243 dialogs.py:2744
+msgid "Channel Name"
+msgstr "ชื่อช่อง"
+
+#: dialogs.py:2248
+msgid "Filter by Category:"
+msgstr "กรองตามหมวดหมู่:"
+
+#: dialogs.py:2257
+msgid "Assign to Categories"
+msgstr "กำหนดให้กับหมวดหมู่"
+
+#: dialogs.py:2262
+msgid "Content Types to Fetch"
+msgstr "ประเภทเนื้อหาที่จะดึงข้อมูล"
+
+#: dialogs.py:2268
+msgid "Actions"
+msgstr "การดำเนินการ"
+
+#: dialogs.py:2271
+msgid "View &Content..."
+msgstr "ดู&เนื้อหา..."
+
+#: dialogs.py:2273
+msgid "Add &new subscribe channel from Clipboard..."
+msgstr "เพิ่ม &ช่องติดตามใหม่จากคลิปบอร์ด..."
+
+#: dialogs.py:2275
+msgid "&Unsubscribe from this Channel"
+msgstr "ยกเลิกการสมัครจากช่องนี้"
+
+#: dialogs.py:2286
+msgid "&Save Changes"
+msgstr "&บันทึกการเปลี่ยนแปลง"
+
+#: dialogs.py:2360
+msgid "All Channels"
+msgstr "ทุกช่อง"
+
+#: dialogs.py:2452
+msgid "No channel selected to save."
+msgstr "ไม่ได้เลือกช่องที่จะบันทึก"
+
+#: dialogs.py:2472
+msgid "Changes saved for the selected channel."
+msgstr "บันทึกการเปลี่ยนแปลงสำหรับช่องที่เลือก"
+
+#: dialogs.py:2476
+msgid "Error saving changes."
+msgstr "เกิดข้อผิดพลาดในการบันทึกการเปลี่ยนแปลง"
+
+#: dialogs.py:2535
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{name}'?"
+msgstr ""
+
+#: dialogs.py:2537 dialogs.py:3063
+msgid "Confirm Unsubscribe"
+msgstr "ยืนยันการยกเลิกการสมัคร"
+
+#: dialogs.py:2558
+msgid "Subscription Feed"
+msgstr "ฟีดการสมัครสมาชิก"
+
+#: dialogs.py:2576
+msgid "Add &new Subscription from clipboard URL."
+msgstr "เพิ่มการสมัครสมาชิกใหม่จาก URL ของคลิปบอร์ด"
+
+#: dialogs.py:2578
+msgid "&Update Feed"
+msgstr "&อัปเดตฟีด"
+
+#: dialogs.py:2580
+msgid "&More..."
+msgstr "&มากกว่า..."
+
+#: dialogs.py:2649
+msgid "All"
+msgstr "ทั้งหมด"
+
+#: dialogs.py:2707
+msgid "Error reordering tabs."
+msgstr "เกิดข้อผิดพลาดในการเรียงลำดับแท็บใหม่"
+
+#: dialogs.py:2732
+#, python-brace-format
+msgid "Subscription Feed - {tab_name} - YoutubePlus"
+msgstr "ฟีดการติดตาม -{tab_name}- YoutubePlus"
+
+#: dialogs.py:2740
+msgid "Video Title"
+msgstr "ชื่อวิดีโอ"
+
+#: dialogs.py:2742
+msgid "Type"
+msgstr "พิมพ์"
+
+#: dialogs.py:2754
+msgid "Mark as &Seen"
+msgstr "ทำเครื่องหมายว่า&เห็นแล้ว"
+
+#: dialogs.py:2792 dialogs.py:2801
+msgid "Video"
+msgstr "วีดีโอ"
+
+#: dialogs.py:2875
+msgid "Mark &all in current tab as seen (control+delete)"
+msgstr "ทำเครื่องหมาย&ทั้งหมดในแท็บปัจจุบันตามที่เห็น (ควบคุม+ลบ)"
+
+#: dialogs.py:2877
+msgid "Show all &videos (including seen)"
+msgstr "แสดง &วีดีโอทั้งหมด (รวมทั้งที่เห็น)"
+
+#: dialogs.py:2877
+msgid "Show only &unseen videos"
+msgstr "แสดงเฉพาะวิดีโอที่ยังไม่ได้ดู"
+
+#: dialogs.py:2880
+msgid "&Manage subscriptions..."
+msgstr "&จัดการการสมัครรับข้อมูล..."
+
+#: dialogs.py:2883
+msgid "Add New &Category...\tCtrl+="
+msgstr "เพิ่ม &หมวดหมู่ใหม่... Ctrl+="
+
+#: dialogs.py:2885
+msgid "&Rename Current Category...\tF2"
+msgstr "&เปลี่ยนชื่อหมวดหมู่ปัจจุบัน... F2"
+
+#: dialogs.py:2887
+msgid "Remove Current Category...\tCtrl+-"
+msgstr "ลบหมวดหมู่ปัจจุบัน... Ctrl+-"
+
+#: dialogs.py:2890
+msgid "Clear All Feed Videos..."
+msgstr "ล้างวิดีโอฟีดทั้งหมด..."
+
+#: dialogs.py:2928
+msgid "An update is already in progress."
+msgstr "กำลังดำเนินการอัปเดตอยู่แล้ว"
+
+#: dialogs.py:2946
+#, python-brace-format
+msgid "Updating Feed ({count} channels)"
+msgstr "กำลังอัปเดตฟีด ({count}ช่อง)"
+
+#: dialogs.py:2948
+msgid "Starting..."
+msgstr "กำลังเริ่ม..."
+
+#: dialogs.py:2979
+msgid "&Unsubscribe from this channel"
+msgstr "ยกเลิกการติดตามช่องนี้"
+
+#: dialogs.py:2995
+msgid "Marked as seen."
+msgstr "ทำเครื่องหมายว่าเห็นแล้ว"
+
+#: dialogs.py:3003
+msgid "There are no videos in this tab to mark as seen."
+msgstr "ไม่มีวิดีโอในแท็บนี้ให้ทำเครื่องหมายว่าดูแล้ว"
+
+#: dialogs.py:3006
+#, python-brace-format
+msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการทำเครื่องหมายวิดีโอ{count}ทั้งหมดในแท็บนี้ว่าดูแล้ว"
+
+#: dialogs.py:3008
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+#: dialogs.py:3014
+msgid "All videos in the current tab have been marked as seen."
+msgstr "วิดีโอทั้งหมดในแท็บปัจจุบันถูกทำเครื่องหมายว่าดูแล้ว"
+
+#: dialogs.py:3061
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{channel}'?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการสมัครจาก '{channel}'?"
+
+#: dialogs.py:3071
+msgid "Enter new category name:"
+msgstr "ป้อนชื่อหมวดหมู่ใหม่:"
+
+#: dialogs.py:3073
+msgid "Add Category"
+msgstr "เพิ่มหมวดหมู่"
+
+#: dialogs.py:3090 dialogs.py:3123
+msgid "A category with this name already exists."
+msgstr "มีหมวดหมู่ที่ใช้ชื่อนี้อยู่แล้ว"
+
+#: dialogs.py:3094
+msgid "Error adding category."
+msgstr "เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่"
+
+#: dialogs.py:3102
+msgid "This is a fixed tab and cannot be renamed."
+msgstr "นี่เป็นแท็บที่ตายตัวและไม่สามารถเปลี่ยนชื่อได้"
+
+#: dialogs.py:3107
+#, python-brace-format
+msgid "Enter new name for '{name}':"
+msgstr "ป้อนชื่อใหม่สำหรับ '{name}':"
+
+#: dialogs.py:3109
+msgid "Rename Category"
+msgstr "เปลี่ยนชื่อหมวดหมู่"
+
+#: dialogs.py:3127
+msgid "Error renaming category."
+msgstr "เกิดข้อผิดพลาดในการเปลี่ยนชื่อหมวดหมู่"
+
+#: dialogs.py:3135
+msgid "This is a fixed tab and cannot be removed."
+msgstr "นี่เป็นแท็บที่ตายตัวและไม่สามารถลบออกได้"
+
+#: dialogs.py:3140
+#, python-brace-format
+msgid "Are you sure you want to remove the '{name}' category?"
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ '{name}'"
+
+#: dialogs.py:3153
+#, python-brace-format
+msgid "Category '{name}' removed."
+msgstr "หมวดหมู่ '{name}' ถูกลบออก"
+
+#: dialogs.py:3157
+msgid "Error removing category."
+msgstr "เกิดข้อผิดพลาดในการลบหมวดหมู่"
+
+#: dialogs.py:3163
+msgid "Manage User Profiles"
+msgstr "จัดการโปรไฟล์ผู้ใช้"
+
+#: dialogs.py:3175
+msgid "&Add"
+msgstr "&เพิ่ม"
+
+#: dialogs.py:3177
+msgid "&Rename"
+msgstr "&เปลี่ยนชื่อ"
+
+#: dialogs.py:3179
+msgid "&Delete"
+msgstr "&ลบ"
+
+#: dialogs.py:3222
+msgid "Enter new profile name:"
+msgstr "ป้อนชื่อโปรไฟล์ใหม่:"
+
+#: dialogs.py:3224
+msgid "Add Profile"
+msgstr "เพิ่มโปรไฟล์"
+
+#: dialogs.py:3240
+msgid "Profile already exists."
+msgstr "มีโปรไฟล์อยู่แล้ว"
+
+#: dialogs.py:3240 dialogs.py:3258 dialogs.py:3272 dialogs.py:3279 dialogs.py:3284
+#: dialogs.py:3299
+msgid "Error"
+msgstr "ข้อผิดพลาด"
+
+#: dialogs.py:3246
+#, python-brace-format
+msgid "Rename profile '{name}' to:"
+msgstr "เปลี่ยนชื่อโปรไฟล์ '{name}' เป็น:"
+
+#: dialogs.py:3248
+msgid "Rename Profile"
+msgstr "เปลี่ยนชื่อโปรไฟล์"
+
+#: dialogs.py:3258
+msgid "A profile with this name already exists."
+msgstr "มีโปรไฟล์ชื่อนี้อยู่แล้ว"
+
+#: dialogs.py:3272
+#, python-brace-format
+msgid "Failed to rename profile: {e}"
+msgstr "ไม่สามารถเปลี่ยนชื่อโปรไฟล์:{e}"
+
+#: dialogs.py:3279
+msgid "The default profile cannot be deleted."
+msgstr "ไม่สามารถลบโปรไฟล์เริ่มต้นได้"
+
+#: dialogs.py:3284
+msgid "Cannot delete the profile currently in use."
+msgstr "ไม่สามารถลบโปรไฟล์ที่ใช้งานอยู่ในปัจจุบันได้"
+
+#: dialogs.py:3287
+#, python-brace-format
+msgid "Delete profile '{name}' and all its data?"
+msgstr "ลบโปรไฟล์ '{name}' และข้อมูลทั้งหมดหรือไม่"
+
+#: dialogs.py:3289
+msgid "Confirm Delete"
+msgstr "ยืนยันการลบ"
+
+#: dialogs.py:3299
+#, python-brace-format
+msgid "Failed to delete profile: {e}"
+msgstr "ไม่สามารถลบโปรไฟล์:{e}"
+
+#: dialogs.py:3308
+msgid ""
+"The active profile has been modified. NVDA must be restarted to apply changes. Restart now?"
+msgstr "โปรไฟล์ที่ใช้งานอยู่ได้รับการแก้ไขแล้วต้องรีสตาร์ท NVDA เพื่อใช้การเปลี่ยนแปลงรีสตาร์ทเลยไหม?"
+
+#: dialogs.py:3310 settings.py:254
+msgid "Restart NVDA"
+msgstr "รีสตาร์ท NVDA"
+
+#: lib/optparse.py:134
+#, python-format
+msgid "no such option: %s"
+msgstr "ไม่มีตัวเลือกดังกล่าว: %s"
+
+#: lib/optparse.py:145
+#, python-format
+msgid "ambiguous option: %s (%s?)"
+msgstr "ตัวเลือกที่ไม่ชัดเจน: %s (%s?)"
+
+#: lib/optparse.py:371
+#, fuzzy, python-format
+msgid "Usage: %s\n"
+msgstr "การใช้งาน: %s\n"
+
+#: lib/optparse.py:390
+msgid "Usage"
+msgstr "การใช้งาน"
+
+#: lib/optparse.py:412 lib/optparse.py:413
+msgid "integer"
+msgstr "จำนวนเต็ม"
+
+#: lib/optparse.py:414
+msgid "floating-point"
+msgstr "จุดลอยตัว"
+
+#: lib/optparse.py:415
+msgid "complex"
+msgstr "ซับซ้อน"
+
+#: lib/optparse.py:423
+#, python-format
+msgid "option %s: invalid %s value: %r"
+msgstr "ตัวเลือก %s: ค่า %s ไม่ถูกต้อง: %r"
+
+#: lib/optparse.py:431
+#, python-format
+msgid "option %s: invalid choice: %r (choose from %s)"
+msgstr "ตัวเลือก %s: ตัวเลือกที่ไม่ถูกต้อง: %r (เลือกจาก %s)"
+
+#: lib/optparse.py:1228
+msgid "show this help message and exit"
+msgstr "แสดงข้อความช่วยเหลือนี้แล้วออก"
+
+#: lib/optparse.py:1233
+msgid "show program's version number and exit"
+msgstr "แสดงหมายเลขเวอร์ชันของโปรแกรมแล้วออก"
+
+#: lib/optparse.py:1256
+msgid "%prog [options]"
+msgstr "%prog [ตัวเลือก]"
+
+#: lib/optparse.py:1476 lib/optparse.py:1514
+#, python-format
+msgid "%(option)s option requires %(number)d argument"
+msgid_plural "%(option)s option requires %(number)d arguments"
+msgstr[0] ""
+
+#: lib/optparse.py:1486
+#, python-format
+msgid "%s option does not take a value"
+msgstr "ตัวเลือก %s ไม่ได้รับค่า"
+
+#: lib/optparse.py:1602
+msgid "Options"
+msgstr "ตัวเลือก"
+
+#: settings.py:17
+msgid "Youtube Plus"
+msgstr "ยูทูป พลัส"
+
+#: settings.py:23
+msgid "Active &Profile (Requires Restart):"
+msgstr "ใช้งาน &โปรไฟล์ (ต้องรีสตาร์ท):"
+
+#: settings.py:29 settings.py:229 settings.py:234
+msgid "default"
+msgstr "ค่าเริ่มต้น"
+
+#: settings.py:34
+msgid "&Manage Profiles..."
+msgstr "&จัดการโปรไฟล์..."
+
+#: settings.py:38
+msgid "&Quick Action (Space bar):"
+msgstr "&การดำเนินการด่วน (Space bar):"
+
+#: settings.py:41
+msgid "Open video URL"
+msgstr "เปิด URL ของวิดีโอ"
+
+#: settings.py:43
+msgid "View video info"
+msgstr "ดูข้อมูลวิดีโอ"
+
+#: settings.py:45
+msgid "View comments"
+msgstr "ดูความคิดเห็น"
+
+#: settings.py:47
+msgid "View chapters"
+msgstr "ดูบทต่างๆ"
+
+#: settings.py:49
+msgid "Download video"
+msgstr "ดาวน์โหลดวิดีโอ"
+
+#: settings.py:51
+msgid "Download audio"
+msgstr "ดาวน์โหลดเสียง"
+
+#: settings.py:53
+msgid "Add to Favorites video"
+msgstr "เพิ่มในวิดีโอโปรด"
+
+#: settings.py:55
+msgid "Add to Favorites channel"
+msgstr "เพิ่มไปยังช่องรายการโปรด"
+
+#: settings.py:57
+msgid "Add to Watch List"
+msgstr "เพิ่มในรายการเฝ้าดู"
+
+#: settings.py:59
+msgid "Copy video URL"
+msgstr "คัดลอก URL ของวิดีโอ"
+
+#: settings.py:61
+msgid "Copy video title"
+msgstr "คัดลอกชื่อวิดีโอ"
+
+#: settings.py:63
+msgid "Copy channel name"
+msgstr "คัดลอกชื่อช่อง"
+
+#: settings.py:65
+msgid "Copy channel URL"
+msgstr "คัดลอก URL ของช่อง"
+
+#: settings.py:67
+msgid "Copy video summary"
+msgstr "คัดลอกวิดีโอสรุป"
+
+#: settings.py:69
+msgid "Open video channel"
+msgstr "เปิดช่องวิดีโอ"
+
+#: settings.py:71
+msgid "Show channel videos"
+msgstr "แสดงวิดีโอของช่อง"
+
+#: settings.py:73
+msgid "Show channel shorts"
+msgstr "แสดงวิดีโอสั้นของช่อง"
+
+#: settings.py:75
+msgid "Show channel lives"
+msgstr "แสดงชีวิตของช่อง"
+
+#: settings.py:92
+msgid "&Notification mode:"
+msgstr "&โหมดการแจ้งเตือน:"
+
+#: settings.py:95
+msgid "Beep"
+msgstr "บี๊บ"
+
+#: settings.py:95
+msgid "Sound"
+msgstr "เสียง"
+
+#: settings.py:95
+msgid "Silent"
+msgstr "เงียบ"
+
+#: settings.py:102
+msgid "Default &sort order:"
+msgstr "ลำดับการจัดเรียงเริ่มต้น:"
+
+#: settings.py:104
+msgid "Newest First"
+msgstr "ใหม่ล่าสุดก่อน"
+
+#: settings.py:104
+msgid "Oldest First"
+msgstr "เก่าแก่ที่สุดก่อน"
+
+#: settings.py:111
+msgid "&Items to fetch for each content type:"
+msgstr "&รายการที่จะดึงข้อมูลสำหรับเนื้อหาแต่ละประเภท:"
+
+#: settings.py:115
+msgid "Default content &types for new subscriptions:"
+msgstr "เนื้อหา &ประเภทเริ่มต้นสำหรับการสมัครสมาชิกใหม่:"
+
+#: settings.py:130
+msgid "Disabled"
+msgstr "พิการ"
+
+#: settings.py:130
+msgid "15 minutes"
+msgstr "15 นาที"
+
+#: settings.py:130
+msgid "30 minutes"
+msgstr "30 นาที"
+
+#: settings.py:130
+msgid "1 hour"
+msgstr "1 ชั่วโมง"
+
+#: settings.py:130
+msgid "2 hours"
+msgstr "2 ชั่วโมง"
+
+#: settings.py:131
+msgid "4 hours"
+msgstr "4 ชั่วโมง"
+
+#: settings.py:131
+msgid "6 hours"
+msgstr "6 ชั่วโมง"
+
+#: settings.py:131
+msgid "12 hours"
+msgstr "12 ชม"
+
+#: settings.py:131
+msgid "24 hours"
+msgstr "24 ชม"
+
+#: settings.py:135
+msgid "Background &update interval:"
+msgstr "พื้นหลัง &ช่วงเวลาอัปเดต:"
+
+#: settings.py:146
+msgid "&Automatically speak incoming live chat"
+msgstr "&พูดแชทสดที่เข้ามาโดยอัตโนมัติ"
+
+#: settings.py:150
+msgid "&Live chat refresh interval (seconds):"
+msgstr "&ช่วงเวลารีเฟรชแชทสด (วินาที):"
+
+#: settings.py:154
+msgid "Message &history limit (live chat):"
+msgstr "ข้อความ&ประวัติจำกัด (แชทสด):"
+
+#: settings.py:209
+msgid "Default download and &export folder path:"
+msgstr "เส้นทางโฟลเดอร์ดาวน์โหลดและส่งออกเริ่มต้น:"
+
+#: settings.py:214
+msgid "&Browse..."
+msgstr "&เรียกดู..."
+
+#: settings.py:252
+#, python-brace-format
+msgid ""
+"The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply "
+"this change. Restart now?"
+msgstr ""
+"โปรไฟล์ที่ใช้งานอยู่ถูกเปลี่ยนเป็น '{profile_name}'ต้องรีสตาร์ท NVDA เพื่อใช้การเปลี่ยนแปลงนี้รีสตาร์ทเลยไหม?"
+
+#: settings.py:313
+msgid "Select cookies.txt file"
+msgstr "เลือกไฟล์ cookie.txt"
+
+#: settings.py:324
+msgid "Select default folder to export files"
+msgstr "เลือกโฟลเดอร์เริ่มต้นเพื่อส่งออกไฟล์"
+
+#: settings.py:333
+msgid ""
+"This will permanently delete all your saved favorite videos, favorite channels, and "
+"subscription data. This action cannot be undone.\n"
+"\n"
+"Are you sure you want to continue?"
+msgstr ""
+"การดำเนินการนี้จะลบวิดีโอโปรด ช่องโปรด "
+"และข้อมูลการติดตามที่บันทึกไว้ทั้งหมดของคุณอย่างถาวรการดำเนินการนี้ไม่สามารถยกเลิกได้\n"
+"\n"
+"คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?"
+
+#: settings.py:334
+msgid "Confirm Data Deletion"
+msgstr "ยืนยันการลบข้อมูล"
