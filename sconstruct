@@ -152,7 +152,7 @@ for langDir in env.Glob(os.path.join('addon', 'locale', '*')):
     # สร้าง manifest.ini จาก template
     t_manifest = env.NVDATranslatedManifest(
         os.path.join(str(langDir), 'manifest.ini'),
-        'manifest-translated.ini'
+        'manifest-translated.ini.tpl'
     )
     env.Depends(addon, t_manifest)
 
