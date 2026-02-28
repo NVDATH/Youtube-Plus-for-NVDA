@@ -17,7 +17,7 @@ features:
 • You can follow your favorite channels and be certain that you will see every video they post without being filtered out by YouTube's algorithm.
 • we offer a Favorites system for videos, channels, playlists, and a Watch List for saving videos you're interested in but don't have time to watch yet.
 • built-in search system that displays results within the same accessible UI as other features, rather than just providing a search box that opens the web results.
-• included download feature for saving videos or audio files.""")
+• included download feature for saving videos or audio files."""),
     "addon_name": "YoutubePlus",
     "addon_version": "2026.2.28",
     "addon_author": "NVDA_TH <nvdainth@gmail.com>, assisted by A.I.",
