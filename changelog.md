@@ -1,3 +1,7 @@
+## 2026.3.3
+
+- **Core Engine Update:** Upgraded internal **yt-dlp to v2026.3.3** for enhanced video extraction performance and stability.
+
 ## 2026.2.28
 
 ### ✨ New Features

@@ -6,6 +6,8 @@ def _(x):
 
 # Add-on information variables
 addon_info = {
+    "addon_name": "YoutubePlus",
+    "addon_version": "2026.3.3",
 # Translators: Summary for this add-on
     "addon_summary": _("YouTubePlus"),
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -18,8 +20,6 @@ features:
 • we offer a Favorites system for videos, channels, playlists, and a Watch List for saving videos you're interested in but don't have time to watch yet.
 • built-in search system that displays results within the same accessible UI as other features, rather than just providing a search box that opens the web results.
 • included download feature for saving videos or audio files."""),
-    "addon_name": "YoutubePlus",
-    "addon_version": "2026.2.28",
     "addon_author": "NVDA_TH <nvdainth@gmail.com>, assisted by A.I.",
     "addon_url": "https://nvda.in.th/youtube-plus",
     "addon_docFileName": "readme.html",

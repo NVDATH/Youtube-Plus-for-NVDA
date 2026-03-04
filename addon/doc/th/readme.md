@@ -29,6 +29,7 @@
 * t: (show timestamp) - แสดง timestamp หรือ chapter หากคลิปนั้นมี
 * m: (open manage subscription) - เปิดหน้าการจัดการช่องที่คุณติดตาม
 * s: (open subscription feed) - แสดงรายการวิดีโอจากช่องต่างๆ ที่คุณ subscription ไว้
+* u: (open User Profile Manager) -    เปิดหน้าต่างการจัดการ User Profile
 * l: (show comment) - แสดงความคิดเห็น (รายละเอียดจะอธิบายไว้ด้านล่างให้เพิ่มเติม)
 * shift+l: (stop monitor live chat) - สั่งให้หยุดการตรวจจับ live chat
 * r: (toggle automatic reading live chat) - สลับการตั้งค่าการอ่านออกเสียงสำหรับ live chat
@@ -265,7 +266,7 @@
 ผู้ใช้สามารถเข้าไปตั้งค่าได้ที่เมนู `NVDA -> Preferences -> Settings...` แล้วเลือกหมวด **"YoutubePlus"** โดยมีรายละเอียดดังนี้:
 
 - **Active Profile:** เลือกโปรไฟล์ที่ต้องการใช้งาน เมื่อเปลี่ยนโปรไฟล์ใหม่ ต้อง restart NVDA ใหม่เพื่อฐานข้อมูลของโปรไฟล์ใหม่ที่เลือกจะถูกใช้งานอย่างถูกต้อง
-=- ** Manage Profile button:** ปุ่มเปิดหน้าต่างจัดการโปรไฟล์ (User Profile manager) 
+- **Manage Profile button:** ปุ่มเปิดหน้าต่างจัดการโปรไฟล์ (User Profile manager) 
 - **quickAction (space bar):** ตัวเลือกว่าผู้ใช้ต้องการให้ปุ่ม space bar ทำหน้าที่อะไรในหน้าต่างรายการวิดีโอ โดยจะดึงตัวเลือกจากปุ่ม Action... มาทั้งหมด
 - **Notification mode:** เลือกรูปแบบการแจ้งเตือนขณะโปรแกรมกำลังทำงาน:
   - *Beep:* ส่งเสียงสัญญาณติ๊ดๆ
