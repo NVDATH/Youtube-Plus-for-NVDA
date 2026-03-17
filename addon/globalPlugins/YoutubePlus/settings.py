@@ -28,7 +28,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         # Translators: Default profile name.
         current_profile = config.conf["YoutubePlus"].get("activeProfile", _("default"))
         self.profileCombo.SetStringSelection(current_profile)
-        self.old_profile = current_profile # เก็บค่าไว้เปรียบเทียบตอน Save
+        self.old_profile = current_profile
 
         # Translators: Button to open the profile management dialog.
         self.manageProfilesBtn = sHelper.addItem(wx.Button(self, label=_("&Manage Profiles...")))
@@ -216,9 +216,16 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         sHelper.addItem(pathSizer, flag=wx.EXPAND)
         self.browseBtn.Bind(wx.EVT_BUTTON, self.onBrowse)
 
+        # Translators: Button to manually back up all data for the current profile.
+        self.backupBtn = sHelper.addItem(wx.Button(self, label=_("Bac&kup data now")))
+        self.backupBtn.Bind(wx.EVT_BUTTON, self.on_backup)
+
+        # Translators: Button to restore data from a previous backup.
+        self.restoreBtn = sHelper.addItem(wx.Button(self, label=_("&Restore data from backup...")))
+        self.restoreBtn.Bind(wx.EVT_BUTTON, self.on_restore)
+        
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=10)
 
-        
     def _get_available_profiles(self):
         """Helper to scan directories for profiles."""
         base_path = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
@@ -228,7 +235,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             except OSError:
                 return [_("default")]
         
-        profiles = [f for f in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, f))]
+        profiles = [f for f in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, f)) and f != "_back_ups_db"]
         # Translators: Ensure 'default' is always in the list.
         if not profiles:
             profiles = [_("default")]
@@ -247,15 +254,15 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         else:
             self.profileCombo.SetSelection(0)
 
-    def ask_for_restart(self, profile_name):
-        # Translators: Message shown when user changes the active profile.
-        msg = _("The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply this change. Restart now?").format(profile_name=profile_name)
+    def ask_for_restart(self, profile_name, message=None):
+        if message is None:
+            # Translators: Message shown when user changes the active profile.
+            message = _("The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply this change. Restart now?").format(profile_name=profile_name)
         # Translators: Title of the restart confirmation dialog.
         title = _("Restart NVDA")
-        
-        if gui.messageBox(msg, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
+        if gui.messageBox(message, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
             globalCommands.commands.script_restart(None)
-
+        
     def onSave(self):
         new_profile = self.profileCombo.GetStringSelection()
         if new_profile != self.old_profile:
@@ -327,17 +334,74 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                 logging.info("User selected new export path: %s", path)
                 self.exportPathTextCtrl.SetValue(path)
 
-    def on_clear_data(self, event):
-        """Shows a confirmation dialog and calls the plugin to clear all data."""
-        confirm = wx.MessageBox(
-            _("This will permanently delete all your saved favorite videos, favorite channels, and subscription data. This action cannot be undone.\n\nAre you sure you want to continue?"),
-            _("Confirm Data Deletion"),
-            wx.YES_NO | wx.ICON_EXCLAMATION, self
-        )
-        if confirm != wx.YES:
+    def on_backup(self, event):
+        try:
+            filename = GlobalPlugin.instance.backup_profile()
+            # Translators: Success message after backup is completed. {filename} is the backup file name.
+            gui.messageBox(
+                _("Backup completed successfully.\n{filename}").format(filename=filename),
+                # Translators: Title of the backup success dialog.
+                _("Backup"),
+                wx.OK | wx.ICON_INFORMATION
+            )
+        except Exception as e:
+            # Translators: Error message when backup fails. {error} is the error details.
+            gui.messageBox(
+                _("Backup failed: {error}").format(error=e),
+                # Translators: Title of the backup error dialog.
+                _("Backup Error"),
+                wx.OK | wx.ICON_ERROR
+            )
+
+    def on_restore(self, event):
+        backups = GlobalPlugin.instance.get_backup_list()
+        if not backups:
+            profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+            # Translators: Message shown when no backup files are found for the current profile.
+            gui.messageBox(
+                _("No backup files found for profile '{profile}'.").format(profile=profile),
+                # Translators: Title of the no backup found dialog.
+                _("Restore"),
+                wx.OK | wx.ICON_INFORMATION
+            )
             return
-        
-        if GlobalPlugin.instance:
-            GlobalPlugin.instance.clear_all_user_data()
-            
+        menu = wx.Menu()
+        for i, backup_name in enumerate(backups):
+            date_str = backup_name.split("_backup_")[1].replace(".zip", "")
+            display_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}" if len(date_str) == 8 else date_str
+            menu.Append(wx.ID_HIGHEST + i, display_date)
+
+        def on_select(e):
+            idx = e.GetId() - wx.ID_HIGHEST
+            selected_backup = backups[idx]
+            date_str = selected_backup.split("_backup_")[1].replace(".zip", "")
+            display_date = f"{date_str[:4]}-{date_str[4:6]}-{date_str[6:]}" if len(date_str) == 8 else date_str
+            profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+            # Translators: Confirmation message before restoring a backup. {date} is the backup date, {profile} is the profile name.
+            confirm_msg = _(
+                "Restore data from {date} for profile '{profile}'?\nThis will overwrite all current data and requires a restart."
+            ).format(date=display_date, profile=profile)
+            # Translators: Title of the restore confirmation dialog.
+            if gui.messageBox(confirm_msg, _("Confirm Restore"), wx.YES_NO | wx.ICON_WARNING) != wx.YES:
+                return
+            try:
+                GlobalPlugin.instance.restore_profile(selected_backup)
+                # Translators: Message shown after restore is successful, asking user to restart NVDA to apply changes.
+                self.ask_for_restart(
+                    profile,
+                    message=_("YoutubePlus Data restored successfully. NVDA must be restarted to apply the changes. Restart now?")
+                )
+            except Exception as e:
+                # Translators: Error message when restore fails. {error} is the error details.
+                gui.messageBox(
+                    _("Restore failed: {error}").format(error=e),
+                    # Translators: Title of the restore error dialog.
+                    _("Restore Error"),
+                    wx.OK | wx.ICON_ERROR
+                )
+
+        menu.Bind(wx.EVT_MENU, on_select)
+        self.restoreBtn.PopupMenu(menu)
+        menu.Destroy()
+
 gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsPanel)

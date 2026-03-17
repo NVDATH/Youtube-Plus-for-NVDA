@@ -20,6 +20,7 @@ from contextlib import contextmanager, redirect_stderr
 from http.cookiejar import MozillaCookieJar
 from functools import wraps
 import ui
+import zipfile
 import config
 import api
 import tones
@@ -122,7 +123,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if filename:
             return os.path.join(base_path, filename)
         return base_path
-    
 
     def _init_sub_database(self):
         """
@@ -1154,7 +1154,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not os.path.exists(export_path):
                 os.makedirs(export_path)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            safe_title = unicodedata.normalize('NFC', self.video_title)
+            safe_title = unicodedata.normalize('NFC', self.live_chat_title)
             safe_title = "".join(c for c in safe_title if c not in '\\/*?:"<>|').strip()
             if not safe_title:
                 safe_title = "LiveChat"
@@ -1438,7 +1438,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if mark_seen:
                 self.mark_videos_as_seen(video_id, notify=True)
             else:
-                self._notify_callbacks("watch_list_updated")
+                self._notify_callbacks("watch_list_updated", {"action": "add"})
         except Exception as e:
             log.error(f"Add to watchlist worker error: {e}")
             # Translators: Error message shown when the add-on fails to save the video to the Watch List file.
@@ -1538,6 +1538,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self._start_indicator()
         self.is_long_task_running = True
         try:
+            db_path = self.get_profile_path("subscription.db")
             ydl_opts = {
                 'quiet': True,
                 'no_warnings': True,
@@ -1637,6 +1638,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         Worker to check for new videos and report detailed progress back to the dialog,
         including the final summary message. Supports aborting mid-process.
         """
+        self.backup_profile(auto=True)
         self.is_long_task_running = True
         self._update_aborted = False
         try:
@@ -1888,15 +1890,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
     def openMessagesDialog(self):
         gui.mainFrame.prePopup()
-        # Translators: Title of the live chat window. 
-        # The first string is used when the chat is active ({title} is the video title). 
+        # Translators: Title of the live chat window.
+        # The first string is used when the chat is active ({title} is the video title).
         # The second string "(stopped)" is used when the chat session has ended or is disconnected.
-        dialog_title = _("Live chat of {title}").format(title=self.video_title) if self.active else _("Live chat (stopped)")
+        dialog_title = _("Live chat of {title}").format(title=self.live_chat_title) if self.active else _("Live chat (stopped)")
         self.dialog = MessagesDialog(gui.mainFrame, dialog_title, self)
         self.dialog.Show()
         self._play_success_sound()
         gui.mainFrame.postPopup()
-
+        
     def _finish_chat_setup(self, video_id, title):
         """Finalizes chat setup on the main thread and starts the worker."""
         #log.info("Finishing chat setup for video ID: %s", video_id)
@@ -1905,6 +1907,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not self.chat.is_alive():
                 raise RuntimeError("Chat is not active on this video (pytchat check).")
             self.video_title = title
+            self.live_chat_title = title  
             self.active = True
             with self._messages_lock:
                 self.messages = []
@@ -2259,7 +2262,55 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Show()
         gui.mainFrame.postPopup()
 
+    def backup_profile(self, auto=False):
+        profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+        profile_path = self.get_profile_path()
+        backup_dir = os.path.join(globalVars.appArgs.configPath, "YoutubePlus", "_back_ups_db")
+        if not os.path.exists(backup_dir):
+            os.makedirs(backup_dir)
+        today = datetime.now().strftime("%Y%m%d")
+        backup_filename = f"{profile}_backup_{today}.zip"
+        backup_path = os.path.join(backup_dir, backup_filename)
+        if auto and os.path.exists(backup_path):
+            return
+        with zipfile.ZipFile(backup_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for filename in os.listdir(profile_path):
+                file_path = os.path.join(profile_path, filename)
+                if os.path.isfile(file_path):
+                    #zf.write(file_path, filename)
+                    zf.write(file_path, os.path.join(profile, filename))
+        all_backups = sorted([
+            f for f in os.listdir(backup_dir)
+            if f.startswith(f"{profile}_backup_") and f.endswith(".zip")
+        ])
+        for old_backup in all_backups[:-5]:
+            os.remove(os.path.join(backup_dir, old_backup))
+        return backup_filename
 
+    def get_backup_list(self):
+        profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+        backup_dir = os.path.join(globalVars.appArgs.configPath, "YoutubePlus", "_back_ups_db")
+        if not os.path.exists(backup_dir):
+            return []
+        return sorted([
+            f for f in os.listdir(backup_dir)
+            if f.startswith(f"{profile}_backup_") and f.endswith(".zip")
+        ], reverse=True)
+
+    def restore_profile(self, backup_filename):
+        profile = config.conf["YoutubePlus"].get("activeProfile", "default")
+        backup_dir = os.path.join(globalVars.appArgs.configPath, "YoutubePlus", "_back_ups_db")
+        backup_path = os.path.join(backup_dir, backup_filename)
+        profile_path = self.get_profile_path()
+        with zipfile.ZipFile(backup_path, 'r') as zf:
+            for member in zf.namelist():
+                filename = os.path.basename(member)
+                if not filename:  # ข้าม folder entry
+                    continue
+                target_path = os.path.join(profile_path, filename)
+                with zf.open(member) as src, open(target_path, 'wb') as dst:
+                    dst.write(src.read())
+                
     __YoutubePlusGestures = {
         "kb:a": "showAddMenu",
         "kb:f": "showFavVideoDialog",

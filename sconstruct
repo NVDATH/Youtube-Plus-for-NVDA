@@ -243,21 +243,6 @@ pythonFiles = expandGlobs(buildVars.pythonSources)
 for file in pythonFiles:
     env.Depends(addon, file)
 
-# ---------- Pot target (I18N source extraction) ----------
-i18nFiles = expandGlobs(buildVars.i18nSources)
-gettextvars = {
-    "gettext_package_bugs_address": "nvda-translations@groups.io",
-    "gettext_package_name": buildVars.addon_info["addon_name"],
-    "gettext_package_version": buildVars.addon_info["addon_version"],
-}
-
-pot = env.gettextPotFile("${addon_name}.pot", i18nFiles, **gettextvars)
-env.Alias("pot", pot)
-env.Depends(pot, i18nFiles)
-mergePot = env.gettextMergePotFile("${addon_name}-merge.pot", i18nFiles, **gettextvars)
-env.Alias("mergePot", mergePot)
-env.Depends(mergePot, i18nFiles)
-
 # ---------- Manifest ----------
 def generateManifest(source, dest):
     addon_info = buildVars.addon_info

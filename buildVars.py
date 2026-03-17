@@ -7,7 +7,7 @@ def _(x):
 # Add-on information variables
 addon_info = {
     "addon_name": "YoutubePlus",
-    "addon_version": "2026.3.3",
+    "addon_version": "2026.3.17",
 # Translators: Summary for this add-on
     "addon_summary": _("YouTubePlus"),
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager

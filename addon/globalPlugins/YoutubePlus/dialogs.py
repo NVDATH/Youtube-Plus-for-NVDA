@@ -139,7 +139,6 @@ class HelpDialog(BaseInfoDialog):
 - Ctrl+Delete: Mark all videos in the current tab as seen
 
 **In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**
-- Shift+Up/Down: Reorder the selected item
 - Delete: Remove the selected item from favorites
 
 --- Help ---
@@ -436,7 +435,7 @@ class MessagesDialog(wx.Dialog):
 
     def updateList(self):
         selected_index = self.messagesListBox.GetFirstSelected()
-        if selected_index != -1:
+        if selected_index != -1 and selected_index < len(self.filteredMessages):
             self.last_selected_obj = self.filteredMessages[selected_index]
         item_count_before = self.messagesListBox.GetItemCount()
         is_at_bottom = (selected_index == item_count_before - 1)
@@ -475,18 +474,36 @@ class MessagesDialog(wx.Dialog):
         finally:
             self.messagesListBox.Thaw()
             self.onMessageSelected(None)
-    
+
     def refreshMessages(self):
         searchText = self.searchTextCtrl.GetValue().lower()
+        if searchText and not hasattr(self, '_pre_search_obj'):
+            selected_index = self.messagesListBox.GetFirstSelected()
+            if selected_index != -1 and selected_index < len(self.filteredMessages):
+                self._pre_search_obj = self.filteredMessages[selected_index]
         if searchText:
             self.filteredMessages = [
                 m for m in self.messages
-                if searchText in m.get('author', '').lower() or searchText in m.get('message', '').lower()
+                if searchText in m.get('author', '').lower() or
+                   searchText in m.get('message', '').lower()
             ]
         else:
             self.filteredMessages = self.messages[:]
         self.updateList()
-
+        if not searchText and hasattr(self, '_pre_search_obj'):
+            try:
+                new_index = self.filteredMessages.index(self._pre_search_obj)
+            except ValueError:
+                new_index = len(self.filteredMessages) - 1
+            del self._pre_search_obj
+            if self.messagesListBox.GetItemCount() > 0:
+                self.messagesListBox.SetItemState(-1, 0,
+                    wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self.messagesListBox.SetItemState(new_index,
+                    wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                    wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self.messagesListBox.EnsureVisible(new_index)
+                
     def onCopy(self, event):
         selected = self.messagesListBox.GetFirstSelected()
         if selected != -1:
@@ -1073,6 +1090,11 @@ class VideoActionMixin:
             self._view_channel_content("streams")
 
 class BaseVideoListPanel(wx.Panel, VideoActionMixin):
+    # Class-level clipboard shared across all instances (enables cross-list paste)
+    _clipboard = []        # list of item dicts
+    _clipboard_is_cut = False
+    _clipboard_source = None  # reference to the panel that did the cut/copy
+
     def __init__(self, parent, core_instance):
         super().__init__(parent)
         self.core = core_instance
@@ -1083,14 +1105,15 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self.file_path = self._get_file_path()
         self.callback_topic = self._get_callback_topic()
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        # Multi-select: removed wx.LC_SINGLE_SEL
+        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT)
         self._create_list_columns(self.listCtrl)
         mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         self._create_extra_buttons(self, btnSizer)
         btnSizer.AddStretchSpacer()
         self.addBtn = wx.Button(self, label=self._get_add_button_label())
-        # Translators: Button to remove the selected item from the list.
+        # Translators: Button to remove the selected item(s) from the list.
         self.removeBtn = wx.Button(self, label=_("&Remove"))
         btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
@@ -1099,29 +1122,30 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         if self.callback_topic:
             self.core.register_callback(self.callback_topic, self.refresh_data)
         self._load_data()
-        self._populate_list()  
+        self._populate_list()
         self._update_button_states()
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.on_list_item_selected)
 
-    def _get_file_path(self): 
+    def _get_file_path(self):
         raise NotImplementedError
-    
-    def _get_callback_topic(self): 
+
+    def _get_callback_topic(self):
         raise NotImplementedError
-    
-    def _get_add_button_label(self): 
+
+    def _get_add_button_label(self):
         raise NotImplementedError
-    
+
     def _get_search_fields(self, item):
         return [item.get('title', ''), item.get('channel_name', '')]
-    
+
     def _get_item_title_for_messages(self, item):
         return item.get('title', 'N/A')
-    
+
     def _create_list_columns(self, list_ctrl):
         # Translators: Column header for video title.
         list_ctrl.InsertColumn(0, _("Title"), width=350)
@@ -1129,7 +1153,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         list_ctrl.InsertColumn(1, _("Channel"), width=200)
         # Translators: Column header for video duration.
         list_ctrl.InsertColumn(2, _("Duration"), width=120)
-    
+
     def _create_extra_buttons(self, panel, sizer):
         # Translators: Button to open action menu.
         self.actionBtn = wx.Button(panel, label=_("&Action..."))
@@ -1169,27 +1193,41 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
                 self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
                 self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
-            if self._is_first_load and self.listCtrl.GetItemCount() > 0:
-                self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                self._is_first_load = False
+                if self._is_first_load and self.listCtrl.GetItemCount() > 0:
+                    self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                                                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                    self._is_first_load = False
         finally:
             self.listCtrl.Thaw()
+            
+    def _get_selected_items(self):
+        """Return list of selected items in current view order."""
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(self.filtered_items[idx])
+            idx = self.listCtrl.GetNextSelected(idx)
+        return selected
+
+    def _get_item_unique_key(self, item):
+        """Return a value that uniquely identifies an item (URL preferred)."""
+        return item.get('url') or item.get('title', '')
 
     def refresh_data(self, data=None):
         if not self.listCtrl:
             return
         self._load_data()
-        self.on_search("")
+        current_search = getattr(self, '_saved_search_text', "")  # ← ดึงค่าที่จำไว้
+        self.on_search(current_search)
         if data and data.get("action") == "add":
             count = self.listCtrl.GetItemCount()
             if count > 0:
                 last_index = count - 1
-                self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                                           wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self.listCtrl.EnsureVisible(last_index)
         self._update_button_states()
-
+        
     def _update_button_states(self):
         is_not_empty = bool(self.items)
         is_selected = self.listCtrl.GetFirstSelected() != -1
@@ -1197,19 +1235,15 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self.actionBtn.Enable(is_not_empty and is_selected)
         self.copyBtn.Enable(is_not_empty and is_selected)
 
-    def on_list_item_selected(self, event):
-        self._update_button_states()
-        event.Skip()
-
     def on_action_menu(self, event):
-        if self.listCtrl.GetFirstSelected() == -1: 
+        if self.listCtrl.GetFirstSelected() == -1:
             return
         menu = self.create_video_action_menu()
         self.PopupMenu(menu)
         menu.Destroy()
 
     def on_copy_menu(self, event):
-        if self.listCtrl.GetFirstSelected() == -1: 
+        if self.listCtrl.GetFirstSelected() == -1:
             return
         menu = wx.Menu()
         # Translators: Menu items for copying specific video information.
@@ -1230,35 +1264,37 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         menu.Destroy()
 
     def on_remove(self, event):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: 
+        selected_items = self._get_selected_items()
+        if not selected_items:
             return
-        item_to_remove = self.filtered_items[selected_index]
-        title = self._get_item_title_for_messages(item_to_remove)
-        # Translators: Confirmation dialog message before deleting an item.
-        confirm_msg = _("Are you sure you want to remove '{title}'?").format(title=title)
+        first_index = self.listCtrl.GetFirstSelected()
+        count = len(selected_items)
+        if count == 1:
+            title = self._get_item_title_for_messages(selected_items[0])
+            # Translators: Confirmation dialog message before deleting a single item.
+            confirm_msg = _("Are you sure you want to remove '{title}'?").format(title=title)
+        else:
+            # Translators: Confirmation dialog message before deleting multiple items. {count} is the number of items.
+            confirm_msg = _("Are you sure you want to remove {count} selected items?").format(count=count)
         # Translators: Title of the confirmation dialog for removal.
         confirm_title = _("Confirm Removal")
-        if wx.MessageBox(
-            confirm_msg,
-            confirm_title,
-            wx.YES_NO | wx.ICON_QUESTION,
-            self
-        ) != wx.YES:
+        if wx.MessageBox(confirm_msg, confirm_title, wx.YES_NO | wx.ICON_QUESTION, self) != wx.YES:
             return
-        self.items.remove(item_to_remove)
+        for item in selected_items:
+            self.items.remove(item)
         self._save_data()
         self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
-            new_selection = min(selected_index, item_count - 1)
-            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            new_selection = min(first_index, item_count - 1)
+            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                                       wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(new_selection)
         self._update_button_states()
         wx.CallAfter(self.listCtrl.SetFocus)
-        # Translators: Notification spoken by NVDA after an item is removed.
-        self.core._notify_delete(_("Item removed."))
+        # Translators: Notification spoken by NVDA after item(s) are removed.
+        self.core._notify_delete(_("Item removed.") if count == 1 else
+                                 _("{count} items removed.").format(count=count))
 
     def on_add(self, event):
         try:
@@ -1270,10 +1306,208 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         except Exception:
             # Translators: Error message when clipboard access fails.
             ui.message(_("Could not read from clipboard."))
-            return        
-        threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
+            return
+        threading.Thread(target=self._add_worker(), args=(url,), daemon=True).start()
+        
+    def _add_worker(self):
+        raise NotImplementedError
+
+    # ---------- Cut / Copy / Paste ----------
+
+    def on_list_copy(self):
+        """Ctrl+C — copy selected items to class-level clipboard."""
+        selected = self._get_selected_items()
+        if not selected:
+            return
+        BaseVideoListPanel._clipboard = [dict(item) for item in selected]
+        BaseVideoListPanel._clipboard_is_cut = False
+        BaseVideoListPanel._clipboard_source = self
+        # Translators: Notification spoken by NVDA after copying item(s) to clipboard.
+        ui.message(_("{count} item(s) copied.").format(count=len(selected)))
+
+    def on_list_cut(self):
+        """Ctrl+X — mark selected items for cut (removed on paste)."""
+        selected = self._get_selected_items()
+        if not selected:
+            return
+        BaseVideoListPanel._clipboard = [dict(item) for item in selected]
+        BaseVideoListPanel._clipboard_is_cut = True
+        BaseVideoListPanel._clipboard_source = self
+        # Translators: Notification spoken by NVDA after cutting item(s) to clipboard.
+        ui.message(_("{count} item(s) cut.").format(count=len(selected)))
+
+    def on_list_paste(self):
+        if not BaseVideoListPanel._clipboard:
+            # Translators: Notification when the clipboard is empty and paste is attempted.
+            ui.message(_("Clipboard is empty."))
+            return
+
+        is_same_list = BaseVideoListPanel._clipboard_source is self
+        is_cut = BaseVideoListPanel._clipboard_is_cut
+        clipboard_keys = [self._get_item_unique_key(i) for i in BaseVideoListPanel._clipboard]
+
+        selected_items = self._get_selected_items()
+        if selected_items:
+            last_selected = selected_items[-1]
+            try:
+                insert_pos = self.items.index(last_selected) + 1
+            except ValueError:
+                insert_pos = len(self.items)
+        else:
+            insert_pos = len(self.items)
+        added_count = 0
+        replaced_count = 0
+        skipped = 0 
+        if is_same_list and is_cut:
+            items_to_move = [dict(i) for i in BaseVideoListPanel._clipboard]
+            move_keys = set(clipboard_keys)
+            removed_before = sum(
+                1 for i in self.items[:insert_pos]
+                if self._get_item_unique_key(i) in move_keys
+            )
+            adjusted_pos = insert_pos - removed_before
+            self.items = [i for i in self.items if self._get_item_unique_key(i) not in move_keys]
+            for offset, item in enumerate(items_to_move):
+                self.items.insert(adjusted_pos + offset, item)
+            self._save_data()
+            added_count = len(items_to_move)
+            skipped = 0
+            BaseVideoListPanel._clipboard = []
+            BaseVideoListPanel._clipboard_is_cut = False
+            BaseVideoListPanel._clipboard_source = None
+
+        else:
+            existing_keys = {self._get_item_unique_key(i) for i in self.items}
+            if is_same_list and not is_cut:
+                existing_keys -= set(clipboard_keys)
+
+            duplicate_items = [] if is_same_list else [
+                i for i in BaseVideoListPanel._clipboard
+                if self._get_item_unique_key(i) in existing_keys
+            ]
+
+            replace_duplicates = False
+            if duplicate_items:
+                source_name = self._get_list_display_name(BaseVideoListPanel._clipboard_source)
+                dest_name = self._get_list_display_name(self)
+                op = _("Cut") if is_cut else _("Copy")
+                dup_count = len(duplicate_items)
+                if dup_count == 1:
+                    # Translators: Confirmation dialog when pasting a single duplicate item across lists. {op} is Cut or Copy, {title} is the item title, {src} and {dst} are list names.
+                    title = self._get_item_title_for_messages(duplicate_items[0])
+                    confirm_msg = _(
+                        "{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
+                    ).format(op=op, title=title, src=source_name, dst=dest_name)
+                else:
+                    # Translators: Confirmation dialog when pasting multiple duplicate items across lists. {op} is Cut or Copy, {count} is number of duplicates, {src} and {dst} are list names.
+                    confirm_msg = _(
+                        "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
+                    ).format(op=op, count=dup_count, src=source_name, dst=dest_name)
+                replace_duplicates = (
+                # Translators: Title of the confirmation dialog when replacing duplicate items on paste.
+                    wx.MessageBox(confirm_msg, _("Confirm Replace"),
+                                  wx.YES_NO | wx.ICON_QUESTION, self) == wx.YES
+                )
+
+            added_count = 0
+            replaced_count = 0
+            skipped = 0
+            for item in BaseVideoListPanel._clipboard:
+                key = self._get_item_unique_key(item)
+                if key in existing_keys:
+                    if replace_duplicates:
+                        for i, existing in enumerate(self.items):
+                            if self._get_item_unique_key(existing) == key:
+                                self.items[i] = dict(item)
+                                break
+                        replaced_count += 1
+                    else:
+                        skipped += 1
+                else:
+                    self.items.insert(insert_pos + added_count, dict(item))
+                    existing_keys.add(key)
+                    added_count += 1
+
+            if added_count or replaced_count:
+                self._save_data()
+
+            if is_cut and not is_same_list:
+                source = BaseVideoListPanel._clipboard_source
+                cut_keys = set(clipboard_keys)
+                src_focused_item, src_focused_idx = self._get_focused_item(source)
+                source.items = [i for i in source.items
+                                 if self._get_item_unique_key(i) not in cut_keys]
+                source._save_data()
+                source.on_search("")
+                self._restore_focus(source, src_focused_item, src_focused_idx)
+                source._update_button_states()
+
+            if is_cut:
+                BaseVideoListPanel._clipboard = []
+                BaseVideoListPanel._clipboard_is_cut = False
+                BaseVideoListPanel._clipboard_source = None
+
+        self.on_search("")
+
+        if added_count:
+            inserted_keys = set(clipboard_keys[:added_count])
+            for idx in range(self.listCtrl.GetItemCount()):
+                if self._get_item_unique_key(self.filtered_items[idx]) in inserted_keys:
+                    self._focus_item(idx)
+                    break
+        elif is_same_list and is_cut:
+            for idx in range(self.listCtrl.GetItemCount()):
+                if self._get_item_unique_key(self.filtered_items[idx]) in set(clipboard_keys):
+                    self._focus_item(idx)
+                    break
+        else:
+            if selected_items:
+                sel_idx = self.listCtrl.GetFirstSelected()
+                self._restore_focus(self, selected_items[-1], max(sel_idx, 0))
+
+        self._update_button_states()
+
+        total_done = added_count + replaced_count
+        if total_done > 0 and skipped == 0:
+            # Translators: Notification after successfully pasting one or more items with no duplicates skipped.
+            msg = _("{count} item(s) pasted.").format(count=total_done)
+        elif total_done > 0 and skipped > 0:
+            # Translators: Notification after pasting where some duplicate items were skipped.
+            msg = _("{done} item(s) pasted, {skipped} skipped.").format(
+                done=total_done, skipped=skipped)
+        else:
+            # Translators: Notification when all items to be pasted already exist in the destination list.
+            msg = _("All items already exist in this list.")
+        ui.message(msg)
+
+    def _restore_focus(self, panel, anchor_item, anchor_idx):
+        count = panel.listCtrl.GetItemCount()
+        if count == 0:
+            return
+        if anchor_item is not None:
+            try:
+                idx = panel.filtered_items.index(anchor_item)
+                panel._focus_item(idx)
+                return
+            except ValueError:
+                pass
+        idx = min(anchor_idx, count - 1)
+        panel._focus_item(idx)
+        
+    def _get_list_display_name(self, panel):
+        """Return a human-readable name for the given panel (used in dialogs).
+        Subclasses can override this to return a translated tab name."""
+        return getattr(panel, '_list_display_name', panel.__class__.__name__)
+
+    def _get_focused_item(self, panel):
+        """Return (item, view_index) of the currently focused item, or (None, -1)."""
+        idx = panel.listCtrl.GetFirstSelected()
+        if idx != -1 and idx < len(panel.filtered_items):
+            return panel.filtered_items[idx], idx
+        return None, -1
 
     def on_search(self, search_text):
+        self._saved_search_text = search_text  
         search_text = search_text.lower()
         if search_text and self.last_selected_item_before_search is None:
             selected_index = self.listCtrl.GetFirstSelected()
@@ -1290,71 +1524,68 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         if not search_text and self.last_selected_item_before_search:
             try:
                 new_index = self.filtered_items.index(self.last_selected_item_before_search)
-                self.listCtrl.SetItemState(new_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                          wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                self.listCtrl.EnsureVisible(new_index)
             except ValueError:
-                if self.listCtrl.GetItemCount() > 0:
-                    self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                              wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                new_index = 0
             self.last_selected_item_before_search = None
+            self._focus_item(new_index)
         elif search_text and self.listCtrl.GetItemCount() > 0:
-            self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(0)
+            self._focus_item(0)
+        else:
+            if self.listCtrl.GetItemCount() > 0:
+                self._focus_item(0)
 
+    def _focus_item(self, index):
+        if self.listCtrl.GetItemCount() == 0:
+            return
+        index = min(index, self.listCtrl.GetItemCount() - 1)
+        self._is_programmatic_focus = True
+        self.listCtrl.SetItemState(-1, 0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.SetItemState(index,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.EnsureVisible(index)
+        if index < len(self.filtered_items):
+            self._last_selected_key = self._get_item_unique_key(self.filtered_items[index])
+        self._is_programmatic_focus = False
+        
+    def on_list_item_selected(self, event):
+        if getattr(self, '_is_programmatic_focus', False):
+            event.Skip()
+            return
+        idx = self.listCtrl.GetFirstSelected()
+        if idx != -1 and idx < len(self.filtered_items):
+            self._last_selected_key = self._get_item_unique_key(self.filtered_items[idx])
+        self._update_button_states()
+        event.Skip()
+    
     def get_selected_video_info(self):
         selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: 
+        if selected_index == -1:
             return None
         return self.filtered_items[selected_index]
 
     def on_list_key_down(self, event):
         key_code = event.GetKeyCode()
-        if event.ShiftDown():
-            if key_code == wx.WXK_UP:
-                self.move_item(-1)
+        if event.ControlDown():
+            if key_code == ord('C'):
+                self.on_list_copy()
                 return
-            elif key_code == wx.WXK_DOWN:
-                self.move_item(1)
+            elif key_code == ord('X'):
+                self.on_list_cut()
                 return
-            event.Skip()
-            return
+            elif key_code == ord('V'):
+                self.on_list_paste()
+                return
         if key_code == wx.WXK_DELETE:
             self.on_remove(event)
             return
         self.handle_video_list_keys(event)
 
-    def move_item(self, direction):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: 
-            return
-        if (direction == -1 and selected_index == 0) or \
-           (direction == 1 and selected_index == len(self.filtered_items) - 1):
-            return
-        item_to_move = self.filtered_items[selected_index]
-        original_master_index = self.items.index(item_to_move)
-        self.items.pop(original_master_index)
-        new_master_index = original_master_index + direction
-        self.items.insert(new_master_index, item_to_move)
-        self._save_data()
-        self.on_search("")
-        try:
-            new_view_index = self.filtered_items.index(item_to_move)
-            self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, 
-                                      wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(new_view_index)
-        except ValueError:
-            pass
-        self._update_button_states()
-        wx.CallAfter(self.listCtrl.SetFocus)
-
     def on_close(self, event):
         if self.callback_topic:
             self.core.unregister_callback(self.callback_topic, self.refresh_data)
         self._save_data()
-
-
+        
 class FavVideoPanel(BaseVideoListPanel):
     def _get_file_path(self):
         return self.core.get_profile_path("fav_video.json")
@@ -1365,9 +1596,9 @@ class FavVideoPanel(BaseVideoListPanel):
     def _get_add_button_label(self):
         return _("Add &new favorite video from clipboard")
 
-    def _add_worker(self, url):
-        threading.Thread(target=self.core.add_item_to_favorites_worker, args=(url,), daemon=True).start()
-
+    def _add_worker(self):
+        return self.core.add_item_to_favorites_worker
+    
 class WatchListPanel(BaseVideoListPanel):
     def _get_file_path(self):
         return self.core.get_profile_path("watch_list.json")
@@ -1378,9 +1609,9 @@ class WatchListPanel(BaseVideoListPanel):
     def _get_add_button_label(self):
         return _("Add &new watch list from clipboard")
 
-    def _add_worker(self, url):
-        threading.Thread(target=self.core.add_item_to_watchlist_worker, args=(url,), daemon=True).start()    
-
+    def _add_worker(self):
+        return self.core.add_to_watchlist_worker
+    
 class FavChannelPanel(wx.Panel):
     def __init__(self, parent, core_instance):
         wx.Panel.__init__(self, parent)
@@ -1394,7 +1625,7 @@ class FavChannelPanel(wx.Panel):
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT)
         # translator: Column header for the channel name
         self.listCtrl.InsertColumn(0, _("Channel"), width=450)
         # translator: Column header for the number of subscribers
@@ -1545,32 +1776,44 @@ class FavChannelPanel(wx.Panel):
             self.GetSizer().Layout()
         
     def on_remove(self, event):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1:
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if not selected:
             return
-        item_to_remove = self.filtered_channel[selected_index]
-        # Translators: Default name used when a channel name is missing during removal confirmation.
-        channel_name = item_to_remove.get('channel_name', _("this channel"))
-        # Translators: Confirmation message before removing a channel. {name} is the channel's title.
-        confirm_message = _("Are you sure you want to remove '{name}'?").format(name=channel_name)
+        first_index = selected[0]
+        count = len(selected)
+        if count == 1:
+            channel_name = self.filtered_channel[selected[0]].get('channel_name', _("this channel"))
+            # Translators: Confirmation message before removing a single channel. {name} is the channel name.
+            confirm_msg = _("Are you sure you want to remove '{name}'?").format(name=channel_name)
+        else:
+            # Translators: Confirmation message before removing multiple channels. {count} is the number of channels.
+            confirm_msg = _("Are you sure you want to remove {count} selected channels?").format(count=count)
         # Translators: Title of the removal confirmation dialog.
-        if wx.MessageBox(confirm_message, _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
+        if wx.MessageBox(confirm_msg, _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
             return
-        self.channel.remove(item_to_remove)
+        items_to_remove = [self.filtered_channel[i] for i in selected]
+        for item in items_to_remove:
+            self.channel.remove(item)
         self._save_channel()
         self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
-            new_selection = min(selected_index, item_count - 1)
-            self._is_programmatic_selection = True
-            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self._is_programmatic_selection = False
+            new_selection = min(first_index, item_count - 1)
+            self.listCtrl.SetItemState(new_selection,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(new_selection)
         self._update_button_states()
         wx.CallAfter(self.listCtrl.SetFocus)
-        # Translators: Notification message after a channel is successfully removed.
-        self.core._notify_delete(_("Channel removed."))
-        
+        # Translators: Notification after one channel is successfully removed.
+        # Translators: Notification after multiple channels are successfully removed. {count} is the number removed.
+        self.core._notify_delete(_("Channel removed.") if count == 1 else
+                                 _("{count} channels removed.").format(count=count))
+                                 
     def on_open(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
@@ -1611,38 +1854,59 @@ class FavChannelPanel(wx.Panel):
         menu.Destroy()
         
     def on_list_key_down(self, event):
-        if event.ShiftDown():
+        if event.ControlDown():
             key_code = event.GetKeyCode()
-            if key_code == wx.WXK_UP:
-                self.move_item(-1)
-            elif key_code == wx.WXK_DOWN:
-                self.move_item(1)
-            else:
-                event.Skip()
-            return
+            if key_code == ord('X'):
+                self.on_list_cut()
+                return
+            elif key_code == ord('V'):
+                self.on_list_paste()
+                return
         key_code = event.GetKeyCode()
-        if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE: self.on_open(event)
-        elif key_code == wx.WXK_DELETE: self.on_remove(event)
-        else: event.Skip()
+        if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
+            self.on_open(event) 
+        elif key_code == wx.WXK_DELETE:
+            self.on_remove(event)
+        else:
+            event.Skip()
+            
+    def on_list_cut(self):
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if not selected:
+            return
+        self._cut_indices = selected
+        # Translators: Notification spoken by NVDA after cutting one or more channel items ready to be moved.
+        ui.message(_("Cut."))
 
-    def move_item(self, direction):
-        selected_index_view = self.listCtrl.GetFirstSelected()
-        if selected_index_view == -1: return
-        if direction == -1 and selected_index_view == 0: return
-        if direction == 1 and selected_index_view == self.listCtrl.GetItemCount() - 1: return
-        item_to_move = self.filtered_channel[selected_index_view]
-        original_master_index = self.channel.index(item_to_move)
-        self.channel.pop(original_master_index)
-        new_master_index = original_master_index + direction
-        self.channel.insert(new_master_index, item_to_move)
+    def on_list_paste(self):
+        if not hasattr(self, '_cut_indices') or not self._cut_indices:
+            # Translators: Notification when there is nothing to paste.
+            ui.message(_("Clipboard is empty."))
+            return
+        target_index = self.listCtrl.GetFirstSelected()
+        if target_index == -1:
+            self._cut_indices = None
+            return
+        items_to_move = [self.filtered_channel[i] for i in self._cut_indices]
+        self.filtered_channel = [item for i, item in enumerate(self.filtered_channel) if i not in self._cut_indices]
+        insert_pos = target_index - sum(1 for i in self._cut_indices if i < target_index)+1
+        for offset, item in enumerate(items_to_move):
+            self.filtered_channel.insert(insert_pos + offset, item)
+        self.channel = self.filtered_channel[:]
         self._save_channel()
-        self.on_search("")
-        try:
-            new_view_index = self.filtered_channel.index(item_to_move)
-            self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(new_view_index)
-        except ValueError: pass
-        self._update_button_states()
+        self._populate_list()
+        for offset in range(len(items_to_move)):
+            self.listCtrl.SetItemState(insert_pos + offset,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.EnsureVisible(insert_pos)
+        self._cut_indices = None
+        # Translators: Notification spoken by NVDA after one or more channel items are successfully moved.
+        ui.message(_("Moved."))
 
 class FavPlaylistPanel(wx.Panel):
     def __init__(self, parent, core_instance):
@@ -1656,7 +1920,7 @@ class FavPlaylistPanel(wx.Panel):
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
-        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT)
         # Translators: Column header for the title of a playlist.
         self.listCtrl.InsertColumn(0, _("Playlist Title"), width=350)
         # Translators: Column header for the name of the channel/uploader.
@@ -1713,44 +1977,62 @@ class FavPlaylistPanel(wx.Panel):
                 item['video_count'] = new_count
                 self.listCtrl.SetItem(index, 2, str(new_count))
                 break
-                
+
     def on_list_key_down(self, event):
-        if event.ShiftDown():
+        if event.ControlDown():
             key_code = event.GetKeyCode()
-            if key_code == wx.WXK_UP:
-                self.move_item(-1)
-            elif key_code == wx.WXK_DOWN:
-                self.move_item(1)
-            else:
-                event.Skip()
-            return
+            if key_code == ord('X'):
+                self.on_list_cut()
+                return
+            elif key_code == ord('V'):
+                self.on_list_paste()
+                return
         key_code = event.GetKeyCode()
-        if key_code == wx.WXK_RETURN:
-            self.on_show_videos(event)
+        if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
+            self.on_show_videos(event) 
         elif key_code == wx.WXK_DELETE:
             self.on_remove(event)
         else:
             event.Skip()
+            
+    def on_list_cut(self):
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if not selected:
+            return
+        self._cut_indices = selected
+        # Translators: Notification spoken by NVDA after cutting one or more playlist items ready to be moved.
+        ui.message(_("Cut."))
 
-    def move_item(self, direction):
-        selected_index_view = self.listCtrl.GetFirstSelected()
-        if selected_index_view == -1: return
-        if direction == -1 and selected_index_view == 0: return
-        if direction == 1 and selected_index_view == self.listCtrl.GetItemCount() - 1: return
-        item_to_move = self.filtered_playlists[selected_index_view]
-        original_master_index = self.playlists.index(item_to_move)
-        self.playlists.pop(original_master_index)
-        new_master_index = original_master_index + direction
-        self.playlists.insert(new_master_index, item_to_move)
+    def on_list_paste(self):
+        if not hasattr(self, '_cut_indices') or not self._cut_indices:
+            # Translators: Notification when there is nothing to paste.
+            ui.message(_("Clipboard is empty."))
+            return
+        target_index = self.listCtrl.GetFirstSelected()
+        if target_index == -1:
+            self._cut_indices = None
+            return
+        items_to_move = [self.filtered_playlists[i] for i in self._cut_indices]
+        self.filtered_playlists = [item for i, item in enumerate(self.filtered_playlists) if i not in self._cut_indices]
+        insert_pos = target_index - sum(1 for i in self._cut_indices if i < target_index)+1
+        for offset, item in enumerate(items_to_move):
+            self.filtered_playlists.insert(insert_pos + offset, item)
+        self.playlists = self.filtered_playlists[:]
         self._save_playlists()
-        self.on_search("")
-        try:
-            new_view_index = self.filtered_playlists.index(item_to_move)
-            self.listCtrl.SetItemState(new_view_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(new_view_index)
-        except ValueError: pass
-        self._update_button_states()
-
+        self._populate_list()
+        for offset in range(len(items_to_move)):
+            self.listCtrl.SetItemState(insert_pos + offset,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.EnsureVisible(insert_pos)
+        self._cut_indices = None
+        # Translators: Notification spoken by NVDA after one or more playlist items are successfully moved.
+        ui.message(_("Moved."))
+        
     def _update_button_states(self):
         has_items = self.listCtrl.GetItemCount() > 0
         self.showVideosBtn.Enable(has_items)
@@ -1758,29 +2040,44 @@ class FavPlaylistPanel(wx.Panel):
         self.removeBtn.Enable(has_items)
     
     def on_remove(self, event):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1: return
-        item_to_remove = self.filtered_playlists[selected_index]
-        # Translators: Confirmation message to remove a playlist. {title} is the playlist's title.
-        confirm_text = _("Are you sure you want to remove '{title}'?").format(title=item_to_remove.get('playlist_title'))
-        # Translators: Title of the confirmation dialog for removal.
-        confirm = wx.MessageBox(
-            confirm_text,
-            _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION, self)
-        if confirm != wx.YES: return
-        self.playlists.remove(item_to_remove)
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if not selected:
+            return
+        first_index = selected[0]
+        count = len(selected)
+        if count == 1:
+            title = self.filtered_playlists[selected[0]].get('playlist_title', _("this playlist"))
+            # Translators: Confirmation message before removing a single playlist. {title} is the playlist title.
+            confirm_msg = _("Are you sure you want to remove '{title}'?").format(title=title)
+        else:
+            # Translators: Confirmation message before removing multiple playlists. {count} is the number of playlists.
+            confirm_msg = _("Are you sure you want to remove {count} selected playlists?").format(count=count)
+        # Translators: Title of the removal confirmation dialog.
+        if wx.MessageBox(confirm_msg, _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION, self) != wx.YES:
+            return
+        items_to_remove = [self.filtered_playlists[i] for i in selected]
+        for item in items_to_remove:
+            self.playlists.remove(item)
         self._save_playlists()
-        self.on_search("") 
+        self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
-            new_selection = min(selected_index, item_count - 1)
-            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            new_selection = min(first_index, item_count - 1)
+            self.listCtrl.SetItemState(new_selection,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(new_selection)
         self._update_button_states()
         wx.CallAfter(self.listCtrl.SetFocus)
-        # Translators: Notification after a playlist is successfully removed.
-        self.core._notify_delete(_("Playlist removed."))
-        
+        # Translators: Notification after one playlist is successfully removed.
+        # Translators: Notification after multiple playlists are successfully removed. {count} is the number removed.
+        self.core._notify_delete(_("Playlist removed.") if count == 1 else
+                                 _("{count} playlists removed.").format(count=count))        
+                                 
     def _load_playlists(self):
         with self.core._fav_file_lock:
             try:
@@ -1883,7 +2180,7 @@ class FavPlaylistPanel(wx.Panel):
                 self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self.listCtrl.EnsureVisible(last_index)
         self._update_button_states()
-    
+
 class FavsDialog(BaseDialogMixin, wx.Dialog):
     _instance = None 
 
@@ -1958,28 +2255,31 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.searchCtrl.Bind(wx.EVT_TEXT, self.on_search)
         self.notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_tab_changed)
-
         wx.CallAfter(self.on_tab_changed, None)
 
     def on_search(self, event):
         search_text = self.searchCtrl.GetValue()
         current_page = self.notebook.GetCurrentPage()
+        if not current_page:
+            return
+        current_page._saved_search_text = search_text
         if hasattr(current_page, 'on_search'):
             current_page.on_search(search_text)
-
+        
     def on_tab_changed(self, event):
         self._update_dialog_title()
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
         ui.message(tab_title)
-        self.searchCtrl.ChangeValue("")
         current_page = self.notebook.GetCurrentPage()
         if not current_page:
             if event: event.Skip()
             return
-        if hasattr(current_page, 'on_search') and self.searchCtrl.GetValue():
-            current_page.on_search("")
+        saved_search = getattr(current_page, '_saved_search_text', "")
+        self.searchCtrl.ChangeValue(saved_search)
+        #if saved_search and hasattr(current_page, 'on_search'):
+            #current_page.on_search(saved_search)
         if hasattr(current_page, 'listCtrl'):
-            wx.CallAfter(current_page.SetFocus)
+            wx.CallAfter(current_page.listCtrl.SetFocus)
         if event:
             event.Skip()
         
@@ -1994,6 +2294,15 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         full_title = _("{tab_name} - Favorites - YoutubePlus").format(tab_name=tab_title) + " - [{profile}]".format(profile=active_profile)
         self.SetTitle(full_title)
 
+    def _focus_initial_tab(self):
+        current_page = self.notebook.GetCurrentPage()
+        if not current_page:
+            return
+        if hasattr(current_page, 'listCtrl'):
+            if hasattr(current_page, '_focus_item'):
+                current_page._focus_item(0)
+            current_page.listCtrl.SetFocus()
+            
     def _build_tabs(self, select_tab_id=None):
         self.notebook.DeleteAllPages()
         self.panels = {}
@@ -2006,8 +2315,8 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             visual_index = next((i for i, t in enumerate(self.ordered_tabs) if t['id'] == select_tab_id), -1)
             if visual_index != -1:
                 self.notebook.SetSelection(visual_index)
-        wx.CallAfter(self.on_tab_changed, None)
-
+        wx.CallLater(100, self._focus_initial_tab)
+        
     def _move_tab(self, direction):
         current_index = self.notebook.GetSelection()
         new_index = current_index + direction
@@ -3214,7 +3523,7 @@ class ProfileManagementDialog(wx.Dialog):
     def _get_profiles(self):
         if not os.path.exists(self.base_data_path):
             return ["default"]
-        profiles = [f for f in os.listdir(self.base_data_path) if os.path.isdir(os.path.join(self.base_data_path, f))]
+        profiles = [f for f in os.listdir(self.base_data_path) if os.path.isdir(os.path.join(self.base_data_path, f)) and f != "_back_ups_db"]
         return sorted(profiles) if profiles else ["default"]
 
     def on_add(self, event):
