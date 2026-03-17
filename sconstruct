@@ -299,6 +299,31 @@ manifest = env.NVDAManifest(os.path.join("addon", "manifest.ini"), os.path.join(
 env.Depends(manifest, "buildVars.py")
 env.Depends(addon, manifest)
 
+# ---------- I18N: generate .pot template ----------
+i18nSources = expandGlobs(getattr(buildVars, "i18nSources", buildVars.pythonSources))
+
+def buildPot(target, source, env):
+    sourceFiles = [str(s) for s in source]
+    xgettext_cmd = [
+        "xgettext",
+        "--language=Python",
+        "--keyword=_",
+        "--from-code=UTF-8",
+        f"--package-name={buildVars.addon_info['addon_name']}",
+        f"--package-version={buildVars.addon_info['addon_version']}",
+        "-o", str(target[0]),
+    ] + sourceFiles
+    subprocess.check_call(xgettext_cmd)
+    return None
+
+potFile = env.Command(
+    "YoutubePlus.pot",
+    i18nSources,
+    env.Action(buildPot, lambda target, source, env: f"Generating POT file {target[0]}")
+)
+env.Alias("pot", potFile)
+env.Alias("mergePot", potFile)
+
 # ---------- Default ----------
 env.Default(addon)
 env.Clean(addon, [".sconsign.dblite", "addon/doc/" + buildVars.baseLanguage + "/"])
