@@ -20,4 +20,4 @@ if lib_path not in sys.path:
 
 # Import the main plugin class from its new file for NVDA to load.
 from .core import GlobalPlugin
-from .settings import SettingsPanel
+from .settings import YoutubePlusSettingsPanel
