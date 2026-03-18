@@ -22,6 +22,7 @@ Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the follow
 * c: (open favorites channel) — Opens the favorite channels window
 * p: (open favorites playlist) — Opens the favorite playlists window
 * w: (show watch list) — Opens the watch list window
+* b: (download subtitle) - Download subtitles for the current video. A language selection dialog will appear showing 
 * d: (download) — Prompts you to confirm whether to download as video or audio only
 * e: (search) — Opens the video search window
 * i: (info) — Opens the video details window
@@ -33,6 +34,7 @@ Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the follow
 * shift+l: (stop monitor live chat) — Stops live chat monitoring
 * r: (toggle automatic reading live chat) — Toggles automatic speech for incoming live chat messages
 * v: (show live chat) — Reopens the live chat window if you closed it while the stream is still active
+* y: (open YoutubePlus settings dialog) quick open NVDA settings then focus at YoutubePlus category.
 * h: (help) — Opens a window listing all available shortcuts
 
 **Note:** For commands that act on a video directly, the add-on first checks the browser window you have open. If a YouTube video page is active, it uses that video's URL. If no video page is open, it checks the clipboard for a YouTube URL.
@@ -128,10 +130,11 @@ Press Alt+A to open the Action menu, which includes:
 * View Chapters/Timestamps...  (t)
 * Download Video  (d)
 * Download Audio  (a)
+* Download Subtitles  (b)
 * Add to Favorite Videos  (f)
 * Add to Favorite Channels  (f)
 * Add to Watch List  (w)
-* Open video in browser  (b)
+* Open video in browser  (o)
 * Open channel in browser  (h)
 * Show channel videos  (v)
 * Show channel shorts  (s)
@@ -277,6 +280,7 @@ Access settings via `NVDA -> Preferences -> Settings...` and select the **"Youtu
 - **Automatically speak incoming live chat:** When checked, NVDA reads new chat messages aloud as they arrive.
 - **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default: 5 seconds.
 - **Message history limit:** Maximum number of chat messages stored in memory during a session.
+- **Default subtitle format:** Choose the subtitle file format for downloads: srt, vtt, or ttml.
 - **Default download and export folder path:** The destination folder for downloaded videos/audio and exported chat.
 - **Backup data now:** Manually backs up all data for the active profile. The add-on also performs an automatic daily backup in the background.
 - **Restore data from backup:** Shows a list of available backups (up to the last 5 days) so you can choose which date to restore from.

@@ -109,6 +109,7 @@ class HelpDialog(BaseInfoDialog):
 - I: Get video info
 - T: Show video chapters/timestamps
 - D: Download video/audio from the current URL
+- B: download sub title from the current URL
 - E: Search YouTube
 
 --- Favorites & Subscriptions ---
@@ -125,6 +126,7 @@ class HelpDialog(BaseInfoDialog):
 - Shift+L: Stop live chat monitoring
 - V: Show live chat messages dialog
 - R: Toggle automatic speaking of incoming messages
+- Y: open YoutubePlus settings dialog
 
 --- Additional Keyboard Shortcuts (within addon dialogs) ---
 **In Favorites and Subscription Feed Dialogs:**
@@ -840,6 +842,7 @@ class VideoActionMixin:
         ID_SHOW_CHAPTERS = wx.NewIdRef() 
         ID_DOWNLOAD_VID = wx.NewIdRef()
         ID_DOWNLOAD_AUD = wx.NewIdRef()
+        ID_DOWNLOAD_SUB = wx.NewIdRef()
         ID_OPEN_VID_WEB = wx.NewIdRef()
         ID_ADD_FAV_VID = wx.NewIdRef()
         ID_ADD_FAV_CHAN = wx.NewIdRef()
@@ -855,12 +858,13 @@ class VideoActionMixin:
         menu.AppendSeparator()
         menu.Append(ID_DOWNLOAD_VID, _("&Download Video"))
         menu.Append(ID_DOWNLOAD_AUD, _("Download &Audio"))
+        menu.Append(ID_DOWNLOAD_SUB, _("Download Su&btitles"))
         menu.AppendSeparator()
         menu.Append(ID_ADD_FAV_VID, _("Add to &Favorite Videos"))
         menu.Append(ID_ADD_FAV_CHAN, _("Add to &Favorite Channels"))
         menu.Append(ID_ADD_WATCHLIST, _("Add to &Watch List"))
         menu.AppendSeparator()
-        menu.Append(ID_OPEN_VID_WEB, _("Open video in &browser"))
+        menu.Append(ID_OPEN_VID_WEB, _("&Open video in browser"))
         menu.Append(ID_OPEN_CHAN_WEB, _("Open c&hannel in browser"))
         menu.AppendSeparator()
         menu.Append(ID_SHOW_VIDS, _("Show channel &videos"))
@@ -871,6 +875,7 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, self.on_show_chapters, id=ID_SHOW_CHAPTERS)  # <--- ✅ เพิ่ม Event Binding ใหม่
         menu.Bind(wx.EVT_MENU, self.on_download_video, id=ID_DOWNLOAD_VID)
         menu.Bind(wx.EVT_MENU, self.on_download_audio, id=ID_DOWNLOAD_AUD)
+        menu.Bind(wx.EVT_MENU, self.on_download_subtitles, id=ID_DOWNLOAD_SUB)
         menu.Bind(wx.EVT_MENU, self.on_open_video, id=ID_OPEN_VID_WEB)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_video, id=ID_ADD_FAV_VID)
         menu.Bind(wx.EVT_MENU, self.on_add_to_fav_channel, id=ID_ADD_FAV_CHAN)
@@ -880,7 +885,20 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('shorts'), id=ID_SHOW_SHORTS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('streams'), id=ID_SHOW_LIVE)
         return menu
-        
+
+    def on_download_subtitles(self, event):
+        video = self.get_selected_video_info()
+        if not video:
+            # Translators: Error message when no video is selected for subtitle download.
+            return ui.message(_("Video ID not found."))
+        video_id = video.get('id') or video.get('video_id')
+        if not video_id:
+            return ui.message(_("Video ID not found."))
+        url = f"https://youtube.com/watch?v={video_id}"
+        # Translators: Status message shown when the add-on starts fetching subtitle information.
+        ui.message(_("Getting subtitle info..."))
+        threading.Thread(target=self.core._subtitle_worker, args=(url,), daemon=True).start()
+
     def on_show_chapters(self, event):
         """Handles showing the chapters/timestamps dialog for the selected video."""
         video = self.get_selected_video_info()
@@ -1064,6 +1082,8 @@ class VideoActionMixin:
             self.on_download_video(None)
         elif action == "download_audio":
             self.on_download_audio(None)
+        elif action == "download_subtitles":
+            self.on_download_subtitles(None)        
         elif action == "add_to_fav_video":
             self.on_add_to_fav_video(None)
         elif action == "add_to_fav_channel":

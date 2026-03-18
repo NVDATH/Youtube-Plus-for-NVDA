@@ -32,10 +32,8 @@ pythonSources = [
     "addon/globalPlugins",
 ]
 
-# [2] เพิ่ม i18nSources — ชี้ไปยัง Python files ที่มี translatable strings
-# SConstruct ใช้ list นี้เพื่อ extract strings ออกมาเป็น .pot file (สำหรับนักแปล)
 i18nSources = [
-    "addon/globalPlugins/*.py",
+    "buildVars.py",
     "addon/globalPlugins/YoutubePlus/*.py",
 ]
 
@@ -43,11 +41,5 @@ docFiles = ["readme.html"]
 
 tests = []
 excludedFiles = []
-
-# [3] เพิ่ม baseLanguage — ภาษาหลักของ add-on (ใช้สำหรับ readme.md และ doc folder)
-# SConstruct จะ copy readme.md ไปไว้ใน addon/doc/<baseLanguage>/readme.md
 baseLanguage = "en"
-
-# [4] เพิ่ม markdownExtensions — list ว่างหมายถึงใช้ markdown มาตรฐาน
-# สามารถเพิ่ม extension ได้ เช่น ["extra", "toc"] ถ้าต้องการ
 markdownExtensions = []

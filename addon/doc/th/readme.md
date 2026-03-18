@@ -23,6 +23,7 @@
 * c: (open favorites channel) - เปิดหน้าต่างช่องที่คุณชื่นชอบ
 * p: (open favorites playlist) - เปิดหน้าต่าง playlist ที่คุณชื่นชอบ
 * w: (show watch list) - แสดงหน้าต่าง watch list
+* b: (download subtitle) - ดาวน์โหลดคำบรรยาย โดยจะแสดงรายการภาษาที่มีให้เลือกก่อน
 * d: (download) - สั่งให้ส่วนเสริมดาวน์โหลดคลิป โดยจะมีหน้าต่างถามให้คุณยืนยันอีกทีว่าต้องการโหลดเป็นวิดีโอหรือเฉพาะไฟล์เสียง
 * e: (search) - เปิดหน้าต่างสำหรับค้นหาคลิป
 * i: (info) - เปิดหน้าต่างแสดงรายละเอียดคลิป
@@ -34,6 +35,7 @@
 * shift+l: (stop monitor live chat) - สั่งให้หยุดการตรวจจับ live chat
 * r: (toggle automatic reading live chat) - สลับการตั้งค่าการอ่านออกเสียงสำหรับ live chat
 * v: (show live chat) - กรณีที่คุณกดแสดง live chat ไว้และปิดหน้าต่างไป สามารถกดเปิดกลับมาอ่านใหม่ได้ด้วยคำสั่งนี้
+* y: (เปิดหน้าต่างการตั้งค่าของส่วนเสริม) เปิดหน้าต่างการตั้งค่าของ NVDA และโฟกัสไปที่หมวด YoutubePlus อย่างรวดเร็ว
 * h: (help) - เปิดหน้าต่างแสดงรายชื่อคีย์ลัดต่างๆ
 
 **หมายเหตุ**: ในการใช้แต่ละคำสั่งที่เป็นการดำเนินการกับคลิปโดยตรง ส่วนเสริมจะพยายามตรวจจับหน้าต่าง browser ที่คุณเปิดอยู่ และมองว่าคลิปที่คุณกำลังเปิดเป็นลำดับความสำคัญแรก 
@@ -130,10 +132,11 @@
 * View Chapters/Timestamps...  (t)
 * Download Video  (d)
 * Download Audio  (a)
+* Download Subtitles  (b)
 * Add to Favorite Videos  (f)
 * Add to Favorite Channels  (f)
 * Add to Watch List  (w)
-* Open video in browser  (b)
+* Open video in browser  (o)
 * Open channel in browser  (h)
 * Show channel videos  (v)
 * Show channel shorts  (s)
@@ -283,10 +286,10 @@
 - **Automatically speak incoming live chat:** หากติ๊กถูก NVDA จะอ่านข้อความแชทที่เข้ามาใหม่ให้ฟังทันที
 - **Live chat refresh interval:** ระยะเวลา (วินาที) ที่จะให้โปรแกรมเช็คข้อความใหม่ (ค่าเริ่มต้น: 5 วินาที)
 - **Message history limit:** จำนวนข้อความแชทสูงสุดที่จะเก็บไว้ในหน่วยความจำขณะใช้งาน
+- **Default subtitle format:** เลือกรูปแบบไฟล์คำบรรยายที่ต้องการดาวน์โหลด ได้แก่ srt, vtt หรือ ttml
 - **Default download and export folder path:** เลือกโฟลเดอร์ปลายทางสำหรับเก็บไฟล์วิดีโอ/เสียงที่ดาวน์โหลด และไฟล์ประวัติแชทที่ส่งออก
 - **back up data now**: ปุ่มสำรองข้อมูลของโปรไฟล์ที่เลือกใช้อยู่ สามารถกดสำรองข้อมูลด้วยตนเองได้จากเมนูนี้ ซึ่งโดยปกติส่วนเสริมจะสำรองข้อมูลให้ผู้ใช้โดยอัตโนมัติอยู่แล้วทุกวัน
 - **Restore data from back up**: จะมีตัวเลือกรายการที่สำรองข้อมูลไว้ (ย้อนหลังไม่เกิน 5 วัน) ให้ผู้ใช้เลือกว่าจะกู้คืนจากวันไหน
-
 
 ## ข้อมูลเพิ่มเติม
 

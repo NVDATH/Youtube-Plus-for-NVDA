@@ -33,6 +33,7 @@ Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the follow
 * shift+l: (stop monitor live chat) — Stops live chat monitoring
 * r: (toggle automatic reading live chat) — Toggles automatic speech for incoming live chat messages
 * v: (show live chat) — Reopens the live chat window if you closed it while the stream is still active
+* y: (open YoutubePlus settings dialog) quick open NVDA settings then focus at YoutubePlus category.
 * h: (help) — Opens a window listing all available shortcuts
 
 **Note:** For commands that act on a video directly, the add-on first checks the browser window you have open. If a YouTube video page is active, it uses that video's URL. If no video page is open, it checks the clipboard for a YouTube URL.

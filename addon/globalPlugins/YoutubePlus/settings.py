@@ -12,7 +12,8 @@ import globalCommands
 # Initialize translations for this file
 addonHandler.initTranslation()
 
-class SettingsPanel(gui.settingsDialogs.SettingsPanel):
+class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
+#class YoutubePlusSettingsPanel(SettingsPanel):
     # Translators: The title of the category in the NVDA Settings dialog.
     title = _("Youtube Plus")
 
@@ -49,6 +50,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             _("Download video"),
             # Translators: Option to download only the audio from the video.
             _("Download audio"),
+            # Translators: Option to download subtitles for the video.
+            _("Download subtitles"),
             # Translators: Option to add the video to favorites.
             _("Add to Favorites video"),
             # Translators: Option to add the video channel to favorites.
@@ -78,7 +81,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         
         self.qa_values = [
             'open_video', 'info', 'comments', 'chapters', 
-            'download_video', 'download_audio', 'add_to_fav_video', 'add_to_fav_channel', 'add_to_watchlist',
+            'download_video', 'download_audio', 'download_subtitles', 'add_to_fav_video', 'add_to_fav_channel', 'add_to_watchlist',
             'copy_url', 'copy_title', 'copy_channel_name', 'copy_channel_url', 'copy_summary',
             'open_channel', 'show_channel_videos', 'show_channel_shorts', 'show_channel_lives'
         ]
@@ -205,6 +208,16 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
 
+        # Translators: Label for a setting to choose the default subtitle format for downloads.
+        sHelper.addItem(wx.StaticText(self, label=_("Default subtitle &format:")))
+        self.subtitle_format_values = ["srt", "vtt", "ttml"]
+        self.subtitleFormatCombo = sHelper.addItem(wx.ComboBox(self, choices=self.subtitle_format_values, style=wx.CB_READONLY))
+        current_subtitle_format = config.conf["YoutubePlus"].get("subtitleFormat", "srt")
+        try:
+            self.subtitleFormatCombo.SetSelection(self.subtitle_format_values.index(current_subtitle_format))
+        except ValueError:
+            self.subtitleFormatCombo.SetSelection(0)
+    
         # Translators: Label for the setting to choose the default folder for downloads and exported files.
         sHelper.addItem(wx.StaticText(self, label=_("Default download and &export folder path:")))
         pathSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -305,7 +318,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         }
         config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'none')
         """
-        
+        config.conf["YoutubePlus"]["subtitleFormat"] = self.subtitle_format_values[self.subtitleFormatCombo.GetSelection()]
         config.conf["YoutubePlus"]["exportPath"] = self.exportPathTextCtrl.GetValue()
         
         if GlobalPlugin.instance:
@@ -404,4 +417,4 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.restoreBtn.PopupMenu(menu)
         menu.Destroy()
 
-gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsPanel)
+gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(YoutubePlusSettingsPanel)

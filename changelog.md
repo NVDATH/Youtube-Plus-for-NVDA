@@ -1,3 +1,14 @@
+## 2026.3.19
+
+### New Features
+- Added subtitle download feature accessible from the Action menu, quick action, and YoutubePlus layer
+- Subtitle language selection dialog shows only languages that can actually be downloaded
+- Added subtitle format setting (srt, vtt, ttml) in Settings
+- Added shortcut to open YoutubePlus settings directly from the YoutubePlus layer
+
+### Dependencies
+- Updated yt-dlp to v2026.3.19
+
 ## 2026.3.17
 
 ### New Features

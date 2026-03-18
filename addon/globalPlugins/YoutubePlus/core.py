@@ -2070,6 +2070,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         ui.message(_("Getting chapters..."))
         threading.Thread(target=self._show_chapters_worker, args=(url, ), daemon=True).start()
 
+    @script(
+        # Translators: Presented in input help mode.
+        description=_("Download subtitles from current page or clipboard URL.")
+    )
+    def script_downloadSubtitle(self, gesture):
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
+        url = self._clean_youtube_url(messy_url)
+        threading.Thread(target=self._subtitle_worker, args=(url,), daemon=True).start()
+        
     @script(description="Download video or audio from current page or clipboard URL.")
     def script_downloadClip(self, gesture):
         #log.info("Script triggered: downloadClip")
@@ -2256,12 +2268,154 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     @script(description=_("Show user profile manager dialog."))
     def script_showUserProfileManagerDialog(self, gesture):
-        #log.info("Script triggered: showUserProfileManagerDialog")
         gui.mainFrame.prePopup()
         dialog = ProfileManagementDialog(gui.mainFrame)
         dialog.Show()
         gui.mainFrame.postPopup()
 
+    @script(description=_("Opens YoutubePlus settings dialog."))
+    def script_openSettings(self, gesture):
+        from .settings import YoutubePlusSettingsPanel
+        wx.CallAfter(gui.mainFrame.popupSettingsDialog, gui.settingsDialogs.NVDASettingsDialog, YoutubePlusSettingsPanel)
+
+    def _subtitle_worker(self, url):
+        clean_url = self._validate_video_url_and_notify(url)
+        if not clean_url:
+            return
+        self._start_indicator()
+        try:
+            self.is_long_task_running = True
+            info = self.get_video_info(url)
+            # Translators: Fallback title used when the video title cannot be retrieved for subtitle download.
+            title = info.get('title', _("Unknown Video"))
+
+            subtitles = info.get('subtitles', {})
+            auto_captions = info.get('automatic_captions', {})
+            original_lang = info.get('language', '')
+
+            log.info("YoutubePlus subtitle - original_lang: %s", original_lang)
+            log.info("YoutubePlus subtitle - subtitles keys: %s", list(subtitles.keys()))
+            log.info("YoutubePlus subtitle - auto_captions keys before filter: %s", list(auto_captions.keys()))
+
+            # กรอง auto_captions เหลือแค่ภาษาต้นฉบับที่โหลดได้จริง
+            if original_lang:
+                auto_captions = {k: v for k, v in auto_captions.items() if k.startswith(original_lang)}
+
+            log.info("YoutubePlus subtitle - auto_captions keys after filter: %s", list(auto_captions.keys()))
+
+            all_langs = sorted(set(list(subtitles.keys()) + list(auto_captions.keys())))
+
+            # กรองเฉพาะ valid ISO code (2-3 ตัวอักษร หรือมี region เช่น zh-Hant)
+            import re
+            all_langs = [l for l in all_langs if re.match(r'^[a-z]{2,3}(-[A-Za-z]{2,4})?$', l)]
+
+            # prefer ISO 639-1 (2 ตัว) เสมอ
+            seen_base = {}
+            for lang in all_langs:
+                base_lang = lang.split('-')[0]
+                if base_lang not in seen_base:
+                    seen_base[base_lang] = lang
+                elif len(lang) == 2 and len(seen_base[base_lang]) != 2:
+                    seen_base[base_lang] = lang
+                elif len(lang) < len(seen_base[base_lang]) and len(seen_base[base_lang]) != 2:
+                    seen_base[base_lang] = lang
+
+            options = []
+            seen = set()
+            for lang in all_langs:
+                base_lang = lang.split('-')[0]
+                best_lang = seen_base[base_lang]
+                if lang in subtitles:
+                    key = (base_lang, 'manual')
+                    if key not in seen:
+                        seen.add(key)
+                        # Translators: Label suffix shown in subtitle language list indicating a manually created subtitle track.
+                        options.append((f"{base_lang} ({_('manual')})", best_lang, 'manual'))
+                if lang in auto_captions:
+                    key = (base_lang, 'auto')
+                    if key not in seen:
+                        seen.add(key)
+                        # Translators: Label suffix shown in subtitle language list indicating an automatically generated subtitle track.
+                        options.append((f"{base_lang} ({_('auto')})", best_lang, 'auto'))
+
+            log.info("YoutubePlus subtitle options: %s", [(o[0], o[1], o[2]) for o in options])
+
+            if not options:
+                # Translators: Message shown when no subtitles are available for the selected video.
+                wx.CallAfter(ui.message, _("No subtitles available for this video."))
+                self._stop_indicator()
+                return
+
+            wx.CallAfter(self._show_subtitle_dialog, url, title, options)
+
+        except Exception as e:
+            log.error("Failed to fetch subtitle info for %s", url, exc_info=True)
+            # Translators: Error message shown when the add-on cannot fetch subtitle information for a video.
+            wx.CallAfter(ui.message, _("Failed to get subtitle info."))
+            self._stop_indicator()
+        finally:
+            self.is_long_task_running = False
+
+    def _show_subtitle_dialog(self, url, title, options):
+        self._pause_indicator()
+        gui.mainFrame.prePopup()
+        try:
+            labels = [opt[0] for opt in options]
+            with wx.SingleChoiceDialog(
+                gui.mainFrame,
+                # Translators: Prompt shown in the subtitle language selection dialog asking the user to choose a subtitle language.
+                _("Select subtitle language:"),
+                # Translators: Title of the subtitle download dialog. {title} is the video title.
+                _("Download subtitles: {title}").format(title=title),
+                labels
+            ) as dlg:
+                result = dlg.ShowModal()
+                selected_index = dlg.GetSelection()
+        finally:
+            gui.mainFrame.postPopup()
+
+        if result != wx.ID_OK:
+            self._stop_indicator()
+            return
+
+        _label, lang_code, sub_type = options[selected_index]
+        self._resume_indicator()
+        threading.Thread(
+            target=self._perform_subtitle_download,
+            args=(url, title, lang_code, sub_type),
+            daemon=True
+        ).start()
+
+    def _perform_subtitle_download(self, url, title, lang_code, sub_type):
+        # Translators: Status message shown when subtitle download begins. {title} is the video title.
+        wx.CallAfter(ui.message, _("Downloading subtitles for {title}...").format(title=title))
+        try:
+            self.is_long_task_running = True
+            save_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+            sub_format = config.conf["YoutubePlus"].get("subtitleFormat", "srt")
+            opts = {
+                'skip_download': True,
+                'outtmpl': os.path.join(save_path, '%(title)s.%(ext)s'),
+                'subtitleslangs': [lang_code],
+                'subtitlesformat': sub_format,
+            }
+            if sub_type == 'auto':
+                opts['writeautomaticsub'] = True
+            else:
+                opts['writesubtitles'] = True
+            with self._get_ydl_instance(extra_opts=opts) as ydl:
+                ydl.download([url])
+            # Translators: Success message shown when subtitles have been downloaded successfully. {title} is the video title.
+            self._notify_success(_("Subtitles downloaded: {title}").format(title=title))
+        except Exception as e:
+            # Translators: Error message shown when subtitle download fails.
+            self._notify_error(_("Subtitle download failed."), log_message=f"Subtitle download failed for {title}: {e}")
+        finally:
+            self.is_long_task_running = False
+            self._stop_indicator()
+            
     def backup_profile(self, auto=False):
         profile = config.conf["YoutubePlus"].get("activeProfile", "default")
         profile_path = self.get_profile_path()
@@ -2317,6 +2471,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:c": "showFavChannelDialog",
         "kb:p": "showFavPlaylistDialog",
         "kb:w": "showWatchListDialog",
+        "kb:b": "downloadSubtitle",
         "kb:d": "downloadClip",
         "kb:e": "showSearchDialog",
         "kb:i": "getInfo",
@@ -2328,5 +2483,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:r": "toggleAutoSpeak",
         "kb:v": "showMessagesDialog",
         "kb:u": "showUserProfileManagerDialog",
+        "kb:y": "openSettings",
         "kb:h": "displayHelp"
     }
