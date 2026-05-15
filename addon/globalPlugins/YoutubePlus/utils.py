@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 # utils.py for Youtube Plus NVDA Addon
-# Copyright (C) 2025
-# This file is covered by the GNU General Public License.
-# You can read the licence by clicking Help->Licence in the NVDA menu
-# or by visiting http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-# Shortcut: Windows+y
+# This file contains functions adapted from the BrowserNav addon for NVDA
+# Original Copyright (C) 2017-2022 Tony Malykh
+# Licensed under the GNU General Public License.
 
 import time
 import functools
-import yt_dlp.utils
 import logging
+import types
+import itertools
+import api
+import controlTypes
+import winUser
+import IAccessibleHandler
+import NVDAObjects.IAccessible
+import core
+import yt_dlp.utils
 from socket import timeout as TimeoutError
 
 def retry_on_network_error(retries=3, delay=5):
@@ -23,16 +29,13 @@ def retry_on_network_error(retries=3, delay=5):
                 try:
                     return func(*args, **kwargs)
                 except (yt_dlp.utils.DownloadError, ConnectionError, TimeoutError) as e:
-                    # We will only retry on actual transient network errors.
-                    # yt_dlp.utils.DownloadError is very broad, so we inspect its message.
-                    # Common transient error strings from yt-dlp include 'timed out', 'Network is unreachable', HTTP 5xx codes, etc.
                     error_str = str(e).lower()
                     is_retryable = (
                         isinstance(e, (ConnectionError, TimeoutError)) or
                         "timed out" in error_str or
                         "network is unreachable" in error_str or
                         "tls handshake" in error_str or
-                        "http error 50" in error_str # Catches 500, 502, 503, 504...
+                        "http error 50" in error_str 
                     )
 
                     if is_retryable:
@@ -41,10 +44,53 @@ def retry_on_network_error(retries=3, delay=5):
                             time.sleep(delay)
                         else:
                             logging.error(f"Network error persisted after {retries} retries. Failing.", exc_info=True)
-                            raise e  # Re-raise the last exception if all retries fail
+                            raise e
                     else:
-                        # If it's another type of DownloadError (e.g., 404 Not Found, private video), fail immediately.
-                        logging.error("A non-retryable DownloadError occurred.", exc_info=True)
+                        logging.debug("A non-retryable DownloadError occurred: %s", e)
                         raise e
         return wrapper
     return decorator
+
+def executeAsynchronously(gen):
+    if not isinstance(gen, types.GeneratorType):
+        raise Exception("Generator function required")
+    try:
+        value = gen.__next__()
+    except StopIteration:
+        return
+    core.callLater(value, executeAsynchronously, gen)
+
+def getIA2Document(textInfo=None):
+    focus = api.getFocusObject()
+    for obj in itertools.chain(api.getFocusAncestors(), [focus]):
+        if obj.role == controlTypes.Role.DOCUMENT:
+            return obj
+    return None
+
+def getIA2FocusedObject(obj):
+    if obj is None:
+        return None
+    tup = IAccessibleHandler.accFocus(obj.IAccessibleObject)
+    if tup is None:
+        return None
+    ia2Focus, ia2ChildId = tup
+    realObj = NVDAObjects.IAccessible.IAccessible(
+        IAccessibleObject=ia2Focus,
+        IAccessibleChildID=ia2ChildId,
+    )
+    return realObj
+
+def getIA2DocumentInThread():
+    focus = api.getFocusObject()
+    obj = NVDAObjects.IAccessible.getNVDAObjectFromEvent(focus.windowHandle, winUser.OBJID_CLIENT, 0)
+    if obj is None:
+        return None
+    if obj.role == controlTypes.Role.DOCUMENT:
+        return obj
+    else:
+        obj = getIA2FocusedObject(obj) # เรียกใช้ helper function
+        while obj is not None:
+            if obj.role == controlTypes.Role.DOCUMENT:
+                return obj
+            obj = obj.parent
+        return None

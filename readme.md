@@ -111,9 +111,16 @@ A window displaying your saved favorites, divided into 4 tabs by type:
 * Press Control+Up/Down to reorder tabs
 * Press Control+C (copy), Control+X (cut), or Control+V (paste) to reorder items
     * Favorites Videos and Watch List support copying and moving items between each other. Favorites Channels and Playlists only support moving items within their own list.
+* press F2 to rename video / channel / playlist title manually.
 * Press Alt+R or Delete to remove an item
 * Press Alt+N to add a new item from the clipboard — for channel and playlist tabs, the URL must match the tab type
-* The search field filters results instantly as you type — no need to press Enter
+* press alt+s go to The search field filters results instantly as you type — no need to press Enter
+* Press the **Sort...** button (next to the search field) to sort the list. 
+You can sort by Title, Channel, Duration, Date Added, or Upload Date. 
+Choose ascending or descending order. 
+If you check "Apply permanently", the order will be saved to the file. 
+Otherwise, the sort is temporary and will reset when you search or refresh the list. 
+Press "Clear Sort" to restore the original order.
 
 #### Video list
 
@@ -280,7 +287,8 @@ Access settings via `NVDA -> Preferences -> Settings...` and select the **"Youtu
 - **Automatically speak incoming live chat:** When checked, NVDA reads new chat messages aloud as they arrive.
 - **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default: 5 seconds.
 - **Message history limit:** Maximum number of chat messages stored in memory during a session.
-- **Default subtitle format:** Choose the subtitle file format for downloads: srt, vtt, or ttml.
+- **Cookie method (Experimental)**: You can choose browser that log in with your Youtube account to may be fix error Sign in to confirm you’re not a bot. 
+- **Default subtitle format:** Choose the subtitle file format for downloads: srt, vtt, ttml or txt for caption without timestamp.
 - **Default download and export folder path:** The destination folder for downloaded videos/audio and exported chat.
 - **Backup data now:** Manually backs up all data for the active profile. The add-on also performs an automatic daily backup in the background.
 - **Restore data from backup:** Shows a list of available backups (up to the last 5 days) so you can choose which date to restore from.

@@ -187,7 +187,7 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         """
         
         # Browser cookie method (experimental - commented out)
-        """
+        #"""
         sHelper.addItem(wx.StaticText(self, label=_("&Cookie method (Experimental - may not work):")))
         cookie_choices = [
             _("Do not use cookies (Default)"),
@@ -210,13 +210,13 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         }
         current_cookie_mode = config.conf["YoutubePlus"].get("cookieMode", "none")
         self.cookieModeCombo.SetSelection(cookie_map.get(current_cookie_mode, 0))
-        """
+        #"""
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
 
         # Translators: Label for a setting to choose the default subtitle format for downloads.
         sHelper.addItem(wx.StaticText(self, label=_("Default subtitle &format:")))
-        self.subtitle_format_values = ["srt", "vtt", "ttml"]
+        self.subtitle_format_values = ["srt", "vtt", "ttml", "txt"]
         self.subtitleFormatCombo = sHelper.addItem(wx.ComboBox(self, choices=self.subtitle_format_values, style=wx.CB_READONLY))
         current_subtitle_format = config.conf["YoutubePlus"].get("subtitleFormat", "srt")
         try:
@@ -312,7 +312,7 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         #config.conf["YoutubePlus"]["cookieFilePath"] = self.cookieFileTextCtrl.GetValue()
         
         # Browser cookie mode (commented out)
-        """
+        #"""
         selection_map_cookie = {
             0: 'none',
             1: 'chrome',
@@ -323,7 +323,7 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
             6: 'vivaldi'
         }
         config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'none')
-        """
+        #"""
         config.conf["YoutubePlus"]["subtitleFormat"] = self.subtitle_format_values[self.subtitleFormatCombo.GetSelection()]
         config.conf["YoutubePlus"]["exportPath"] = self.exportPathTextCtrl.GetValue()
         

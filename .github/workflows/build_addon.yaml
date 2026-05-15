@@ -12,12 +12,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # แก้ไข: ลิงก์ออก
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # แก้ไข: ลิงก์ออก
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Install dependencies
         run: |
@@ -31,7 +31,6 @@ jobs:
         id: extract_changelog
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          # ป้องกัน error ถ้าไม่มีไฟล์ changelog
           if [ -f "changelog.md" ]; then
             sed -n "/^## $VERSION/,/^## /p" changelog.md | sed '1d;$d' > release_notes.md
           fi

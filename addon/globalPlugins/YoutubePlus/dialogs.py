@@ -993,6 +993,8 @@ class VideoActionMixin:
             # Translators: Error message.
             return ui.message(_("Video ID not found."))
         url = f"https://youtube.com/watch?v={video_id}"
+        dlg = DownloadProgressDialog(gui.mainFrame, self.core)
+        dlg.Show()
         threading.Thread(target=self.core._direct_download_worker, args=(url, 'video'), daemon=True).start()
 
     def on_download_audio(self, event):
@@ -1003,6 +1005,8 @@ class VideoActionMixin:
             # Translators: Error message.
             return ui.message(_("Video ID not found."))
         url = f"https://youtube.com/watch?v={video_id}"
+        dlg = DownloadProgressDialog(gui.mainFrame, self.core)
+        dlg.Show()
         threading.Thread(target=self.core._direct_download_worker, args=(url, 'audio'), daemon=True).start()
 
     def on_open_channel(self, event):
@@ -1093,7 +1097,7 @@ class VideoActionMixin:
             self.on_add_to_fav_video(None)
         elif action == "add_to_fav_channel":
             self.on_add_to_fav_channel(None)
-        elif action == "add__to_watchlist":
+        elif action == "add_to_watchlist":
             self.on_add_to_watchlist(None)
         elif action == "copy_url":
             self.on_copy("url")
@@ -1127,6 +1131,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self.filtered_items = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
+        self._current_sort = None 
         self.file_path = self._get_file_path()
         self.callback_topic = self._get_callback_topic()
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -1178,6 +1183,8 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         list_ctrl.InsertColumn(1, _("Channel"), width=200)
         # Translators: Column header for video duration.
         list_ctrl.InsertColumn(2, _("Duration"), width=120)
+        # Translators: Column header for video upload date.
+        list_ctrl.InsertColumn(3, _("Upload Date"), width=120)
 
     def _create_extra_buttons(self, panel, sizer):
         # Translators: Button to open action menu.
@@ -1218,6 +1225,10 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
                 self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
                 self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
+                upload_date = item.get('upload_date', '')
+                if upload_date and len(upload_date) == 8:
+                    upload_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
+                self.listCtrl.SetItem(index, 3, upload_date)
                 if self._is_first_load and self.listCtrl.GetItemCount() > 0:
                     self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
                                                 wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
@@ -1255,11 +1266,12 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         
     def _update_button_states(self):
         is_not_empty = bool(self.items)
+        is_filtered_not_empty = bool(self.filtered_items)
         is_selected = self.listCtrl.GetFirstSelected() != -1
         self.removeBtn.Enable(is_not_empty and is_selected)
-        self.actionBtn.Enable(is_not_empty and is_selected)
-        self.copyBtn.Enable(is_not_empty and is_selected)
-
+        self.actionBtn.Enable(is_filtered_not_empty and is_selected)
+        self.copyBtn.Enable(is_filtered_not_empty and is_selected)
+    
     def on_action_menu(self, event):
         if self.listCtrl.GetFirstSelected() == -1:
             return
@@ -1288,6 +1300,154 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self.PopupMenu(menu)
         menu.Destroy()
 
+    def _get_sort_fields(self):
+        """Subclasses can override to provide different sort fields."""
+        return [
+            # Translators: Sort field option for video title.
+            ('title', _("Title")),
+            # Translators: Sort field option for channel name.
+            ('channel_name', _("Channel")),
+            # Translators: Sort field option for video duration.
+            ('duration_str', _("Duration")),
+            # Translators: Sort field option for uploaded date.
+            ('upload_date', _("uploaded Date")),
+            # Translators: Sort field option for date added to the list.
+            ('added_at', _("Date Added")),
+        ]
+
+    def on_sort(self, event):
+        fields = self._get_sort_fields()
+        field_labels = [f[1] for f in fields]
+        
+        dlg = wx.Dialog(
+            self,
+            # Translators: Title of the sort dialog.
+            title=_("Sort List")
+        )
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # ComboBox เลือก field
+        # Translators: Label for sort field selection.
+        sizer.Add(wx.StaticText(dlg, label=_("Sort by:")), 0, wx.ALL, 5)
+        fieldCombo = wx.ComboBox(dlg, choices=field_labels, style=wx.CB_READONLY)
+        # เลือก field ปัจจุบันถ้ามี
+        if self._current_sort:
+            current_keys = [f[0] for f in fields]
+            if self._current_sort[0] in current_keys:
+                fieldCombo.SetSelection(current_keys.index(self._current_sort[0]))
+            else:
+                fieldCombo.SetSelection(0)
+        else:
+            fieldCombo.SetSelection(0)
+        sizer.Add(fieldCombo, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+
+        # Radio button Ascending/Descending
+        # Translators: Radio button for ascending sort order.
+        ascRadio = wx.RadioButton(dlg, label=_("&Ascending"), style=wx.RB_GROUP)
+        # Translators: Radio button for descending sort order.
+        descRadio = wx.RadioButton(dlg, label=_("&Descending"))
+        if self._current_sort and not self._current_sort[1]:
+            descRadio.SetValue(True)
+        else:
+            ascRadio.SetValue(True)
+        sizer.Add(ascRadio, 0, wx.LEFT | wx.TOP, 5)
+        sizer.Add(descRadio, 0, wx.LEFT, 5)
+
+        # Checkbox permanent
+        # Translators: Checkbox to apply sort permanently to the saved file.
+        permanentChk = wx.CheckBox(dlg, label=_("&Apply permanently (saves to file)"))
+        sizer.Add(permanentChk, 0, wx.ALL, 5)
+
+        # Buttons
+        btnSizer = wx.StdDialogButtonSizer()
+        okBtn = wx.Button(dlg, wx.ID_OK)
+        cancelBtn = wx.Button(dlg, wx.ID_CANCEL)
+        # Translators: Button to clear current sort and restore original order.
+        clearBtn = wx.Button(dlg, label=_("C&lear Sort"))
+        btnSizer.AddButton(okBtn)
+        btnSizer.AddButton(cancelBtn)
+        btnSizer.Realize()
+        outerBtnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        outerBtnSizer.Add(clearBtn, 0, wx.ALL, 5)
+        outerBtnSizer.AddStretchSpacer()
+        outerBtnSizer.Add(btnSizer, 0)
+        sizer.Add(outerBtnSizer, 0, wx.EXPAND | wx.ALL, 5)
+
+        dlg.SetSizer(sizer)
+        sizer.Fit(dlg)
+        dlg.CentreOnScreen()
+
+        def on_clear(e):
+            dlg.EndModal(wx.ID_RESET)
+        clearBtn.Bind(wx.EVT_BUTTON, on_clear)
+
+        result = dlg.ShowModal()
+        selected_field_key = fields[fieldCombo.GetSelection()][0]
+        ascending = ascRadio.GetValue()
+        permanent = permanentChk.GetValue()
+        dlg.Destroy()
+
+        if result == wx.ID_RESET:
+            # Clear sort — คืนลำดับจากไฟล์
+            self._current_sort = None
+            self._load_data()
+            current_search = getattr(self, '_saved_search_text', "")
+            self.on_search(current_search)
+            # Translators: Notification after sort is cleared and original order is restored.
+            ui.message(_("Sort cleared."))
+            return
+
+        if result != wx.ID_OK:
+            return
+
+        self._current_sort = (selected_field_key, ascending)
+        self._apply_sort(permanent)
+
+    def _apply_sort(self, permanent=False):
+        if not self._current_sort:
+            return
+        field_key, ascending = self._current_sort
+
+        def parse_duration(duration_str):
+            if not duration_str:
+                return 0
+            total = 0
+            patterns = {
+                'hour': 3600, 'hours': 3600,
+                'minute': 60, 'minutes': 60,
+                'second': 1, 'seconds': 1,
+            }
+            for word, multiplier in patterns.items():
+                match = re.search(r'(\d+)\s+' + word, duration_str.lower())
+                if match:
+                    total += int(match.group(1)) * multiplier
+            return total
+
+        def sort_key(item):
+            val = item.get(field_key, '')
+            if val is None:
+                val = ''
+            if field_key == 'duration_str':
+                return parse_duration(str(val))
+            return str(val).lower()
+
+        if permanent:
+            self.items.sort(key=sort_key, reverse=not ascending)
+            self._save_data()
+            self._current_sort = None
+            current_search = getattr(self, '_saved_search_text', "")
+            self.on_search(current_search)
+            # Translators: Notification after sort is applied permanently and saved.
+            ui.message(_("List sorted and saved."))
+        else:
+            self.filtered_items.sort(key=sort_key, reverse=not ascending)
+            self._populate_list()
+            # Translators: Notification after temporary sort is applied.
+            ui.message(_("List sorted temporarily."))
+        if self.listCtrl.GetItemCount() > 0:
+            self._focus_item(0)
+            wx.CallAfter(self.listCtrl.SetFocus)        
+            
     def on_remove(self, event):
         selected_items = self._get_selected_items()
         if not selected_items:
@@ -1308,7 +1468,9 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         for item in selected_items:
             self.items.remove(item)
         self._save_data()
-        self.on_search("")
+        current_search = getattr(self, '_saved_search_text', "")
+        self.on_search(current_search)
+        #self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
             new_selection = min(first_index, item_count - 1)
@@ -1546,6 +1708,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         else:
             self.filtered_items = self.items[:]
         self._populate_list()
+        self._update_button_states() 
         if not search_text and self.last_selected_item_before_search:
             try:
                 new_index = self.filtered_items.index(self.last_selected_item_before_search)
@@ -1591,6 +1754,9 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
 
     def on_list_key_down(self, event):
         key_code = event.GetKeyCode()
+        if key_code == wx.WXK_F2:
+            self.on_rename_title()
+            return
         if event.ControlDown():
             if key_code == ord('C'):
                 self.on_list_copy()
@@ -1610,7 +1776,45 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         if self.callback_topic:
             self.core.unregister_callback(self.callback_topic, self.refresh_data)
         self._save_data()
-        
+      
+    def on_rename_title(self):
+        selected_items = self._get_selected_items()
+        if len(selected_items) != 1:
+            return
+        item = selected_items[0]
+        current_title = item.get('title', '')
+        # Translators: Prompt shown when renaming a video title.
+        with wx.TextEntryDialog(
+            self,
+            _("Enter new title:"),
+            # Translators: Title of the rename dialog.
+            _("Rename"),
+            value=current_title
+        ) as dlg:
+            if dlg.ShowModal() != wx.ID_OK:
+                return
+            new_title = dlg.GetValue().strip()
+            if not new_title or new_title == current_title:
+                return
+        # แก้ไขใน items (master list)
+        for i, master_item in enumerate(self.items):
+            if self._get_item_unique_key(master_item) == self._get_item_unique_key(item):
+                self.items[i]['title'] = new_title
+                break
+        self._save_data()
+        selected_index = self.listCtrl.GetFirstSelected()
+        for i, f_item in enumerate(self.filtered_items):
+            if self._get_item_unique_key(f_item) == self._get_item_unique_key(item):
+                self.filtered_items[i]['title'] = new_title
+                self.listCtrl.SetItem(i, 0, new_title)
+                break
+        self.listCtrl.SetItemState(
+            selected_index,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+        )
+        wx.CallAfter(self.listCtrl.SetFocus)
+      
 class FavVideoPanel(BaseVideoListPanel):
     def _get_file_path(self):
         return self.core.get_profile_path("fav_video.json")
@@ -1645,6 +1849,7 @@ class FavChannelPanel(wx.Panel):
         self.filtered_channel = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
+        self._current_sort = None
         self._is_programmatic_selection = False
         self.fav_file_path = self.core.get_profile_path("fav_channel.json")
 
@@ -1664,7 +1869,7 @@ class FavChannelPanel(wx.Panel):
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         # translator: Button to open the selected channel URL in a browser. The '&' precedes the shortcut key.
-        self.openBtn = wx.Button(self, label=_("&Open"))
+        self.openBtn = wx.Button(self, label=_("Open channel on &browser"))
         # Translators: Button to view content of the selected channel.
         self.viewContentBtn = wx.Button(self, label=_("View &channel Content..."))
         # Translators: Button to add a new channel from clipboard content.
@@ -1824,7 +2029,9 @@ class FavChannelPanel(wx.Panel):
         for item in items_to_remove:
             self.channel.remove(item)
         self._save_channel()
-        self.on_search("")
+        current_search = getattr(self, '_saved_search_text', "")
+        self.on_search(current_search)
+        #self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
             new_selection = min(first_index, item_count - 1)
@@ -1879,22 +2086,27 @@ class FavChannelPanel(wx.Panel):
         menu.Destroy()
         
     def on_list_key_down(self, event):
+        key_code = event.GetKeyCode()
+        if key_code == wx.WXK_F2:
+            self.on_rename_channel() 
+            return
         if event.ControlDown():
-            key_code = event.GetKeyCode()
             if key_code == ord('X'):
                 self.on_list_cut()
                 return
             elif key_code == ord('V'):
                 self.on_list_paste()
                 return
-        key_code = event.GetKeyCode()
-        if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
+            elif key_code == ord('C'):
+                self.on_list_copy()
+                return
+        if key_code in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_SPACE]:
             self.on_open(event) 
         elif key_code == wx.WXK_DELETE:
             self.on_remove(event)
         else:
             event.Skip()
-            
+        
     def on_list_cut(self):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -1933,6 +2145,150 @@ class FavChannelPanel(wx.Panel):
         # Translators: Notification spoken by NVDA after one or more channel items are successfully moved.
         ui.message(_("Moved."))
 
+    def _get_sort_fields(self):
+        return [
+            # Translators: Sort field option for channel name.
+            ('channel_name', _("Channel")),
+            # Translators: Sort field option for subscriber count.
+            ('subscriber_count', _("Subscribers")),
+            # Translators: Sort field option for date added to the list.
+            ('added_at', _("Date Added")),
+        ]
+
+    def on_sort(self, event):
+        fields = self._get_sort_fields()
+        field_labels = [f[1] for f in fields]
+        dlg = wx.Dialog(self, title=_("Sort List"))
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Label for sort field selection.
+        sizer.Add(wx.StaticText(dlg, label=_("Sort by:")), 0, wx.ALL, 5)
+        fieldCombo = wx.ComboBox(dlg, choices=field_labels, style=wx.CB_READONLY)
+        if self._current_sort:
+            current_keys = [f[0] for f in fields]
+            if self._current_sort[0] in current_keys:
+                fieldCombo.SetSelection(current_keys.index(self._current_sort[0]))
+            else:
+                fieldCombo.SetSelection(0)
+        else:
+            fieldCombo.SetSelection(0)
+        sizer.Add(fieldCombo, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+        # Translators: Radio button for ascending sort order.
+        ascRadio = wx.RadioButton(dlg, label=_("&Ascending"), style=wx.RB_GROUP)
+        # Translators: Radio button for descending sort order.
+        descRadio = wx.RadioButton(dlg, label=_("&Descending"))
+        if self._current_sort and not self._current_sort[1]:
+            descRadio.SetValue(True)
+        else:
+            ascRadio.SetValue(True)
+        sizer.Add(ascRadio, 0, wx.LEFT | wx.TOP, 5)
+        sizer.Add(descRadio, 0, wx.LEFT, 5)
+        # Translators: Checkbox to apply sort permanently to the saved file.
+        permanentChk = wx.CheckBox(dlg, label=_("&Apply permanently (saves to file)"))
+        sizer.Add(permanentChk, 0, wx.ALL, 5)
+        btnSizer = wx.StdDialogButtonSizer()
+        okBtn = wx.Button(dlg, wx.ID_OK)
+        cancelBtn = wx.Button(dlg, wx.ID_CANCEL)
+        # Translators: Button to clear current sort and restore original order.
+        clearBtn = wx.Button(dlg, label=_("C&lear Sort"))
+        btnSizer.AddButton(okBtn)
+        btnSizer.AddButton(cancelBtn)
+        btnSizer.Realize()
+        outerBtnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        outerBtnSizer.Add(clearBtn, 0, wx.ALL, 5)
+        outerBtnSizer.AddStretchSpacer()
+        outerBtnSizer.Add(btnSizer, 0)
+        sizer.Add(outerBtnSizer, 0, wx.EXPAND | wx.ALL, 5)
+        dlg.SetSizer(sizer)
+        sizer.Fit(dlg)
+        dlg.CentreOnScreen()
+        def on_clear(e):
+            dlg.EndModal(wx.ID_RESET)
+        clearBtn.Bind(wx.EVT_BUTTON, on_clear)
+        result = dlg.ShowModal()
+        selected_field_key = fields[fieldCombo.GetSelection()][0]
+        ascending = ascRadio.GetValue()
+        permanent = permanentChk.GetValue()
+        dlg.Destroy()
+        if result == wx.ID_RESET:
+            self._current_sort = None
+            self._load_channel()
+            self.on_search("")
+            # Translators: Notification after sort is cleared and original order is restored.
+            ui.message(_("Sort cleared."))
+            return
+        if result != wx.ID_OK:
+            return
+        self._current_sort = (selected_field_key, ascending)
+        self._apply_sort(permanent)
+
+    def _apply_sort(self, permanent=False):
+        if not self._current_sort:
+            return
+        field_key, ascending = self._current_sort
+        def sort_key(item):
+            val = item.get(field_key, '')
+            if val is None:
+                val = ''
+            try:
+                return (0, int(val))
+            except (ValueError, TypeError):
+                return (1, str(val).lower())
+        if permanent:
+            self.channel.sort(key=sort_key, reverse=not ascending)
+            self._save_channel()
+            self._current_sort = None
+            self.on_search("")
+            # Translators: Notification after sort is applied permanently and saved.
+            ui.message(_("List sorted and saved."))
+        else:
+            self.filtered_channel.sort(key=sort_key, reverse=not ascending)
+            self._populate_list()
+            # Translators: Notification after temporary sort is applied.
+            ui.message(_("List sorted temporarily."))
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            self.listCtrl.EnsureVisible(0)
+            wx.CallAfter(self.listCtrl.SetFocus)
+
+    def on_rename_channel(self):
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if len(selected) != 1:
+            return
+        selected_index = selected[0]
+        item = self.filtered_channel[selected_index]
+        current_name = item.get('channel_name', '')
+        # Translators: Prompt shown when renaming a channel title.
+        with wx.TextEntryDialog(
+            self,
+            _("Enter new channel name:"),
+            _("Rename Channel"),
+            value=current_name
+        ) as dlg:
+            if dlg.ShowModal() != wx.ID_OK:
+                return
+            new_name = dlg.GetValue().strip()
+            if not new_name or new_name == current_name:
+                return
+        for i, master_item in enumerate(self.channel):
+            if master_item == item:
+                self.channel[i]['channel_name'] = new_name
+                break
+        self.filtered_channel[selected_index]['channel_name'] = new_name
+        self.listCtrl.SetItem(selected_index, 0, new_name)
+        self._save_channel()
+        self.listCtrl.SetItemState(
+            selected_index,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+        )
+        wx.CallAfter(self.listCtrl.SetFocus)
+        
 class FavPlaylistPanel(wx.Panel):
     def __init__(self, parent, core_instance):
         wx.Panel.__init__(self, parent)
@@ -1941,6 +2297,7 @@ class FavPlaylistPanel(wx.Panel):
         self.filtered_playlists = []
         self._is_first_load = True
         self.last_selected_item_before_search = None
+        self._current_sort = None
         self.fav_file_path = self.core.get_profile_path("fav_playlist.json")
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -1958,7 +2315,7 @@ class FavPlaylistPanel(wx.Panel):
         # Translators: Button to show videos within the selected playlist.
         self.showVideosBtn = wx.Button(self, label=_("Show &Videos..."))
         # Translators: Button to open the playlist on the YouTube website.
-        self.openWebBtn = wx.Button(self, label=_("Open on &Web"))
+        self.openWebBtn = wx.Button(self, label=_("Open on &browser"))
         # Translators: Button to add a new favorite playlist from the clipboard.
         self.addBtn = wx.Button(self, label=_("Add &new favorite playlist from clipboard"))
         # Translators: Button to remove the selected playlist from favorites.
@@ -2004,22 +2361,27 @@ class FavPlaylistPanel(wx.Panel):
                 break
 
     def on_list_key_down(self, event):
+        key_code = event.GetKeyCode()
+        if key_code == wx.WXK_F2:
+            self.on_rename_playlist()
+            return
         if event.ControlDown():
-            key_code = event.GetKeyCode()
             if key_code == ord('X'):
                 self.on_list_cut()
                 return
             elif key_code == ord('V'):
                 self.on_list_paste()
                 return
-        key_code = event.GetKeyCode()
+            elif key_code == ord('C'):
+                self.on_list_copy()
+                return
         if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
             self.on_show_videos(event) 
         elif key_code == wx.WXK_DELETE:
             self.on_remove(event)
         else:
             event.Skip()
-            
+        
     def on_list_cut(self):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -2088,7 +2450,9 @@ class FavPlaylistPanel(wx.Panel):
         for item in items_to_remove:
             self.playlists.remove(item)
         self._save_playlists()
-        self.on_search("")
+        current_search = getattr(self, '_saved_search_text', "")
+        self.on_search(current_search)
+        #self.on_search("")
         item_count = self.listCtrl.GetItemCount()
         if item_count > 0:
             new_selection = min(first_index, item_count - 1)
@@ -2206,6 +2570,152 @@ class FavPlaylistPanel(wx.Panel):
                 self.listCtrl.EnsureVisible(last_index)
         self._update_button_states()
 
+    def _get_sort_fields(self):
+        return [
+            # Translators: Sort field option for playlist title.
+            ('playlist_title', _("Title")),
+            # Translators: Sort field option for channel/uploader name.
+            ('uploader', _("Channel")),
+            # Translators: Sort field option for number of videos in playlist.
+            ('video_count', _("Videos")),
+            # Translators: Sort field option for date added to the list.
+            ('added_at', _("Date Added")),
+        ]
+
+    def on_sort(self, event):
+        fields = self._get_sort_fields()
+        field_labels = [f[1] for f in fields]
+        dlg = wx.Dialog(self, title=_("Sort List"))
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Label for sort field selection.
+        sizer.Add(wx.StaticText(dlg, label=_("Sort by:")), 0, wx.ALL, 5)
+        fieldCombo = wx.ComboBox(dlg, choices=field_labels, style=wx.CB_READONLY)
+        if self._current_sort:
+            current_keys = [f[0] for f in fields]
+            if self._current_sort[0] in current_keys:
+                fieldCombo.SetSelection(current_keys.index(self._current_sort[0]))
+            else:
+                fieldCombo.SetSelection(0)
+        else:
+            fieldCombo.SetSelection(0)
+        sizer.Add(fieldCombo, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+        # Translators: Radio button for ascending sort order.
+        ascRadio = wx.RadioButton(dlg, label=_("&Ascending"), style=wx.RB_GROUP)
+        # Translators: Radio button for descending sort order.
+        descRadio = wx.RadioButton(dlg, label=_("&Descending"))
+        if self._current_sort and not self._current_sort[1]:
+            descRadio.SetValue(True)
+        else:
+            ascRadio.SetValue(True)
+        sizer.Add(ascRadio, 0, wx.LEFT | wx.TOP, 5)
+        sizer.Add(descRadio, 0, wx.LEFT, 5)
+        # Translators: Checkbox to apply sort permanently to the saved file.
+        permanentChk = wx.CheckBox(dlg, label=_("&Apply permanently (saves to file)"))
+        sizer.Add(permanentChk, 0, wx.ALL, 5)
+        btnSizer = wx.StdDialogButtonSizer()
+        okBtn = wx.Button(dlg, wx.ID_OK)
+        cancelBtn = wx.Button(dlg, wx.ID_CANCEL)
+        # Translators: Button to clear current sort and restore original order.
+        clearBtn = wx.Button(dlg, label=_("C&lear Sort"))
+        btnSizer.AddButton(okBtn)
+        btnSizer.AddButton(cancelBtn)
+        btnSizer.Realize()
+        outerBtnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        outerBtnSizer.Add(clearBtn, 0, wx.ALL, 5)
+        outerBtnSizer.AddStretchSpacer()
+        outerBtnSizer.Add(btnSizer, 0)
+        sizer.Add(outerBtnSizer, 0, wx.EXPAND | wx.ALL, 5)
+        dlg.SetSizer(sizer)
+        sizer.Fit(dlg)
+        dlg.CentreOnScreen()
+        def on_clear(e):
+            dlg.EndModal(wx.ID_RESET)
+        clearBtn.Bind(wx.EVT_BUTTON, on_clear)
+        result = dlg.ShowModal()
+        selected_field_key = fields[fieldCombo.GetSelection()][0]
+        ascending = ascRadio.GetValue()
+        permanent = permanentChk.GetValue()
+        dlg.Destroy()
+        if result == wx.ID_RESET:
+            self._current_sort = None
+            self._load_playlists()
+            self.on_search("")
+            # Translators: Notification after sort is cleared and original order is restored.
+            ui.message(_("Sort cleared."))
+            return
+        if result != wx.ID_OK:
+            return
+        self._current_sort = (selected_field_key, ascending)
+        self._apply_sort(permanent)
+
+    def _apply_sort(self, permanent=False):
+        if not self._current_sort:
+            return
+        field_key, ascending = self._current_sort
+        def sort_key(item):
+            val = item.get(field_key, '')
+            if val is None:
+                val = ''
+            try:
+                return (0, int(val))
+            except (ValueError, TypeError):
+                return (1, str(val).lower())
+        if permanent:
+            self.playlists.sort(key=sort_key, reverse=not ascending)
+            self._save_playlists()
+            self._current_sort = None
+            self.on_search("")
+            # Translators: Notification after sort is applied permanently and saved.
+            ui.message(_("List sorted and saved."))
+        else:
+            self.filtered_playlists.sort(key=sort_key, reverse=not ascending)
+            self._populate_list()
+            # Translators: Notification after temporary sort is applied.
+            ui.message(_("List sorted temporarily."))
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            self.listCtrl.EnsureVisible(0)
+            wx.CallAfter(self.listCtrl.SetFocus)
+
+    def on_rename_playlist(self):
+        selected = []
+        idx = self.listCtrl.GetFirstSelected()
+        while idx != -1:
+            selected.append(idx)
+            idx = self.listCtrl.GetNextSelected(idx)
+        if len(selected) != 1:
+            return
+        selected_index = selected[0]
+        item = self.filtered_playlists[selected_index]
+        current_title = item.get('playlist_title', '')
+        # Translators: Prompt shown when renaming a playlist title.
+        with wx.TextEntryDialog(
+            self,
+            _("Enter new playlist title:"),
+            _("Rename Playlist"),
+            value=current_title
+        ) as dlg:
+            if dlg.ShowModal() != wx.ID_OK:
+                return
+            new_title = dlg.GetValue().strip()
+            if not new_title or new_title == current_title:
+                return
+        for i, master_item in enumerate(self.playlists):
+            if master_item == item:
+                self.playlists[i]['playlist_title'] = new_title
+                break
+        self.filtered_playlists[selected_index]['playlist_title'] = new_title
+        self.listCtrl.SetItem(selected_index, 0, new_title)
+        self._save_playlists()
+        self.listCtrl.SetItemState(
+            selected_index,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+        )
+        wx.CallAfter(self.listCtrl.SetFocus)
+        
 class FavsDialog(BaseDialogMixin, wx.Dialog):
     _instance = None 
 
@@ -2251,18 +2761,21 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         # Translators: Label for the search text control.
         searchLabel = wx.StaticText(panel, label=_("&Search:"))
         self.searchCtrl = wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER)
+        # Translators: Button to open sort dialog.
+        self.sortBtn = wx.Button(panel, label=_("S&ort..."))
         searchSizer.Add(searchLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
         searchSizer.Add(self.searchCtrl, 1, wx.EXPAND)
+        searchSizer.Add(self.sortBtn, 0)
+        self.sortBtn.Bind(wx.EVT_BUTTON, self.on_sort)
         sizer.Add(searchSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
 
         self.notebook = wx.Notebook(panel)
         self._build_tabs()
-
         initial_tab_id = default_order[initial_tab_index]
         visual_index = next((i for i, t in enumerate(self.ordered_tabs) if t['id'] == initial_tab_id), 0)
         self.notebook.SetSelection(visual_index)
-
         sizer.Add(self.notebook, 1, wx.EXPAND | wx.ALL, 5)
+
         # Translators: Button to close the dialog.
         close_btn = wx.Button(panel, wx.ID_CLOSE, _("C&lose"))
         close_btn.Bind(wx.EVT_BUTTON, lambda e: self.Close())
@@ -2290,7 +2803,13 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         current_page._saved_search_text = search_text
         if hasattr(current_page, 'on_search'):
             current_page.on_search(search_text)
-        
+
+    def on_sort(self, event):
+        current_page = self.notebook.GetCurrentPage()
+        if not current_page or not hasattr(current_page, 'on_sort'):
+            return
+        current_page.on_sort(event)
+    
     def on_tab_changed(self, event):
         self._update_dialog_title()
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
@@ -2950,16 +3469,31 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.__class__._instance = None
         self.Destroy()
 
+    def _save_all_tab_positions(self):
+        positions = {}
+        for i in range(self.notebook.GetPageCount()):
+            page = self.notebook.GetPage(i)
+            if hasattr(page, 'listCtrl') and hasattr(page, 'tab_id'):
+                idx = page.listCtrl.GetFirstSelected()
+                positions[str(page.tab_id)] = idx if idx != -1 else 0
+        return positions
+
     def _on_subscriptions_updated(self):
-        """Handles the callback when subscription data changes."""
+        currentPage = self.notebook.GetCurrentPage()
+        last_tab_id = currentPage.tab_id if currentPage else "all"
+        saved_positions = self._save_all_tab_positions()
+        deleted_id = self.pending_focus_info.get('deleted_video_id') if self.pending_focus_info else None
+        self.pending_focus_info = None
         if self.progress_dialog:
             self.progress_dialog.Update(self.progress_dialog.GetRange())
             self.progress_dialog = None
-        currentPage = self.notebook.GetCurrentPage()
-        last_tab_id = currentPage.tab_id if currentPage else "all"
-        self._build_all_tabs(select_tab_id=last_tab_id)
-
-    def _build_all_tabs(self, select_tab_id=None):
+        self._build_all_tabs(
+            select_tab_id=last_tab_id,
+            saved_positions=saved_positions,
+            deleted_video_id=deleted_id
+        )
+        
+    def _build_all_tabs(self, select_tab_id=None, saved_positions=None, deleted_video_id=None):
         try:
             con = sqlite3.connect(self.db_path)
             cur = con.cursor()
@@ -2987,7 +3521,6 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         ]
         user_tabs = [{'id': cat_id, 'name': name} for cat_id, name in self.user_categories]
         default_order_tabs = fixed_tabs + user_tabs
-        
         saved_order = config.conf["YoutubePlus"].get("subTabOrder", "").split(',')
         all_tabs_dict = {str(t['id']): t for t in default_order_tabs}
         self.tab_order = []
@@ -2998,7 +3531,11 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.tab_order.extend(all_tabs_dict.values())
         self.notebook.DeleteAllPages()
         for tab_info in self.tab_order:
-            page = self._create_tab_panel(tab_info['id'])
+            page = self._create_tab_panel(
+                tab_info['id'],
+                saved_position=saved_positions.get(str(tab_info['id']), 0) if saved_positions else 0,
+                deleted_video_id=deleted_video_id
+            )
             self.notebook.AddPage(page, tab_info['name'])
         tab_to_select_id = str(select_tab_id) if select_tab_id is not None else config.conf["YoutubePlus"].get("lastSubTabId", "all")
         initial_selection = 0
@@ -3010,7 +3547,8 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.notebook.GetPageCount() > 0:
             self._update_dialog_title()
             self.notebook.GetCurrentPage().SetFocus()
-            
+        self.pending_focus_info = None  
+        
     def _move_tab(self, direction):
         """
         Moves the current tab and then safely rebuilds the entire notebook UI
@@ -3066,7 +3604,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         full_title = _("Subscription Feed - {tab_name} - YoutubePlus").format(tab_name=tab_title) + " - [{profile}]".format(profile=active_profile)
         self.SetTitle(full_title)
 
-    def _create_tab_panel(self, tab_id):
+    def _create_tab_panel(self, tab_id, saved_position=0, deleted_video_id=None):
         panel = wx.Panel(self.notebook)
         sizer = wx.BoxSizer(wx.VERTICAL)
         listCtrl = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
@@ -3098,10 +3636,12 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         markSeenBtn.Bind(wx.EVT_BUTTON, self.on_mark_seen)
         listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
         listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
-        self._populate_list_for_panel(panel)
+        listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, lambda e, p=panel: self._update_tab_button_states(p))
+        listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, lambda e, p=panel: self._update_tab_button_states(p))
+        self._populate_list_for_panel(panel, saved_position=saved_position, deleted_video_id=deleted_video_id)
         return panel
 
-    def _populate_list_for_panel(self, panel):
+    def _populate_list_for_panel(self, panel, saved_position=0, deleted_video_id=None):
         tab_id = panel.tab_id
         videos_to_show = []
         if tab_id == "all":
@@ -3139,20 +3679,39 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         item_count = panel.listCtrl.GetItemCount()
         if item_count > 0:
             focus_index = 0
-            if self.pending_focus_info and self.pending_focus_info['tab_id'] == panel.tab_id:
-                saved_index = self.pending_focus_info['index']
-                focus_index = min(saved_index, item_count - 1)
-                self.pending_focus_info = None
-            panel.listCtrl.SetItemState(focus_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            if deleted_video_id:
+                remaining_ids = [v.get('id') for v in videos_to_show]
+                all_ids = [v.get('id') for v in self.all_videos]
+                try:
+                    deleted_pos = all_ids.index(deleted_video_id)
+                    for next_id in all_ids[deleted_pos + 1:]:
+                        if next_id in remaining_ids:
+                            focus_index = remaining_ids.index(next_id)
+                            break
+                    else:
+                        for prev_id in reversed(all_ids[:deleted_pos]):
+                            if prev_id in remaining_ids:
+                                focus_index = remaining_ids.index(prev_id)
+                                break
+                except ValueError:
+                    focus_index = min(saved_position, item_count - 1)
+            else:
+                focus_index = min(saved_position, item_count - 1)
+
+            panel.listCtrl.SetItemState(
+                focus_index,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
             panel.listCtrl.EnsureVisible(focus_index)
         self._update_tab_button_states(panel)
 
     def _update_tab_button_states(self, panel):
-        has_items = panel.listCtrl.GetItemCount() > 0
-        panel.actionBtn.Enable(has_items)
-        panel.copyBtn.Enable(has_items)
-        panel.markSeenBtn.Enable(has_items)
-
+        has_selection = panel.listCtrl.GetFirstSelected() != -1
+        panel.actionBtn.Enable(has_selection)
+        panel.copyBtn.Enable(has_selection)
+        panel.markSeenBtn.Enable(has_selection)
+        
     def get_selected_video_info(self):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return None
@@ -3252,9 +3811,9 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             self.pending_focus_index = currentPage.listCtrl.GetFirstSelected()
         else:
             self.pending_focus_index = -1
-
         dlg = ManageSubscriptionsDialog(self, self.core)
         dlg.ShowModal()
+        wx.CallAfter(self.notebook.GetCurrentPage().SetFocus)
         
     def on_update_feed(self, event):
         if self.core.is_long_task_running:
@@ -3322,12 +3881,16 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         selected_index = listCtrl.GetFirstSelected()
         video_to_mark = self.get_selected_video_info()
         if not video_to_mark: return
-        self.pending_focus_info = {'tab_id': currentPage.tab_id, 'index': selected_index}
+        self.pending_focus_info = {
+            'tab_id': currentPage.tab_id,
+            'index': selected_index,
+            'deleted_video_id': video_to_mark.get('id')
+        }
         video_id = video_to_mark.get('id')
         if self.core.mark_videos_as_seen(video_id):
             # Translators: Brief notification when a video is marked as seen.
             self.core._notify_delete(_("Marked as seen."))
-        
+            
     def on_mark_all_seen(self, event=None):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage or not hasattr(currentPage, 'videos'): return
@@ -3644,3 +4207,211 @@ class ProfileManagementDialog(wx.Dialog):
         title = _("Restart NVDA")
         if gui.messageBox(msg, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
             globalCommands.commands.script_restart(None)
+            
+class DownloadProgressDialog(wx.Dialog):
+    """
+    Non-modal progress dialog for video/audio downloads.
+    แสดงข้อมูลเป็น ListView 2 column (Field | Value)
+    ให้ screen reader Tab/ลูกศรเลื่อนอ่านทีละ row ได้
+    """
+
+    # Row indices — ใช้ค่าคงที่เพื่อ SetItem ตรงๆ
+    _ROW_FILENAME = 0
+    _ROW_PROGRESS = 1
+    _ROW_SIZE     = 2
+    _ROW_SPEED    = 3
+    _ROW_ETA      = 4
+    _ROW_STATUS   = 5
+
+    def __init__(self, parent, core):
+        super().__init__(
+            parent,
+            title=_("Downloading..."),
+            style=wx.DEFAULT_DIALOG_STYLE | wx.STAY_ON_TOP
+        )
+        self.core = core
+        self._closed = False
+        self._is_pulse_mode = False
+
+        # ── Layout ──────────────────────────────────────────────
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.listCtrl = wx.ListCtrl(
+            self,
+            style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.BORDER_SUNKEN
+        )
+        # Translators: Column headers in the download progress dialog.
+        self.listCtrl.InsertColumn(0, _("Field"), width=120)
+        self.listCtrl.InsertColumn(1, _("Value"), width=280)
+
+        # สร้าง row ตามลำดับ _ROW_* — label คงที่, value เริ่มต้นเป็น "-"
+        row_labels = [
+            _("File"),      # _ROW_FILENAME
+            _("Progress"),  # _ROW_PROGRESS
+            _("Size"),      # _ROW_SIZE
+            _("Speed"),     # _ROW_SPEED
+            _("ETA"),       # _ROW_ETA
+            _("Status"),    # _ROW_STATUS
+        ]
+        for label in row_labels:
+            idx = self.listCtrl.InsertItem(self.listCtrl.GetItemCount(), label)
+            self.listCtrl.SetItem(idx, 1, "-")
+
+        self._set_value(self._ROW_STATUS, _("Preparing..."))
+
+        # ความสูง ListView ให้พอดีกับจำนวน row
+        row_h = self.listCtrl.GetItemRect(0).height if self.listCtrl.GetItemCount() else 22
+        self.listCtrl.SetMinSize((-1, row_h * (len(row_labels) + 1)))
+
+        main_sizer.Add(self.listCtrl, 1, wx.ALL | wx.EXPAND, 10)
+
+        # Gauge — visual เท่านั้น screen reader ไม่จำเป็นต้อง focus
+        self.gauge = wx.Gauge(self, range=100, size=(-1, 14))
+        main_sizer.Add(self.gauge, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.EXPAND, 10)
+
+        # Translators: Cancel button in the download progress dialog.
+        self.cancelBtn = wx.Button(self, label=_("&Cancel"))
+        main_sizer.Add(self.cancelBtn, 0, wx.ALL | wx.ALIGN_CENTER, 8)
+
+        self.SetSizerAndFit(main_sizer)
+        self.SetMinSize((430, -1))
+        self.CentreOnScreen()
+
+        # ── Events ──────────────────────────────────────────────
+        self.cancelBtn.Bind(wx.EVT_BUTTON, self._on_cancel)
+        self.Bind(wx.EVT_CLOSE, self._on_close)
+
+        self._pulse_timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self._on_pulse_timer, self._pulse_timer)
+
+        # ── Register callbacks ───────────────────────────────────
+        self.core.register_callback("download_started", self._on_download_started)
+        self.core.register_callback("download_progress", self._on_progress)
+
+    # ── Helper ──────────────────────────────────────────────────
+
+    def _set_value(self, row_idx, text):
+        """อัปเดต column Value ของ row ที่ระบุ"""
+        self.listCtrl.SetItem(row_idx, 1, text)
+
+    # ── Static formatters ────────────────────────────────────────
+
+    @staticmethod
+    def _fmt_speed(bps):
+        if not bps:
+            return "-"
+        if bps >= 1_048_576:
+            return f"{bps / 1_048_576:.1f} MB/s"
+        if bps >= 1024:
+            return f"{bps / 1024:.0f} KB/s"
+        return f"{bps:.0f} B/s"
+
+    @staticmethod
+    def _fmt_eta(seconds):
+        if seconds is None or seconds < 0:
+            return "-"
+        seconds = int(seconds)
+        h, rem = divmod(seconds, 3600)
+        m, s = divmod(rem, 60)
+        if h:
+            return f"{h:02d}:{m:02d}:{s:02d}"
+        return f"{m:02d}:{s:02d}"
+
+    @staticmethod
+    def _fmt_bytes(b):
+        if not b:
+            return "-"
+        if b >= 1_073_741_824:
+            return f"{b / 1_073_741_824:.2f} GB"
+        if b >= 1_048_576:
+            return f"{b / 1_048_576:.1f} MB"
+        if b >= 1024:
+            return f"{b / 1024:.0f} KB"
+        return f"{b} B"
+
+    # ── Callbacks ────────────────────────────────────────────────
+
+    def _on_download_started(self, data=None):
+        if self._closed:
+            return
+        title = (data or {}).get('title', '')
+        if title:
+            self._set_value(self._ROW_FILENAME, title)
+            # Translators: Dialog title while a file is downloading. {title} is the file name.
+            self.SetTitle(_("Downloading: {title}").format(title=title))
+
+    def _on_progress(self, data=None):
+        if self._closed:
+            return
+        data = data or {}
+        status = data.get('status', 'downloading')
+
+        if status == 'downloading':
+            percent = data.get('percent', -1)
+            speed   = data.get('speed', 0)
+            eta     = data.get('eta')
+            dl      = data.get('downloaded_bytes', 0)
+            total   = data.get('total_bytes', 0)
+
+            if percent >= 0:
+                # รู้ขนาดไฟล์ — แสดง progress จริง
+                if self._is_pulse_mode:
+                    self._pulse_timer.Stop()
+                    self._is_pulse_mode = False
+                self.gauge.SetValue(min(percent, 100))
+                # Translators: Progress percentage. {pct} is 0-100.
+                self._set_value(self._ROW_PROGRESS, _("{pct}%").format(pct=percent))
+                if dl and total:
+                    self._set_value(self._ROW_SIZE,
+                        f"{self._fmt_bytes(dl)} / {self._fmt_bytes(total)}")
+                self._set_value(self._ROW_SPEED, self._fmt_speed(speed))
+                self._set_value(self._ROW_ETA,   self._fmt_eta(eta))
+                # Translators: Status while downloading.
+                self._set_value(self._ROW_STATUS, _("Downloading"))
+            else:
+                # ไม่รู้ขนาดไฟล์ — pulse mode
+                if not self._is_pulse_mode:
+                    self._is_pulse_mode = True
+                    self._pulse_timer.Start(150)
+                self._set_value(self._ROW_PROGRESS, "-")
+                if dl:
+                    self._set_value(self._ROW_SIZE, self._fmt_bytes(dl))
+                self._set_value(self._ROW_SPEED, self._fmt_speed(speed))
+                self._set_value(self._ROW_ETA,   "-")
+                # Translators: Status while downloading (size unknown).
+                self._set_value(self._ROW_STATUS, _("Downloading"))
+
+        elif status == 'finished':
+            self._pulse_timer.Stop()
+            self._is_pulse_mode = False
+            self.gauge.SetValue(100)
+            self._set_value(self._ROW_PROGRESS, "100%")
+            # Translators: Status while yt-dlp wraps up the file.
+            self._set_value(self._ROW_STATUS, _("Finishing..."))
+
+        elif status in ('complete', 'cancelled', 'error'):
+            self._safe_close()
+
+    def _on_pulse_timer(self, event):
+        if not self._closed:
+            self.gauge.Pulse()
+
+    def _on_cancel(self, event):
+        self.core.cancel_download()
+        self.cancelBtn.Disable()
+        # Translators: Status after user clicks Cancel.
+        self._set_value(self._ROW_STATUS, _("Cancelling..."))
+
+    def _on_close(self, event):
+        if not self._closed:
+            self.core.cancel_download()
+        self._safe_close()
+
+    def _safe_close(self):
+        if self._closed:
+            return
+        self._closed = True
+        self._pulse_timer.Stop()
+        self.core.unregister_callback("download_started", self._on_download_started)
+        self.core.unregister_callback("download_progress", self._on_progress)
+        self.Destroy()
