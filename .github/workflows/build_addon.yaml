@@ -24,6 +24,12 @@ jobs:
           sudo apt-get update && sudo apt-get install -y gettext
           pip install scons markdown
 
+      - name: Append Changelog to Readme
+        run: |
+          echo "" >> readme.md
+          echo "## Changelog" >> readme.md
+          cat changelog.md >> readme.md
+
       - name: Build Add-on and Pot file
         run: scons && scons pot
 
@@ -34,18 +40,12 @@ jobs:
           if [ -f "changelog.md" ]; then
             sed -n "/^## $VERSION/,/^## /p" changelog.md | sed '1d;$d' > release_notes.md
           fi
-          if [ ! -s release_notes.md ]; then 
+          if [ ! -s release_notes.md ]; then
             echo "Release for version $VERSION" > release_notes.md
           fi
 
-    - name: Append Changelog to Readme
-      run: |
-        echo "" >> readme.md
-        echo "## Changelog" >> readme.md
-        cat changelog.md >> readme.md
-
-        - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2 # แก้ไข: ลิงก์ออก
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
           body_path: release_notes.md
           files: |
