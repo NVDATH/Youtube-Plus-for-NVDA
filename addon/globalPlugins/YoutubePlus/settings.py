@@ -82,6 +82,10 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
             _("Show channel shorts"),
         # Translators: Option to show channel lives.
             _("Show channel lives"),
+                    # Translators: Option to show channel playlists.
+            _("Show channel playlists"),
+        # Translators: Option to show channel podcasts.
+            _("Show channel podcasts"),
         ]
         self.quickActionCombo = sHelper.addItem(wx.ComboBox(self, choices=self.quickActionChoices, style=wx.CB_READONLY))
         
@@ -89,7 +93,7 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
             'open_video', 'info', 'comments', 'chapters', 
             'download_video', 'download_audio', 'download_subtitles', 'add_to_fav_video', 'add_to_fav_channel', 'add_to_watchlist',
             'copy_url', 'copy_title', 'copy_channel_name', 'copy_channel_url', 'copy_summary',
-            'open_channel', 'show_channel_videos', 'show_channel_shorts', 'show_channel_lives'
+            'open_channel', 'show_channel_videos', 'show_channel_shorts', 'show_channel_lives', 'show_channel_playlists', 'show_channel_podcasts'
         ]
         current_qa = config.conf["YoutubePlus"].get("quickAction", "open_video")
         try:

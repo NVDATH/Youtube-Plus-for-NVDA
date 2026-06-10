@@ -75,8 +75,10 @@ from .dialogs import (
     SubDialog,
     SearchDialog,
     ChannelVideoDialog,
+    ChannelCollectionDialog,
     ManageSubscriptionsDialog,
-    ProfileManagementDialog
+    ProfileManagementDialog,
+    DownloadProgressDialog
 )
 from . import utils 
 from .errors import NetworkRetryError, HandledError
@@ -1494,7 +1496,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         finally:
             self._stop_indicator()
     
-    def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None):
+    def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None, load_all=False, is_collection=False):
         """
         Generic worker to fetch a list of videos from any URL (channel or playlist)
         and display them in the ChannelVideoDialog.
@@ -1512,7 +1514,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 'no_warnings': True,
                 'extract_flat': 'in_playlist',
             }
-            if not is_playlist:
+            if not is_playlist and not load_all:
                 fetch_count = config.conf["YoutubePlus"].get("playlist_fetch_count", 20)
                 ydl_opts['playlistend'] = fetch_count
             with open(os.devnull, 'w') as devnull:
@@ -1532,14 +1534,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 info_channel_url = info.get('uploader_url') or info.get('channel_url')
                 for entry in info.get('entries', []):
                     if entry and entry.get('id'):
-                        video_list.append({
-                            'id': entry.get('id'),
-                            # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
-                            'title': entry.get('title', _("N/A")),
-                            'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
-                            'channel_url': base_channel_url or info_channel_url, 
-                            'channel_name': base_channel_name or info_channel_name
-                        })
+                        if is_collection:
+                            video_list.append({
+                                'id': entry.get('id'),
+                                'playlist_url': f"https://www.youtube.com/playlist?list={entry.get('id')}",
+                                # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
+                                'title': entry.get('title', _("N/A")),
+                                'duration_str': str(entry.get('playlist_count') or ''),
+                                'channel_url': base_channel_url or info_channel_url,
+                                'channel_name': base_channel_name or info_channel_name,
+                                'is_collection': True,
+                            })
+                        else:
+                            video_list.append({
+                                'id': entry.get('id'),
+                                # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
+                                'title': entry.get('title', _("N/A")),
+                                'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
+                                'channel_url': base_channel_url or info_channel_url,
+                                'channel_name': base_channel_name or info_channel_name,
+                                'is_collection': False,
+                            })
             sort_order = config.conf["YoutubePlus"].get("sortOrder", "newest")
             if sort_order == 'oldest':
                 video_list.reverse()
@@ -1556,14 +1571,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             else:
                 # Translators: Title of the video list dialog for a channel. 
                 # {count} is the number of videos, {type} is the content type (e.g., videos/shorts), {channel} is the channel name.
-                dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
-
+                if load_all:
+                    dialog_title = _("All {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
+                else:
+                    dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
             def show_dialog():
-                dialog = ChannelVideoDialog(
-                    gui.mainFrame, dialog_title, video_list, self,
-                    playlist_id_to_update=playlist_id_to_update,
-                    new_count_to_update=new_count_to_update
-                )
+                if is_collection:
+                    dialog = ChannelCollectionDialog(
+                        gui.mainFrame, dialog_title, video_list, self,
+                            source_url=url if not is_playlist else None,
+                            content_type_label=content_type_label,
+                    )
+                else:
+                    dialog = ChannelVideoDialog(
+                        gui.mainFrame, dialog_title, video_list, self,
+                        playlist_id_to_update=playlist_id_to_update,
+                        new_count_to_update=new_count_to_update,
+                        source_url=url if not is_playlist else None,
+                        content_type_label=content_type_label,
+                    )
                 dialog.Show()
                 self._play_success_sound()
             wx.CallAfter(show_dialog)
@@ -1808,6 +1834,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self._perform_download_worker(url, choice, title)
         except Exception as e:
             log.warning("Failed to initiate direct download for %s", e)
+            wx.CallAfter(
+                self._notify_callbacks,
+                "download_progress",
+                {'status': 'error'}
+            )
             # Translators: Error message shown when a direct download fails to start. {error} is the technical error message.
             self._notify_error(_("Failed to start download: {error}").format(error=e))
         finally:
@@ -1833,6 +1864,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             choice = 'audio'
         if choice:
             self._resume_indicator()
+            wx.CallAfter(lambda: DownloadProgressDialog(gui.mainFrame, self).Show())
             threading.Thread(target=self._perform_download_worker, args=(url, choice, title, ), daemon=True).start()
         else:
             self._stop_indicator()

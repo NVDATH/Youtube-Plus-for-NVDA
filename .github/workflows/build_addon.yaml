@@ -38,7 +38,13 @@ jobs:
             echo "Release for version $VERSION" > release_notes.md
           fi
 
-      - name: Create GitHub Release
+    - name: Append Changelog to Readme
+      run: |
+        echo "" >> readme.md
+        echo "## Changelog" >> readme.md
+        cat changelog.md >> readme.md
+
+        - name: Create GitHub Release
         uses: softprops/action-gh-release@v2 # แก้ไข: ลิงก์ออก
         with:
           body_path: release_notes.md

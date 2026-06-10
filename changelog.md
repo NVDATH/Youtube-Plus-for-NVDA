@@ -1,3 +1,26 @@
+## 2026.6.9
+
+### New Features
+
+* Added Playlists and Podcasts as browsable content types in channel views
+* Added Load All button to remove fetch limit when browsing channel content
+* New collection browser dialog for playlist/podcast content with expand-to-videos support
+* Escape key now requires double-press to close dialogs that load content from YouTube, preventing accidental closure
+
+### Bug Fixes
+
+* Fixed Ctrl+W not closing Comments dialog
+* Fixed URL copy returning wrong format for playlist items
+* Fixed content type menu in Favorites Channel not passing correct parameters
+* download progress dialog not appearing when downloading from the current page using the keyboard shortcut
+* Fixed download progress dialog freezing when video info could not be retrieved (e.g. bot detection, geo-restricted 
+* Fixed Manage Subscriptions dialog not reopening after saving changes
+* Manage Subscriptions now auto-saves when switching channels or closing — Save button removed
+
+### Dependencies
+
+* Updated yt-dlp to v2026.6.9
+
 ## 2026.5.15
 
 ### New Features
@@ -24,8 +47,6 @@
 * Fixed duplicate success sound when displaying comments or live chat replay.
 * Fixed Add to Watch List quick action not working due to a typo.
 * Fixed Watch List items missing the `channel_url` field.
-
----
 
 ## 2026.3.19
 

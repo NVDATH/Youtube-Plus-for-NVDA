@@ -64,15 +64,34 @@ def sanitize_filename(filename):
     return sanitized
 
 class BaseDialogMixin:
-    """A mixin to provide common dialog functionality, like closing on Escape."""
+    """A mixin to provide common dialog functionality."""
+    _escape_protection = False
+
     def on_char_hook(self, event):
-        if event.GetKeyCode() == wx.WXK_ESCAPE:
+        key = event.GetKeyCode()
+        ctrl = event.ControlDown()
+        if ctrl and key == ord('W'):
             self.Close()
-        else:
-            event.Skip()
+            return
+        if key == wx.WXK_ESCAPE:
+            if self._escape_protection:
+                if getattr(self, '_escape_pending', False):
+                    self._escape_pending = False
+                    self.Close()
+                else:
+                    self._escape_pending = True
+                    # Translators: Message shown when user presses Escape once in a protected dialog.
+                    ui.message(_("Press Escape again to close."))
+            else:
+                self.Close()
+            return
+        self._escape_pending = False
+        event.Skip()
+        
     
 class BaseInfoDialog(BaseDialogMixin, wx.Dialog):
     """A base dialog for showing read-only text content."""
+    
     def __init__(self, parent, title, text_content):
         super().__init__(parent, title=title)
         panel = wx.Panel(self)
@@ -147,6 +166,8 @@ class HelpDialog(BaseInfoDialog):
 
 **In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**
 - Delete: Remove the selected item from favorites
+- F2: rename item
+- Control+c / control+x > control+v : copy or cut then paste item to move position support multiple selection.
 
 --- Help ---
 - H: Show this help dialog
@@ -154,6 +175,8 @@ class HelpDialog(BaseInfoDialog):
 
 class InfoDialog(BaseInfoDialog):
     """Dialog to show video info, inherits from BaseInfoDialog."""
+    _escape_protection = True   
+    
     def __init__(self, parent, title, info_text):
         super(InfoDialog, self).__init__(parent, title, info_text)
 
@@ -180,6 +203,8 @@ class CommentsListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.InsertColumn(2, _("Time"), width=150)
 
 class TimestampDialog(BaseDialogMixin, wx.Dialog):
+    _escape_protection = True   
+
     def __init__(self, parent, title, chapters_data, video_url):
         super().__init__(parent, title=title)
         self.chapters = chapters_data
@@ -557,6 +582,8 @@ class MessagesDialog(wx.Dialog):
             elif key == ord("E"): self.onExport(event)
             elif key == ord("L"): self.Close()
             elif key == ord("S"): self.searchTextCtrl.SetFocus()
+            elif ctrl and key == ord('W'):
+                self.Close()
             else: event.Skip()
         else: event.Skip()
 
@@ -564,6 +591,9 @@ class MessagesDialog(wx.Dialog):
         if event.ControlDown() and event.GetKeyCode() == ord('C'):
             self.onCopy(event)
             return
+            if event.ControlDown() and event.GetKeyCode() == ord('W'):
+                self.Close()
+                return          
         if event.GetKeyCode() == wx.WXK_ESCAPE: self.Close()
         else: event.Skip()
 
@@ -789,18 +819,32 @@ class CommentsDialog(wx.Dialog):
     def onCharHook(self, event):
         key = event.GetKeyCode()
         altDown = event.AltDown()
-        if key == wx.WXK_ESCAPE: self.Close()
+        ctrl = event.ControlDown()
+        if ctrl and key == ord('W'):
+            self.Close()
+        elif key == wx.WXK_ESCAPE:
+            if getattr(self, '_escape_pending', False):
+                self._escape_pending = False
+                self.Close()
+            else:
+                self._escape_pending = True
+                # Translators: Message shown when user presses Escape once in a protected dialog.
+                ui.message(_("Press Escape again to close."))
         elif altDown:
+            self._escape_pending = False
             if key == ord("C"): self.onCopy(event)
             elif key == ord("E"): self.onExport(event)
             elif key == ord("L"): self.Close()
             elif key == ord("S"): self.searchTextCtrl.SetFocus()
             else: event.Skip()
-        else: event.Skip()
+        else:
+            self._escape_pending = False
+            event.Skip()
 
     def processKey(self, event):
         if event.ControlDown() and event.GetKeyCode() == ord('C'):
             self.onCopy(event)
+            return
         else:
             event.Skip()
 
@@ -856,6 +900,8 @@ class VideoActionMixin:
         ID_SHOW_VIDS = wx.NewIdRef()
         ID_SHOW_SHORTS = wx.NewIdRef()
         ID_SHOW_LIVE = wx.NewIdRef()
+        ID_SHOW_PLAYLIST = wx.NewIdRef()
+        ID_SHOW_PODCAST = wx.NewIdRef()
         # Translators: Menu items for video actions.
         menu.Append(ID_VIEW_INFO, _("View Video &Info..."))
         menu.Append(ID_VIEW_COMMENTS, _("View &Comments / Replay..."))
@@ -875,6 +921,8 @@ class VideoActionMixin:
         menu.Append(ID_SHOW_VIDS, _("Show channel &videos"))
         menu.Append(ID_SHOW_SHORTS, _("Show channel &shorts"))
         menu.Append(ID_SHOW_LIVE, _("Show channel &live"))
+        menu.Append(ID_SHOW_PLAYLIST, _("Show channel &playlist"))
+        menu.Append(ID_SHOW_PODCAST, _("Show channel &podcast"))
         menu.Bind(wx.EVT_MENU, self.on_view_info, id=ID_VIEW_INFO)
         menu.Bind(wx.EVT_MENU, self.on_view_comments, id=ID_VIEW_COMMENTS)
         menu.Bind(wx.EVT_MENU, self.on_show_chapters, id=ID_SHOW_CHAPTERS)  # <--- ✅ เพิ่ม Event Binding ใหม่
@@ -889,6 +937,8 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('videos'), id=ID_SHOW_VIDS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('shorts'), id=ID_SHOW_SHORTS)
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('streams'), id=ID_SHOW_LIVE)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('playlists'), id=ID_SHOW_PLAYLIST)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('podcasts'), id=ID_SHOW_PODCAST)
         return menu
 
     def on_download_subtitles(self, event):
@@ -982,7 +1032,7 @@ class VideoActionMixin:
             return ui.message(_("Video ID not found."))
         url = f"https://youtube.com/watch?v={video_id}"
         # Translators: Message shown while fetching comments for a specific video title.
-        ui.message(_("Getting data for '{title}'...").format(title=video.get('title')))
+        #ui.message(_("Getting data for '{title}'...").format(title=video.get('title')))
         threading.Thread(target=self.core.get_data_for_url, args=(url,), daemon=True).start()
 
     def on_download_video(self, event):
@@ -1015,31 +1065,43 @@ class VideoActionMixin:
         webbrowser.open(video['channel_url'])
 
     def on_copy(self, copy_type):
-            """Handles copying a specific piece of video data to the clipboard."""
-            video = self.get_selected_video_info()
-            if not video: return
-            video_id = video.get('id') or video.get('video_id')
-            if not video_id: return
-            text_to_copy = ""
-            if copy_type == 'title':
-                text_to_copy = video.get('title', '')
-            elif copy_type == 'url':
+        """Handles copying a specific piece of video data to the clipboard."""
+        video = self.get_selected_video_info()
+        if not video: return
+        is_collection = video.get('is_collection', False)
+        video_id = video.get('id') or video.get('video_id')
+        if not video_id: return
+        text_to_copy = ""
+        if copy_type == 'title':
+            text_to_copy = video.get('title', '')
+        elif copy_type == 'url':
+            if is_collection:
+                text_to_copy = video.get('playlist_url', f"https://www.youtube.com/playlist?list={video_id}")
+            else:
                 text_to_copy = f"https://youtu.be/{video_id}"
-            elif copy_type == 'channel_name':
-                text_to_copy = video.get('channel_name', '')
-            elif copy_type == 'channel_url':
-                text_to_copy = video.get('channel_url', '')
-            elif copy_type == 'summary':
+        elif copy_type == 'channel_name':
+            text_to_copy = video.get('channel_name', '')
+        elif copy_type == 'channel_url':
+            text_to_copy = video.get('channel_url', '')
+        elif copy_type == 'summary':
+            if is_collection:
                 # Translators: Labels used when copying video summary to clipboard.
                 text_to_copy = (
                     _("Title: {title}\n").format(title=video.get('title', '')) +
                     _("Channel: {channel}\n").format(channel=video.get('channel_name', '')) +
-                    _("URL: ") + "https://youtu.be/{id}".format(id=video_id)
+                    _("URL: ") + video.get('playlist_url', f"https://www.youtube.com/playlist?list={video_id}")
                 )
-            if text_to_copy:
-                api.copyToClip(text_to_copy)
-                # Translators: Confirmation message when something is copied.
-                ui.message(_("Copied"))
+            else:
+                # Translators: Labels used when copying video summary to clipboard.
+                text_to_copy = (
+                    _("Title: {title}\n").format(title=video.get('title', '')) +
+                    _("Channel: {channel}\n").format(channel=video.get('channel_name', '')) +
+                    _("URL: ") + f"https://youtu.be/{video_id}"
+                )
+        if text_to_copy:
+            api.copyToClip(text_to_copy)
+            # Translators: Confirmation message when something is copied.
+            ui.message(_("Copied"))
             
     def _view_channel_content(self, content_type):
         video = self.get_selected_video_info()
@@ -1050,20 +1112,37 @@ class VideoActionMixin:
             # Translators: Error message.
             ui.message(_("Error: Channel information not found for this item."))
             return
-        suffix_map = {"videos": "/videos", "shorts": "/shorts", "streams": "/streams"}
-        label_map = {"videos": _("Videos"), "shorts": _("Shorts"), "streams": _("Live")}
+        suffix_map = {
+            "videos":    "/videos",
+            "shorts":    "/shorts",
+            "streams":   "/streams",
+            "playlists": "/playlists",
+            "podcasts":  "/podcasts",
+        }
+        label_map = {
+            "videos":    _("Videos"),
+            "shorts":    _("Shorts"),
+            "streams":   _("Live"),
+            "playlists": _("Playlists"),
+            "podcasts":  _("Podcasts"),
+        }
+        is_collection = content_type in ("playlists", "podcasts")
         suffix = suffix_map.get(content_type, "/videos")
         label = label_map.get(content_type, _("Content"))
         full_url = channel_url.rstrip('/') + suffix
         # Translators: Status message when fetching specific content from a channel.
-        # {type} will be Videos, Shorts, or Live.
+        # {type} will be Videos, Shorts, Live, Playlist, or Podcast.
         title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
         thread_kwargs = {
-            'url': full_url, 'dialog_title_template': title_template, 'content_type_label': label,
-            'base_channel_url': channel_url, 'base_channel_name': channel_name
+            'url': full_url,
+            'dialog_title_template': title_template,
+            'content_type_label': label,
+            'base_channel_url': channel_url,
+            'base_channel_name': channel_name,
+            'is_collection': is_collection,
         }
         threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
-
+        
     def handle_video_list_keys(self, event):
         """
         Universal handler for Enter and Space keys.
@@ -1117,6 +1196,10 @@ class VideoActionMixin:
             self._view_channel_content("shorts")
         elif action == "show_channel_lives":
             self._view_channel_content("streams")
+        elif action == "show_channel_playlists":
+            self._view_channel_content("playlists")
+        elif action == "show_channel_podcasts":
+            self._view_channel_content("podcasts")
 
 class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     # Class-level clipboard shared across all instances (enables cross-list paste)
@@ -1852,6 +1935,7 @@ class FavChannelPanel(wx.Panel):
         self._current_sort = None
         self._is_programmatic_selection = False
         self.fav_file_path = self.core.get_profile_path("fav_channel.json")
+        #_escape_protection = True   
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2059,26 +2143,28 @@ class FavChannelPanel(wx.Panel):
         channel_url = item.get("channel_url")
         channel_name = item.get("channel_name")
         if not channel_url:
-            # Translators: Error message when the channel URL is missing.
             return ui.message(_("Error: Channel URL not found."))
         menu = wx.Menu()
-        # Translators: Menu items for different types of channel content.
         menu_choices = {
-        wx.ID_HIGHEST + 1: (_("Videos"), "/videos"),
-        wx.ID_HIGHEST + 2: (_("Shorts"), "/shorts"),
-        wx.ID_HIGHEST + 3: (_("Live"), "/streams"),
+            wx.ID_HIGHEST + 1: (_("Videos"),    "/videos",    False),
+            wx.ID_HIGHEST + 2: (_("Shorts"),    "/shorts",    False),
+            wx.ID_HIGHEST + 3: (_("Live"),      "/streams",   False),
+            wx.ID_HIGHEST + 4: (_("Playlists"), "/playlists", True),
+            wx.ID_HIGHEST + 5: (_("Podcasts"),  "/podcasts",  True),
         }
-        for menu_id, (label, suffix) in menu_choices.items(): menu.Append(menu_id, label)
+        for menu_id, (label, suffix, is_col) in menu_choices.items():
+            menu.Append(menu_id, label)
         def on_menu_select(e):
-            label, suffix = menu_choices.get(e.GetId())
+            label, suffix, is_collection = menu_choices.get(e.GetId())
             full_url = channel_url.rstrip('/') + suffix
-                        # Translators: Status message when starting to fetch channel content. 
-            # {type} is the content type (Videos, Shorts, Live) and {channel} is the channel name.
             title_template = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
-            #threading.Thread(target=self.core._view_channel_worker, args=(full_url, title_template, label), daemon=True).start()
             thread_kwargs = {
-                'url': full_url, 'dialog_title_template': title_template, 'content_type_label': label,
-                'base_channel_url': channel_url, 'base_channel_name': channel_name
+                'url': full_url,
+                'dialog_title_template': title_template,
+                'content_type_label': label,
+                'base_channel_url': channel_url,
+                'base_channel_name': channel_name,
+                'is_collection': is_collection,
             }
             threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
         menu.Bind(wx.EVT_MENU, on_menu_select)
@@ -2299,6 +2385,7 @@ class FavPlaylistPanel(wx.Panel):
         self.last_selected_item_before_search = None
         self._current_sort = None
         self.fav_file_path = self.core.get_profile_path("fav_playlist.json")
+        #_escape_protection = True   
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2900,6 +2987,8 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
     """
     A simplified and robust search dialog.
     """
+    _escape_protection = True   
+
     def __init__(self, parent, core_instance):
         # Translators: Title of the dialog for searching YouTube.
         super().__init__(parent, title=_("Search YouTube"))
@@ -2955,29 +3044,34 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
 
 class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """A dialog to display a list of videos, now with a full action menu."""
-    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_count_to_update=None):
+    _escape_protection = True   
+
+    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_count_to_update=None, source_url=None, content_type_label="videos", is_collection=False):
         super().__init__(parent, title=title)
         self.videos = video_list
         self.core = core_instance
         self.playlist_id_to_update = playlist_id_to_update
         self.new_count_to_update = new_count_to_update
+        self.is_collection = is_collection
+        self.source_url = source_url
+        self.content_type_label = content_type_label
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.listCtrl = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
-        # Translators: Column header for video title.
         self.listCtrl.InsertColumn(0, _("Title"), width=450)
-        # Translators: Column header for video duration.
-        self.listCtrl.InsertColumn(1, _("Duration"), width=120)
+        # Translators: Column header showing video count for playlists, or duration for videos.
+        col2_label = _("Videos") if is_collection else _("Duration")
+        self.listCtrl.InsertColumn(1, col2_label, width=120)
         mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, 10)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        # Translators: Button to open the action menu for the selected video.
         self.actionBtn = wx.Button(panel, label=_("&Action..."))
-        # Translators: Button to open the copy menu for the selected video info.
         self.copyBtn = wx.Button(panel, label=_("&Copy..."))
-        # Translators: Button to close the dialog.
+        # Translators: Button to load all videos without the fetch limit.
+        self.loadAllBtn = wx.Button(panel, label=_("Load All"))
         self.closeBtn = wx.Button(panel, label=_("C&lose"))
         btnSizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.loadAllBtn, 0, wx.RIGHT, 5)
         btnSizer.AddStretchSpacer()
         btnSizer.Add(self.closeBtn, 0)
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.ALL, 10)
@@ -2988,14 +3082,17 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
+        if not self.source_url:
+            self.loadAllBtn.Hide()
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.actionBtn.Bind(wx.EVT_BUTTON, self.on_action_menu)
         self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
+        self.loadAllBtn.Bind(wx.EVT_BUTTON, self.on_load_all)
         self.closeBtn.Bind(wx.EVT_BUTTON, self.on_close)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
         wx.CallAfter(self.listCtrl.SetFocus)
-
+        
     def get_selected_video_info(self):
         """Required method for the Action Mixin."""
         selected_index = self.listCtrl.GetFirstSelected()
@@ -3056,15 +3153,203 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             self.handle_video_list_keys(event)
             return
         event.Skip()
-        
+
+    def on_load_all(self, event):
+        self.loadAllBtn.Disable()
+        thread_kwargs = {
+            'url': self.source_url,
+            'dialog_title_template': self.GetTitle(),
+            'content_type_label': self.content_type_label,
+            'load_all': True,
+        }
+        self.Destroy()
+        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()     
+     
+class ChannelCollectionDialog(BaseDialogMixin, wx.Dialog):
+    """
+    Browse dialog for playlist-based content types (playlists, podcasts).
+    Shows list of playlists with title + video count.
+    Enter/Space expands a playlist into ChannelVideoDialog.
+    """
+    _escape_protection = True   
+
+    def __init__(self, parent, title, items, core_instance, source_url=None, content_type_label=""):
+        super().__init__(parent, title=title)
+        self.items = items          
+        self.core = core_instance
+        self    .source_url = source_url
+        self.content_type_label = content_type_label
+    
+        panel = wx.Panel(self)
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.listCtrl = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        # Translators: Column header for the playlist title.
+        self.listCtrl.InsertColumn(0, _("Playlist Title"), width=400)
+        # Translators: Column header for the number of videos in a playlist.
+        self.listCtrl.InsertColumn(1, _("Videos"), width=80)
+
+        mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, 10)
+
+        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to add selected playlist to favorites.
+        self.addFavBtn = wx.Button(panel, label=_("Add to &Favorites"))
+        # Translators: Button to show videos inside the selected playlist.
+        self.showVideosBtn = wx.Button(panel, label=_("Show &Videos..."))
+        # Translators: Button to open the selected playlist in a browser.
+        self.openWebBtn = wx.Button(panel, label=_("Open on &Browser"))
+        # Translators: Button to copy info from selected playlist.
+        self.copyBtn = wx.Button(panel, label=_("&Copy..."))
+        # Translators: Button to load all videos without the fetch limit.
+        self.loadAllBtn = wx.Button(panel, label=_("Load All"))
+        # Translators: Button to close this dialog.
+        self.closeBtn = wx.Button(panel, label=_("C&lose"))
+        btnSizer.Add(self.addFavBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.showVideosBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.openWebBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.loadAllBtn, 0, wx.RIGHT, 5)
+        btnSizer.AddStretchSpacer()
+        btnSizer.Add(self.closeBtn, 0)
+        mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+
+        panel.SetSizer(mainSizer)
+        self.SetSize((580, 450))
+        self.CentreOnScreen()
+
+        self._populate_list()
+        if not self.source_url:
+            self.loadAllBtn.Hide()
+        self.addFavBtn.Bind(wx.EVT_BUTTON, self.on_add_to_favorites)
+        self.Bind(wx.EVT_CLOSE, lambda e: self.Destroy())
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
+        self.showVideosBtn.Bind(wx.EVT_BUTTON, self.on_show_videos)
+        self.openWebBtn.Bind(wx.EVT_BUTTON, self.on_open_web)
+        self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
+        self.loadAllBtn.Bind(wx.EVT_BUTTON, self.on_load_all)
+        self.closeBtn.Bind(wx.EVT_BUTTON, lambda e: self.Destroy())
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_show_videos)
+        self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(
+                0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
+        wx.CallAfter(self.listCtrl.SetFocus)
+
+    def _populate_list(self):
+        self.listCtrl.DeleteAllItems()
+        for index, item in enumerate(self.items):
+            self.listCtrl.InsertItem(index, item.get('title', _("N/A")))
+            count = item.get('duration_str', '')   # worker เก็บ video_count ใน duration_str
+            self.listCtrl.SetItem(index, 1, str(count) if count else '-')
+
+    def on_list_key_down(self, event):
+        key = event.GetKeyCode()
+        if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_SPACE):
+            self.on_show_videos(event)
+            return
+        event.Skip()
+
+    def _get_selected(self):
+        idx = self.listCtrl.GetFirstSelected()
+        if idx == -1:
+            return None
+        return self.items[idx]
+
+    def on_show_videos(self, event):
+        item = self._get_selected()
+        if not item:
+            return
+        playlist_url = item.get('playlist_url')
+        if not playlist_url:
+            ui.message(_("Playlist URL not found."))
+            return
+        # Translators: Status shown while fetching videos from a playlist. {title} is the playlist name.
+        title_template = _("Fetching videos from '{title}'...").format(title=item.get('title', ''))
+        threading.Thread(
+            target=self.core._view_channel_worker,
+            args=(playlist_url, title_template),
+            daemon=True
+        ).start()
+
+    def on_open_web(self, event):
+        item = self._get_selected()
+        if not item:
+            return
+        url = item.get('playlist_url', '')
+        if url:
+            webbrowser.open(url)
+
+    def on_copy_menu(self, event):
+        item = self._get_selected()
+        if not item:
+            return
+        menu = wx.Menu()
+        # Translators: Menu item to copy the playlist title.
+        menu.Append(1, _("Copy &Title"))
+        # Translators: Menu item to copy the playlist URL.
+        menu.Append(2, _("Copy Playlist &URL"))
+        # Translators: Menu item to copy both title and URL as a summary.
+        menu.Append(3, _("Copy &Summary"))
+
+        def on_select(e):
+            mid = e.GetId()
+            text = ''
+            if mid == 1:
+                text = item.get('title', '')
+            elif mid == 2:
+                text = item.get('playlist_url', '')
+            elif mid == 3:
+                text = (
+                    _("Title: {title}\n").format(title=item.get('title', '')) +
+                    _("URL: ") + item.get('playlist_url', '')
+                )
+            if text:
+                api.copyToClip(text)
+                ui.message(_("Copied"))
+
+        menu.Bind(wx.EVT_MENU, on_select)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def on_load_all(self, event):
+        source_url = self.source_url
+        content_type_label = self.content_type_label
+        thread_kwargs = {
+            'url': source_url,
+            'dialog_title_template': self.GetTitle(),
+            'content_type_label': content_type_label,
+            'load_all': True,
+            'is_collection': True,
+        }
+        self.Destroy()
+        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
+
+    def on_add_to_favorites(self, event):
+        item = self._get_selected()
+        if not item:
+            return
+        url = item.get('playlist_url')
+        if not url:
+            ui.message(_("Playlist URL not found."))
+            return
+        threading.Thread(
+            target=self.core.add_playlist_to_favorites_worker,
+            args=(url,),
+            daemon=True
+        ).start()
+
 class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
     """
-    A comprehensive dialog to manage subscribed channels, their categories,
-    and content types to fetch, with all fixes applied.
+    Dialog to manage subscribed channels, categories, and content types.
+    Auto-saves when switching channels or closing — no Save button needed.
     """
-    _instance = None 
+    _instance = None
 
-    def __new__(cls, *args, **kwargs):  # <--- ✅ เพิ่มเมธอดนี้ทั้งหมด
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             return super(ManageSubscriptionsDialog, cls).__new__(cls, *args, **kwargs)
         cls._instance.Raise()
@@ -3076,17 +3361,18 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         # Translators: Title of the subscription management dialog.
         super().__init__(parent, title=_("Manage Subscriptions"))
         self.__class__._instance = self
- 
+
         self.core = core_instance
         self.db_path = self.core.get_profile_path("subscription.db")
-
         self.all_channels = []
         self.categories = []
-        
+        self._current_channel_url = None   # track ช่องที่ถูก load ใน right panel
+        self._dirty = False                # มีการแก้ไขที่ยังไม่ได้ save
+
         panel = wx.Panel(self)
         topSizer = wx.BoxSizer(wx.VERTICAL)
         mainSplitSizer = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         leftPanel = wx.Panel(panel)
         leftSizer = wx.BoxSizer(wx.VERTICAL)
         # Translators: Label for the list of subscribed channels.
@@ -3127,82 +3413,101 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         # Translators: Button to unsubscribe from the selected channel.
         self.unsubBtn = actionHelper.addItem(wx.Button(self.rightPanel, label=_("&Unsubscribe from this Channel")))
         rightSizer.Add(actionBox, 0, wx.EXPAND | wx.ALL, 5)
-
         self.rightPanel.SetSizer(rightSizer)
-        
+
         mainSplitSizer.Add(leftPanel, 1, wx.EXPAND | wx.ALL, 5)
         mainSplitSizer.Add(self.rightPanel, 1, wx.EXPAND | wx.ALL, 5)
         topSizer.Add(mainSplitSizer, 1, wx.EXPAND)
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        # Translators: Button to save subscription changes.
-        self.saveBtn = wx.Button(panel, wx.ID_OK, label=_("&Save Changes"))
         # Translators: Button to close the dialog.
         self.closeBtn = wx.Button(panel, wx.ID_CANCEL, label=_("C&lose"))
         btnSizer.AddStretchSpacer()
-        btnSizer.Add(self.saveBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.closeBtn, 0)
         topSizer.Add(btnSizer, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
 
         panel.SetSizer(topSizer)
         self.SetSize((800, 500))
         self.CentreOnScreen()
-        self.core.register_callback("subscriptions_updated", self._on_subscriptions_updated)
+
         self.core.register_callback("subscription_added", self._on_subscription_added)
         self.core.register_callback("subscription_removed", self._on_subscription_removed)
         self._load_all_data()
         self._populate_category_filter()
         self._populate_channel_list()
+
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
-        self.saveBtn.Bind(wx.EVT_BUTTON, self.on_save)
         self.closeBtn.Bind(wx.EVT_BUTTON, lambda e: self.Close())
-        self.categoryFilterCombo.Bind(wx.EVT_COMBOBOX, lambda e: self._populate_channel_list())
-        self.channelListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self._update_right_panel)
-        self.channelListCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._update_right_panel)
+        self.categoryFilterCombo.Bind(wx.EVT_COMBOBOX, self._on_filter_changed)
+        self.channelListCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_channel_selected)
+        self.channelListCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._update_ui_state)
+        self.categoryCheckList.Bind(wx.EVT_CHECKLISTBOX, self._on_setting_changed)
+        self.contentTypesList.Bind(wx.EVT_CHECKLISTBOX, self._on_setting_changed)
         self.unsubBtn.Bind(wx.EVT_BUTTON, self.on_unsubscribe)
         self.viewContentBtn.Bind(wx.EVT_BUTTON, self.on_view_channel_content)
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add_subscription)
 
-    def on_close(self, event):
-        """Called when the dialog is closed."""
-        self.core.unregister_callback("subscriptions_updated", self._on_subscriptions_updated)
-        self.core.unregister_callback("subscription_added", self._on_subscription_added)
-        self.core.unregister_callback("subscription_removed", self._on_subscription_removed)
-        self.__class__._instance = None
-        self.Destroy()
+    # ── Auto-save logic ──────────────────────────────────────────
 
-    def _on_subscription_added(self, new_channel_data):
-        """Handles the targeted addition of a new channel to the list."""
-        self.all_channels.append(new_channel_data)
-        self.all_channels.sort(key=lambda x: x[1].lower())
+    def _on_setting_changed(self, event):
+        """Mark dirty whenever user checks/unchecks anything."""
+        self._dirty = True
+        event.Skip()
+
+    def _save_current_channel(self):
+        """
+        Save categories and content types for the currently loaded channel.
+        Called automatically before switching channels or closing.
+        Returns True on success or if nothing to save.
+        """
+        if not self._dirty or not self._current_channel_url:
+            return True
+        channel_url = self._current_channel_url
+        try:
+            with sqlite3.connect(self.db_path) as con:
+                cur = con.cursor()
+                cur.execute("DELETE FROM channel_category_links WHERE channel_url = ?", (channel_url,))
+                for index in self.categoryCheckList.CheckedItems:
+                    cat_id, __ = self.categories[index]
+                    cur.execute(
+                        "INSERT INTO channel_category_links (channel_url, category_id) VALUES (?, ?)",
+                        (channel_url, cat_id)
+                    )
+                internal_types = ["videos", "shorts", "streams"]
+                types_to_save = [internal_types[i] for i in self.contentTypesList.CheckedItems]
+                cur.execute(
+                    "UPDATE subscribed_channels SET content_types = ? WHERE channel_url = ?",
+                    (",".join(types_to_save), channel_url)
+                )
+                con.commit()
+            self._dirty = False
+            # Translators: Brief announcement after auto-saving channel settings.
+            ui.message(_("Changes saved."))
+            return True
+        except Exception as e:
+            log.error("Failed to auto-save subscription changes: %s", e)
+            return False
+
+    def _on_filter_changed(self, event):
+        """Save current channel before repopulating list with new filter."""
+        self._save_current_channel()
         self._populate_channel_list()
 
-    def _on_subscription_removed(self, data):
-        """Handles the targeted removal of a channel from the list."""
-        channel_url_to_remove = data.get("channel_url")
-        if not channel_url_to_remove: return
-        self.all_channels = [ch for ch in self.all_channels if ch[0] != channel_url_to_remove]
-        self._populate_channel_list()
-        
-    def _on_subscriptions_updated(self):
-        """Callback handler to refresh the dialog when data changes."""
-        if not self.IsShown():
-            return
-        wx.CallAfter(self._load_all_data)
-        wx.CallAfter(self._populate_category_filter)
-        wx.CallAfter(self._populate_channel_list)
-        
+    def _on_channel_selected(self, event):
+        """Save previous channel's settings before loading the newly selected one."""
+        self._save_current_channel()
+        self._update_right_panel(event)
+
     def _load_all_data(self):
         """Loads all channels and categories from the database."""
         try:
-            con = sqlite3.connect(self.db_path)
-            cur = con.cursor()
-            cur.execute("SELECT channel_url, channel_name FROM subscribed_channels ORDER BY channel_name COLLATE NOCASE")
-            self.all_channels = cur.fetchall()
-            cur.execute("SELECT id, name FROM categories ORDER BY position")
-            self.categories = cur.fetchall()
-            con.close()
+            with sqlite3.connect(self.db_path) as con:
+                cur = con.cursor()
+                cur.execute("SELECT channel_url, channel_name FROM subscribed_channels ORDER BY channel_name COLLATE NOCASE")
+                self.all_channels = cur.fetchall()
+                cur.execute("SELECT id, name FROM categories ORDER BY position")
+                self.categories = cur.fetchall()
         except Exception as e:
             log.error("Failed to load subscription management data: %s", e)
 
@@ -3217,12 +3522,7 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
 
     def _populate_channel_list(self):
         """Populates the channel list based on the category filter."""
-        selected_channel_url = None
-        selected_index = self.channelListCtrl.GetFirstSelected()
-        if selected_index != -1:
-            original_index = self.channelListCtrl.GetItemData(selected_index)
-            if original_index < len(self.all_channels):
-                selected_channel_url, __ = self.all_channels[original_index]
+        selected_channel_url = self._current_channel_url
         self.channelListCtrl.DeleteAllItems()
         filter_selection = self.categoryFilterCombo.GetSelection()
         channels_to_show = []
@@ -3231,15 +3531,14 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         else:
             cat_id = self.categoryFilterCombo.GetClientData(filter_selection)
             try:
-                con = sqlite3.connect(self.db_path)
-                cur = con.cursor()
-                cur.execute("""
-                    SELECT sc.channel_url, sc.channel_name FROM subscribed_channels sc
-                    JOIN channel_category_links ccl ON sc.channel_url = ccl.channel_url
-                    WHERE ccl.category_id = ? ORDER BY sc.channel_name COLLATE NOCASE
-                """, (cat_id,))
-                channels_to_show = cur.fetchall()
-                con.close()
+                with sqlite3.connect(self.db_path) as con:
+                    cur = con.cursor()
+                    cur.execute("""
+                        SELECT sc.channel_url, sc.channel_name FROM subscribed_channels sc
+                        JOIN channel_category_links ccl ON sc.channel_url = ccl.channel_url
+                        WHERE ccl.category_id = ? ORDER BY sc.channel_name COLLATE NOCASE
+                    """, (cat_id,))
+                    channels_to_show = cur.fetchall()
             except Exception as e:
                 log.error("Failed to filter channels by category: %s", e)
         new_selection_index = -1
@@ -3250,124 +3549,124 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             if url == selected_channel_url:
                 new_selection_index = index
         if new_selection_index != -1:
-            self.channelListCtrl.SetItemState(new_selection_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-        if self.channelListCtrl.GetItemCount() > 0 and self.channelListCtrl.GetFirstSelected() == -1:
-            self.channelListCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+            self.channelListCtrl.SetItemState(
+                new_selection_index,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
+        elif self.channelListCtrl.GetItemCount() > 0:
+            self.channelListCtrl.SetItemState(
+                0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
             self.channelListCtrl.EnsureVisible(0)
             event = wx.ListEvent(wx.wxEVT_LIST_ITEM_SELECTED, self.channelListCtrl.GetId())
             event.SetIndex(0)
             wx.PostEvent(self.channelListCtrl.GetEventHandler(), event)
         self._update_ui_state()
-    
-    def _update_ui_state(self):
-        """Enable/disable controls based on whether any channels are subscribed."""
+
+    def _update_ui_state(self, event=None):
+        """Enable/disable controls based on selection state."""
         has_any_channels = bool(self.all_channels)
         is_channel_selected = self.channelListCtrl.GetFirstSelected() != -1
         self.categoryFilterCombo.Enable(has_any_channels)
         self.channelListCtrl.Enable(has_any_channels)
         self.rightPanel.Show(has_any_channels)
-        for ctrl in [self.categoryCheckList, self.contentTypesList, self.unsubBtn, self.saveBtn]:
+        for ctrl in [self.categoryCheckList, self.contentTypesList, self.unsubBtn]:
             ctrl.Enable(is_channel_selected and has_any_channels)
         self.Layout()
 
     def _update_right_panel(self, event=None):
+        """Load categories and content types for the selected channel."""
         self._update_ui_state()
         selected_index = self.channelListCtrl.GetFirstSelected()
         self.categoryCheckList.Clear()
         self.contentTypesList.CheckedItems = []
-        if selected_index == -1: return
-        original_index = self.channelListCtrl.GetItemData(selected_index)
-        channel_url, __ = self.all_channels[original_index]
-        try:
-            con = sqlite3.connect(self.db_path)
-            cur = con.cursor()
-            cur.execute("SELECT category_id FROM channel_category_links WHERE channel_url = ?", (channel_url,))
-            assigned_cat_ids = {row[0] for row in cur.fetchall()}
-            cur.execute("SELECT content_types FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
-            content_types_str = cur.fetchone()[0]
-            con.close()
-            checked_cats = []
-            self.categoryCheckList.Set([cat[1] for cat in self.categories])
-            for index, (cat_id, name) in enumerate(self.categories):
-                if cat_id in assigned_cat_ids:
-                    checked_cats.append(index)
-            self.categoryCheckList.CheckedItems = checked_cats
-            internal_types = ["videos", "shorts", "streams"]
-            saved_types = content_types_str.split(',')
-            self.contentTypesList.CheckedItems = [i for i, t in enumerate(internal_types) if t in saved_types]
-        except Exception as e:
-            log.error("Failed to update channel details panel: %s", e)
-            
-    def on_save(self, event):
-        selected_index = self.channelListCtrl.GetFirstSelected()
         if selected_index == -1:
-            # Translators: Error message when no channel is selected to save.
-            ui.message(_("No channel selected to save."))
+            self._current_channel_url = None
             return
         original_index = self.channelListCtrl.GetItemData(selected_index)
         channel_url, __ = self.all_channels[original_index]
+        self._current_channel_url = channel_url
+        self._dirty = False   # reset หลังโหลดข้อมูลใหม่
         try:
-            con = sqlite3.connect(self.db_path)
-            cur = con.cursor()
-            cur.execute("DELETE FROM channel_category_links WHERE channel_url = ?", (channel_url,))
-            assigned_cat_indices = self.categoryCheckList.CheckedItems
-            for index in assigned_cat_indices:
-                cat_id, __ = self.categories[index]
-                cur.execute("INSERT INTO channel_category_links (channel_url, category_id) VALUES (?, ?)", (channel_url, cat_id))
+            with sqlite3.connect(self.db_path) as con:
+                cur = con.cursor()
+                cur.execute("SELECT category_id FROM channel_category_links WHERE channel_url = ?", (channel_url,))
+                assigned_cat_ids = {row[0] for row in cur.fetchall()}
+                cur.execute("SELECT content_types FROM subscribed_channels WHERE channel_url = ?", (channel_url,))
+                content_types_str = cur.fetchone()[0]
+            self.categoryCheckList.Set([cat[1] for cat in self.categories])
+            self.categoryCheckList.CheckedItems = [
+                i for i, (cat_id, _) in enumerate(self.categories) if cat_id in assigned_cat_ids
+            ]
             internal_types = ["videos", "shorts", "streams"]
-            checked_types_indices = self.contentTypesList.CheckedItems
-            types_to_save = [internal_types[i] for i in checked_types_indices]
-            cur.execute("UPDATE subscribed_channels SET content_types = ? WHERE channel_url = ?", (",".join(types_to_save), channel_url))
-            con.commit()
-            con.close()
-            self.core._notify_callbacks("subscriptions_updated")
-            # Translators: Success message after saving changes.
-            ui.message(_("Changes saved for the selected channel."))
+            saved_types = content_types_str.split(',') if content_types_str else []
+            self.contentTypesList.CheckedItems = [i for i, t in enumerate(internal_types) if t in saved_types]
         except Exception as e:
-            log.error("Failed to save subscription changes: %s", e)
-            # Translators: Error message shown when save fails.
-            ui.message(_("Error saving changes."))
+            log.error("Failed to update channel details panel: %s", e)
+
+    def _on_subscription_added(self, new_channel_data):
+        self.all_channels.append(new_channel_data)
+        self.all_channels.sort(key=lambda x: x[1].lower())
+        self._populate_channel_list()
+
+    def _on_subscription_removed(self, data):
+        channel_url_to_remove = data.get("channel_url")
+        if not channel_url_to_remove:
+            return
+        if self._current_channel_url == channel_url_to_remove:
+            self._current_channel_url = None
+            self._dirty = False
+        self.all_channels = [ch for ch in self.all_channels if ch[0] != channel_url_to_remove]
+        self._populate_channel_list()
+
+    def on_close(self, event):
+        """Save pending changes before closing, then clean up."""
+        self._save_current_channel()
+        self.core.unregister_callback("subscription_added", self._on_subscription_added)
+        self.core.unregister_callback("subscription_removed", self._on_subscription_removed)
+        self.core._notify_callbacks("subscriptions_updated")
+        self.__class__._instance = None
+        self.Destroy()
 
     def on_view_channel_content(self, event):
-            """Shows a submenu to view different content types for the selected channel."""
-            selected_index = self.channelListCtrl.GetFirstSelected()
-            if selected_index == -1: return
-            original_index = self.channelListCtrl.GetItemData(selected_index)
-            channel_url, channel_name = self.all_channels[original_index]
-            if not channel_url:
-                # Translators: Error message when channel URL is missing.
-                ui.message(_("Error: Channel URL not found."))
-                return
-            menu = wx.Menu()
-            # Translators: Submenu items to fetch specific content types.
-            menu_choices = {
-                wx.ID_HIGHEST + 1: (_("Videos"), "/videos"),
-                wx.ID_HIGHEST + 2: (_("Shorts"), "/shorts"),
-                wx.ID_HIGHEST + 3: (_("Live"), "/streams"),
+        selected_index = self.channelListCtrl.GetFirstSelected()
+        if selected_index == -1: return
+        original_index = self.channelListCtrl.GetItemData(selected_index)
+        channel_url, channel_name = self.all_channels[original_index]
+        if not channel_url:
+            ui.message(_("Error: Channel URL not found."))
+            return
+        menu = wx.Menu()
+        menu_choices = {
+            wx.ID_HIGHEST + 1: (_("Videos"),    "/videos",    False),
+            wx.ID_HIGHEST + 2: (_("Shorts"),    "/shorts",    False),
+            wx.ID_HIGHEST + 3: (_("Live"),      "/streams",   False),
+            wx.ID_HIGHEST + 4: (_("Playlists"), "/playlists", True),
+            wx.ID_HIGHEST + 5: (_("Podcasts"),  "/podcasts",  True),
+        }
+        for menu_id, (label, suffix, is_col) in menu_choices.items():
+            menu.Append(menu_id, label)
+        def on_menu_select(e):
+            label, suffix, is_collection = menu_choices.get(e.GetId())
+            full_url = channel_url.rstrip('/') + suffix
+            title_text = _("Fetching {type} from {channel}...").format(channel=channel_name, type=label)
+            thread_kwargs = {
+                'url': full_url,
+                'dialog_title_template': title_text,
+                'content_type_label': label,
+                'base_channel_url': channel_url,
+                'base_channel_name': channel_name,
+                'is_collection': is_collection,
             }
-            for menu_id, (label, suffix) in menu_choices.items():
-                menu.Append(menu_id, label)
-            
-            def on_menu_select(e):
-                label, suffix = menu_choices.get(e.GetId())
-                full_url = channel_url.rstrip('/') + suffix
-                # Translators: Progress template for fetching channel content. {type} is "Videos"/"Live", {channel} is the name.
-                template = _("Fetching {type} from {channel}...")   
-                title_text = template.format(channel=channel_name, type=label)
-                thread_kwargs = {
-                    'url': full_url,
-                    'dialog_title_template': title_text,
-                    'content_type_label': label,
-                    'base_channel_url': channel_url,
-                    'base_channel_name': channel_name
-                }
-                threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
-            menu.Bind(wx.EVT_MENU, on_menu_select)
-            self.PopupMenu(menu)
-            menu.Destroy()
-            
+            threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
+        menu.Bind(wx.EVT_MENU, on_menu_select)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
     def on_add_subscription(self, event):
-        """Handles adding a new subscription from a URL in the clipboard."""
         try:
             url = api.getClipData()
             if not url or not self.core.is_youtube_url(url):
@@ -3378,10 +3677,11 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             ui.message(_("Could not read from clipboard."))
             return
         threading.Thread(target=self.core.subscribe_to_channel_worker, args=(url,), daemon=True).start()
-        
+
     def on_unsubscribe(self, event):
         selected_index = self.channelListCtrl.GetFirstSelected()
-        if selected_index == -1: return
+        if selected_index == -1:
+            return
         original_index = self.channelListCtrl.GetItemData(selected_index)
         channel_url, channel_name = self.all_channels[original_index]
         # Translators: Confirmation message for unsubscribing. {name} is the channel name.
@@ -3391,7 +3691,8 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
         if wx.MessageBox(msg_template.format(name=channel_name), confirm_title, wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
             return
         threading.Thread(target=self.core.unsubscribe_from_channel_worker, args=(channel_url, channel_name), daemon=True).start()
-    
+
+
 class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """
     The definitive, fully-featured tabbed subscription feed dialog with all fixes applied.
@@ -4055,6 +4356,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         wx.CallAfter(self.notebook.GetCurrentPage().SetFocus)
         
 class ProfileManagementDialog(wx.Dialog):
+    
     def __init__(self, parent):
         # Translators: Title of the profile management dialog
         super().__init__(parent, title=_("Manage User Profiles"))
@@ -4209,13 +4511,6 @@ class ProfileManagementDialog(wx.Dialog):
             globalCommands.commands.script_restart(None)
             
 class DownloadProgressDialog(wx.Dialog):
-    """
-    Non-modal progress dialog for video/audio downloads.
-    แสดงข้อมูลเป็น ListView 2 column (Field | Value)
-    ให้ screen reader Tab/ลูกศรเลื่อนอ่านทีละ row ได้
-    """
-
-    # Row indices — ใช้ค่าคงที่เพื่อ SetItem ตรงๆ
     _ROW_FILENAME = 0
     _ROW_PROGRESS = 1
     _ROW_SIZE     = 2
@@ -4233,7 +4528,6 @@ class DownloadProgressDialog(wx.Dialog):
         self._closed = False
         self._is_pulse_mode = False
 
-        # ── Layout ──────────────────────────────────────────────
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         self.listCtrl = wx.ListCtrl(
@@ -4244,7 +4538,6 @@ class DownloadProgressDialog(wx.Dialog):
         self.listCtrl.InsertColumn(0, _("Field"), width=120)
         self.listCtrl.InsertColumn(1, _("Value"), width=280)
 
-        # สร้าง row ตามลำดับ _ROW_* — label คงที่, value เริ่มต้นเป็น "-"
         row_labels = [
             _("File"),      # _ROW_FILENAME
             _("Progress"),  # _ROW_PROGRESS
@@ -4259,13 +4552,11 @@ class DownloadProgressDialog(wx.Dialog):
 
         self._set_value(self._ROW_STATUS, _("Preparing..."))
 
-        # ความสูง ListView ให้พอดีกับจำนวน row
         row_h = self.listCtrl.GetItemRect(0).height if self.listCtrl.GetItemCount() else 22
         self.listCtrl.SetMinSize((-1, row_h * (len(row_labels) + 1)))
 
         main_sizer.Add(self.listCtrl, 1, wx.ALL | wx.EXPAND, 10)
 
-        # Gauge — visual เท่านั้น screen reader ไม่จำเป็นต้อง focus
         self.gauge = wx.Gauge(self, range=100, size=(-1, 14))
         main_sizer.Add(self.gauge, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.EXPAND, 10)
 
@@ -4277,24 +4568,17 @@ class DownloadProgressDialog(wx.Dialog):
         self.SetMinSize((430, -1))
         self.CentreOnScreen()
 
-        # ── Events ──────────────────────────────────────────────
         self.cancelBtn.Bind(wx.EVT_BUTTON, self._on_cancel)
         self.Bind(wx.EVT_CLOSE, self._on_close)
 
         self._pulse_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self._on_pulse_timer, self._pulse_timer)
 
-        # ── Register callbacks ───────────────────────────────────
         self.core.register_callback("download_started", self._on_download_started)
         self.core.register_callback("download_progress", self._on_progress)
 
-    # ── Helper ──────────────────────────────────────────────────
-
     def _set_value(self, row_idx, text):
-        """อัปเดต column Value ของ row ที่ระบุ"""
         self.listCtrl.SetItem(row_idx, 1, text)
-
-    # ── Static formatters ────────────────────────────────────────
 
     @staticmethod
     def _fmt_speed(bps):
@@ -4329,8 +4613,6 @@ class DownloadProgressDialog(wx.Dialog):
             return f"{b / 1024:.0f} KB"
         return f"{b} B"
 
-    # ── Callbacks ────────────────────────────────────────────────
-
     def _on_download_started(self, data=None):
         if self._closed:
             return
@@ -4354,7 +4636,6 @@ class DownloadProgressDialog(wx.Dialog):
             total   = data.get('total_bytes', 0)
 
             if percent >= 0:
-                # รู้ขนาดไฟล์ — แสดง progress จริง
                 if self._is_pulse_mode:
                     self._pulse_timer.Stop()
                     self._is_pulse_mode = False
@@ -4369,7 +4650,6 @@ class DownloadProgressDialog(wx.Dialog):
                 # Translators: Status while downloading.
                 self._set_value(self._ROW_STATUS, _("Downloading"))
             else:
-                # ไม่รู้ขนาดไฟล์ — pulse mode
                 if not self._is_pulse_mode:
                     self._is_pulse_mode = True
                     self._pulse_timer.Start(150)
@@ -4396,22 +4676,25 @@ class DownloadProgressDialog(wx.Dialog):
         if not self._closed:
             self.gauge.Pulse()
 
-    def _on_cancel(self, event):
-        self.core.cancel_download()
-        self.cancelBtn.Disable()
-        # Translators: Status after user clicks Cancel.
-        self._set_value(self._ROW_STATUS, _("Cancelling..."))
-
     def _on_close(self, event):
         if not self._closed:
             self.core.cancel_download()
         self._safe_close()
-
+        
+    def _on_cancel(self, event):
+        self.core.cancel_download()
+        self.cancelBtn.Disable()
+        self._set_value(self._ROW_STATUS, _("Cancelling..."))
+        self._cancel_timeout_timer = wx.CallLater(3000, self._safe_close)
+        
     def _safe_close(self):
         if self._closed:
             return
         self._closed = True
         self._pulse_timer.Stop()
+        if hasattr(self, '_cancel_timeout_timer') and self._cancel_timeout_timer.IsRunning():
+            self._cancel_timeout_timer.Stop()
         self.core.unregister_callback("download_started", self._on_download_started)
         self.core.unregister_callback("download_progress", self._on_progress)
         self.Destroy()
+
