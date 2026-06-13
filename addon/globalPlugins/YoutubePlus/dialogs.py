@@ -3144,7 +3144,7 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         for index, video in enumerate(self.videos):
             # Translators: Default text for a video title if it's missing.
             default_val = _("N/A")
-            self.listCtrl.InsertItem(index, video.get('title', default_val))
+            self.listCtrl.InsertItem(index, video.get('title') or default_val)
             self.listCtrl.SetItem(index, 1, video.get('duration_str', ''))
 
     def on_list_key_down(self, event):

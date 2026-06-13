@@ -1,3 +1,9 @@
+## 2026.6.13
+
+### Bug Fixes
+
+- Fixed crash when expanding a playlist containing unavailable (private/deleted) videos — these now display as "[Unavailable video]"
+
 ## 2026.6.9
 
 ### New Features

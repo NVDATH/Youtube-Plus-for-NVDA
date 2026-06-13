@@ -1539,7 +1539,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                                 'id': entry.get('id'),
                                 'playlist_url': f"https://www.youtube.com/playlist?list={entry.get('id')}",
                                 # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
-                                'title': entry.get('title', _("N/A")),
+                                'title': entry.get('title') or _("[Unavailable video]"),
                                 'duration_str': str(entry.get('playlist_count') or ''),
                                 'channel_url': base_channel_url or info_channel_url,
                                 'channel_name': base_channel_name or info_channel_name,
@@ -1549,7 +1549,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                             video_list.append({
                                 'id': entry.get('id'),
                                 # Translators: Abbreviation for "Not Available", used when a video title cannot be found.
-                                'title': entry.get('title', _("N/A")),
+                                'title': entry.get('title') or _("[Unavailable video]"),
                                 'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
                                 'channel_url': base_channel_url or info_channel_url,
                                 'channel_name': base_channel_name or info_channel_name,
