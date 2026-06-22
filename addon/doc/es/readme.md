@@ -25,6 +25,8 @@ Presiona **NVDA+Y** para ingresar al modo de comando de YoutubePlus, luego presi
 * b: (descargar subtítulos) - Descarga los subtítulos del video actual. Aparecerá un cuadro de diálogo de selección de idioma 
 * d: (descargar) — Te pide confirmar si deseas descargar como video o solo audio
 * e: (buscar) — Abre la ventana de búsqueda de videos
+* q: (búsqueda rápida) — Busca en YouTube inmediatamente usando el texto seleccionado actualmente o el contenido del portapapeles, sin abrir el diálogo de búsqueda
+* control+h: (historial de búsqueda) — Abre la ventana de Favoritos directamente en la pestaña Historial de búsqueda
 * i: (información) — Abre la ventana de detalles del video
 * t: (mostrar marca de tiempo) — Muestra las marcas de tiempo o capítulos si están disponibles
 * m: (abrir administrar suscripciones) — Abre la ventana de administración de suscripciones
@@ -67,7 +69,22 @@ Ten en cuenta que la función de descarga se proporciona por comodidad y puede t
 
 Este comando abre una ventana de búsqueda de YouTube. Escribe tu consulta en el campo de búsqueda y presiona Enter para buscar inmediatamente. También puedes pulsar Tab para ajustar la cantidad de resultados a mostrar; el complemento recordará este valor para futuras búsquedas.
 
-Los resultados se muestran en el mismo formato de [lista de videos](https://www.google.com/search?q=%23lista-de-videos) utilizado en todo el complemento, no como una página web de YouTube. Puedes acceder a todos los detalles del video de la misma manera que en cualquier otra lista de videos del complemento.
+El campo de búsqueda es un cuadro combinado que recuerda tus búsquedas anteriores: presiona la flecha hacia abajo (o Alt+Abajo) para desplegar una lista de palabras clave previas y seleccionar una en lugar de volver a escribirla.
+
+Los resultados se muestran en el mismo formato de lista de videos utilizado en todo el complemento, no como una página web de YouTube. Puedes acceder a todos los detalles del video de la misma manera que en cualquier otra lista de videos del complemento.
+
+#### q: (búsqueda rápida)
+
+Una alternativa más rápida al diálogo de búsqueda. Selecciona texto en cualquier aplicación (o tenlo copiado en el portapapeles si no hay nada seleccionado), luego presiona Q en la capa de YoutubePlus. El complemento busca en YouTube inmediatamente usando ese texto y el número de resultados guardado de tu última búsqueda — sin diálogo, sin pulsaciones adicionales.
+
+#### Historial de búsqueda
+
+Cada búsqueda que realizas — desde el diálogo de búsqueda o la búsqueda rápida — se guarda automáticamente. Presiona **Control+H** en la capa de YoutubePlus para ir directamente a la pestaña Historial de búsqueda en la ventana de Favoritos, donde puedes:
+
+* Presionar Enter, o el botón **Buscar de nuevo**, para repetir una búsqueda anterior
+* Presionar **Nueva búsqueda (Alt+N)** para abrir el diálogo de búsqueda
+* Presionar Suprimir, o el botón **Eliminar**, para eliminar una entrada
+* Presionar el botón **Borrar todo** para limpiar todo el historial
 
 ### i: (información del video)
 
@@ -98,67 +115,87 @@ Esta ventana ofrece más comodidad que leer los capítulos desde el navegador:
 
 ### Favoritos
 
-Una ventana que muestra tus favoritos guardados, dividida en 4 pestañas por tipo:
+Una ventana que muestra tus favoritos guardados, dividida en **5 pestañas** por tipo:
 
-* **Video:** Enumera tus videos guardados. Incluye botones de Acción y Copiar para cada elemento (descritos más abajo).
+* **Video:** Enumera tus videos guardados, organizados en categorías propias. Un árbol de categorías se sitúa a la izquierda y la lista de videos de la categoría seleccionada a la derecha (ver [Categorías](#categorías-pestañas-video-y-lista-de-seguimiento) más abajo).
 * **Canal:** Enumera tus canales guardados con un panel de descripción del canal. Incluye botones para abrir el canal y explorar su contenido por tipo.
 * **Lista de reproducción:** Enumera tus listas de reproducción guardadas. Presiona Espacio, Enter o Alt+V para expandir todos los videos de una lista de reproducción. Incluye un botón Abrir en la Web (Alt+W) para abrir la lista de reproducción en un navegador.
-* **Lista de seguimiento:** Enumera tus videos guardados con la misma estructura y diseño que la pestaña Video.
+* **Lista de seguimiento:** Enumera tus videos guardados con el mismo diseño de árbol + lista que la pestaña Video, con su propio conjunto independiente de categorías.
+* **Historial de búsqueda:** Muestra todas las búsquedas realizadas, con opciones para repetir, eliminar o borrar entradas.
 
 #### Comandos de la ventana de Favoritos
 
-* Presiona Control+1 a Control+4 para cambiar entre pestañas.
+* Presiona Control+1 a Control+5 para cambiar entre pestañas.
 * Presiona Control+Flecha arriba/abajo para reordenar las pestañas.
 * Presiona Control+C (copiar), Control+X (cortar) o Control+V (pegar) para reordenar los elementos.
-* Las pestañas de Videos Favoritos y Lista de Seguimiento admiten copiar y mover elementos entre sí. Las pestañas de Canales y Listas de Reproducción Favoritas solo admiten mover elementos dentro de su propia lista.
-
-
+    * Las pestañas Video y Lista de seguimiento admiten copiar y mover elementos entre sí, incluyendo elementos dentro de una categoría. Cada pestaña mantiene su propia lista de categorías separada, por lo que al mover un elemento entre ellas se coloca en la categoría actualmente seleccionada en la pestaña de destino. Las pestañas de Canales y Listas de Reproducción solo admiten mover elementos dentro de su propia lista.
 * Presiona F2 para renombrar manualmente el título del video / canal / lista de reproducción.
 * Presiona Alt+R o Suprimir para eliminar un elemento.
 * Presiona Alt+N para añadir un nuevo elemento desde el portapapeles; para las pestañas de canal y lista de reproducción, la URL debe coincidir con el tipo de pestaña.
-* Presiona Alt+S para ir al campo de búsqueda que filtra los resultados instantáneamente a medida que escribes, sin necesidad de presionar Enter.
-* Presiona el botón **Ordenar...** (al lado del campo de búsqueda) para ordenar la lista. 
-Puedes ordenar por Título, Canal, Duración, Fecha de adición o Fecha de subida. 
-Elige orden ascendente o descendente. 
-Si marcas "Aplicar permanentemente", el orden se guardará en el archivo. 
-De lo contrario, el ordenamiento es temporal y se restablecerá al buscar o actualizar la lista. 
-Presiona "Limpiar orden" para restaurar el orden original.
+* Presiona **Alt+O (Ordenar...)** para abrir el diálogo de ordenación de la pestaña actual.
+* El campo de búsqueda filtra los resultados instantáneamente a medida que escribes, sin necesidad de presionar Enter.
+
+#### Categorías (Pestañas Video y Lista de seguimiento)
+
+Tanto la pestaña Video como la de Lista de seguimiento permiten organizar elementos en categorías propias mediante un árbol a la izquierda, separado de la lista de elementos a la derecha. Cada pestaña mantiene sus propias categorías de forma independiente. Siempre hay un nodo predeterminado para los elementos sin categoría ("Videos" en la pestaña Video, "Lista de seguimiento" en la Lista de seguimiento).
+
+Con el foco en el árbol de categorías:
+
+* Presiona **Control+=** para añadir una nueva categoría
+* Presiona **F2** para renombrar la categoría seleccionada
+* Presiona **Suprimir** para eliminar la categoría seleccionada — si aún contiene elementos, se preguntará si moverlos al nodo predeterminado o eliminarlos junto con la categoría
+* Presiona **Control+Mayús+Arriba / Control+Mayús+Abajo** para reordenar la categoría seleccionada
+* Presiona Enter o Tab para mover el foco a la lista de elementos de esa categoría
+* Haz clic derecho o presiona la tecla Aplicación/Menú para el menú contextual — en un nodo de categoría muestra opciones de gestión (Añadir/Renombrar/Eliminar/Mover); en el nodo predeterminado solo muestra Añadir categoría
+
+Con el foco en la lista de elementos (derecha), haz clic derecho o presiona la tecla Aplicación/Menú para el mismo menú Acción usado en todo el complemento — separado del menú contextual del árbol.
+
+Cortar, Copiar y Pegar en la lista de elementos siempre coloca los elementos en la categoría actualmente seleccionada en el árbol.
+
+#### Ordenación
+
+El botón **Ordenar... (Alt+O)** abre un diálogo con:
+
+* **Ordenar por:** el campo de ordenación (Título, Canal, Duración, Fecha de subida, Fecha de adición)
+* **Ascendente / Descendente**
+* **Ordenar solo la categoría actual:** cuando está marcado, la ordenación solo reordena los elementos dentro de la categoría seleccionada en el árbol, sin afectar a las demás. Desmarcado por defecto.
+* **Aplicar permanentemente (guardar en archivo):** cuando está marcado, el nuevo orden se escribe en el disco inmediatamente. Si no está marcado, la ordenación es temporal y se revierte al recargar.
+* **Limpiar orden:** descarta cualquier ordenación temporal y restaura el orden guardado.
 
 #### Lista de videos
 
 En las pestañas de video y lista de seguimiento, así como en cualquier otra vista que muestre una lista de videos, encontrarás los botones **Acción...** y **Copiar...**. Estos son controles estándar en todas las vistas de listas de videos, y el feed de suscripciones añade una opción adicional de "Anular suscripción a este canal".
 
-Presiona Enter en cualquier elemento para abrir el video en tu navegador, o presiona la barra espaciadora para realizar la acción rápida que puedes configurar en [Opciones](https://www.google.com/search?q=%23opciones).
+Presiona Enter en cualquier elemento para abrir el video en tu navegador, o presiona la barra espaciadora para realizar la acción rápida que puedes configurar en Opciones.
 
 ##### Botón Acción
 
 Presiona Alt+A para abrir el menú Acción, que incluye:
 
-* Ver información del video...  (i)
-* Ver comentarios / Reproducción...  (c)
-* Ver capítulos/marcas de tiempo...  (t)
-* Descargar video  (d)
-* Descargar audio  (a)
-* Descargar subtítulos  (b)
-* Añadir a Videos Favoritos  (f)
-* Añadir a Canales Favoritos  (f)
-* Añadir a la Lista de Seguimiento  (w)
-* Abrir video en el navegador  (o)
-* Abrir canal en el navegador  (h)
-* Mostrar videos del canal  (v)
-* Mostrar shorts del canal  (s)
-* Mostrar transmisiones en vivo del canal  (l)
+* Ver información del video...  (i)
+* Ver comentarios / Reproducción...  (c)
+* Ver capítulos/marcas de tiempo...  (t)
+* Descargar video  (d)
+* Descargar audio  (a)
+* Descargar subtítulos  (b)
+* Añadir a Videos Favoritos  (f)
+* Añadir a Canales Favoritos  (f)
+* Añadir a la Lista de Seguimiento  (w)
+* Abrir video en el navegador  (o)
+* Abrir canal en el navegador  (h)
+* Mostrar videos del canal  (v)
+* Mostrar shorts del canal  (s)
+* Mostrar transmisiones en vivo del canal  (l)
 
 ##### Botón Copiar
 
 Presiona Alt+C para abrir el menú Copiar, que incluye:
 
-* Copiar título  (t)
-* Copiar URL del video  (u)
-* Copiar nombre del canal  (c)
-* Copiar URL del canal  (h)
-* Copiar resumen  (s)
-
+* Copiar título  (t)
+* Copiar URL del video  (u)
+* Copiar nombre del canal  (c)
+* Copiar URL del canal  (h)
+* Copiar resumen  (s)
 ### Feed de suscripciones
 
 Una ventana que muestra los videos de los canales que sigues dentro del complemento. Esto es independiente de las suscripciones de tu cuenta de YouTube; no se requiere vinculación de cuentas ni datos personales.

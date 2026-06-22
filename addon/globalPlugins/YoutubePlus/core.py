@@ -23,6 +23,7 @@ import ui
 import zipfile
 import config
 import api
+import textInfos
 import tones
 import nvwave
 import gui
@@ -1294,6 +1295,26 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
+    def _add_search_history(self, keyword, result_count):
+        """
+        Save a search keyword to history (MRU, max 50 entries).
+        If keyword already exists, move it to top and update timestamp.
+        """
+        try:
+            path = self.get_profile_path("search_history.json")
+            history = self._load_json_list(path)
+            history = [h for h in history if h.get('keyword', '').lower() != keyword.lower()]
+            history.insert(0, {
+                'keyword': keyword,
+                'result_count': result_count,
+                'searched_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            })
+            history = history[:50]
+            self._save_json_list(path, history)
+            self._notify_callbacks("search_history_updated")
+        except Exception as e:
+            log.error(f"Failed to save search history: {e}")
+
     def add_item_to_favorites_worker(self, url):
         """Worker to handle adding a favorite in the background with file lock and dialog refresh."""
         # Translators: Status message shown when a video is being added to the favorites list.
@@ -2030,7 +2051,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         item = {
                             'id': entry.get('id'),
                             # Translators: Abbreviation for "Not Available".
-                            'title': entry.get('title', _("N/A")),
+                            'title': entry.get('title') or _("[Unavailable video]"),
                             'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
                             'channel_name': entry.get('channel'),
                             'channel_url': entry.get('channel_url')
@@ -2047,6 +2068,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 # Translators: Message shown when a YouTube search returns no results. {query} is the search text.
                 wx.CallAfter(ui.message, _("No results found for '{query}'.").format(query=query))
             else:
+                self._add_search_history(keyword=query, result_count=count)
                 # Translators: Title of the dialog that displays YouTube search results. {query} is the search text.
                 dialog_title = _("Search Results for '{query}'").format(query=query)
                 wx.CallAfter(self._show_search_results, results_list, dialog_title, source_dialog)
@@ -2153,9 +2175,22 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def _show_search_results(self, results_list, title, parent_dialog):
         """Creates and shows the search results dialog with the correct parent."""
         gui.mainFrame.prePopup()
-        dialog = ChannelVideoDialog(parent_dialog, title, results_list, self)
-        dialog.ShowModal()
-        dialog.Destroy()
+        # ถ้า parent เป็น mainFrame (เรียกจาก script หรือ SearchHistoryPanel) ใช้ Show
+        # ถ้า parent เป็น SearchDialog ใช้ ShowModal แล้ว Destroy
+        is_modal = parent_dialog is not None and parent_dialog is not gui.mainFrame
+        dialog = ChannelVideoDialog(
+            parent_dialog if is_modal else gui.mainFrame,
+            title, results_list, self
+        )
+        if is_modal:
+            dialog.ShowModal()
+            if dialog:
+                try:
+                    dialog.Destroy()
+                except RuntimeError:
+                    pass
+        else:
+            dialog.Show()
         gui.mainFrame.postPopup()
 
     
@@ -2384,6 +2419,50 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         dialog.Show()
         gui.mainFrame.postPopup()
 
+    @script(description=_("Open favorites dialog on Search History tab."))
+    def script_showSearchHistory(self, gesture):
+        from .dialogs import FavsDialog
+        if FavsDialog._instance:
+            FavsDialog._instance.Raise()
+            return
+        # หา index ของ search_history tab จาก default order
+        default_tabs = ['videos', 'channels', 'playlists', 'watchlist', 'search_history']
+        tab_index = default_tabs.index('search_history')
+        wx.CallAfter(self._open_fav_at_tab, tab_index)
+
+    def _open_fav_at_tab(self, tab_index):
+        from .dialogs import FavsDialog
+        gui.mainFrame.prePopup()
+        dialog = FavsDialog(gui.mainFrame, self, initial_tab_index=tab_index)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
+    @script(description=_("Search YouTube using selected text or clipboard content and show results directly."))
+    def script_quickSearch(self, gesture):
+        query = ""
+        try:
+            obj = api.getCaretObject()
+            info = obj.makeTextInfo(textInfos.POSITION_SELECTION)
+            if info and not info.isCollapsed:
+                query = info.text.strip()
+        except (RuntimeError, NotImplementedError):
+            pass
+        except Exception as e:
+            log.debug(f"Could not get selected text: {e}")
+        if not query:
+            try:
+                query = api.getClipData().strip()
+            except Exception as e:
+                log.debug(f"Could not get clipboard data: {e}")
+        if not query:
+            # Translators: Error shown when no text is selected and clipboard is empty.
+            ui.message(_("No text selected and clipboard is empty."))
+            return
+        count = config.conf["YoutubePlus"].get("searchResultCount", 20)
+        threading.Thread(target=self._Youtube_worker,
+                         args=(query, count, gui.mainFrame),
+                         daemon=True).start()
+
     @script(description=_("Show manage subscriptions dialog."))
     def script_showManageSubDialog(self, gesture):
         gui.mainFrame.prePopup()
@@ -2609,6 +2688,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:b": "downloadSubtitle",
         "kb:d": "downloadClip",
         "kb:e": "showSearchDialog",
+        "kb:q": "quickSearch",
+        "kb:control+h": "showSearchHistory",
         "kb:i": "getInfo",
         "kb:t": "showChapters",
         "kb:m": "showManageSubDialog",

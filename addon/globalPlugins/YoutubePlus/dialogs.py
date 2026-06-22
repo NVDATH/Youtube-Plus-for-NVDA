@@ -27,10 +27,6 @@ import shutil
 import globalVars
 import globalCommands
 
-
-
-
-
 # Initialize translations for this file
 addonHandler.initTranslation()
 
@@ -49,10 +45,12 @@ confspec = {
     "refreshInteval": "integer(default=5, min=1, max=60)",
     "messageLimit": "integer(default=5000, min=100, max=20000)",
     #"cookieFilePath": "string(default='')",
-    #"cookieMode": "string(default='none')",
+    "cookieMode": "string(default='none')",
     "exportPath": "string()",
     "subDialogViewMode": "string(default='unseen')",
-    "searchResultCount": "integer(default=20, min=5, max=100)"
+    "searchResultCount": "integer(default=20, min=5, max=100)",
+    "favVideoLastCatId": "string(default='__default__')",
+    "watchListLastCatId": "string(default='__default__')",
 }
 config.conf.spec["YoutubePlus"] = confspec
 
@@ -135,6 +133,8 @@ class HelpDialog(BaseInfoDialog):
 - D: Download video/audio from the current URL
 - B: download sub title from the current URL
 - E: Search YouTube
+- Q: Quick search — searches immediately using selected text or clipboard content, no dialog
+- Control+H: Open Favorites window on the Search History tab
 
 --- Favorites & Subscriptions ---
 - A: Show the "Add to..." menu (for favorites/subscriptions)
@@ -167,7 +167,15 @@ class HelpDialog(BaseInfoDialog):
 **In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**
 - Delete: Remove the selected item from favorites
 - F2: rename item
-- Control+c / control+x > control+v : copy or cut then paste item to move position support multiple selection.
+- Control+c / control+x > control+v : copy or cut then paste item to move position, supports multiple selection and moving items between the Video and Watch List tabs
+- Alt+O: Open the Sort dialog for the current tab (sort by field, optionally limited to the current category, optionally saved permanently)
+
+**In the Video and Watch List tabs (category tree, left side):**
+- Control+=: Add a new category
+- F2: Rename the selected category
+- Delete: Remove the selected category (asks whether to move or delete its items)
+- Control+Shift+Up / Control+Shift+Down: Reorder the selected category
+- Application/Menu key or right-click: Category context menu on the tree, video Action menu on the item list
 
 --- Help ---
 - H: Show this help dialog
@@ -1203,48 +1211,44 @@ class VideoActionMixin:
 
 class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     # Class-level clipboard shared across all instances (enables cross-list paste)
-    _clipboard = []        # list of item dicts
+    _clipboard = []
     _clipboard_is_cut = False
-    _clipboard_source = None  # reference to the panel that did the cut/copy
+    _clipboard_source = None
+
+    _CONF_KEY = "videoListLastCatId"  # subclasses MUST override with a unique key
 
     def __init__(self, parent, core_instance):
         super().__init__(parent)
         self.core = core_instance
         self.items = []
+        self.categories = []
         self.filtered_items = []
-        self._is_first_load = True
+        self._current_sort = None
+        self._saved_search_text = ""
+        self._search_mode = False
+        self._closing = False
+        self._initial_focus_done = False
         self.last_selected_item_before_search = None
-        self._current_sort = None 
+
         self.file_path = self._get_file_path()
+        self.cat_file_path = self._get_category_file_path()
         self.callback_topic = self._get_callback_topic()
-        mainSizer = wx.BoxSizer(wx.VERTICAL)
-        # Multi-select: removed wx.LC_SINGLE_SEL
-        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT)
-        self._create_list_columns(self.listCtrl)
-        mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
-        self._create_extra_buttons(self, btnSizer)
-        btnSizer.AddStretchSpacer()
-        self.addBtn = wx.Button(self, label=self._get_add_button_label())
-        # Translators: Button to remove the selected item(s) from the list.
-        self.removeBtn = wx.Button(self, label=_("&Remove"))
-        btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
-        btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
-        mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-        self.SetSizer(mainSizer)
+
+        self._load_data()
+        self._build_ui()
+        self._populate_tree()
+        self._restore_selected_cat()
+        self._update_button_states()
+
         if self.callback_topic:
             self.core.register_callback(self.callback_topic, self.refresh_data)
-        self._load_data()
-        self._populate_list()
-        self._update_button_states()
-        self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
-        self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
-        self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
-        self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
-        self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected)
-        self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.on_list_item_selected)
+
+    # ---------- Hooks subclasses must/can override ----------
 
     def _get_file_path(self):
+        raise NotImplementedError
+
+    def _get_category_file_path(self):
         raise NotImplementedError
 
     def _get_callback_topic(self):
@@ -1253,31 +1257,99 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     def _get_add_button_label(self):
         raise NotImplementedError
 
+    def _get_default_category_label(self):
+        """Display name of the built-in 'uncategorized' node."""
+        return _("Videos")
+
     def _get_search_fields(self, item):
         return [item.get('title', ''), item.get('channel_name', '')]
 
     def _get_item_title_for_messages(self, item):
         return item.get('title', 'N/A')
 
-    def _create_list_columns(self, list_ctrl):
-        # Translators: Column header for video title.
-        list_ctrl.InsertColumn(0, _("Title"), width=350)
-        # Translators: Column header for channel name.
-        list_ctrl.InsertColumn(1, _("Channel"), width=200)
-        # Translators: Column header for video duration.
-        list_ctrl.InsertColumn(2, _("Duration"), width=120)
-        # Translators: Column header for video upload date.
-        list_ctrl.InsertColumn(3, _("Upload Date"), width=120)
+    def _get_sort_fields(self):
+        return [
+            ('title', _("Title")),
+            ('channel_name', _("Channel")),
+            ('duration_str', _("Duration")),
+            ('upload_date', _("Uploaded Date")),
+            ('added_at', _("Date Added")),
+        ]
 
-    def _create_extra_buttons(self, panel, sizer):
-        # Translators: Button to open action menu.
-        self.actionBtn = wx.Button(panel, label=_("&Action..."))
-        # Translators: Button to open copy menu.
-        self.copyBtn = wx.Button(panel, label=_("&Copy..."))
-        sizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
-        sizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
+    def _add_worker(self):
+        raise NotImplementedError
+
+    def _sanitize_pasted_item(self, item):
+        """Hook: subclasses override to strip/adjust fields on cross-list paste."""
+        return dict(item)
+
+    # ---------- UI ----------
+
+    def _build_ui(self):
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        self.treePane = wx.Panel(self.splitter)
+        self.listPane = wx.Panel(self.splitter)
+
+        tSizer = wx.BoxSizer(wx.VERTICAL)
+        self.treeCtrl = wx.TreeCtrl(
+            self.treePane,
+            style=wx.TR_DEFAULT_STYLE | wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT | wx.TR_FULL_ROW_HIGHLIGHT
+        )
+        self._root = self.treeCtrl.AddRoot("root")
+        tSizer.Add(self.treeCtrl, 1, wx.EXPAND)
+        self.treePane.SetSizer(tSizer)
+
+        lSizer = wx.BoxSizer(wx.VERTICAL)
+        self.listCtrl = wx.ListCtrl(self.listPane, style=wx.LC_REPORT)
+        self._create_list_columns(self.listCtrl)
+        lSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.BOTTOM, 5)
+
+        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.actionBtn = wx.Button(self.listPane, label=_("&Action..."))
+        self.copyBtn   = wx.Button(self.listPane, label=_("&Copy..."))
+        self.addBtn    = wx.Button(self.listPane, label=self._get_add_button_label())
+        self.removeBtn = wx.Button(self.listPane, label=_("&Remove"))
+        btnSizer.Add(self.actionBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.copyBtn,   0, wx.RIGHT, 5)
+        btnSizer.AddStretchSpacer()
+        btnSizer.Add(self.addBtn,    0, wx.RIGHT, 5)
+        btnSizer.Add(self.removeBtn, 0)
+        lSizer.Add(btnSizer, 0, wx.EXPAND)
+        self.listPane.SetSizer(lSizer)
+
+        self.splitter.SplitVertically(self.treePane, self.listPane, 200)
+        mainSizer.Add(self.splitter, 1, wx.EXPAND | wx.ALL, 5)
+        self.SetSizer(mainSizer)
+
+        self.Bind(wx.EVT_CHAR_HOOK, self._on_char_hook)
+        self.treeCtrl.Bind(wx.EVT_TREE_SEL_CHANGED, self._on_cat_selected)
+        self.treeCtrl.Bind(wx.EVT_CONTEXT_MENU, self._on_tree_right_click)
+        self.treeCtrl.Bind(wx.EVT_KEY_DOWN, self._on_tree_key_down)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_list_item_selected)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.on_list_item_selected)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
+        self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+        self.listCtrl.Bind(wx.EVT_CONTEXT_MENU, self._on_list_right_click)
         self.actionBtn.Bind(wx.EVT_BUTTON, self.on_action_menu)
         self.copyBtn.Bind(wx.EVT_BUTTON, self.on_copy_menu)
+        self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
+        self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
+
+    def _create_list_columns(self, list_ctrl):
+        list_ctrl.InsertColumn(0, _("Title"), width=320)
+        list_ctrl.InsertColumn(1, _("Duration"), width=90)
+        list_ctrl.InsertColumn(2, _("Channel"), width=160)
+        list_ctrl.InsertColumn(3, _("Date Added"), width=140)
+
+    def on_close(self, event=None):
+        self._closing = True
+        if self.callback_topic:
+            self.core.unregister_callback(self.callback_topic, self.refresh_data)
+        self._save_data()
+
+    # ---------- Data ----------
 
     def _load_data(self):
         with self.core._fav_file_lock:
@@ -1289,7 +1361,16 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                     self.items = []
             except (FileNotFoundError, json.JSONDecodeError, TypeError):
                 self.items = []
-        self.filtered_items = self.items[:]
+        # Migration: backfill category_id for data saved before categories existed.
+        migrated = False
+        for item in self.items:
+            if "category_id" not in item:
+                item["category_id"] = None
+                migrated = True
+        if migrated:
+            self._save_data()
+        raw_cats = self.core._load_json_list(self.cat_file_path)
+        self.categories = sorted(raw_cats, key=lambda c: c.get("position", 0))
 
     def _save_data(self):
         with self.core._fav_file_lock:
@@ -1297,64 +1378,423 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 with open(self.file_path, 'w', encoding='utf-8') as f:
                     json.dump(self.items, f, indent=2, ensure_ascii=False)
             except (IOError, OSError):
-                # Translators: Error message when data cannot be saved to disk.
                 ui.message(_("Error: Could not save data."))
+
+    def _save_categories(self):
+        for i, cat in enumerate(self.categories):
+            cat["position"] = i
+        self.core._save_json_list(self.cat_file_path, self.categories)
+
+    def _get_item_unique_key(self, item):
+        return item.get('url') or item.get('title', '')
+
+    def refresh_data(self, data=None):
+        if self._closing or not self.treeCtrl:
+            return
+        try:
+            saved_cat_id = self._get_selected_cat_id()
+            self._load_data()
+            self._populate_tree()
+            self._restore_cat_by_id(saved_cat_id)
+            current_search = getattr(self, '_saved_search_text', "")
+            self.on_search(current_search)
+            if data and data.get("action") == "add" and self.listCtrl.GetItemCount() > 0:
+                last_index = self.listCtrl.GetItemCount() - 1
+                self._focus_item(last_index)
+            self._update_button_states()
+        except RuntimeError:
+            pass
+
+    # ---------- Category tree ----------
+
+    def _populate_tree(self):
+        self.treeCtrl.DeleteChildren(self._root)
+        for cat in self.categories:
+            node = self.treeCtrl.AppendItem(self._root, cat["name"])
+            self.treeCtrl.SetItemData(node, {"type": "category", "cat": cat})
+        default_node = self.treeCtrl.AppendItem(self._root, self._get_default_category_label())
+        self.treeCtrl.SetItemData(default_node, {"type": "default"})
+
+    def _get_selected_cat_id(self):
+        node = self.treeCtrl.GetSelection()
+        if not node.IsOk():
+            return None
+        data = self.treeCtrl.GetItemData(node)
+        if not data:
+            return None
+        if data.get("type") == "category":
+            return data["cat"]["id"]
+        return "__default__"
+
+    def _restore_selected_cat(self):
+        saved = config.conf["YoutubePlus"].get(self._CONF_KEY, "__default__")
+        self._restore_cat_by_id(saved)
+
+    def _restore_cat_by_id(self, cat_id):
+        child, cookie = self.treeCtrl.GetFirstChild(self._root)
+        while child.IsOk():
+            data = self.treeCtrl.GetItemData(child)
+            if data:
+                if cat_id == "__default__" and data.get("type") == "default":
+                    self.treeCtrl.SelectItem(child)
+                    return
+                if data.get("type") == "category" and data["cat"]["id"] == cat_id:
+                    self.treeCtrl.SelectItem(child)
+                    return
+            child, cookie = self.treeCtrl.GetNextChild(self._root, cookie)
+        first, _cookie = self.treeCtrl.GetFirstChild(self._root)
+        if first.IsOk():
+            self.treeCtrl.SelectItem(first)
+
+    def _save_selected_cat(self):
+        cat_id = self._get_selected_cat_id()
+        if cat_id:
+            config.conf["YoutubePlus"][self._CONF_KEY] = cat_id
+
+    def _get_cat_id_for_selected_node(self):
+        node = self.treeCtrl.GetSelection()
+        if not node.IsOk():
+            return None
+        data = self.treeCtrl.GetItemData(node)
+        if data and data.get("type") == "category":
+            return data["cat"]["id"]
+        return None  # default node
+
+    def _get_cat_name_for_selected_node(self):
+        node = self.treeCtrl.GetSelection()
+        if not node.IsOk():
+            return self._get_default_category_label()
+        data = self.treeCtrl.GetItemData(node)
+        if data and data.get("type") == "category":
+            return data["cat"]["name"]
+        return self._get_default_category_label()
+
+    def _on_cat_selected(self, event):
+        if self._closing:
+            event.Skip()
+            return
+        try:
+            self._save_selected_cat()
+            self._search_mode = False
+            self.on_search("")
+            self._update_button_states()
+        except RuntimeError:
+            pass
+        event.Skip()
+
+    def _on_tree_right_click(self, event):
+        node = self.treeCtrl.GetSelection()
+        if node.IsOk():
+            self.treeCtrl.SelectItem(node)
+        self._show_category_menu()
+
+    def _on_tree_key_down(self, event):
+        key  = event.GetKeyCode()
+        ctrl = event.ControlDown()
+        node = self.treeCtrl.GetSelection()
+        data = self.treeCtrl.GetItemData(node) if node.IsOk() else None
+        is_cat = bool(data and data.get("type") == "category")
+
+        if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
+            wx.CallAfter(self.listCtrl.SetFocus)
+        elif key == wx.WXK_F2:
+            if is_cat:
+                self._category_rename(data["cat"])
+        elif ctrl and key == ord("="):
+            self._category_add()
+        elif key == wx.WXK_DELETE:
+            if is_cat:
+                self._category_delete(data["cat"])
+            else:
+                ui.message(_("The default {label} category cannot be deleted.").format(
+                    label=self._get_default_category_label()))
+        else:
+            event.Skip()
+
+    def _on_char_hook(self, event):
+        key = event.GetKeyCode()
+        if (event.ControlDown() and event.ShiftDown()
+                and key in (wx.WXK_UP, wx.WXK_DOWN)
+                and wx.Window.FindFocus() is self.treeCtrl):
+            node = self.treeCtrl.GetSelection()
+            data = self.treeCtrl.GetItemData(node) if node.IsOk() else None
+            if data and data.get("type") == "category":
+                self._category_move(data["cat"], -1 if key == wx.WXK_UP else 1)
+            else:
+                tones.beep(200, 50)
+            return
+        event.Skip()
+
+    def _show_category_menu(self):
+        node = self.treeCtrl.GetSelection()
+        data = self.treeCtrl.GetItemData(node) if node.IsOk() else None
+        is_cat = data and data.get("type") == "category"
+
+        menu = wx.Menu()
+        menu.Append(1, _("&Add Category"))
+        if is_cat:
+            menu.Append(2, _("&Rename Category"))
+            menu.Append(3, _("&Delete Category"))
+            menu.AppendSeparator()
+            menu.Append(4, _("Move &Up"))
+            menu.Append(5, _("Move &Down"))
+
+        def on_select(e):
+            eid = e.GetId()
+            if eid == 1:   self._category_add()
+            elif eid == 2: self._category_rename(data["cat"])
+            elif eid == 3: self._category_delete(data["cat"])
+            elif eid == 4: self._category_move(data["cat"], -1)
+            elif eid == 5: self._category_move(data["cat"], 1)
+
+        menu.Bind(wx.EVT_MENU, on_select)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def _category_add(self):
+        dlg = wx.TextEntryDialog(self, _("Category name:"), _("Add Category"))
+        if dlg.ShowModal() != wx.ID_OK:
+            dlg.Destroy()
+            return
+        name = dlg.GetValue().strip()
+        dlg.Destroy()
+        if not name:
+            return
+        import uuid
+        new_cat = {"id": str(uuid.uuid4()), "name": name, "position": len(self.categories)}
+        self.categories.append(new_cat)
+        self._save_categories()
+        self._populate_tree()
+        self._restore_cat_by_id(new_cat["id"])
+        ui.message(_("Category '{name}' added.").format(name=name))
+
+    def _category_rename(self, cat):
+        dlg = wx.TextEntryDialog(self, _("New name:"), _("Rename Category"), cat["name"])
+        if dlg.ShowModal() != wx.ID_OK:
+            dlg.Destroy()
+            return
+        name = dlg.GetValue().strip()
+        dlg.Destroy()
+        if not name:
+            return
+        cat["name"] = name
+        self._save_categories()
+        self._populate_tree()
+        self._restore_cat_by_id(cat["id"])
+        ui.message(_("Renamed to '{name}'.").format(name=name))
+
+    def _category_delete(self, cat):
+        cat_id = cat["id"]
+        video_count = sum(1 for v in self.items if v.get("category_id") == cat_id)
+        default_label = self._get_default_category_label()
+
+        if video_count == 0:
+            if wx.MessageBox(
+                _("Delete category '{name}'?").format(name=cat["name"]),
+                _("Confirm"), wx.YES_NO | wx.ICON_QUESTION
+            ) != wx.YES:
+                return
+            self.categories = [c for c in self.categories if c["id"] != cat_id]
+            self._save_categories()
+            self._populate_tree()
+            self._restore_cat_by_id("__default__")
+            self.core._notify_delete(_("Category '{name}' deleted.").format(name=cat["name"]))
+            return
+
+        dlg = wx.MessageDialog(
+            self,
+            _("Category '{name}' contains {count} item(s).\n\n"
+              "Move them to '{default}', or delete them along with the category?")
+                .format(name=cat["name"], count=video_count, default=default_label),
+            _("Delete Category"),
+            wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION
+        )
+        dlg.SetYesNoCancelLabels(_("&Move to {default}").format(default=default_label),
+                                  _("&Delete items too"), _("Cancel"))
+        result = dlg.ShowModal()
+        dlg.Destroy()
+        if result == wx.ID_CANCEL:
+            return
+
+        if result == wx.ID_YES:
+            for v in self.items:
+                if v.get("category_id") == cat_id:
+                    v["category_id"] = None
+            msg = _("Category '{name}' deleted. {count} item(s) moved to {default}.").format(
+                name=cat["name"], count=video_count, default=default_label)
+        else:
+            self.items = [v for v in self.items if v.get("category_id") != cat_id]
+            msg = _("Category '{name}' and its {count} item(s) deleted.").format(
+                name=cat["name"], count=video_count)
+
+        self.categories = [c for c in self.categories if c["id"] != cat_id]
+        self._save_data()
+        self._save_categories()
+        self._populate_tree()
+        self._restore_cat_by_id("__default__")
+        self.core._notify_delete(msg)
+
+    def _category_move(self, cat, direction):
+        idx = next((i for i, c in enumerate(self.categories) if c["id"] == cat["id"]), -1)
+        if idx == -1:
+            return
+        new_idx = idx + direction
+        if new_idx < 0 or new_idx >= len(self.categories):
+            tones.beep(200, 50)
+            return
+        self.categories[idx], self.categories[new_idx] = self.categories[new_idx], self.categories[idx]
+        self._save_categories()
+        self._populate_tree()
+        self._restore_cat_by_id(cat["id"])
+
+    # ---------- List rendering ----------
 
     def _populate_list(self):
         self.listCtrl.Freeze()
         try:
             self.listCtrl.DeleteAllItems()
-            for index, item in enumerate(self.filtered_items):
-                self.listCtrl.InsertItem(index, item.get('title', 'N/A'))
-                self.listCtrl.SetItem(index, 1, item.get('channel_name', 'N/A'))
-                self.listCtrl.SetItem(index, 2, item.get('duration_str', ''))
-                upload_date = item.get('upload_date', '')
-                if upload_date and len(upload_date) == 8:
-                    upload_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
-                self.listCtrl.SetItem(index, 3, upload_date)
-                if self._is_first_load and self.listCtrl.GetItemCount() > 0:
-                    self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
-                                                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                    self._is_first_load = False
+            has_cat_col = self.listCtrl.GetColumnCount() > 4
+
+            if self._search_mode:
+                if self.splitter.IsSplit():
+                    self.splitter.Unsplit(self.treePane)
+                if not has_cat_col:
+                    self.listCtrl.InsertColumn(4, _("Category"), width=120)
+                for i, v in enumerate(self.filtered_items):
+                    cat_id = v.get("category_id")
+                    cat_name = next((c["name"] for c in self.categories if c["id"] == cat_id),
+                                     self._get_default_category_label())
+                    self._insert_list_row(i, v)
+                    self.listCtrl.SetItem(i, 4, cat_name)
+            else:
+                if not self.splitter.IsSplit():
+                    self.splitter.SplitVertically(self.treePane, self.listPane, 200)
+                if has_cat_col:
+                    self.listCtrl.DeleteColumn(4)
+                for i, v in enumerate(self.filtered_items):
+                    self._insert_list_row(i, v)
+
+            if self.listCtrl.GetItemCount() > 0:
+                self.listCtrl.SetItemState(
+                    0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                    wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+                self.listCtrl.EnsureVisible(0)
         finally:
             self.listCtrl.Thaw()
-            
+
+        if not self._initial_focus_done:
+            wx.CallAfter(self.listCtrl.SetFocus)
+            self._initial_focus_done = True
+
+    def _insert_list_row(self, index, video):
+        self.listCtrl.InsertItem(index, video.get("title") or _("[Unavailable video]"))
+        self.listCtrl.SetItem(index, 1, video.get("duration_str", ""))
+        self.listCtrl.SetItem(index, 2, video.get("channel_name", ""))
+        self.listCtrl.SetItem(index, 3, video.get("added_at", ""))
+
+    def _recompute_filtered_items(self):
+        if self._search_mode:
+            q = self._saved_search_text.strip().lower()
+            self.filtered_items = [
+                v for v in self.items
+                if any(q in field.lower() for field in self._get_search_fields(v))
+            ]
+        else:
+            cat_id = self._get_cat_id_for_selected_node()
+            self.filtered_items = [v for v in self.items if v.get("category_id") == cat_id]
+
+    def on_search(self, search_text):
+        self._saved_search_text = search_text
+        self._search_mode = bool(search_text.strip())
+        if self._search_mode and self.last_selected_item_before_search is None:
+            selected_index = self.listCtrl.GetFirstSelected()
+            if selected_index != -1 and selected_index < len(self.filtered_items):
+                self.last_selected_item_before_search = self.filtered_items[selected_index]
+        self._recompute_filtered_items()
+        self._populate_list()
+        self._update_button_states()
+        if not self._search_mode and self.last_selected_item_before_search:
+            try:
+                new_index = self.filtered_items.index(self.last_selected_item_before_search)
+            except ValueError:
+                new_index = 0
+            self.last_selected_item_before_search = None
+            self._focus_item(new_index)
+        elif self.listCtrl.GetItemCount() > 0:
+            self._focus_item(0)
+
+    def _focus_item(self, index):
+        count = self.listCtrl.GetItemCount()
+        if count == 0:
+            return
+        index = min(index, count - 1)
+        self._is_programmatic_focus = True
+        self.listCtrl.SetItemState(-1, 0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.SetItemState(
+            index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self.listCtrl.EnsureVisible(index)
+        self._is_programmatic_focus = False
+
+    def on_list_item_selected(self, event):
+        if not getattr(self, '_is_programmatic_focus', False):
+            self._update_button_states()
+        event.Skip()
+
+    def get_selected_video_info(self):
+        idx = self.listCtrl.GetFirstSelected()
+        if idx == -1 or idx >= len(self.filtered_items):
+            return None
+        return self.filtered_items[idx]
+
     def _get_selected_items(self):
-        """Return list of selected items in current view order."""
         selected = []
         idx = self.listCtrl.GetFirstSelected()
         while idx != -1:
-            selected.append(self.filtered_items[idx])
+            if idx < len(self.filtered_items):
+                selected.append(self.filtered_items[idx])
             idx = self.listCtrl.GetNextSelected(idx)
         return selected
 
-    def _get_item_unique_key(self, item):
-        """Return a value that uniquely identifies an item (URL preferred)."""
-        return item.get('url') or item.get('title', '')
-
-    def refresh_data(self, data=None):
-        if not self.listCtrl:
-            return
-        self._load_data()
-        current_search = getattr(self, '_saved_search_text', "")  # ← ดึงค่าที่จำไว้
-        self.on_search(current_search)
-        if data and data.get("action") == "add":
-            count = self.listCtrl.GetItemCount()
-            if count > 0:
-                last_index = count - 1
-                self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
-                                           wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-                self.listCtrl.EnsureVisible(last_index)
-        self._update_button_states()
-        
     def _update_button_states(self):
-        is_not_empty = bool(self.items)
-        is_filtered_not_empty = bool(self.filtered_items)
-        is_selected = self.listCtrl.GetFirstSelected() != -1
-        self.removeBtn.Enable(is_not_empty and is_selected)
-        self.actionBtn.Enable(is_filtered_not_empty and is_selected)
-        self.copyBtn.Enable(is_filtered_not_empty and is_selected)
-    
+        if not self or not self.listCtrl:
+            return
+        has_sel = self.listCtrl.GetFirstSelected() != -1
+        self.actionBtn.Enable(has_sel)
+        self.copyBtn.Enable(has_sel)
+        self.removeBtn.Enable(has_sel)
+
+    def _on_list_right_click(self, event):
+        if self.listCtrl.GetFirstSelected() == -1:
+            event.Skip()
+            return
+        menu = self.create_video_action_menu()
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def on_list_key_down(self, event):
+        key_code = event.GetKeyCode()
+        if key_code == wx.WXK_F2:
+            self.on_rename_title()
+            return
+        if event.ControlDown():
+            if key_code == ord('C'):
+                self.on_list_copy()
+                return
+            elif key_code == ord('X'):
+                self.on_list_cut()
+                return
+            elif key_code == ord('V'):
+                self.on_list_paste()
+                return
+        if key_code == wx.WXK_DELETE:
+            self.on_remove(event)
+            return
+        if key_code == wx.WXK_TAB and not event.ShiftDown():
+            wx.CallAfter(self.treeCtrl.SetFocus)
+            return
+        self.handle_video_list_keys(event)
+
     def on_action_menu(self, event):
         if self.listCtrl.GetFirstSelected() == -1:
             return
@@ -1366,7 +1806,6 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         if self.listCtrl.GetFirstSelected() == -1:
             return
         menu = wx.Menu()
-        # Translators: Menu items for copying specific video information.
         menu.Append(1, _("Copy &Title"))
         menu.Append(2, _("Copy Video &URL"))
         menu.Append(3, _("Copy &Channel Name"))
@@ -1383,51 +1822,90 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         self.PopupMenu(menu)
         menu.Destroy()
 
-    def _get_sort_fields(self):
-        """Subclasses can override to provide different sort fields."""
-        return [
-            # Translators: Sort field option for video title.
-            ('title', _("Title")),
-            # Translators: Sort field option for channel name.
-            ('channel_name', _("Channel")),
-            # Translators: Sort field option for video duration.
-            ('duration_str', _("Duration")),
-            # Translators: Sort field option for uploaded date.
-            ('upload_date', _("uploaded Date")),
-            # Translators: Sort field option for date added to the list.
-            ('added_at', _("Date Added")),
-        ]
+    def on_add(self, event):
+        try:
+            url = api.getClipData()
+            if not url or not self.core.is_youtube_url(url):
+                ui.message(_("No valid YouTube URL found in clipboard."))
+                return
+        except Exception:
+            ui.message(_("Could not read from clipboard."))
+            return
+        threading.Thread(target=self._add_worker(), args=(url,), daemon=True).start()
+
+    def on_remove(self, event):
+        selected_items = self._get_selected_items()
+        if not selected_items:
+            return
+        first_index = self.listCtrl.GetFirstSelected()
+        count = len(selected_items)
+        if count == 1:
+            title = self._get_item_title_for_messages(selected_items[0])
+            confirm_msg = _("Are you sure you want to remove '{title}'?").format(title=title)
+        else:
+            confirm_msg = _("Are you sure you want to remove {count} selected items?").format(count=count)
+        if wx.MessageBox(confirm_msg, _("Confirm Removal"), wx.YES_NO | wx.ICON_QUESTION, self) != wx.YES:
+            return
+        remove_keys = {self._get_item_unique_key(i) for i in selected_items}
+        self.items = [i for i in self.items if self._get_item_unique_key(i) not in remove_keys]
+        self._save_data()
+        current_search = getattr(self, '_saved_search_text', "")
+        self.on_search(current_search)
+        item_count = self.listCtrl.GetItemCount()
+        if item_count > 0:
+            self._focus_item(min(first_index, item_count - 1))
+        self._update_button_states()
+        wx.CallAfter(self.listCtrl.SetFocus)
+        self.core._notify_delete(_("Item removed.") if count == 1 else
+                                 _("{count} items removed.").format(count=count))
+
+    def on_rename_title(self):
+        selected_items = self._get_selected_items()
+        if len(selected_items) != 1:
+            return
+        item = selected_items[0]
+        current_title = item.get('title', '')
+        with wx.TextEntryDialog(self, _("Enter new title:"), _("Rename"), value=current_title) as dlg:
+            if dlg.ShowModal() != wx.ID_OK:
+                return
+            new_title = dlg.GetValue().strip()
+            if not new_title or new_title == current_title:
+                return
+        key = self._get_item_unique_key(item)
+        for master_item in self.items:
+            if self._get_item_unique_key(master_item) == key:
+                master_item['title'] = new_title
+                break
+        self._save_data()
+        selected_index = self.listCtrl.GetFirstSelected()
+        for i, f_item in enumerate(self.filtered_items):
+            if self._get_item_unique_key(f_item) == key:
+                f_item['title'] = new_title
+                self.listCtrl.SetItem(i, 0, new_title)
+                break
+        if selected_index != -1:
+            self.listCtrl.SetItemState(
+                selected_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        wx.CallAfter(self.listCtrl.SetFocus)
+
+    # ---------- Sort ----------
 
     def on_sort(self, event):
         fields = self._get_sort_fields()
         field_labels = [f[1] for f in fields]
-        
-        dlg = wx.Dialog(
-            self,
-            # Translators: Title of the sort dialog.
-            title=_("Sort List")
-        )
+        dlg = wx.Dialog(self, title=_("Sort List"))
         sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # ComboBox เลือก field
-        # Translators: Label for sort field selection.
         sizer.Add(wx.StaticText(dlg, label=_("Sort by:")), 0, wx.ALL, 5)
         fieldCombo = wx.ComboBox(dlg, choices=field_labels, style=wx.CB_READONLY)
-        # เลือก field ปัจจุบันถ้ามี
         if self._current_sort:
-            current_keys = [f[0] for f in fields]
-            if self._current_sort[0] in current_keys:
-                fieldCombo.SetSelection(current_keys.index(self._current_sort[0]))
-            else:
-                fieldCombo.SetSelection(0)
+            keys = [f[0] for f in fields]
+            sel = keys.index(self._current_sort[0]) if self._current_sort[0] in keys else 0
         else:
-            fieldCombo.SetSelection(0)
+            sel = 0
+        fieldCombo.SetSelection(sel)
         sizer.Add(fieldCombo, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
-
-        # Radio button Ascending/Descending
-        # Translators: Radio button for ascending sort order.
         ascRadio = wx.RadioButton(dlg, label=_("&Ascending"), style=wx.RB_GROUP)
-        # Translators: Radio button for descending sort order.
         descRadio = wx.RadioButton(dlg, label=_("&Descending"))
         if self._current_sort and not self._current_sort[1]:
             descRadio.SetValue(True)
@@ -1436,16 +1914,16 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         sizer.Add(ascRadio, 0, wx.LEFT | wx.TOP, 5)
         sizer.Add(descRadio, 0, wx.LEFT, 5)
 
-        # Checkbox permanent
-        # Translators: Checkbox to apply sort permanently to the saved file.
+        onlyCurrentCheck = wx.CheckBox(dlg, label=_("Sort only the current &category"))
+        onlyCurrentCheck.SetValue(False)
+        sizer.Add(onlyCurrentCheck, 0, wx.LEFT | wx.TOP, 8)
         permanentChk = wx.CheckBox(dlg, label=_("&Apply permanently (saves to file)"))
-        sizer.Add(permanentChk, 0, wx.ALL, 5)
+        permanentChk.SetValue(False)
+        sizer.Add(permanentChk, 0, wx.LEFT | wx.TOP, 5)
 
-        # Buttons
         btnSizer = wx.StdDialogButtonSizer()
         okBtn = wx.Button(dlg, wx.ID_OK)
         cancelBtn = wx.Button(dlg, wx.ID_CANCEL)
-        # Translators: Button to clear current sort and restore original order.
         clearBtn = wx.Button(dlg, label=_("C&lear Sort"))
         btnSizer.AddButton(okBtn)
         btnSizer.AddButton(cancelBtn)
@@ -1455,42 +1933,38 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
         outerBtnSizer.AddStretchSpacer()
         outerBtnSizer.Add(btnSizer, 0)
         sizer.Add(outerBtnSizer, 0, wx.EXPAND | wx.ALL, 5)
-
         dlg.SetSizer(sizer)
         sizer.Fit(dlg)
         dlg.CentreOnScreen()
-
-        def on_clear(e):
-            dlg.EndModal(wx.ID_RESET)
-        clearBtn.Bind(wx.EVT_BUTTON, on_clear)
+        clearBtn.Bind(wx.EVT_BUTTON, lambda e: dlg.EndModal(wx.ID_RESET))
 
         result = dlg.ShowModal()
         selected_field_key = fields[fieldCombo.GetSelection()][0]
         ascending = ascRadio.GetValue()
+        only_current = onlyCurrentCheck.GetValue()
         permanent = permanentChk.GetValue()
         dlg.Destroy()
 
         if result == wx.ID_RESET:
-            # Clear sort — คืนลำดับจากไฟล์
             self._current_sort = None
             self._load_data()
             current_search = getattr(self, '_saved_search_text', "")
             self.on_search(current_search)
-            # Translators: Notification after sort is cleared and original order is restored.
             ui.message(_("Sort cleared."))
             return
-
         if result != wx.ID_OK:
             return
 
         self._current_sort = (selected_field_key, ascending)
-        self._apply_sort(permanent)
+        self._apply_sort(permanent, only_current)
 
-    def _apply_sort(self, permanent=False):
+    def _apply_sort(self, permanent=False, only_current=False):
         if not self._current_sort:
             return
         field_key, ascending = self._current_sort
 
+        # Original duration parser — duration_str is verbose text ("1 Hour 23 Minutes"),
+        # produced by core._format_duration_verbose, NOT "H:MM:SS".
         def parse_duration(duration_str):
             if not duration_str:
                 return 0
@@ -1514,107 +1988,66 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 return parse_duration(str(val))
             return str(val).lower()
 
+        target_cat_id = self._get_cat_id_for_selected_node() if only_current else None
+
         if permanent:
-            self.items.sort(key=sort_key, reverse=not ascending)
+            if only_current:
+                indices = [i for i, v in enumerate(self.items) if v.get("category_id") == target_cat_id]
+                subset = sorted((self.items[i] for i in indices), key=sort_key, reverse=not ascending)
+                for idx, item in zip(indices, subset):
+                    self.items[idx] = item
+            else:
+                self.items.sort(key=sort_key, reverse=not ascending)
             self._save_data()
             self._current_sort = None
             current_search = getattr(self, '_saved_search_text', "")
             self.on_search(current_search)
-            # Translators: Notification after sort is applied permanently and saved.
             ui.message(_("List sorted and saved."))
         else:
-            self.filtered_items.sort(key=sort_key, reverse=not ascending)
+            if only_current:
+                indices = [i for i, v in enumerate(self.filtered_items) if v.get("category_id") == target_cat_id]
+                subset = sorted((self.filtered_items[i] for i in indices), key=sort_key, reverse=not ascending)
+                for idx, item in zip(indices, subset):
+                    self.filtered_items[idx] = item
+            else:
+                self.filtered_items.sort(key=sort_key, reverse=not ascending)
             self._populate_list()
-            # Translators: Notification after temporary sort is applied.
             ui.message(_("List sorted temporarily."))
+
         if self.listCtrl.GetItemCount() > 0:
             self._focus_item(0)
-            wx.CallAfter(self.listCtrl.SetFocus)        
-            
-    def on_remove(self, event):
-        selected_items = self._get_selected_items()
-        if not selected_items:
-            return
-        first_index = self.listCtrl.GetFirstSelected()
-        count = len(selected_items)
-        if count == 1:
-            title = self._get_item_title_for_messages(selected_items[0])
-            # Translators: Confirmation dialog message before deleting a single item.
-            confirm_msg = _("Are you sure you want to remove '{title}'?").format(title=title)
-        else:
-            # Translators: Confirmation dialog message before deleting multiple items. {count} is the number of items.
-            confirm_msg = _("Are you sure you want to remove {count} selected items?").format(count=count)
-        # Translators: Title of the confirmation dialog for removal.
-        confirm_title = _("Confirm Removal")
-        if wx.MessageBox(confirm_msg, confirm_title, wx.YES_NO | wx.ICON_QUESTION, self) != wx.YES:
-            return
-        for item in selected_items:
-            self.items.remove(item)
-        self._save_data()
-        current_search = getattr(self, '_saved_search_text', "")
-        self.on_search(current_search)
-        #self.on_search("")
-        item_count = self.listCtrl.GetItemCount()
-        if item_count > 0:
-            new_selection = min(first_index, item_count - 1)
-            self.listCtrl.SetItemState(new_selection, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
-                                       wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-            self.listCtrl.EnsureVisible(new_selection)
-        self._update_button_states()
-        wx.CallAfter(self.listCtrl.SetFocus)
-        # Translators: Notification spoken by NVDA after item(s) are removed.
-        self.core._notify_delete(_("Item removed.") if count == 1 else
-                                 _("{count} items removed.").format(count=count))
-
-    def on_add(self, event):
-        try:
-            url = api.getClipData()
-            if not url or not self.core.is_youtube_url(url):
-                # Translators: Message when the clipboard does not contain a YouTube link.
-                ui.message(_("No valid YouTube URL found in clipboard."))
-                return
-        except Exception:
-            # Translators: Error message when clipboard access fails.
-            ui.message(_("Could not read from clipboard."))
-            return
-        threading.Thread(target=self._add_worker(), args=(url,), daemon=True).start()
-        
-    def _add_worker(self):
-        raise NotImplementedError
+            wx.CallAfter(self.listCtrl.SetFocus)
 
     # ---------- Cut / Copy / Paste ----------
 
     def on_list_copy(self):
-        """Ctrl+C — copy selected items to class-level clipboard."""
         selected = self._get_selected_items()
         if not selected:
             return
-        BaseVideoListPanel._clipboard = [dict(item) for item in selected]
+        BaseVideoListPanel._clipboard = [dict(i) for i in selected]
         BaseVideoListPanel._clipboard_is_cut = False
         BaseVideoListPanel._clipboard_source = self
-        # Translators: Notification spoken by NVDA after copying item(s) to clipboard.
         ui.message(_("{count} item(s) copied.").format(count=len(selected)))
 
     def on_list_cut(self):
-        """Ctrl+X — mark selected items for cut (removed on paste)."""
         selected = self._get_selected_items()
         if not selected:
             return
-        BaseVideoListPanel._clipboard = [dict(item) for item in selected]
+        BaseVideoListPanel._clipboard = [dict(i) for i in selected]
         BaseVideoListPanel._clipboard_is_cut = True
         BaseVideoListPanel._clipboard_source = self
-        # Translators: Notification spoken by NVDA after cutting item(s) to clipboard.
         ui.message(_("{count} item(s) cut.").format(count=len(selected)))
 
     def on_list_paste(self):
         if not BaseVideoListPanel._clipboard:
-            # Translators: Notification when the clipboard is empty and paste is attempted.
             ui.message(_("Clipboard is empty."))
             return
 
         is_same_list = BaseVideoListPanel._clipboard_source is self
         is_cut = BaseVideoListPanel._clipboard_is_cut
         clipboard_keys = [self._get_item_unique_key(i) for i in BaseVideoListPanel._clipboard]
+        target_cat_id = self._get_cat_id_for_selected_node()
+        cat_name = self._get_cat_name_for_selected_node()
 
         selected_items = self._get_selected_items()
         if selected_items:
@@ -1625,9 +2058,11 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 insert_pos = len(self.items)
         else:
             insert_pos = len(self.items)
+
         added_count = 0
         replaced_count = 0
-        skipped = 0 
+        skipped = 0
+
         if is_same_list and is_cut:
             items_to_move = [dict(i) for i in BaseVideoListPanel._clipboard]
             move_keys = set(clipboard_keys)
@@ -1638,10 +2073,10 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
             adjusted_pos = insert_pos - removed_before
             self.items = [i for i in self.items if self._get_item_unique_key(i) not in move_keys]
             for offset, item in enumerate(items_to_move):
+                item["category_id"] = target_cat_id
                 self.items.insert(adjusted_pos + offset, item)
             self._save_data()
             added_count = len(items_to_move)
-            skipped = 0
             BaseVideoListPanel._clipboard = []
             BaseVideoListPanel._clipboard_is_cut = False
             BaseVideoListPanel._clipboard_source = None
@@ -1663,38 +2098,36 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 op = _("Cut") if is_cut else _("Copy")
                 dup_count = len(duplicate_items)
                 if dup_count == 1:
-                    # Translators: Confirmation dialog when pasting a single duplicate item across lists. {op} is Cut or Copy, {title} is the item title, {src} and {dst} are list names.
                     title = self._get_item_title_for_messages(duplicate_items[0])
                     confirm_msg = _(
                         "{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
                     ).format(op=op, title=title, src=source_name, dst=dest_name)
                 else:
-                    # Translators: Confirmation dialog when pasting multiple duplicate items across lists. {op} is Cut or Copy, {count} is number of duplicates, {src} and {dst} are list names.
                     confirm_msg = _(
                         "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
                     ).format(op=op, count=dup_count, src=source_name, dst=dest_name)
                 replace_duplicates = (
-                # Translators: Title of the confirmation dialog when replacing duplicate items on paste.
                     wx.MessageBox(confirm_msg, _("Confirm Replace"),
                                   wx.YES_NO | wx.ICON_QUESTION, self) == wx.YES
                 )
 
-            added_count = 0
-            replaced_count = 0
-            skipped = 0
             for item in BaseVideoListPanel._clipboard:
                 key = self._get_item_unique_key(item)
                 if key in existing_keys:
                     if replace_duplicates:
                         for i, existing in enumerate(self.items):
                             if self._get_item_unique_key(existing) == key:
-                                self.items[i] = dict(item)
+                                new_item = self._sanitize_pasted_item(item)
+                                new_item["category_id"] = target_cat_id
+                                self.items[i] = new_item
                                 break
                         replaced_count += 1
                     else:
                         skipped += 1
                 else:
-                    self.items.insert(insert_pos + added_count, dict(item))
+                    new_item = self._sanitize_pasted_item(item)
+                    new_item["category_id"] = target_cat_id
+                    self.items.insert(insert_pos + added_count, new_item)
                     existing_keys.add(key)
                     added_count += 1
 
@@ -1739,14 +2172,11 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
 
         total_done = added_count + replaced_count
         if total_done > 0 and skipped == 0:
-            # Translators: Notification after successfully pasting one or more items with no duplicates skipped.
-            msg = _("{count} item(s) pasted.").format(count=total_done)
+            msg = _("{count} item(s) pasted to {cat}.").format(count=total_done, cat=cat_name)
         elif total_done > 0 and skipped > 0:
-            # Translators: Notification after pasting where some duplicate items were skipped.
-            msg = _("{done} item(s) pasted, {skipped} skipped.").format(
-                done=total_done, skipped=skipped)
+            msg = _("{done} item(s) pasted to {cat}, {skipped} skipped.").format(
+                done=total_done, cat=cat_name, skipped=skipped)
         else:
-            # Translators: Notification when all items to be pasted already exist in the destination list.
             msg = _("All items already exist in this list.")
         ui.message(msg)
 
@@ -1763,144 +2193,25 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
                 pass
         idx = min(anchor_idx, count - 1)
         panel._focus_item(idx)
-        
+
     def _get_list_display_name(self, panel):
-        """Return a human-readable name for the given panel (used in dialogs).
-        Subclasses can override this to return a translated tab name."""
         return getattr(panel, '_list_display_name', panel.__class__.__name__)
 
     def _get_focused_item(self, panel):
-        """Return (item, view_index) of the currently focused item, or (None, -1)."""
         idx = panel.listCtrl.GetFirstSelected()
         if idx != -1 and idx < len(panel.filtered_items):
             return panel.filtered_items[idx], idx
         return None, -1
 
-    def on_search(self, search_text):
-        self._saved_search_text = search_text  
-        search_text = search_text.lower()
-        if search_text and self.last_selected_item_before_search is None:
-            selected_index = self.listCtrl.GetFirstSelected()
-            if selected_index != -1:
-                self.last_selected_item_before_search = self.filtered_items[selected_index]
-        if search_text:
-            self.filtered_items = [
-                item for item in self.items
-                if any(search_text in field.lower() for field in self._get_search_fields(item))
-            ]
-        else:
-            self.filtered_items = self.items[:]
-        self._populate_list()
-        self._update_button_states() 
-        if not search_text and self.last_selected_item_before_search:
-            try:
-                new_index = self.filtered_items.index(self.last_selected_item_before_search)
-            except ValueError:
-                new_index = 0
-            self.last_selected_item_before_search = None
-            self._focus_item(new_index)
-        elif search_text and self.listCtrl.GetItemCount() > 0:
-            self._focus_item(0)
-        else:
-            if self.listCtrl.GetItemCount() > 0:
-                self._focus_item(0)
-
-    def _focus_item(self, index):
-        if self.listCtrl.GetItemCount() == 0:
-            return
-        index = min(index, self.listCtrl.GetItemCount() - 1)
-        self._is_programmatic_focus = True
-        self.listCtrl.SetItemState(-1, 0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-        self.listCtrl.SetItemState(index,
-            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
-            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
-        self.listCtrl.EnsureVisible(index)
-        if index < len(self.filtered_items):
-            self._last_selected_key = self._get_item_unique_key(self.filtered_items[index])
-        self._is_programmatic_focus = False
-        
-    def on_list_item_selected(self, event):
-        if getattr(self, '_is_programmatic_focus', False):
-            event.Skip()
-            return
-        idx = self.listCtrl.GetFirstSelected()
-        if idx != -1 and idx < len(self.filtered_items):
-            self._last_selected_key = self._get_item_unique_key(self.filtered_items[idx])
-        self._update_button_states()
-        event.Skip()
-    
-    def get_selected_video_info(self):
-        selected_index = self.listCtrl.GetFirstSelected()
-        if selected_index == -1:
-            return None
-        return self.filtered_items[selected_index]
-
-    def on_list_key_down(self, event):
-        key_code = event.GetKeyCode()
-        if key_code == wx.WXK_F2:
-            self.on_rename_title()
-            return
-        if event.ControlDown():
-            if key_code == ord('C'):
-                self.on_list_copy()
-                return
-            elif key_code == ord('X'):
-                self.on_list_cut()
-                return
-            elif key_code == ord('V'):
-                self.on_list_paste()
-                return
-        if key_code == wx.WXK_DELETE:
-            self.on_remove(event)
-            return
-        self.handle_video_list_keys(event)
-
-    def on_close(self, event):
-        if self.callback_topic:
-            self.core.unregister_callback(self.callback_topic, self.refresh_data)
-        self._save_data()
-      
-    def on_rename_title(self):
-        selected_items = self._get_selected_items()
-        if len(selected_items) != 1:
-            return
-        item = selected_items[0]
-        current_title = item.get('title', '')
-        # Translators: Prompt shown when renaming a video title.
-        with wx.TextEntryDialog(
-            self,
-            _("Enter new title:"),
-            # Translators: Title of the rename dialog.
-            _("Rename"),
-            value=current_title
-        ) as dlg:
-            if dlg.ShowModal() != wx.ID_OK:
-                return
-            new_title = dlg.GetValue().strip()
-            if not new_title or new_title == current_title:
-                return
-        # แก้ไขใน items (master list)
-        for i, master_item in enumerate(self.items):
-            if self._get_item_unique_key(master_item) == self._get_item_unique_key(item):
-                self.items[i]['title'] = new_title
-                break
-        self._save_data()
-        selected_index = self.listCtrl.GetFirstSelected()
-        for i, f_item in enumerate(self.filtered_items):
-            if self._get_item_unique_key(f_item) == self._get_item_unique_key(item):
-                self.filtered_items[i]['title'] = new_title
-                self.listCtrl.SetItem(i, 0, new_title)
-                break
-        self.listCtrl.SetItemState(
-            selected_index,
-            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
-            wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
-        )
-        wx.CallAfter(self.listCtrl.SetFocus)
-      
 class FavVideoPanel(BaseVideoListPanel):
+    _CONF_KEY = "favVideoLastCatId"
+    _list_display_name = _("Favorite Videos")
+
     def _get_file_path(self):
         return self.core.get_profile_path("fav_video.json")
+
+    def _get_category_file_path(self):
+        return self.core.get_profile_path("fav_video_categories.json")
 
     def _get_callback_topic(self):
         return "fav_video_updated"
@@ -1908,12 +2219,21 @@ class FavVideoPanel(BaseVideoListPanel):
     def _get_add_button_label(self):
         return _("Add &new favorite video from clipboard")
 
+    def _get_default_category_label(self):
+        return _("Videos")
+
     def _add_worker(self):
         return self.core.add_item_to_favorites_worker
-    
+
 class WatchListPanel(BaseVideoListPanel):
+    _CONF_KEY = "watchListLastCatId"
+    _list_display_name = _("Watch List")
+
     def _get_file_path(self):
         return self.core.get_profile_path("watch_list.json")
+
+    def _get_category_file_path(self):
+        return self.core.get_profile_path("watch_list_categories.json")
 
     def _get_callback_topic(self):
         return "watch_list_updated"
@@ -1921,9 +2241,15 @@ class WatchListPanel(BaseVideoListPanel):
     def _get_add_button_label(self):
         return _("Add &new watch list from clipboard")
 
+    def _get_default_category_label(self):
+        return _("Watch List")
+
     def _add_worker(self):
         return self.core.add_to_watchlist_worker
-    
+
+    def _sanitize_pasted_item(self, item):
+        return dict(item)
+
 class FavChannelPanel(wx.Panel):
     def __init__(self, parent, core_instance):
         wx.Panel.__init__(self, parent)
@@ -2827,6 +3153,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             {'id': 'channels', 'panel_class': FavChannelPanel, 'name': _("Channels")},
             {'id': 'playlists', 'panel_class': FavPlaylistPanel, 'name': _("Playlists")},
             {'id': 'watchlist', 'panel_class': WatchListPanel, 'name': _("Watch List")},
+            {'id': 'search_history', 'panel_class': SearchHistoryPanel, 'name': _("Search History")},
         ]
 
         default_order = [t['id'] for t in self.tabs_info]
@@ -2846,15 +3173,17 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
 
         searchSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Translators: Label for the search text control.
-        searchLabel = wx.StaticText(panel, label=_("&Search:"))
+        self.searchLabel = wx.StaticText(panel, label=_("&Search:"))
         self.searchCtrl = wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER)
         # Translators: Button to open sort dialog.
         self.sortBtn = wx.Button(panel, label=_("S&ort..."))
-        searchSizer.Add(searchLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+        searchSizer.Add(self.searchLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
         searchSizer.Add(self.searchCtrl, 1, wx.EXPAND)
         searchSizer.Add(self.sortBtn, 0)
         self.sortBtn.Bind(wx.EVT_BUTTON, self.on_sort)
         sizer.Add(searchSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
+        self._searchSizer = searchSizer
+        self._mainPanel = panel
 
         self.notebook = wx.Notebook(panel)
         self._build_tabs()
@@ -2880,6 +3209,12 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.searchCtrl.Bind(wx.EVT_TEXT, self.on_search)
         self.notebook.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self.on_tab_changed)
+        # อัปเดต visibility ทุกครั้งที่ list เพิ่ม/ลบ item ใน panel ใดก็ตาม
+        self.Bind(wx.EVT_LIST_INSERT_ITEM,      lambda e: self._update_search_sort_visibility())
+        self.Bind(wx.EVT_LIST_DELETE_ALL_ITEMS, lambda e: self._update_search_sort_visibility())
+        self.Bind(wx.EVT_LIST_DELETE_ITEM,      lambda e: self._update_search_sort_visibility())
+        self.Bind(wx.EVT_TREE_ITEM_EXPANDED,    lambda e: (self._update_search_sort_visibility(), e.Skip()))
+        self.Bind(wx.EVT_TREE_DELETE_ITEM,      lambda e: (self._update_search_sort_visibility(), e.Skip()))
         wx.CallAfter(self.on_tab_changed, None)
 
     def on_search(self, event):
@@ -2907,12 +3242,33 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             return
         saved_search = getattr(current_page, '_saved_search_text', "")
         self.searchCtrl.ChangeValue(saved_search)
-        #if saved_search and hasattr(current_page, 'on_search'):
-            #current_page.on_search(saved_search)
+        self._update_search_sort_visibility()
         if hasattr(current_page, 'listCtrl'):
             wx.CallAfter(current_page.listCtrl.SetFocus)
         if event:
             event.Skip()
+
+    def _update_search_sort_visibility(self):
+        current_page = self.notebook.GetCurrentPage()
+        if not current_page:
+            return
+        try:
+            if hasattr(current_page, 'listCtrl'):
+                ctrl = current_page.listCtrl
+                if isinstance(ctrl, wx.TreeCtrl):
+                    root = ctrl.GetRootItem()
+                    has_items = root.IsOk() and ctrl.GetChildrenCount(root, False) > 0
+                else:
+                    has_items = ctrl.GetItemCount() > 0
+            else:
+                has_items = False
+        except Exception:
+            has_items = False
+        has_sort = hasattr(current_page, 'on_sort') and has_items
+        self.sortBtn.Show(has_sort)
+        self.searchLabel.Show(has_items)
+        self.searchCtrl.Show(has_items)
+        self._mainPanel.Layout()
         
     def _update_dialog_title(self):
         """Helper method to update the dialog's title based on the current tab."""
@@ -2983,23 +3339,305 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         self.__class__._instance = None
         self.Destroy()
 
+class SearchHistoryPanel(wx.Panel):
+    """Panel showing search history, accessible as a tab in FavDialog."""
+
+    def __init__(self, parent, core_instance):
+        wx.Panel.__init__(self, parent)
+        self.core = core_instance
+        self.history = []
+        self.history_file = self.core.get_profile_path("search_history.json")
+        self._current_sort = None
+
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.listCtrl = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        # Translators: Column header for the search keyword in search history.
+        self.listCtrl.InsertColumn(0, _("Keyword"), width=300)
+        # Translators: Column header for the number of results fetched in search history.
+        self.listCtrl.InsertColumn(1, _("Results"), width=70)
+        # Translators: Column header for the date and time the search was performed.
+        self.listCtrl.InsertColumn(2, _("Searched At"), width=160)
+        mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+
+        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to re-run the selected search query.
+        self.searchBtn = wx.Button(self, label=_("Search &Again"))
+        # Translators: Button to open search dialog to add a new search.
+        self.addBtn = wx.Button(self, label=_("&New Search"))
+        # Translators: Button to remove the selected search history entry.
+        self.removeBtn = wx.Button(self, label=_("&Remove"))
+        # Translators: Button to clear all search history entries.
+        self.clearAllBtn = wx.Button(self, label=_("&Clear All"))
+        btnSizer.Add(self.searchBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
+        btnSizer.AddStretchSpacer()
+        btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.clearAllBtn, 0)
+        mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+
+        self.SetSizer(mainSizer)
+
+        self.core.register_callback("search_history_updated", self._on_history_updated)
+        self._load_and_populate()
+        self._update_button_states()
+
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_search_again)
+        self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, lambda e: self._update_button_states())
+        self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, lambda e: self._update_button_states())
+        self.searchBtn.Bind(wx.EVT_BUTTON, self.on_search_again)
+        self.addBtn.Bind(wx.EVT_BUTTON, self.on_new_search)
+        self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
+        self.clearAllBtn.Bind(wx.EVT_BUTTON, self.on_clear_all)
+
+    def _load_and_populate(self):
+        if not self or not self.listCtrl or not self.listCtrl.IsShown():
+            return
+        self.history = self.core._load_json_list(self.history_file)
+        self.listCtrl.DeleteAllItems()
+        for index, item in enumerate(self.history):
+            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
+            self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(
+                0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
+
+    def _on_history_updated(self, data=None):
+        wx.CallAfter(self._load_and_populate)
+        wx.CallAfter(self._update_button_states)
+
+    def on_close(self, event=None):
+        self.core.unregister_callback("search_history_updated", self._on_history_updated)
+
+    def _get_sort_fields(self):
+        return [
+            ('keyword',     _("Keyword")),
+            ('result_count', _("Results")),
+            ('searched_at', _("Searched At")),
+        ]
+
+    def on_sort(self, event):
+        fields = self._get_sort_fields()
+        field_labels = [f[1] for f in fields]
+        dlg = wx.Dialog(self, title=_("Sort List"))
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Label for sort field selection.
+        sizer.Add(wx.StaticText(dlg, label=_("Sort by:")), 0, wx.ALL, 5)
+        fieldCombo = wx.ComboBox(dlg, choices=field_labels, style=wx.CB_READONLY)
+        if self._current_sort:
+            current_keys = [f[0] for f in fields]
+            if self._current_sort[0] in current_keys:
+                fieldCombo.SetSelection(current_keys.index(self._current_sort[0]))
+            else:
+                fieldCombo.SetSelection(0)
+        else:
+            fieldCombo.SetSelection(0)
+        sizer.Add(fieldCombo, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+        # Translators: Radio button for ascending sort order.
+        ascRadio = wx.RadioButton(dlg, label=_("&Ascending"), style=wx.RB_GROUP)
+        # Translators: Radio button for descending sort order.
+        descRadio = wx.RadioButton(dlg, label=_("&Descending"))
+        if self._current_sort and not self._current_sort[1]:
+            descRadio.SetValue(True)
+        else:
+            ascRadio.SetValue(True)
+        sizer.Add(ascRadio, 0, wx.LEFT | wx.TOP, 5)
+        sizer.Add(descRadio, 0, wx.LEFT, 5)
+        btnSizer = wx.StdDialogButtonSizer()
+        okBtn = wx.Button(dlg, wx.ID_OK)
+        cancelBtn = wx.Button(dlg, wx.ID_CANCEL)
+        # Translators: Button to clear current sort and restore original order.
+        clearBtn = wx.Button(dlg, label=_("C&lear Sort"))
+        btnSizer.AddButton(okBtn)
+        btnSizer.AddButton(cancelBtn)
+        btnSizer.Realize()
+        outerBtnSizer = wx.BoxSizer(wx.HORIZONTAL)
+        outerBtnSizer.Add(clearBtn, 0, wx.ALL, 5)
+        outerBtnSizer.AddStretchSpacer()
+        outerBtnSizer.Add(btnSizer, 0)
+        sizer.Add(outerBtnSizer, 0, wx.EXPAND | wx.ALL, 5)
+        dlg.SetSizer(sizer)
+        sizer.Fit(dlg)
+        dlg.CentreOnScreen()
+        clearBtn.Bind(wx.EVT_BUTTON, lambda e: dlg.EndModal(wx.ID_RESET))
+        result = dlg.ShowModal()
+        selected_field_key = fields[fieldCombo.GetSelection()][0]
+        ascending = ascRadio.GetValue()
+        dlg.Destroy()
+        if result == wx.ID_RESET:
+            self._current_sort = None
+            self._load_and_populate()
+            # Translators: Notification after sort is cleared.
+            ui.message(_("Sort cleared."))
+            return
+        if result != wx.ID_OK:
+            return
+        self._current_sort = (selected_field_key, ascending)
+        self._apply_sort()
+
+    def _apply_sort(self):
+        if not self._current_sort:
+            return
+        field_key, ascending = self._current_sort
+        def sort_key(item):
+            val = item.get(field_key, '')
+            if val is None:
+                val = ''
+            try:
+                return (0, int(val))
+            except (ValueError, TypeError):
+                return (1, str(val).lower())
+        self.history.sort(key=sort_key, reverse=not ascending)
+        self.listCtrl.DeleteAllItems()
+        for index, item in enumerate(self.history):
+            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
+            self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(
+                0,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
+            wx.CallAfter(self.listCtrl.SetFocus)
+        # Translators: Notification after sort is applied.
+        ui.message(_("List sorted."))
+
+    def _update_button_states(self):
+        if not self or not self.listCtrl:
+            return
+        has_items     = self.listCtrl.GetItemCount() > 0
+        has_selection = self.listCtrl.GetFirstSelected() != -1
+        self.searchBtn.Enable(has_selection)
+        self.removeBtn.Enable(has_selection)
+        self.clearAllBtn.Enable(has_items)
+
+    def _get_selected_item(self):
+        idx = self.listCtrl.GetFirstSelected()
+        if idx == -1:
+            return None, -1
+        return self.history[idx], idx
+
+    # ── Key handler ───────────────────────────────────────────────────────────
+
+    def on_list_key_down(self, event):
+        key = event.GetKeyCode()
+        if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_SPACE):
+            self.on_search_again(event)
+        elif key == wx.WXK_DELETE:
+            self.on_remove(event)
+        else:
+            event.Skip()
+
+    # ── Actions ───────────────────────────────────────────────────────────────
+
+    def on_search_again(self, event):
+        item, _ = self._get_selected_item()
+        if not item:
+            return
+        keyword = item.get('keyword', '')
+        count   = item.get('result_count', config.conf["YoutubePlus"].get("searchResultCount", 20))
+        if not keyword:
+            return
+        threading.Thread(
+            target=self.core._Youtube_worker,
+            args=(keyword, count, gui.mainFrame),
+            daemon=True
+        ).start()
+
+    def on_search(self, search_text):
+        """Filter history list by keyword."""
+        self.listCtrl.DeleteAllItems()
+        query = search_text.strip().lower()
+        filtered = [h for h in self.history if query in h.get('keyword', '').lower()] if query else self.history
+        for index, item in enumerate(filtered):
+            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
+            self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
+        if self.listCtrl.GetItemCount() > 0:
+            self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
+        self._update_button_states()
+
+    def on_new_search(self, event):
+        """เปิด SearchDialog เพื่อค้นหาใหม่"""
+        from .dialogs import SearchDialog
+        gui.mainFrame.prePopup()
+        dialog = SearchDialog(gui.mainFrame, self.core)
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
+    def on_remove(self, event):
+        item, idx = self._get_selected_item()
+        if not item:
+            return
+        del self.history[idx]
+        self.core._save_json_list(self.history_file, self.history)
+        self.listCtrl.DeleteItem(idx)
+        new_count = self.listCtrl.GetItemCount()
+        if new_count > 0:
+            new_sel = min(idx, new_count - 1)
+            self.listCtrl.SetItemState(
+                new_sel,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+                wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
+            )
+        self._update_button_states()
+        # Translators: Notification after a search history entry is removed.
+        self.core._notify_delete(_("Search history entry removed."))
+
+    def on_clear_all(self, event):
+        # Translators: Confirmation message before clearing all search history.
+        if wx.MessageBox(
+            _("Clear all search history?"),
+            # Translators: Title of the confirmation dialog for clearing search history.
+            _("Confirm"),
+            wx.YES_NO | wx.ICON_QUESTION
+        ) != wx.YES:
+            return
+        self.history = []
+        self.core._save_json_list(self.history_file, self.history)
+        self.listCtrl.DeleteAllItems()
+        self._update_button_states()
+
+
 class SearchDialog(BaseDialogMixin, wx.Dialog):
     """
     A simplified and robust search dialog.
     """
-    _escape_protection = True   
 
     def __init__(self, parent, core_instance):
         # Translators: Title of the dialog for searching YouTube.
         super().__init__(parent, title=_("Search YouTube"))
         self.core = core_instance
 
+        history_file = self.core.get_profile_path("search_history.json")
+        history_data = self.core._load_json_list(history_file)
+        
+        self.history_keywords = []
+        for item in history_data:
+            kw = item.get('keyword', '')
+            if kw and kw not in self.history_keywords:
+                self.history_keywords.append(kw)
+
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=mainSizer)
+        
         # Translators: Label for the search query input field.
         sHelper.addItem(wx.StaticText(panel, label=_("&Search for:")))
-        self.queryText = sHelper.addItem(wx.TextCtrl(panel, style=wx.TE_PROCESS_ENTER))
+        
+        self.queryText = sHelper.addItem(wx.ComboBox(
+            panel, 
+            value="", # ให้ค่าเริ่มต้นเป็นช่องว่างเปล่า
+            choices=self.history_keywords, # ยัดประวัติการค้นหาเข้าไปให้เป็นตัวเลือก
+            style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER
+        ))
+
         # Translators: Label for selecting the number of search results to retrieve.
         sHelper.addItem(wx.StaticText(panel, label=_("Number of &results to fetch:")))
         last_count = config.conf["YoutubePlus"].get("searchResultCount", 20)
@@ -3023,9 +3661,10 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.searchBtn.Bind(wx.EVT_BUTTON, self.on_search)
         self.cancelBtn.Bind(wx.EVT_BUTTON, self.on_close)
+        
         self.queryText.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         wx.CallAfter(self.queryText.SetFocus)
-
+        
     def on_close(self, event):
         self.Destroy()
 

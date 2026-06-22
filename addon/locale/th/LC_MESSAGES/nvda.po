@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-06-13 10:09+0700\n"
+"POT-Creation-Date: 2026-06-23 04:17+0700\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,152 +18,152 @@ msgstr ""
 "X-Poedit-SearchPath-2: addon/globalPlugins/YoutubePlus/dialogs.py\n"
 "X-Poedit-SearchPath-3: addon/globalPlugins/YoutubePlus/settings.py\n"
 
-#: addon/globalPlugins/YoutubePlus/core.py:462
+#: addon/globalPlugins/YoutubePlus/core.py:463
 #, python-brace-format
 msgid "Failed to get video data. Details: {}"
-msgstr "ไม่สามารถเรียกรายการวิดีโอได้ รายละเอียด: {e}"
+msgstr "ไม่สามารถเรียกข้อมูลวิดีโอได้ รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:466
+#: addon/globalPlugins/YoutubePlus/core.py:467
 msgid "An unexpected error occurred."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:479
+#: addon/globalPlugins/YoutubePlus/core.py:480
 msgid "This command is for videos, but the current page is a playlist."
 msgstr "คำสั่งนี้ใช้สำหรับวิดีโอ แต่หน้าปัจจุบันคือเพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/core.py:486
+#: addon/globalPlugins/YoutubePlus/core.py:487
 msgid "This command is for videos, but the current page appears to be a channel or playlist."
 msgstr "คำสั่งนี้ใช้สำหรับวิดีโอ แต่หน้าปัจจุบันดูเหมือนจะเป็นช่องหรือเพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/core.py:740
+#: addon/globalPlugins/YoutubePlus/core.py:741
 msgid "activate YoutubePlus"
 msgstr "เปิดใช้งาน YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/core.py:839
+#: addon/globalPlugins/YoutubePlus/core.py:840
 #, python-brace-format
 msgid "Super Chat ({amount}): {paid_message}"
 msgstr "ซูเปอร์แชท ({amount}):{paid_message}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:853
+#: addon/globalPlugins/YoutubePlus/core.py:854
 #, python-brace-format
 msgid "Super Sticker ({amount})"
 msgstr "ซุปเปอร์สติ๊กเกอร์ ({amount})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:884
+#: addon/globalPlugins/YoutubePlus/core.py:885
 #, python-brace-format
 msgid "YouTube System ({icon_type})"
 msgstr "ระบบ YouTube ({icon_type})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:906
+#: addon/globalPlugins/YoutubePlus/core.py:907
 #, python-brace-format
 msgid "{h} Hour"
 msgstr "{h}ชั่วโมง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:908
+#: addon/globalPlugins/YoutubePlus/core.py:909
 #, python-brace-format
 msgid "{h} Hours"
 msgstr "{h}ชั่วโมง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:913
+#: addon/globalPlugins/YoutubePlus/core.py:914
 #, python-brace-format
 msgid "{m} Minute"
 msgstr "{m}นาที"
 
-#: addon/globalPlugins/YoutubePlus/core.py:913
+#: addon/globalPlugins/YoutubePlus/core.py:914
 #, python-brace-format
 msgid "{m} Minutes"
 msgstr "{m}นาที"
 
-#: addon/globalPlugins/YoutubePlus/core.py:916
+#: addon/globalPlugins/YoutubePlus/core.py:917
 #, python-brace-format
 msgid "{s} Second"
 msgstr "{s}วินาที"
 
-#: addon/globalPlugins/YoutubePlus/core.py:916
+#: addon/globalPlugins/YoutubePlus/core.py:917
 #, python-brace-format
 msgid "{s} Seconds"
 msgstr "{s}วินาที"
 
-#: addon/globalPlugins/YoutubePlus/core.py:951
+#: addon/globalPlugins/YoutubePlus/core.py:952
 #, python-brace-format
 msgid "Info of {title}"
 msgstr "ข้อมูลของ{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:968
+#: addon/globalPlugins/YoutubePlus/core.py:969
 msgid "This video has a live chat replay. What would you like to view?"
 msgstr "วิดีโอนี้มีการเล่นแชทสดซ้ำคุณอยากจะดูอะไร?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:968
+#: addon/globalPlugins/YoutubePlus/core.py:969
 msgid "Choice"
 msgstr "ทางเลือก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:972
+#: addon/globalPlugins/YoutubePlus/core.py:973
 #, python-brace-format
 msgid "Show {comment_count} &Comments"
 msgstr "แสดง &ความคิดเห็น{comment_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:972
+#: addon/globalPlugins/YoutubePlus/core.py:973
 msgid "Show &Live Chat Replay"
 msgstr "แสดง &เล่นแชทสดซ้ำ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:972 addon/globalPlugins/YoutubePlus/core.py:1857
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3012
+#: addon/globalPlugins/YoutubePlus/core.py:973 addon/globalPlugins/YoutubePlus/core.py:1878
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3650
 msgid "Ca&ncel"
 msgstr "ยกเลิก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1011
+#: addon/globalPlugins/YoutubePlus/core.py:1012
 msgid "This video has no comments."
 msgstr "วิดีโอนี้ไม่มีความคิดเห็น"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1015
+#: addon/globalPlugins/YoutubePlus/core.py:1016
 #, python-brace-format
 msgid "Loading {count} comments..."
 msgstr "กำลังโหลดความคิดเห็น{count}รายการ..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1018
+#: addon/globalPlugins/YoutubePlus/core.py:1019
 msgid "Loading live chat replay..."
 msgstr "กำลังโหลดการเล่นแชทสดซ้ำ..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1032
+#: addon/globalPlugins/YoutubePlus/core.py:1033
 msgid "Live stream detected. Please use the 'Monitor live chat' command instead."
 msgstr "ตรวจพบสตรีมสดโปรดใช้คำสั่ง 'ตรวจสอบแชทสด' แทน"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1048
+#: addon/globalPlugins/YoutubePlus/core.py:1049
 #, python-brace-format
 msgid "Title: {title}"
 msgstr "ชื่อเรื่อง:{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1049
+#: addon/globalPlugins/YoutubePlus/core.py:1050
 #, python-brace-format
 msgid "Channel: {uploader}"
 msgstr "ช่องทาง:{uploader}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1050
+#: addon/globalPlugins/YoutubePlus/core.py:1051
 #, python-brace-format
 msgid "Duration: {duration}"
 msgstr "ระยะเวลา:{duration}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1051
+#: addon/globalPlugins/YoutubePlus/core.py:1052
 #, python-brace-format
 msgid "Uploaded: {upload_date}"
 msgstr "อัปโหลดแล้ว:{upload_date}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1052
+#: addon/globalPlugins/YoutubePlus/core.py:1053
 #, python-brace-format
 msgid "Views: {view_count}"
 msgstr "การดู:{view_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1053
+#: addon/globalPlugins/YoutubePlus/core.py:1054
 #, python-brace-format
 msgid "Likes: {like_count}"
 msgstr "ชอบ:{like_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1054
+#: addon/globalPlugins/YoutubePlus/core.py:1055
 #, python-brace-format
 msgid "Comments: {comment_count}"
 msgstr "ความคิดเห็น:{comment_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1056
+#: addon/globalPlugins/YoutubePlus/core.py:1057
 #, python-brace-format
 msgid ""
 "Description:\n"
@@ -172,72 +172,72 @@ msgstr ""
 "คำอธิบาย:\n"
 "{description}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1068
+#: addon/globalPlugins/YoutubePlus/core.py:1069
 #, python-brace-format
 msgid "Could not get video info: {error}"
 msgstr "ไม่สามารถรับข้อมูลวิดีโอ: {error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1072 addon/globalPlugins/YoutubePlus/core.py:1100
-#: addon/globalPlugins/YoutubePlus/core.py:1148
+#: addon/globalPlugins/YoutubePlus/core.py:1073 addon/globalPlugins/YoutubePlus/core.py:1101
+#: addon/globalPlugins/YoutubePlus/core.py:1149
 msgid "An unexpected error occurred. Please check the log for details."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดโปรดตรวจสอบบันทึกเพื่อดูรายละเอียด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1089
+#: addon/globalPlugins/YoutubePlus/core.py:1090
 #, python-brace-format
 msgid "Chapters for {title}"
 msgstr "บทสำหรับ{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1093
+#: addon/globalPlugins/YoutubePlus/core.py:1094
 msgid "No chapters found in this video."
 msgstr "ไม่พบบทในวิดีโอนี้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1096
+#: addon/globalPlugins/YoutubePlus/core.py:1097
 #, python-brace-format
 msgid "Failed to get chapters. Details: {}"
 msgstr "ไม่สามารถดึงข้อมูล Chapter ได้ รายละเอียด: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1118
+#: addon/globalPlugins/YoutubePlus/core.py:1119
 #, python-brace-format
 msgid "{count} comments of {title}"
 msgstr "{count}ความคิดเห็นของ{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1135
+#: addon/globalPlugins/YoutubePlus/core.py:1136
 #, python-brace-format
 msgid "{count} live chat replay of {title}"
 msgstr "{count}เล่นแชทสดซ้ำของ{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1143
+#: addon/globalPlugins/YoutubePlus/core.py:1144
 #, python-brace-format
 msgid "Could not load data: {error}"
 msgstr "ไม่สามารถโหลดข้อมูล:{error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1160
+#: addon/globalPlugins/YoutubePlus/core.py:1161
 msgid "Connection to live chat lost. The stream may have ended."
 msgstr "การเชื่อมต่อกับแชทสดขาดหายไปกระแสอาจจะจบลงแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1186
+#: addon/globalPlugins/YoutubePlus/core.py:1187
 msgid "To conserve memory, older chat messages have been discarded."
 msgstr "เพื่อเป็นการประหยัดหน่วยความจำ ข้อความแชทเก่าๆ จึงถูกละทิ้ง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1194
+#: addon/globalPlugins/YoutubePlus/core.py:1195
 #, python-brace-format
 msgid "Receiving live chat of {video_title}"
 msgstr "กำลังรับแชทสดของ{video_title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1204
+#: addon/globalPlugins/YoutubePlus/core.py:1205
 msgid "An error occurred while receiving live chat. Monitoring stopped."
 msgstr "เกิดข้อผิดพลาดขณะรับแชทสดหยุดการตรวจสอบแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1235
+#: addon/globalPlugins/YoutubePlus/core.py:1236
 #, python-brace-format
 msgid "Live chat saved to {filename}"
 msgstr "บันทึกแชทสดไปที่{filename}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1241
+#: addon/globalPlugins/YoutubePlus/core.py:1242
 msgid "Failed to save chat history."
 msgstr "ไม่สามารถบันทึกประวัติการแชทได้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1260
+#: addon/globalPlugins/YoutubePlus/core.py:1261
 #, python-brace-format
 msgid ""
 "The stream has ended. You have {count} chat messages.\n"
@@ -247,134 +247,135 @@ msgstr ""
 "สตรีมสิ้นสุดลงแล้วคุณมีข้อความแชท{count}\n"
 "คุณต้องการบันทึกประวัติการแชทหรือไม่?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1261
+#: addon/globalPlugins/YoutubePlus/core.py:1262
 msgid "Save Chat History?"
 msgstr "บันทึกประวัติการแชทไหม"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1282 addon/globalPlugins/YoutubePlus/core.py:2092
+#: addon/globalPlugins/YoutubePlus/core.py:1283 addon/globalPlugins/YoutubePlus/core.py:2114
 #, python-brace-format
 msgid "Could not receive live chat: {error}"
 msgstr "ไม่สามารถรับแชทสด:{error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1300
+#: addon/globalPlugins/YoutubePlus/core.py:1321
 msgid "Adding to favorites..."
 msgstr "กำลังเพิ่มในรายการโปรด..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1307
+#: addon/globalPlugins/YoutubePlus/core.py:1328
 msgid "The provided link is not for a single video."
 msgstr "ลิงก์ที่ให้มาไม่ใช่สำหรับวิดีโอเดียว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1315
+#: addon/globalPlugins/YoutubePlus/core.py:1336
 msgid "This video is already in your favorites."
 msgstr "วิดีโอนี้อยู่ในรายการโปรดของคุณแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1331
+#: addon/globalPlugins/YoutubePlus/core.py:1352
 #, python-brace-format
 msgid "Added '{title}' to favorites."
 msgstr "เพิ่ม '{title}' ลงในรายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1334
+#: addon/globalPlugins/YoutubePlus/core.py:1355
 #, python-brace-format
 msgid "Failed to add favorite. Details: {}"
 msgstr "ไม่สามารถเพิ่มรายการโปรดได้ รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1345
+#: addon/globalPlugins/YoutubePlus/core.py:1366
 msgid "Adding to favorite channels..."
 msgstr "กำลังเพิ่มไปยังช่องโปรด..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1366
+#: addon/globalPlugins/YoutubePlus/core.py:1387
 msgid "This channel is already in your favorites."
 msgstr "ช่องนี้อยู่ในรายการโปรดของคุณแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1380
+#: addon/globalPlugins/YoutubePlus/core.py:1401
 #, python-brace-format
 msgid "Added '{channel}' to favorites."
 msgstr "เพิ่ม '{channel}' ลงในรายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1383
+#: addon/globalPlugins/YoutubePlus/core.py:1404
 msgid "Failed to add favorite."
 msgstr "ไม่สามารถเพิ่มรายการโปรดได้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1391
+#: addon/globalPlugins/YoutubePlus/core.py:1412
 msgid "Adding playlist to favorites..."
 msgstr "กำลังเพิ่มเพลย์ลิสต์ในรายการโปรด..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1409
+#: addon/globalPlugins/YoutubePlus/core.py:1430
 msgid "This playlist is already in your favorites."
 msgstr "เพลย์ลิสต์นี้อยู่ในรายการโปรดของคุณแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1413
+#: addon/globalPlugins/YoutubePlus/core.py:1434
 msgid "Unknown Playlist"
 msgstr "เพลย์ลิสต์ที่ไม่รู้จัก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1427
+#: addon/globalPlugins/YoutubePlus/core.py:1448
 #, python-brace-format
 msgid "Added '{playlist}' to favorites."
 msgstr "เพิ่ม '{playlist}' ลงในรายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1430
+#: addon/globalPlugins/YoutubePlus/core.py:1451
 msgid "Failed to add favorite playlist."
 msgstr "ไม่สามารถเพิ่มเพลย์ลิสต์โปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1473
+#: addon/globalPlugins/YoutubePlus/core.py:1494
 #, python-brace-format
 msgid "'{title}' is already in Watch List."
 msgstr "'{title}' อยู่ในรายการเฝ้าดูแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1487
+#: addon/globalPlugins/YoutubePlus/core.py:1508
 #, python-brace-format
 msgid "Added '{title}' to Watch List."
 msgstr "เพิ่ม '{title}' ในรายการเฝ้าดู"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1495
+#: addon/globalPlugins/YoutubePlus/core.py:1516
 #, python-brace-format
 msgid "Error: Could not add video to Watch List. Details: {}"
 msgstr "ข้อผิดพลาด: ไม่สามารถเพิ่มวิดีโอลงในรายการเฝ้าดูได้ รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1542 addon/globalPlugins/YoutubePlus/core.py:1552
+#: addon/globalPlugins/YoutubePlus/core.py:1563 addon/globalPlugins/YoutubePlus/core.py:1573
+#: addon/globalPlugins/YoutubePlus/core.py:2054 addon/globalPlugins/YoutubePlus/dialogs.py:1690
 msgid "[Unavailable video]"
 msgstr "วิดีโอที่เข้าถึงไม่ได้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1563
+#: addon/globalPlugins/YoutubePlus/core.py:1584
 msgid "No videos found."
 msgstr "ไม่พบวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1570
+#: addon/globalPlugins/YoutubePlus/core.py:1591
 #, python-brace-format
 msgid "{count} videos in {playlist}"
 msgstr "{count}วิดีโอใน{playlist}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1570
+#: addon/globalPlugins/YoutubePlus/core.py:1591
 msgid "Playlist"
 msgstr "เพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1575
+#: addon/globalPlugins/YoutubePlus/core.py:1596
 #, python-brace-format
 msgid "All {count} {type} from {channel}"
 msgstr "ทั้งหมด {count}{type}จาก{channel}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1575 addon/globalPlugins/YoutubePlus/core.py:1577
-#: addon/globalPlugins/YoutubePlus/core.py:2041 addon/globalPlugins/YoutubePlus/dialogs.py:1266
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1392 addon/globalPlugins/YoutubePlus/dialogs.py:1944
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2237 addon/globalPlugins/YoutubePlus/dialogs.py:2396
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2665
+#: addon/globalPlugins/YoutubePlus/core.py:1596 addon/globalPlugins/YoutubePlus/core.py:1598
+#: addon/globalPlugins/YoutubePlus/core.py:2062 addon/globalPlugins/YoutubePlus/dialogs.py:1273
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1343 addon/globalPlugins/YoutubePlus/dialogs.py:2270
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2563 addon/globalPlugins/YoutubePlus/dialogs.py:2722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2991
 msgid "Channel"
 msgstr "ช่อง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1577
+#: addon/globalPlugins/YoutubePlus/core.py:1598
 #, python-brace-format
 msgid "Recent {count} {type} from {channel}"
 msgstr "{count}{type}ล่าสุดจาก{channel}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1599
+#: addon/globalPlugins/YoutubePlus/core.py:1620
 msgid "Failed to fetch video list."
 msgstr "ไม่สามารถเรียกรายการวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1607
+#: addon/globalPlugins/YoutubePlus/core.py:1628
 msgid "Subscribing to channel..."
 msgstr "กำลังติดตามช่อง..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1636
+#: addon/globalPlugins/YoutubePlus/core.py:1657
 #, python-brace-format
 msgid ""
 "You are already subscribed to '{channel}'.\n"
@@ -383,196 +384,189 @@ msgstr ""
 "คุณได้สมัครรับข้อมูลจาก '{channel}' แล้ว\n"
 "คุณต้องการยกเลิกการสมัครแทนหรือไม่?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1638
+#: addon/globalPlugins/YoutubePlus/core.py:1659
 msgid "Already Subscribed"
 msgstr "สมัครสมาชิกแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1659
+#: addon/globalPlugins/YoutubePlus/core.py:1680
 msgid "Unknown Channel"
 msgstr "ช่องที่ไม่รู้จัก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1674
+#: addon/globalPlugins/YoutubePlus/core.py:1695
 #, python-brace-format
 msgid "Subscribed to {channel}."
 msgstr "ติดตาม{channel}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1677
+#: addon/globalPlugins/YoutubePlus/core.py:1698
 msgid "Failed to subscribe."
 msgstr "สมัครสมาชิกไม่สำเร็จ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1697
+#: addon/globalPlugins/YoutubePlus/core.py:1718
 #, python-brace-format
 msgid "Successfully unsubscribed from {channel}"
 msgstr "ยกเลิกการสมัครจาก{channel}สำเร็จแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1700
+#: addon/globalPlugins/YoutubePlus/core.py:1721
 msgid "Failed to unsubscribe - channel not found in database"
 msgstr "ไม่สามารถยกเลิกการสมัคร - ไม่พบช่องในฐานข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1704
+#: addon/globalPlugins/YoutubePlus/core.py:1725
 msgid "Critical error during unsubscribe."
 msgstr "เกิดข้อผิดพลาดร้ายแรงระหว่างการยกเลิกการสมัคร"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1726 addon/globalPlugins/YoutubePlus/core.py:1729
+#: addon/globalPlugins/YoutubePlus/core.py:1747 addon/globalPlugins/YoutubePlus/core.py:1750
 msgid "No channels to update."
 msgstr "ไม่มีช่องให้อัพเดต"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1746
+#: addon/globalPlugins/YoutubePlus/core.py:1767
 #, python-brace-format
 msgid "Checking {channel} ({type})..."
 msgstr "กำลังตรวจสอบ{channel}({type})..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1774 addon/globalPlugins/YoutubePlus/core.py:1777
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4164
+#: addon/globalPlugins/YoutubePlus/core.py:1795 addon/globalPlugins/YoutubePlus/core.py:1798
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4803
 msgid "Update cancelled."
 msgstr "การอัปเดตถูกยกเลิก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1780
+#: addon/globalPlugins/YoutubePlus/core.py:1801
 #, python-brace-format
 msgid "Update complete. Found {count} new videos."
 msgstr "การอัปเดตเสร็จสมบูรณ์พบวิดีโอใหม่{count}รายการ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1787
+#: addon/globalPlugins/YoutubePlus/core.py:1808
 #, python-brace-format
 msgid "Found and added {count} new videos."
 msgstr "พบและเพิ่มวิดีโอใหม่{count}รายการ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1790
+#: addon/globalPlugins/YoutubePlus/core.py:1811
 msgid "No new videos found."
 msgstr "ไม่พบวิดีโอใหม่"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1796
+#: addon/globalPlugins/YoutubePlus/core.py:1817
 msgid "Error updating feed."
 msgstr "เกิดข้อผิดพลาดในการอัปเดตฟีด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1814 addon/globalPlugins/YoutubePlus/core.py:1833
-#: addon/globalPlugins/YoutubePlus/core.py:2438
+#: addon/globalPlugins/YoutubePlus/core.py:1835 addon/globalPlugins/YoutubePlus/core.py:1854
+#: addon/globalPlugins/YoutubePlus/core.py:2517
 msgid "Unknown Video"
 msgstr "วิดีโอที่ไม่รู้จัก"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1820
+#: addon/globalPlugins/YoutubePlus/core.py:1841
 #, python-brace-format
 msgid "Failed to get video info for download. Details: {}"
 msgstr "ไม่สามารถรับข้อมูลวิดีโอสำหรับการดาวน์โหลดได้ รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1827 addon/globalPlugins/YoutubePlus/core.py:2258
+#: addon/globalPlugins/YoutubePlus/core.py:1848 addon/globalPlugins/YoutubePlus/core.py:2293
 msgid "Getting video info for download..."
 msgstr "กำลังรับข้อมูลวิดีโอสำหรับการดาวน์โหลด..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1843
+#: addon/globalPlugins/YoutubePlus/core.py:1864
 #, python-brace-format
 msgid "Failed to start download: {error}"
 msgstr "ไม่สามารถเริ่มการดาวน์โหลด:{error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1851
+#: addon/globalPlugins/YoutubePlus/core.py:1872
 msgid "What would you like to download?"
 msgstr "คุณต้องการดาวน์โหลดอะไร"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1853
+#: addon/globalPlugins/YoutubePlus/core.py:1874
 #, python-brace-format
 msgid "Download: {title} ({duration})"
 msgstr "ดาวน์โหลด:{title}({duration})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1857
+#: addon/globalPlugins/YoutubePlus/core.py:1878
 msgid "Download &Video"
 msgstr "ดาวน์โหลด&วีดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1857 addon/globalPlugins/YoutubePlus/dialogs.py:911
+#: addon/globalPlugins/YoutubePlus/core.py:1878 addon/globalPlugins/YoutubePlus/dialogs.py:919
 msgid "Download &Audio"
 msgstr "ดาวน์โหลด&เสียง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1946
+#: addon/globalPlugins/YoutubePlus/core.py:1967
 #, python-brace-format
 msgid "Starting download of {title}..."
 msgstr "กำลังเริ่มดาวน์โหลด{title}..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1968
+#: addon/globalPlugins/YoutubePlus/core.py:1989
 #, python-brace-format
 msgid "Download complete: {title}"
 msgstr "ดาวน์โหลดเสร็จสมบูรณ์:{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1973
+#: addon/globalPlugins/YoutubePlus/core.py:1994
 msgid "Download cancelled."
 msgstr "ยกเลิกการดาวน์โหลด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1978
+#: addon/globalPlugins/YoutubePlus/core.py:1999
 msgid "Audio-only format not found. Attempting to download a video file with audio instead..."
 msgstr "ไม่พบรูปแบบเสียงเท่านั้นกำลังพยายามดาวน์โหลดไฟล์วิดีโอพร้อมเสียงแทน..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1986
+#: addon/globalPlugins/YoutubePlus/core.py:2007
 #, python-brace-format
 msgid "Download complete (as MP4 video file): {title}"
 msgstr "ดาวน์โหลดเสร็จสมบูรณ์ (เป็นไฟล์วิดีโอ MP4):{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1992 addon/globalPlugins/YoutubePlus/core.py:1996
+#: addon/globalPlugins/YoutubePlus/core.py:2013 addon/globalPlugins/YoutubePlus/core.py:2017
 msgid "Download failed."
 msgstr "การดาวน์โหลดล้มเหลว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2018
+#: addon/globalPlugins/YoutubePlus/core.py:2039
 #, python-brace-format
 msgid "Searching for '{query}'..."
 msgstr "กำลังค้นหา '{query}'..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2033 addon/globalPlugins/YoutubePlus/dialogs.py:1994
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2049 addon/globalPlugins/YoutubePlus/dialogs.py:2623
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3146 addon/globalPlugins/YoutubePlus/dialogs.py:3245
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3973
-msgid "N/A"
-msgstr "ไม่มี"
-
-#: addon/globalPlugins/YoutubePlus/core.py:2044
+#: addon/globalPlugins/YoutubePlus/core.py:2065
 #, python-brace-format
 msgid "Playlist ({count})"
 msgstr "เพลย์ลิสต์ ({count})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2048
+#: addon/globalPlugins/YoutubePlus/core.py:2069
 #, python-brace-format
 msgid "No results found for '{query}'."
 msgstr "ไม่พบผลลัพธ์สำหรับ '{query}'"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2051
+#: addon/globalPlugins/YoutubePlus/core.py:2073
 #, python-brace-format
 msgid "Search Results for '{query}'"
 msgstr "ผลลัพธ์การค้นหาสำหรับ '{query}'"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2056
+#: addon/globalPlugins/YoutubePlus/core.py:2078
 msgid "Failed to perform search."
 msgstr "การค้นหาล้มเหลว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2066
+#: addon/globalPlugins/YoutubePlus/core.py:2088
 #, python-brace-format
 msgid "Live chat of {title}"
 msgstr "แชทสดของ{title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2066
+#: addon/globalPlugins/YoutubePlus/core.py:2088
 msgid "Live chat (stopped)"
 msgstr "แชทสด (หยุดแล้ว)"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2099
+#: addon/globalPlugins/YoutubePlus/core.py:2121
 msgid "Chat monitoring is not active."
 msgstr "การตรวจสอบการแชทไม่ทำงาน"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2109
+#: addon/globalPlugins/YoutubePlus/core.py:2131
 msgid "Chat monitoring stopped."
 msgstr "การตรวจสอบการแชทหยุดลง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2121
+#: addon/globalPlugins/YoutubePlus/core.py:2143
 #, python-brace-format
 msgid "Live chat of {title} (stopped)"
 msgstr "แชทสดของ{title}(หยุดแล้ว)"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2141
+#: addon/globalPlugins/YoutubePlus/core.py:2163
 msgid "You haven't subscribed to any channels yet."
 msgstr "คุณยังไม่ได้ติดตามช่องใดๆ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2151
+#: addon/globalPlugins/YoutubePlus/core.py:2173
 msgid "Error loading subscription feed from database."
 msgstr "เกิดข้อผิดพลาดในการโหลดฟีดการสมัครจากฐานข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2166
+#: addon/globalPlugins/YoutubePlus/core.py:2201
 msgid ""
-"This will permanently delete ALL videos from your subscription feed, leaving only the list of subscribed "
-"channels. This action cannot be undone.\n"
+"This will permanently delete ALL videos from your subscription feed, leaving only the list of subscribed channels. "
+"This action cannot be undone.\n"
 "\n"
 "Are you sure you want to continue?"
 msgstr ""
@@ -580,179 +574,191 @@ msgstr ""
 "\n"
 "คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2170
+#: addon/globalPlugins/YoutubePlus/core.py:2205
 msgid "Confirm Clearing All Videos"
 msgstr "ยืนยันการล้างวิดีโอทั้งหมด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2174
+#: addon/globalPlugins/YoutubePlus/core.py:2209
 msgid "Clearing all feed videos..."
 msgstr "กำลังล้างวิดีโอฟีดทั้งหมด..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2190
+#: addon/globalPlugins/YoutubePlus/core.py:2225
 #, python-brace-format
 msgid "Clearing complete. All {count} videos were deleted."
 msgstr "การเคลียร์เสร็จสมบูรณ์ลบวิดีโอ{count}ทั้งหมดแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2195
+#: addon/globalPlugins/YoutubePlus/core.py:2230
 msgid "An error occurred while clearing all videos."
 msgstr "เกิดข้อผิดพลาดขณะล้างวิดีโอทั้งหมด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2197
+#: addon/globalPlugins/YoutubePlus/core.py:2232
 msgid "an YoutubePlus layer commands."
 msgstr "คำสั่งเลเยอร์ YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2212 addon/globalPlugins/YoutubePlus/core.py:2221
-#: addon/globalPlugins/YoutubePlus/core.py:2232 addon/globalPlugins/YoutubePlus/core.py:2246
-#: addon/globalPlugins/YoutubePlus/core.py:2255
+#: addon/globalPlugins/YoutubePlus/core.py:2247 addon/globalPlugins/YoutubePlus/core.py:2256
+#: addon/globalPlugins/YoutubePlus/core.py:2267 addon/globalPlugins/YoutubePlus/core.py:2281
+#: addon/globalPlugins/YoutubePlus/core.py:2290
 msgid "YouTube URL not found in current window or clipboard."
 msgstr "ไม่พบ URL ของ YouTube ในหน้าต่างหรือคลิปบอร์ดปัจจุบัน"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2224
+#: addon/globalPlugins/YoutubePlus/core.py:2259
 msgid "Getting video info..."
 msgstr "กำลังรับข้อมูลวิดีโอ..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2235 addon/globalPlugins/YoutubePlus/dialogs.py:967
+#: addon/globalPlugins/YoutubePlus/core.py:2270 addon/globalPlugins/YoutubePlus/dialogs.py:975
 msgid "Getting chapters..."
 msgstr "กำลังดึงข้อมูล Chapter..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2240
+#: addon/globalPlugins/YoutubePlus/core.py:2275
 msgid "Download subtitles from current page or clipboard URL."
 msgstr "ดาวน์โหลดคำบรรยายจากหน้าปัจจุบันหรือ URL ของคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2276
+#: addon/globalPlugins/YoutubePlus/core.py:2311
 msgid "No stream is currently being monitored."
 msgstr "ไม่มีการถ่ายทอดสดใดที่ถูกตรวจสอบอยู่ในขณะนี้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2286
+#: addon/globalPlugins/YoutubePlus/core.py:2321
 msgid "Automatic message speaking enabled."
 msgstr "เปิดใช้งานการพูดข้อความอัตโนมัติแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2286
+#: addon/globalPlugins/YoutubePlus/core.py:2321
 msgid "Automatic message speaking disabled."
 msgstr "ปิดใช้งานการพูดข้อความอัตโนมัติ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2288
+#: addon/globalPlugins/YoutubePlus/core.py:2323
 msgid "Show favorite videos dialog."
 msgstr "แสดงหน้าต่างวิดีโอโปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2295
+#: addon/globalPlugins/YoutubePlus/core.py:2330
 msgid "Show favorite channels dialog."
 msgstr "แสดงหน้าต่างช่องโปรด"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2302
+#: addon/globalPlugins/YoutubePlus/core.py:2337
 msgid "Show favorite playlists dialog."
 msgstr "แสดงหน้าต่างเพลย์ลิสต์ที่ชื่นชอบ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2309
+#: addon/globalPlugins/YoutubePlus/core.py:2344
 msgid "Show watch list dialog."
 msgstr "แสดงหน้าต่างรายการเฝ้าดู"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2316
+#: addon/globalPlugins/YoutubePlus/core.py:2351
 msgid "Show a menu to add the current page URL to favorites or subscriptions."
 msgstr "แสดงเมนูเพื่อเพิ่ม URL ของหน้าปัจจุบันในรายการโปรดหรือการสมัครรับข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2321
+#: addon/globalPlugins/YoutubePlus/core.py:2356
 msgid "No specific YouTube URL found in the current window or clipboard."
 msgstr "ไม่พบ URL ของ YouTube เฉพาะเจาะจงในหน้าต่างหรือคลิปบอร์ดปัจจุบัน"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2330
+#: addon/globalPlugins/YoutubePlus/core.py:2365
 msgid "Add to Favorite &Videos"
 msgstr "เพิ่มลงในรายการโปรด & วิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2332
+#: addon/globalPlugins/YoutubePlus/core.py:2367
 msgid "Add to Favorite &Channels"
 msgstr "เพิ่มในรายการโปรด &ช่อง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2334
+#: addon/globalPlugins/YoutubePlus/core.py:2369
 msgid "Add to Favorite &Playlists"
 msgstr "เพิ่มในรายการโปรด &เพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2336
+#: addon/globalPlugins/YoutubePlus/core.py:2371
 msgid "&Subscribe to Channel"
 msgstr "&ติดตามช่อง"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2338 addon/globalPlugins/YoutubePlus/dialogs.py:916
+#: addon/globalPlugins/YoutubePlus/core.py:2373 addon/globalPlugins/YoutubePlus/dialogs.py:924
 msgid "Add to &Watch List"
 msgstr "เพิ่มในรายการเฝ้าดู"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2376
+#: addon/globalPlugins/YoutubePlus/core.py:2411
 msgid "Show subscription feed dialog."
 msgstr "แสดงหน้าต่างฟีดการสมัครรับข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2380
+#: addon/globalPlugins/YoutubePlus/core.py:2415
 msgid "Search YouTube for videos, channels, or playlists."
 msgstr "ค้นหาวิดีโอ ช่อง หรือเพลย์ลิสต์ใน YouTube"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2387
+#: addon/globalPlugins/YoutubePlus/core.py:2422
+msgid "Open favorites dialog on Search History tab."
+msgstr "เปิดกล่องโต้ตอบหน้าประวัติการค้นหา"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2440
+msgid "Search YouTube using selected text or clipboard content and show results directly."
+msgstr "ค้นหา YouTube โดยใช้ข้อความหรือเนื้อหาคลิปบอร์ดที่เลือกและแสดงผลลัพธ์โดยตรง"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2459
+msgid "No text selected and clipboard is empty."
+msgstr "ไม่ได้เลือกข้อความและคลิปบอร์ดว่างเปล่า"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2466
 msgid "Show manage subscriptions dialog."
 msgstr "แสดงหน้าต่างจัดการการสมัครรับข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2417
+#: addon/globalPlugins/YoutubePlus/core.py:2496
 msgid "Show user profile manager dialog."
 msgstr "แสดงหน้าต่างตัวจัดการโปรไฟล์ผู้ใช้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2424
+#: addon/globalPlugins/YoutubePlus/core.py:2503
 msgid "Opens YoutubePlus settings dialog."
 msgstr "เปิดหน้าต่างการตั้งค่าของส่วนเสริม YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2465
+#: addon/globalPlugins/YoutubePlus/core.py:2544
 msgid "manual"
 msgstr "คำบรรยายจากเจ้าของคลิป"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2471
+#: addon/globalPlugins/YoutubePlus/core.py:2550
 msgid "auto"
 msgstr "คำบรรยายอัตโนมัติ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2474
+#: addon/globalPlugins/YoutubePlus/core.py:2553
 msgid "No subtitles available for this video."
 msgstr "ไม่พบคำบรรยายในวิดีโอนี้"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2481
+#: addon/globalPlugins/YoutubePlus/core.py:2560
 #, python-brace-format
 msgid "Failed to get subtitle info. Details: {}"
 msgstr "ไม่สามารถรับข้อมูลวิดีโอสำหรับการดาวน์โหลดคำบรรยายได้ รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2494
+#: addon/globalPlugins/YoutubePlus/core.py:2573
 msgid "Select subtitle language:"
 msgstr "เลือกภาษาคำบรรยาย:"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2496
+#: addon/globalPlugins/YoutubePlus/core.py:2575
 #, python-brace-format
 msgid "Download subtitles: {title}"
 msgstr "ดาวน์โหลดคำบรรยาย: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2516
+#: addon/globalPlugins/YoutubePlus/core.py:2595
 #, python-brace-format
 msgid "Downloading subtitles for {title}..."
 msgstr "กำลังดาวน์โหลดคำบรรยายสำหรับ '{title}'..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2546
+#: addon/globalPlugins/YoutubePlus/core.py:2625
 #, python-brace-format
 msgid "Subtitles downloaded: {title}"
 msgstr "ดาวน์โหลดคำบรรยายสำเร็จ: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2549
+#: addon/globalPlugins/YoutubePlus/core.py:2628
 #, python-brace-format
 msgid "Subtitle download failed. Details: {}"
 msgstr "การดาวน์โหลดคำบรรยายล้มเหลว รายละเอียด: {e}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:84 addon/globalPlugins/YoutubePlus/dialogs.py:832
+#: addon/globalPlugins/YoutubePlus/dialogs.py:82 addon/globalPlugins/YoutubePlus/dialogs.py:840
 msgid "Press Escape again to close."
 msgstr "กด escape อีกครั้งเพื่อปิดหน้าต่าง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:102 addon/globalPlugins/YoutubePlus/dialogs.py:245
-#: addon/globalPlugins/YoutubePlus/dialogs.py:425 addon/globalPlugins/YoutubePlus/dialogs.py:671
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2867 addon/globalPlugins/YoutubePlus/dialogs.py:3071
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3206 addon/globalPlugins/YoutubePlus/dialogs.py:3424
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3736 addon/globalPlugins/YoutubePlus/dialogs.py:4388
+#: addon/globalPlugins/YoutubePlus/dialogs.py:100 addon/globalPlugins/YoutubePlus/dialogs.py:253
+#: addon/globalPlugins/YoutubePlus/dialogs.py:433 addon/globalPlugins/YoutubePlus/dialogs.py:679
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3196 addon/globalPlugins/YoutubePlus/dialogs.py:3710
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3845 addon/globalPlugins/YoutubePlus/dialogs.py:4063
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4375 addon/globalPlugins/YoutubePlus/dialogs.py:5027
 msgid "C&lose"
 msgstr "ปิด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:121
+#: addon/globalPlugins/YoutubePlus/dialogs.py:119
 msgid "YouTubePlus Help & Shortcuts"
 msgstr "ความช่วยเหลือและทางลัดของ YouTubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:129
+#: addon/globalPlugins/YoutubePlus/dialogs.py:127
 msgid ""
 "YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
 "\n"
@@ -763,6 +769,8 @@ msgid ""
 "- D: Download video/audio from the current URL\n"
 "- B: download sub title from the current URL\n"
 "- E: Search YouTube\n"
+"- Q: Quick search — searches immediately using selected text or clipboard content, no dialog\n"
+"- Control+H: Open Favorites window on the Search History tab\n"
 "\n"
 "--- Favorites & Subscriptions ---\n"
 "- A: Show the \"Add to...\" menu (for favorites/subscriptions)\n"
@@ -795,1086 +803,1256 @@ msgid ""
 "**In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**\n"
 "- Delete: Remove the selected item from favorites\n"
 "- F2: rename item\n"
-"- Control+c / control+x > control+v : copy or cut then paste item to move position support multiple "
-"selection.\n"
+"- Control+c / control+x > control+v : copy or cut then paste item to move position, supports multiple selection and "
+"moving items between the Video and Watch List tabs\n"
+"- Alt+O: Open the Sort dialog for the current tab (sort by field, optionally limited to the current category, "
+"optionally saved permanently)\n"
+"\n"
+"**In the Video and Watch List tabs (category tree, left side):**\n"
+"- Control+=: Add a new category\n"
+"- F2: Rename the selected category\n"
+"- Delete: Remove the selected category (asks whether to move or delete its items)\n"
+"- Control+Shift+Up / Control+Shift+Down: Reorder the selected category\n"
+"- Application/Menu key or right-click: Category context menu on the tree, video Action menu on the item list\n"
 "\n"
 "--- Help ---\n"
 "- H: Show this help dialog\n"
 msgstr ""
-"คำสั่งเลเยอร์ YouTubePlus (กด NVDA+Y เพื่อเปิดใช้งาน)\n"
-"\n"
-"--- การดำเนินการหลัก (จากหน้าต่าง/URL ของ YouTube) ---\n"
-"- L: รับความคิดเห็นจาก URL ปัจจุบัน (แชทสด เล่นซ้ำ หรือแสดงความคิดเห็น)\n"
-"- I: รับข้อมูลวิดีโอ\n"
-"- T: แสดงตอน/การประทับเวลาของวิดีโอ\n"
-"- D: ดาวน์โหลดวิดีโอ/เสียงจาก URL ปัจจุบัน\n"
-"- B: ดาวน์โหลดคำบรรยาย จาก URL ปัจจุบัน\n"
-"- E: ค้นหา YouTube\n"
-"\n"
-"--- รายการโปรดและการสมัครสมาชิก ---\n"
-"- A: แสดงเมนู \"เพิ่มใน...\" (สำหรับรายการโปรด/สมัครสมาชิก)\n"
-"- F: แสดงหน้าต่างวิดีโอโปรด\n"
-"- C: แสดงหน้าต่างช่องโปรด\n"
-"- P: แสดงหน้าต่างรายการเพลงโปรด\n"
-"- W: แสดงหน้าต่างรายการเฝ้าดู\n"
-"- S: แสดงหน้าต่างฟีดการสมัครสมาชิก\n"
-"- M: แสดงหน้าต่างจัดการการสมัครสมาชิก\n"
-"- U: แสดงหน้าต่างตัวจัดการโปรไฟล์ผู้ใช้\n"
-"\n"
-"--- การตรวจสอบแชทสด (ขณะใช้งาน) ---\n"
-"- Shift+L: หยุดการตรวจสอบแชทสด\n"
-"- V: แสดงหน้าต่างข้อความแชทสด\n"
-"- R: สลับการพูดข้อความขาเข้าโดยอัตโนมัติ\n"
-"\n"
-"--- แป้นพิมพ์ลัดเพิ่มเติม (ภายในหน้าต่าง addon) ---\n"
-"**ในหน้าต่างรายการโปรดและฟีดการสมัครสมาชิก:**\n"
-"- Ctrl+1 ถึง 9: ข้ามไปยังแท็บที่ต้องการ\n"
-"- Ctrl+ขึ้น/ลง หรือ ซ้าย/ขวา: เรียงลำดับแท็บใหม่\n"
-"\n"
-"**ในหน้าต่างฟีดการติดตาม:**\n"
-"- F2: เปลี่ยนชื่อหมวดหมู่ปัจจุบัน\n"
-"- Ctrl+Equals: เพิ่มหมวดหมู่ใหม่\n"
-"- Ctrl+Minus: ลบหมวดหมู่ปัจจุบัน\n"
-"- ลบ: ทำเครื่องหมายวิดีโอที่เลือกว่าเห็นแล้ว\n"
-"- Ctrl+Delete: ทำเครื่องหมายวิดีโอทั้งหมดในแท็บปัจจุบันว่าเห็นแล้ว\n"
-"\n"
-"**ในหน้าต่างรายการโปรด (วิดีโอ ช่อง เพลย์ลิสต์ รายการดู):**\n"
-"- ลบ: ลบรายการที่เลือกออกจากรายการโปรด\n"
-"F2: แก้ไขชื่อรายการ \n"
-"\n"
-"--- ช่วย ---\n"
-"- H: แสดงหน้าต่างความช่วยเหลือนี้\n"
+"คำสั่งเลเยอร์ YouTubePlus (กด NVDA+Y เพื่อเปิดใช้งาน)\\n\n"
+"\\n\n"
+"--- การดำเนินการหลัก (จากหน้าต่าง/URL ของ YouTube) ---\\n\n"
+"- L: รับความคิดเห็นจาก URL ปัจจุบัน (แชทสด เล่นซ้ำ หรือแสดงความคิดเห็น)\\n\n"
+"- ฉัน: รับข้อมูลวิดีโอ\\n\n"
+"- T: แสดงตอน/การประทับเวลาของวิดีโอ\\n\n"
+"- D: ดาวน์โหลดวิดีโอ/เสียงจาก URL ปัจจุบัน\\n\n"
+"- B: ดาวน์โหลดหัวข้อย่อยจาก URL ปัจจุบัน\\n\n"
+"- E: ค้นหา YouTube\\n\n"
+"- ถาม: การค้นหาด่วน — ค้นหาทันทีโดยใช้ข้อความหรือเนื้อหาคลิปบอร์ดที่เลือก โดยไม่มีกล่องโต้ตอบ\\n\n"
+"- Control+H: เปิดหน้าต่างรายการโปรดบนแท็บประวัติการค้นหา\\n\n"
+"\\n\n"
+"--- รายการโปรดและการสมัครรับข้อมูล ---\\n\n"
+"- A: แสดงเมนู \"เพิ่มใน...\" (สำหรับรายการโปรด/การสมัครสมาชิก)\\n\n"
+"- F: แสดงกล่องโต้ตอบวิดีโอโปรด\\n\n"
+"- C: แสดงกล่องโต้ตอบช่องโปรด\\n\n"
+"- P: แสดงกล่องโต้ตอบเพลย์ลิสต์โปรด\\n\n"
+"- W: แสดงกล่องโต้ตอบรายการเฝ้าดู\\n\n"
+"- S: แสดงกล่องโต้ตอบฟีดการสมัครสมาชิก\\n\n"
+"- M: แสดงกล่องโต้ตอบจัดการการสมัครรับข้อมูล\\n\n"
+"- U: แสดงกล่องโต้ตอบตัวจัดการโปรไฟล์ผู้ใช้\\n\n"
+"\\n\n"
+"--- การตรวจสอบแชทสด (ขณะใช้งานอยู่) ---\\n\n"
+"- Shift+L: หยุดการตรวจสอบแชทสด\\n\n"
+"- V: แสดงกล่องโต้ตอบข้อความแชทสด\\n\n"
+"- R: สลับการพูดข้อความขาเข้าโดยอัตโนมัติ\\n\n"
+"- Y: เปิดกล่องโต้ตอบการตั้งค่า YoutubePlus\\n\n"
+"\\n\n"
+"--- แป้นพิมพ์ลัดเพิ่มเติม (ภายในกล่องโต้ตอบเสริม) ---\\n\n"
+"**ในกล่องโต้ตอบรายการโปรดและฟีดการสมัครสมาชิก:**\\n\n"
+"- Ctrl+1 ถึง 9: ข้ามไปยังแท็บที่ต้องการ\\n\n"
+"- Ctrl+ขึ้น/ลง หรือ ซ้าย/ขวา: เรียงลำดับแท็บใหม่\\n\n"
+"\\n\n"
+"**ในกล่องโต้ตอบฟีดการติดตาม:**\\n\n"
+"- F2: เปลี่ยนชื่อหมวดหมู่ปัจจุบัน\\n\n"
+"- Ctrl+เท่ากับ: เพิ่มหมวดหมู่ใหม่\\n\n"
+"- Ctrl+Minus: ลบหมวดหมู่ปัจจุบัน\\n\n"
+"- ลบ: ทำเครื่องหมายวิดีโอที่เลือกว่าเห็นแล้ว\\n\n"
+"- Ctrl+Delete: ทำเครื่องหมายวิดีโอทั้งหมดในแท็บปัจจุบันว่าเห็นแล้ว\\n\n"
+"\\n\n"
+"**ในกล่องโต้ตอบรายการโปรด (วิดีโอ ช่อง เพลย์ลิสต์ รายการดู):**\\n\n"
+"- ลบ: ลบรายการที่เลือกออกจากรายการโปรด\\n\n"
+"- F2: เปลี่ยนชื่อรายการ\\n\n"
+"- Control+c / control+x > control+v : คัดลอกหรือตัดแล้ววางรายการเพื่อย้ายตำแหน่ง "
+"รองรับการเลือกหลายรายการและย้ายรายการระหว่างแท็บวิดีโอและรายการเฝ้าดู\\n\n"
+"- Alt+O: เปิดกล่องโต้ตอบการเรียงลำดับสำหรับแท็บปัจจุบัน (จัดเรียงตามฟิลด์ หรือจำกัดไว้ที่หมวดหมู่ปัจจุบัน หรือจะบันทึกอย่างถาวรก็ได้)\\n\n"
+"\\n\n"
+"**ในแท็บวิดีโอและรายการเฝ้าดู (โครงสร้างหมวดหมู่ด้านซ้าย):**\\n\n"
+"- Control+=: เพิ่มหมวดหมู่ใหม่\\n\n"
+"- F2: เปลี่ยนชื่อหมวดหมู่ที่เลือก\\n\n"
+"- ลบ: ลบหมวดหมู่ที่เลือก (ถามว่าจะย้ายหรือลบรายการ)\\n\n"
+"- Control+Shift+Up / Control+Shift+Down: จัดลำดับหมวดหมู่ที่เลือกใหม่\\n\n"
+"- ปุ่มแอปพลิเคชัน/เมนู หรือคลิกขวา: เมนูบริบทหมวดหมู่บนแผนผัง เมนูการทำงานวิดีโอในรายการ\\n\n"
+"\\n\n"
+"--- ช่วยเหลือ ---\\n\n"
+"- H: แสดงกล่องโต้ตอบความช่วยเหลือนี้\\n\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:188 addon/globalPlugins/YoutubePlus/dialogs.py:199
+#: addon/globalPlugins/YoutubePlus/dialogs.py:196 addon/globalPlugins/YoutubePlus/dialogs.py:207
 msgid "Author"
 msgstr "ผู้เขียน"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:190 addon/globalPlugins/YoutubePlus/dialogs.py:201
+#: addon/globalPlugins/YoutubePlus/dialogs.py:198 addon/globalPlugins/YoutubePlus/dialogs.py:209
 msgid "Message"
 msgstr "ข้อความ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:192 addon/globalPlugins/YoutubePlus/dialogs.py:203
-#: addon/globalPlugins/YoutubePlus/dialogs.py:229
+#: addon/globalPlugins/YoutubePlus/dialogs.py:200 addon/globalPlugins/YoutubePlus/dialogs.py:211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:237
 msgid "Time"
 msgstr "เวลา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:219 addon/globalPlugins/YoutubePlus/dialogs.py:407
-#: addon/globalPlugins/YoutubePlus/dialogs.py:636 addon/globalPlugins/YoutubePlus/dialogs.py:2849
+#: addon/globalPlugins/YoutubePlus/dialogs.py:227 addon/globalPlugins/YoutubePlus/dialogs.py:415
+#: addon/globalPlugins/YoutubePlus/dialogs.py:644 addon/globalPlugins/YoutubePlus/dialogs.py:3176
 msgid "&Search:"
 msgstr "&ค้นหา:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:227 addon/globalPlugins/YoutubePlus/dialogs.py:1264
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1390 addon/globalPlugins/YoutubePlus/dialogs.py:2663
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3061
+#: addon/globalPlugins/YoutubePlus/dialogs.py:235 addon/globalPlugins/YoutubePlus/dialogs.py:1272
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1341 addon/globalPlugins/YoutubePlus/dialogs.py:2989
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3700
 msgid "Title"
 msgstr "ชื่อ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:237
+#: addon/globalPlugins/YoutubePlus/dialogs.py:245
 msgid "&Open Chapter"
 msgstr "&เปิดบท"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:239
+#: addon/globalPlugins/YoutubePlus/dialogs.py:247
 msgid "&Copy Title"
 msgstr "&คัดลอกชื่อเรื่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:241
+#: addon/globalPlugins/YoutubePlus/dialogs.py:249
 msgid "Copy &URL"
 msgstr "คัดลอก&URL"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:243 addon/globalPlugins/YoutubePlus/dialogs.py:423
-#: addon/globalPlugins/YoutubePlus/dialogs.py:663
+#: addon/globalPlugins/YoutubePlus/dialogs.py:251 addon/globalPlugins/YoutubePlus/dialogs.py:431
+#: addon/globalPlugins/YoutubePlus/dialogs.py:671
 msgid "&Export"
 msgstr "&ส่งออก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:325 addon/globalPlugins/YoutubePlus/dialogs.py:878
+#: addon/globalPlugins/YoutubePlus/dialogs.py:333 addon/globalPlugins/YoutubePlus/dialogs.py:886
 msgid "Opening in browser..."
 msgstr "กำลังเปิดในเบราว์เซอร์..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:330 addon/globalPlugins/YoutubePlus/dialogs.py:884
+#: addon/globalPlugins/YoutubePlus/dialogs.py:338 addon/globalPlugins/YoutubePlus/dialogs.py:892
 #, python-brace-format
 msgid "Error opening browser: {error}"
 msgstr "เกิดข้อผิดพลาดในการเปิดเบราว์เซอร์:{error}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:340
+#: addon/globalPlugins/YoutubePlus/dialogs.py:348
 #, python-brace-format
 msgid "Copied timestamp: {text}"
 msgstr "เวลาที่คัดลอก:{text}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:349
+#: addon/globalPlugins/YoutubePlus/dialogs.py:357
 #, python-brace-format
 msgid "Copied URL: {url}"
 msgstr "URL ที่คัดลอก:{url}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:367 addon/globalPlugins/YoutubePlus/dialogs.py:809
+#: addon/globalPlugins/YoutubePlus/dialogs.py:375 addon/globalPlugins/YoutubePlus/dialogs.py:817
 msgid "Export complete"
 msgstr "ส่งออกเสร็จสมบูรณ์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:371 addon/globalPlugins/YoutubePlus/dialogs.py:570
-#: addon/globalPlugins/YoutubePlus/dialogs.py:813
+#: addon/globalPlugins/YoutubePlus/dialogs.py:379 addon/globalPlugins/YoutubePlus/dialogs.py:578
+#: addon/globalPlugins/YoutubePlus/dialogs.py:821
 #, python-brace-format
 msgid "Error exporting file: {error}"
 msgstr "เกิดข้อผิดพลาดในการส่งออกไฟล์:{error}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:375 addon/globalPlugins/YoutubePlus/dialogs.py:574
-#: addon/globalPlugins/YoutubePlus/dialogs.py:817
+#: addon/globalPlugins/YoutubePlus/dialogs.py:383 addon/globalPlugins/YoutubePlus/dialogs.py:582
+#: addon/globalPlugins/YoutubePlus/dialogs.py:825
 msgid "An unexpected error occurred during export."
 msgstr "เกิดข้อผิดพลาดที่ไม่คาดคิดระหว่างการส่งออก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:421 addon/globalPlugins/YoutubePlus/dialogs.py:661
+#: addon/globalPlugins/YoutubePlus/dialogs.py:429 addon/globalPlugins/YoutubePlus/dialogs.py:669
 msgid "&Copy"
 msgstr "&สำเนา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:546
+#: addon/globalPlugins/YoutubePlus/dialogs.py:554
 msgid "message copied"
 msgstr "คัดลอกข้อความแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:549
+#: addon/globalPlugins/YoutubePlus/dialogs.py:557
 msgid "No message selected"
 msgstr "ไม่มีข้อความที่เลือก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:566
+#: addon/globalPlugins/YoutubePlus/dialogs.py:574
 msgid "Export message complete"
 msgstr "ส่งออกข้อความเรียบร้อยแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:643 addon/globalPlugins/YoutubePlus/dialogs.py:650
-#: addon/globalPlugins/YoutubePlus/dialogs.py:724
+#: addon/globalPlugins/YoutubePlus/dialogs.py:651 addon/globalPlugins/YoutubePlus/dialogs.py:658
+#: addon/globalPlugins/YoutubePlus/dialogs.py:732
 msgid "No Filter"
 msgstr "ไม่มีตัวกรอง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:644 addon/globalPlugins/YoutubePlus/dialogs.py:717
+#: addon/globalPlugins/YoutubePlus/dialogs.py:652 addon/globalPlugins/YoutubePlus/dialogs.py:725
 msgid "Filter by Selected Author"
 msgstr "กรองตามผู้เขียนที่เลือก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:645 addon/globalPlugins/YoutubePlus/dialogs.py:726
+#: addon/globalPlugins/YoutubePlus/dialogs.py:653 addon/globalPlugins/YoutubePlus/dialogs.py:734
 msgid "Show Super Chats Only"
 msgstr "แสดง Super Chat เท่านั้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:646 addon/globalPlugins/YoutubePlus/dialogs.py:728
+#: addon/globalPlugins/YoutubePlus/dialogs.py:654 addon/globalPlugins/YoutubePlus/dialogs.py:736
 msgid "Show Super Stickers Only"
 msgstr "แสดง Super Stickers เท่านั้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:647 addon/globalPlugins/YoutubePlus/dialogs.py:730
+#: addon/globalPlugins/YoutubePlus/dialogs.py:655 addon/globalPlugins/YoutubePlus/dialogs.py:738
 msgid "Show Super Thanks Only"
 msgstr "แสดง Super Thanks เท่านั้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:707
+#: addon/globalPlugins/YoutubePlus/dialogs.py:715
 msgid "Total Paid Amount:\n"
 msgstr "ยอดบริจาคทั้งหมด:\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:787 addon/globalPlugins/YoutubePlus/dialogs.py:1104
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3312
+#: addon/globalPlugins/YoutubePlus/dialogs.py:795 addon/globalPlugins/YoutubePlus/dialogs.py:1112
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
 msgid "Copied"
 msgstr "คัดลอกแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:790
+#: addon/globalPlugins/YoutubePlus/dialogs.py:798
 msgid "Nothing selected"
 msgstr "ไม่ได้เลือกอะไร"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:874 addon/globalPlugins/YoutubePlus/dialogs.py:948
-#: addon/globalPlugins/YoutubePlus/dialogs.py:951 addon/globalPlugins/YoutubePlus/dialogs.py:962
-#: addon/globalPlugins/YoutubePlus/dialogs.py:964 addon/globalPlugins/YoutubePlus/dialogs.py:1022
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1032 addon/globalPlugins/YoutubePlus/dialogs.py:1044
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1056
+#: addon/globalPlugins/YoutubePlus/dialogs.py:882 addon/globalPlugins/YoutubePlus/dialogs.py:956
+#: addon/globalPlugins/YoutubePlus/dialogs.py:959 addon/globalPlugins/YoutubePlus/dialogs.py:970
+#: addon/globalPlugins/YoutubePlus/dialogs.py:972 addon/globalPlugins/YoutubePlus/dialogs.py:1030
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1040 addon/globalPlugins/YoutubePlus/dialogs.py:1052
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1064
 msgid "Video ID not found."
 msgstr "ไม่พบรหัสวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:906
+#: addon/globalPlugins/YoutubePlus/dialogs.py:914
 msgid "View Video &Info..."
 msgstr "ดูวิดีโอ &ข้อมูล..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:907
+#: addon/globalPlugins/YoutubePlus/dialogs.py:915
 msgid "View &Comments / Replay..."
 msgstr "ดู&แสดงความคิดเห็น / เล่นซ้ำ..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:908
+#: addon/globalPlugins/YoutubePlus/dialogs.py:916
 msgid "View Chap&ters/Timestamps..."
 msgstr "ดูบท&เตอร์/ประทับเวลา..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:910
+#: addon/globalPlugins/YoutubePlus/dialogs.py:918
 msgid "&Download Video"
 msgstr "&ดาวน์โหลดวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:912
+#: addon/globalPlugins/YoutubePlus/dialogs.py:920
 msgid "Download Su&btitles"
 msgstr "ดาวน์โหลด&คำบรรยาย"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:914
+#: addon/globalPlugins/YoutubePlus/dialogs.py:922
 msgid "Add to &Favorite Videos"
 msgstr "เพิ่มลงในวิดีโอโปรด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:915
+#: addon/globalPlugins/YoutubePlus/dialogs.py:923
 msgid "Add to &Favorite Channels"
 msgstr "เพิ่มในช่อง &รายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:918
+#: addon/globalPlugins/YoutubePlus/dialogs.py:926
 msgid "&Open video in browser"
 msgstr "เปิดวิดีโอในเบราว์เซอร์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:919
+#: addon/globalPlugins/YoutubePlus/dialogs.py:927
 msgid "Open c&hannel in browser"
 msgstr "เปิด c&hannel ในเบราว์เซอร์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:921
+#: addon/globalPlugins/YoutubePlus/dialogs.py:929
 msgid "Show channel &videos"
 msgstr "แสดงช่องและวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:922
+#: addon/globalPlugins/YoutubePlus/dialogs.py:930
 msgid "Show channel &shorts"
 msgstr "แสดงช่อง&สั้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:923
+#: addon/globalPlugins/YoutubePlus/dialogs.py:931
 msgid "Show channel &live"
 msgstr "แสดงช่อง&ถ่ายทอดสด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:924
+#: addon/globalPlugins/YoutubePlus/dialogs.py:932
 msgid "Show channel &playlist"
 msgstr "แสดงรายการเพลลิสต์ของช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:925
+#: addon/globalPlugins/YoutubePlus/dialogs.py:933
 msgid "Show channel &podcast"
 msgstr "แสดงรายการพอดแคสต์ของช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:954
+#: addon/globalPlugins/YoutubePlus/dialogs.py:962
 msgid "Getting subtitle info..."
 msgstr "กำลังรับข้อมูลคำบรรยาย..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:975
+#: addon/globalPlugins/YoutubePlus/dialogs.py:983
 msgid "Could not get video ID to add to favorites."
 msgstr "ไม่สามารถรับ ID วิดีโอเพื่อเพิ่มลงในรายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:985
+#: addon/globalPlugins/YoutubePlus/dialogs.py:993
 msgid "Could not get video ID to find the channel."
 msgstr "ไม่สามารถรับรหัสวิดีโอเพื่อค้นหาช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1090 addon/globalPlugins/YoutubePlus/dialogs.py:1097
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3307
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1098 addon/globalPlugins/YoutubePlus/dialogs.py:1105
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3946
 #, python-brace-format
 msgid "Title: {title}\n"
 msgstr "ชื่อเรื่อง:{title}\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1091 addon/globalPlugins/YoutubePlus/dialogs.py:1098
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1099 addon/globalPlugins/YoutubePlus/dialogs.py:1106
 #, python-brace-format
 msgid "Channel: {channel}\n"
 msgstr "ช่อง:{channel}\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1092 addon/globalPlugins/YoutubePlus/dialogs.py:1099
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3308
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1100 addon/globalPlugins/YoutubePlus/dialogs.py:1107
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3947
 msgid "URL: "
 msgstr "URL: "
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1113
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1121
 msgid "Error: Channel information not found for this item."
 msgstr "ข้อผิดพลาด: ไม่พบข้อมูลช่องสำหรับรายการนี้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1123 addon/globalPlugins/YoutubePlus/dialogs.py:2149
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2398 addon/globalPlugins/YoutubePlus/dialogs.py:2667
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2826 addon/globalPlugins/YoutubePlus/dialogs.py:3063
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3190 addon/globalPlugins/YoutubePlus/dialogs.py:3404
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3644 addon/globalPlugins/YoutubePlus/dialogs.py:3819
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1131 addon/globalPlugins/YoutubePlus/dialogs.py:1262
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2223 addon/globalPlugins/YoutubePlus/dialogs.py:2475
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2724 addon/globalPlugins/YoutubePlus/dialogs.py:2993
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3152 addon/globalPlugins/YoutubePlus/dialogs.py:3702
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3829 addon/globalPlugins/YoutubePlus/dialogs.py:4043
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4283 addon/globalPlugins/YoutubePlus/dialogs.py:4458
 #: addon/globalPlugins/YoutubePlus/settings.py:130
 msgid "Videos"
 msgstr "วิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1124 addon/globalPlugins/YoutubePlus/dialogs.py:2150
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3404 addon/globalPlugins/YoutubePlus/dialogs.py:3645
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3820 addon/globalPlugins/YoutubePlus/dialogs.py:3968
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1132 addon/globalPlugins/YoutubePlus/dialogs.py:2476
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4043 addon/globalPlugins/YoutubePlus/dialogs.py:4284
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4459 addon/globalPlugins/YoutubePlus/dialogs.py:4607
 #: addon/globalPlugins/YoutubePlus/settings.py:130
 msgid "Shorts"
 msgstr "Shorts"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1125 addon/globalPlugins/YoutubePlus/dialogs.py:2151
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3404 addon/globalPlugins/YoutubePlus/dialogs.py:3646
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3821 addon/globalPlugins/YoutubePlus/dialogs.py:3969
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1133 addon/globalPlugins/YoutubePlus/dialogs.py:2477
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4043 addon/globalPlugins/YoutubePlus/dialogs.py:4285
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4460 addon/globalPlugins/YoutubePlus/dialogs.py:4608
 #: addon/globalPlugins/YoutubePlus/settings.py:130
 msgid "Live"
 msgstr "สด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1126 addon/globalPlugins/YoutubePlus/dialogs.py:2152
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2828 addon/globalPlugins/YoutubePlus/dialogs.py:3647
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1134 addon/globalPlugins/YoutubePlus/dialogs.py:2478
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3154 addon/globalPlugins/YoutubePlus/dialogs.py:4286
 msgid "Playlists"
 msgstr "เพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1127 addon/globalPlugins/YoutubePlus/dialogs.py:2153
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3648
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1135 addon/globalPlugins/YoutubePlus/dialogs.py:2479
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4287
 msgid "Podcasts"
 msgstr "พอดแคสต์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1131
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1139
 msgid "Content"
 msgstr "เนื้อหา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1135 addon/globalPlugins/YoutubePlus/dialogs.py:2160
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3655
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1143 addon/globalPlugins/YoutubePlus/dialogs.py:2486
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4294
 #, python-brace-format
 msgid "Fetching {type} from {channel}..."
 msgstr "กำลังดึงข้อมูล{type}จาก{channel}..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1230 addon/globalPlugins/YoutubePlus/dialogs.py:1962
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2409
-msgid "&Remove"
-msgstr "&ลบ"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1268 addon/globalPlugins/YoutubePlus/dialogs.py:1394
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3063 addon/globalPlugins/YoutubePlus/dialogs.py:3919
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1274 addon/globalPlugins/YoutubePlus/dialogs.py:1342
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3702 addon/globalPlugins/YoutubePlus/dialogs.py:4558
 msgid "Duration"
 msgstr "ระยะเวลา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1270
-msgid "Upload Date"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1275
+msgid "Uploaded Date"
 msgstr "วันที่อัพโหลด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1274 addon/globalPlugins/YoutubePlus/dialogs.py:3067
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3923
-msgid "&Action..."
-msgstr "&การกระทำ..."
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1276 addon/globalPlugins/YoutubePlus/dialogs.py:3068
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3202 addon/globalPlugins/YoutubePlus/dialogs.py:3925
-msgid "&Copy..."
-msgstr "&สำเนา..."
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1301
-msgid "Error: Could not save data."
-msgstr "ข้อผิดพลาด: ไม่สามารถบันทึกข้อมูลได้"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1370 addon/globalPlugins/YoutubePlus/dialogs.py:3113
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3292 addon/globalPlugins/YoutubePlus/dialogs.py:4029
-msgid "Copy &Title"
-msgstr "คัดลอก &ชื่อเรื่อง"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1371 addon/globalPlugins/YoutubePlus/dialogs.py:3115
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4031
-msgid "Copy Video &URL"
-msgstr "คัดลอกวิดีโอ &URL"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1372 addon/globalPlugins/YoutubePlus/dialogs.py:3117
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4033
-msgid "Copy &Channel Name"
-msgstr "คัดลอก&ชื่อช่อง"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1373 addon/globalPlugins/YoutubePlus/dialogs.py:3119
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4035
-msgid "Copy C&hannel URL"
-msgstr "คัดลอก&ช่องทาง URL"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1375 addon/globalPlugins/YoutubePlus/dialogs.py:3122
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3296 addon/globalPlugins/YoutubePlus/dialogs.py:4038
-msgid "Copy &Summary"
-msgstr "คัดลอก &สรุป"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1396
-msgid "uploaded Date"
-msgstr "วันที่อัพโหลด: {upload_date}"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1398 addon/globalPlugins/YoutubePlus/dialogs.py:2241
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2669
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1276 addon/globalPlugins/YoutubePlus/dialogs.py:1344
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2567 addon/globalPlugins/YoutubePlus/dialogs.py:2995
 msgid "Date Added"
 msgstr "วันที่เพิ่มลงรายการ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1408 addon/globalPlugins/YoutubePlus/dialogs.py:2247
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2675
-msgid "Sort List"
-msgstr "เรียงลำดับรายการ"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1310 addon/globalPlugins/YoutubePlus/dialogs.py:3706
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4562
+msgid "&Action..."
+msgstr "&การกระทำ..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1414 addon/globalPlugins/YoutubePlus/dialogs.py:2250
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2678
-msgid "Sort by:"
-msgstr "เรียงตาม"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1311 addon/globalPlugins/YoutubePlus/dialogs.py:3707
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3841 addon/globalPlugins/YoutubePlus/dialogs.py:4564
+msgid "&Copy..."
+msgstr "&สำเนา..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1429 addon/globalPlugins/YoutubePlus/dialogs.py:2262
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2690
-msgid "&Ascending"
-msgstr "จากน้อยไปหามาก"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1313 addon/globalPlugins/YoutubePlus/dialogs.py:2288
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2735 addon/globalPlugins/YoutubePlus/dialogs.py:3369
+msgid "&Remove"
+msgstr "&ลบ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1431 addon/globalPlugins/YoutubePlus/dialogs.py:2264
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2692
-msgid "&Descending"
-msgstr "จากมากไปหาน้อย"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1381
+msgid "Error: Could not save data."
+msgstr "ข้อผิดพลาด: ไม่สามารถบันทึกข้อมูลได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1441 addon/globalPlugins/YoutubePlus/dialogs.py:2272
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2700
-msgid "&Apply permanently (saves to file)"
-msgstr "แก้ไขการเรียงลำดับใหม่ถาวร โดยบันทึกในไฟล์ฐานข้อมูล"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1509
+#, python-brace-format
+msgid "The default {label} category cannot be deleted."
+msgstr "หมวดหมู่ {label} เริ่มต้นไม่สามารถลบได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1449 addon/globalPlugins/YoutubePlus/dialogs.py:2278
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2706
-msgid "C&lear Sort"
-msgstr "ล้างค่าการเรียงลำดับ"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1534
+msgid "&Add Category"
+msgstr "เพิ่มหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1480 addon/globalPlugins/YoutubePlus/dialogs.py:2303
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2731
-msgid "Sort cleared."
-msgstr "ล้างค่าการเรียงลำดับแล้ว"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1536
+msgid "&Rename Category"
+msgstr "เปลี่ยนชื่อหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1524 addon/globalPlugins/YoutubePlus/dialogs.py:2328
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2756
-msgid "List sorted and saved."
-msgstr "เรียงลำดับในการ (ถาวร) แล้ว"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1537
+msgid "&Delete Category"
+msgstr "ลบหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1529 addon/globalPlugins/YoutubePlus/dialogs.py:2333
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2761
-msgid "List sorted temporarily."
-msgstr "เรียงลำดับในรายการ (ชั่วคราว) แล้ว"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1539
+msgid "Move &Up"
+msgstr "เลื่อนขึ้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1543 addon/globalPlugins/YoutubePlus/dialogs.py:2529
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1540
+msgid "Move &Down"
+msgstr "เลื่อนลง"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1555
+msgid "Category name:"
+msgstr "ป้อนชื่อหมวดหมู่ใหม่:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1555 addon/globalPlugins/YoutubePlus/dialogs.py:4910
+msgid "Add Category"
+msgstr "เพิ่มหมวดหมู่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1569
+#, python-brace-format
+msgid "Category '{name}' added."
+msgstr "เพิ่มหมวดหมู่ '{name}' แล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1572
+msgid "New name:"
+msgstr "ชื่อใหม่:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1572 addon/globalPlugins/YoutubePlus/dialogs.py:4946
+msgid "Rename Category"
+msgstr "เปลี่ยนชื่อหมวดหมู่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1584
+#, python-brace-format
+msgid "Renamed to '{name}'."
+msgstr "เปลี่ยนชื่อเป็น '{name}'"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1593
+#, python-brace-format
+msgid "Delete category '{name}'?"
+msgstr "ลบหมวดหมู่ '{name}' หรือไม่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1594 addon/globalPlugins/YoutubePlus/dialogs.py:3598
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4845
+msgid "Confirm"
+msgstr "ยืนยัน"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1601
+#, python-brace-format
+msgid "Category '{name}' deleted."
+msgstr "หมวดหมู่ '{name}'  ถูกลบแล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1606
+#, python-brace-format
+msgid ""
+"Category '{name}' contains {count} item(s).\n"
+"\n"
+"Move them to '{default}', or delete them along with the category?"
+msgstr ""
+"หมวดหมู่ '{name}' มี {count} รายการ\\n\n"
+"\\n\n"
+"ย้ายไปที่ '{default}' หรือต้องการลบออกพร้อมกับหมวดหมู่?"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1609
+msgid "Delete Category"
+msgstr "ลบหมวดหมู่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1612
+#, python-brace-format
+msgid "&Move to {default}"
+msgstr "ย้ายวิดีโอไปยังหมดหมู่หลัก"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1613
+msgid "&Delete items too"
+msgstr "ต้องการลบรายการวิดีโอทั้งหมดในหมวดหมู่นี้ด้วยหรือไม่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1613
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1623
+#, python-brace-format
+msgid "Category '{name}' deleted. {count} item(s) moved to {default}."
+msgstr "ลบหมวดหมู่ '{name}' แล้ว ย้าย {count} รายการไปที่ {default}"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1627
+#, python-brace-format
+msgid "Category '{name}' and its {count} item(s) deleted."
+msgstr "หมวดหมู่ '{name}' และรายการ {count} ถูกลบแล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1662
+msgid "Category"
+msgstr "หมวดหมู่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1809 addon/globalPlugins/YoutubePlus/dialogs.py:3752
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3931 addon/globalPlugins/YoutubePlus/dialogs.py:4668
+msgid "Copy &Title"
+msgstr "คัดลอก &ชื่อเรื่อง"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1810 addon/globalPlugins/YoutubePlus/dialogs.py:3754
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4670
+msgid "Copy Video &URL"
+msgstr "คัดลอกวิดีโอ &URL"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1811 addon/globalPlugins/YoutubePlus/dialogs.py:3756
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4672
+msgid "Copy &Channel Name"
+msgstr "คัดลอก&ชื่อช่อง"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1812 addon/globalPlugins/YoutubePlus/dialogs.py:3758
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4674
+msgid "Copy C&hannel URL"
+msgstr "คัดลอก&ช่องทาง URL"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1814 addon/globalPlugins/YoutubePlus/dialogs.py:3761
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3935 addon/globalPlugins/YoutubePlus/dialogs.py:4677
+msgid "Copy &Summary"
+msgstr "คัดลอก &สรุป"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1829 addon/globalPlugins/YoutubePlus/dialogs.py:2346
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4312 addon/globalPlugins/YoutubePlus/dialogs.py:4693
+msgid "No valid YouTube URL found in clipboard."
+msgstr "ไม่พบ URL ของ YouTube ที่ถูกต้องในคลิปบอร์ด"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1832 addon/globalPlugins/YoutubePlus/dialogs.py:2350
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2911 addon/globalPlugins/YoutubePlus/dialogs.py:4316
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4697
+msgid "Could not read from clipboard."
+msgstr "ไม่สามารถอ่านจากคลิปบอร์ดได้"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1844 addon/globalPlugins/YoutubePlus/dialogs.py:2855
 #, python-brace-format
 msgid "Are you sure you want to remove '{title}'?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '{title}'"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1546
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1846
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected items?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '{count} รายการที่เลือกไว้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1548 addon/globalPlugins/YoutubePlus/dialogs.py:2110
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2534 addon/globalPlugins/YoutubePlus/dialogs.py:4340
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1847 addon/globalPlugins/YoutubePlus/dialogs.py:2436
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2860 addon/globalPlugins/YoutubePlus/dialogs.py:4979
 msgid "Confirm Removal"
 msgstr "ยืนยันการลบ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1566
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1859
 msgid "Item removed."
 msgstr "นำรายการออกแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1567
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1860
 #, python-brace-format
 msgid "{count} items removed."
 msgstr "ลบ {count} รายการแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1574 addon/globalPlugins/YoutubePlus/dialogs.py:2020
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3673 addon/globalPlugins/YoutubePlus/dialogs.py:4054
-msgid "No valid YouTube URL found in clipboard."
-msgstr "ไม่พบ URL ของ YouTube ที่ถูกต้องในคลิปบอร์ด"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1868
+msgid "Enter new title:"
+msgstr "ป้อนชื่อวิดีโอใหม่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1578 addon/globalPlugins/YoutubePlus/dialogs.py:2024
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2585 addon/globalPlugins/YoutubePlus/dialogs.py:3677
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4058
-msgid "Could not read from clipboard."
-msgstr "ไม่สามารถอ่านจากคลิปบอร์ดได้"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1868
+msgid "Rename"
+msgstr "เปลี่ยนชื่อ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1596
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1897 addon/globalPlugins/YoutubePlus/dialogs.py:2573
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3001 addon/globalPlugins/YoutubePlus/dialogs.py:3427
+msgid "Sort List"
+msgstr "เรียงลำดับรายการ"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1899 addon/globalPlugins/YoutubePlus/dialogs.py:2576
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3004 addon/globalPlugins/YoutubePlus/dialogs.py:3430
+msgid "Sort by:"
+msgstr "เรียงตาม"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1908 addon/globalPlugins/YoutubePlus/dialogs.py:2588
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3016 addon/globalPlugins/YoutubePlus/dialogs.py:3442
+msgid "&Ascending"
+msgstr "จากน้อยไปหามาก"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1909 addon/globalPlugins/YoutubePlus/dialogs.py:2590
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3018 addon/globalPlugins/YoutubePlus/dialogs.py:3444
+msgid "&Descending"
+msgstr "จากมากไปหาน้อย"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1917
+msgid "Sort only the current &category"
+msgstr "เรียงลำดับเฉพาะในหมวดหมู่ปัจจุบัน"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1920 addon/globalPlugins/YoutubePlus/dialogs.py:2598
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3026
+msgid "&Apply permanently (saves to file)"
+msgstr "แก้ไขการเรียงลำดับใหม่ถาวร โดยบันทึกในไฟล์ฐานข้อมูล"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1927 addon/globalPlugins/YoutubePlus/dialogs.py:2604
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3032 addon/globalPlugins/YoutubePlus/dialogs.py:3455
+msgid "C&lear Sort"
+msgstr "ล้างค่าการเรียงลำดับ"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1953 addon/globalPlugins/YoutubePlus/dialogs.py:2629
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3057 addon/globalPlugins/YoutubePlus/dialogs.py:3476
+msgid "Sort cleared."
+msgstr "ล้างค่าการเรียงลำดับแล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2005 addon/globalPlugins/YoutubePlus/dialogs.py:2654
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3082
+msgid "List sorted and saved."
+msgstr "เรียงลำดับในการ (ถาวร) แล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2015 addon/globalPlugins/YoutubePlus/dialogs.py:2659
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3087
+msgid "List sorted temporarily."
+msgstr "เรียงลำดับในรายการ (ชั่วคราว) แล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2030
 #, python-brace-format
 msgid "{count} item(s) copied."
 msgstr "คัดลอกแล้ว {count} รายการ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1607
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2039
 #, python-brace-format
 msgid "{count} item(s) cut."
 msgstr "ย้ายแล้ว {count} รายการ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1612 addon/globalPlugins/YoutubePlus/dialogs.py:2211
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2487
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2043 addon/globalPlugins/YoutubePlus/dialogs.py:2537
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2813
 msgid "Clipboard is empty."
 msgstr "ไม่มีรายการในคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1663
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2098
 msgid "Cut"
 msgstr "ย้าย"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1663
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2098
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1669
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2103
 #, python-brace-format
 msgid "{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
 msgstr "{op} '{title}' จาก {src} ถึง {dst} — รายการนี้มีอยู่แล้ว ต้องการแทนที่ใช่ไหม?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1674
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2107
 #, python-brace-format
 msgid "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
 msgstr "{op} จาก {src} ถึง {dst} — มี {count} รายการอยู่แล้ว ต้องการแทนที่ทั้งหมดใช่ไหม"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1678
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2110
 msgid "Confirm Replace"
 msgstr "ต้องการวางทับหรือไม่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1743
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2175
 #, python-brace-format
-msgid "{count} item(s) pasted."
-msgstr "{count} รายการถูกวางแล้ว"
+msgid "{count} item(s) pasted to {cat}."
+msgstr "วาง {count} รายการไปที่ {cat}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1746
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2177
 #, python-brace-format
-msgid "{done} item(s) pasted, {skipped} skipped."
-msgstr "วางแล้ว {done} รายการ, {skipped} ข้ามไป"
+msgid "{done} item(s) pasted to {cat}, {skipped} skipped."
+msgstr "วาง {done} รายการไปที่ {cat}, {skip} ข้ามไป"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1750
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2180
 msgid "All items already exist in this list."
 msgstr "สิ่งที่คุณวางมีอยู่ในรายการนี้แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1872
-msgid "Enter new title:"
-msgstr "ป้อนชื่อวิดีโอใหม่:"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2208
+msgid "Favorite Videos"
+msgstr "วิดีโอโปรด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1874
-msgid "Rename"
-msgstr "เปลี่ยนชื่อ"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1909
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2220
 msgid "Add &new favorite video from clipboard"
 msgstr "เพิ่ม&วิดีโอโปรดใหม่จากคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1922
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2230 addon/globalPlugins/YoutubePlus/dialogs.py:2245
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3155
+msgid "Watch List"
+msgstr "รายการเฝ้าดู"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2242
 msgid "Add &new watch list from clipboard"
 msgstr "เพิ่มรายการเฝ้าดูใหม่จากคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1946 addon/globalPlugins/YoutubePlus/dialogs.py:2239
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2272 addon/globalPlugins/YoutubePlus/dialogs.py:2565
 msgid "Subscribers"
 msgstr "สมาชิก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1949
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2275
 msgid "Channel Description"
 msgstr "คำอธิบายช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1956
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2282
 msgid "Open channel on &browser"
 msgstr "เปิดช่องในเบราว์เซอร์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1958
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2284
 msgid "View &channel Content..."
 msgstr "ดู &เนื้อหาช่อง..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1960
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2286
 msgid "Add &new favorite channel from clipboard"
 msgstr "เพิ่มช่องโปรดใหม่จากคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2103
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2320 addon/globalPlugins/YoutubePlus/dialogs.py:2375
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2949 addon/globalPlugins/YoutubePlus/dialogs.py:3785
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3884 addon/globalPlugins/YoutubePlus/dialogs.py:4612
+msgid "N/A"
+msgstr "ไม่มี"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2429
 msgid "this channel"
 msgstr "ช่องนี้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2105
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2431
 #, python-brace-format
 msgid "Are you sure you want to remove '{name}'?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ '{name}'"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2108
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2434
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected channels?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ {count} ช่องที่เลือกไว้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2130
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2456
 msgid "Channel removed."
 msgstr "ลบช่องแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2131
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2457
 #, python-brace-format
 msgid "{count} channels removed."
 msgstr "ลบ {count} ช่องแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2146 addon/globalPlugins/YoutubePlus/dialogs.py:3640
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2472 addon/globalPlugins/YoutubePlus/dialogs.py:4279
 msgid "Error: Channel URL not found."
 msgstr "ข้อผิดพลาด: ไม่พบ URL ของช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2206 addon/globalPlugins/YoutubePlus/dialogs.py:2482
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2532 addon/globalPlugins/YoutubePlus/dialogs.py:2808
 msgid "Cut."
 msgstr "ย้าย"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2232 addon/globalPlugins/YoutubePlus/dialogs.py:2508
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2558 addon/globalPlugins/YoutubePlus/dialogs.py:2834
 msgid "Moved."
 msgstr "ย้าย"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2355
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2681
 msgid "Enter new channel name:"
 msgstr "ป้อนชื่อช่องใหม่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2356
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2682
 msgid "Rename Channel"
 msgstr "เปลี่ยนชื่อช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2394 addon/globalPlugins/YoutubePlus/dialogs.py:3188
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2720 addon/globalPlugins/YoutubePlus/dialogs.py:3827
 msgid "Playlist Title"
 msgstr "ชื่อเพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2403 addon/globalPlugins/YoutubePlus/dialogs.py:3198
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2729 addon/globalPlugins/YoutubePlus/dialogs.py:3837
 msgid "Show &Videos..."
 msgstr "แสดงและวิดีโอ..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2405
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2731
 msgid "Open on &browser"
 msgstr "เปิดวิดีโอในเบราว์เซอร์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2407
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2733
 msgid "Add &new favorite playlist from clipboard"
 msgstr "เพิ่มเพลย์ลิสต์โปรดใหม่จากคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2527
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2853
 msgid "this playlist"
 msgstr "เพลย์ลิสต์นี้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2532
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2858
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected playlists?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบ {count} เพลย์ลิสต์ที่เลือกไว้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2554
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2880
 msgid "Playlist removed."
 msgstr "ลบเพลย์ลิสต์แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2555
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2881
 #, python-brace-format
 msgid "{count} playlists removed."
 msgstr "ลบ {count} เพลย์ลิสต์แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2573
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2899
 msgid "Error: Could not save playlist list."
 msgstr "ข้อผิดพลาด: ไม่สามารถบันทึกรายการเพลย์ลิสต์ได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2581
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2907
 msgid "No valid YouTube playlist URL found in clipboard."
 msgstr "ไม่พบ URL เพลย์ลิสต์ YouTube ที่ถูกต้องในคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2638
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2964
 #, python-brace-format
 msgid "Fetching videos from '{playlist}'..."
 msgstr "กำลังเรียกวิดีโอจาก '{playlist}'..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2783
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3109
 msgid "Enter new playlist title:"
 msgstr "ป้อนชื่อเพลลิสต์ใหม่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2784
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3110
 msgid "Rename Playlist"
 msgstr "เปลี่ยนชื่อเพลย์ลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2820
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3146
 msgid "Favorites - YoutubePlus"
 msgstr "รายการโปรด - YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2827
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3153
 msgid "Channels"
 msgstr "ช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2829
-msgid "Watch List"
-msgstr "รายการเฝ้าดู"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3156
+msgid "Search History"
+msgstr "ประวัติการค้นหา:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2852
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3179
 msgid "S&ort..."
 msgstr "การเรียงลำดับ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2925
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3281
 #, python-brace-format
 msgid "{tab_name} - Favorites - YoutubePlus"
 msgstr "{tab_name}- รายการโปรด - YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2994
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3356 addon/globalPlugins/YoutubePlus/dialogs.py:3419
+msgid "Keyword"
+msgstr "คำสำคัญ"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3358 addon/globalPlugins/YoutubePlus/dialogs.py:3420
+msgid "Results"
+msgstr "ผลลัพธ์"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3360 addon/globalPlugins/YoutubePlus/dialogs.py:3421
+msgid "Searched At"
+msgstr "ค้นหาเมื่อ"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3365
+msgid "Search &Again"
+msgstr "ค้นหาอีกครั้ง"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3367
+msgid "&New Search"
+msgstr "ค้นหาใหม่"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3371
+msgid "&Clear All"
+msgstr "ล้างรายการทั้งหมด"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3509
+msgid "List sorted."
+msgstr "เรียงลำดับวิดีโอแล้ว"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3591
+msgid "Search history entry removed."
+msgstr "รายการประวัติการค้นหาถูกลบออก"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3596
+msgid "Clear all search history?"
+msgstr "ลบประวัติการค้นหาทั้งหมด"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3615
 msgid "Search YouTube"
 msgstr "ค้นหา YouTube"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3001
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3632
 msgid "&Search for:"
 msgstr "&ค้นหา:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3004
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3642
 msgid "Number of &results to fetch:"
 msgstr "จำนวน &ผลลัพธ์ที่จะดึงข้อมูล:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3010
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3648
 msgid "&Search"
 msgstr "&ค้นหา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3038
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3677
 msgid "Please enter a search term."
 msgstr "กรุณากรอกคำค้นหา"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3070 addon/globalPlugins/YoutubePlus/dialogs.py:3204
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3709 addon/globalPlugins/YoutubePlus/dialogs.py:3843
 msgid "Load All"
 msgstr "โหลดทั้งหมด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3196
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3835
 msgid "Add to &Favorites"
 msgstr "เพิ่มลงในรายการโปรด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3200
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3839
 msgid "Open on &Browser"
 msgstr "เปิดในเบราว์เซอร์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3268 addon/globalPlugins/YoutubePlus/dialogs.py:3337
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3907 addon/globalPlugins/YoutubePlus/dialogs.py:3976
 msgid "Playlist URL not found."
 msgstr "ข้อผิดพลาด: ไม่พบ URL ของเพลลิสต์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3271
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3910
 #, python-brace-format
 msgid "Fetching videos from '{title}'..."
 msgstr "กำลังเรียกวิดีโอจาก '{title}'..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3294
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3933
 msgid "Copy Playlist &URL"
 msgstr "คัดลอกเพลลิสต์ &URL"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3362
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4001
 msgid "Manage Subscriptions"
 msgstr "จัดการการสมัครสมาชิก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3379
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4018
 msgid "Subscribed &Channels:"
 msgstr "สมัครรับข้อมูล&ช่อง:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3382 addon/globalPlugins/YoutubePlus/dialogs.py:3917
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4021 addon/globalPlugins/YoutubePlus/dialogs.py:4556
 msgid "Channel Name"
 msgstr "ชื่อช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3387
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4026
 msgid "Filter by Category:"
 msgstr "กรองตามหมวดหมู่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3396
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4035
 msgid "Assign to Categories"
 msgstr "กำหนดให้กับหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3401
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4040
 msgid "Content Types to Fetch"
 msgstr "ประเภทเนื้อหาที่จะดึงข้อมูล"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3407
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4046
 msgid "Actions"
 msgstr "การดำเนินการ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3410
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4049
 msgid "View &Content..."
 msgstr "ดู&เนื้อหา..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3412
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4051
 msgid "Add &new subscribe channel from Clipboard..."
 msgstr "เพิ่ม &ช่องติดตามใหม่จากคลิปบอร์ด..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3414
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4053
 msgid "&Unsubscribe from this Channel"
 msgstr "ยกเลิกการสมัครจากช่องนี้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3486
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4125
 msgid "Changes saved."
 msgstr "บันทึกการเปลี่ยนแปลงเรียบร้อย"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3518
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4157
 msgid "All Channels"
 msgstr "ทุกช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3688
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4327
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{name}'?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการสมัครจาก '{name}'?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3690 addon/globalPlugins/YoutubePlus/dialogs.py:4261
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4329 addon/globalPlugins/YoutubePlus/dialogs.py:4900
 msgid "Confirm Unsubscribe"
 msgstr "ยืนยันการยกเลิกการสมัคร"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3712
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4351
 msgid "Subscription Feed"
 msgstr "ฟีดการสมัครสมาชิก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3730
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4369
 msgid "Add &new Subscription from clipboard URL."
 msgstr "เพิ่มการสมัครสมาชิกใหม่จาก URL ของคลิปบอร์ด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3732
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4371
 msgid "&Update Feed"
 msgstr "&อัปเดตฟีด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3734
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4373
 msgid "&More..."
 msgstr "&มากกว่า..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3818
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4457
 msgid "All"
 msgstr "ทั้งหมด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3880
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4519
 msgid "Error reordering tabs."
 msgstr "เกิดข้อผิดพลาดในการเรียงลำดับแท็บใหม่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3905
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4544
 #, python-brace-format
 msgid "Subscription Feed - {tab_name} - YoutubePlus"
 msgstr "ฟีดการติดตาม -{tab_name}- YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3913
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4552
 msgid "Video Title"
 msgstr "ชื่อวิดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3915
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4554
 msgid "Type"
 msgstr "พิมพ์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3927
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4566
 msgid "Mark as &Seen"
 msgstr "ทำเครื่องหมายว่า&เห็นแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3967 addon/globalPlugins/YoutubePlus/dialogs.py:3976
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4606 addon/globalPlugins/YoutubePlus/dialogs.py:4615
 msgid "Video"
 msgstr "วีดีโอ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4069
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4708
 msgid "Mark &all in current tab as seen (control+delete)"
 msgstr "ทำเครื่องหมาย&ทั้งหมดในแท็บปัจจุบันตามที่เห็น (ควบคุม+ลบ)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4071
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4710
 msgid "Show all &videos (including seen)"
 msgstr "แสดง &วีดีโอทั้งหมด (รวมทั้งที่เห็น)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4071
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4710
 msgid "Show only &unseen videos"
 msgstr "แสดงเฉพาะวิดีโอที่ยังไม่ได้ดู"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4074
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4713
 msgid "&Manage subscriptions..."
 msgstr "&จัดการการสมัครรับข้อมูล..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4077
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4716
 msgid "Add New &Category...\tCtrl+="
 msgstr "เพิ่ม &หมวดหมู่ใหม่... Ctrl+="
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4079
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4718
 msgid "&Rename Current Category...\tF2"
 msgstr "&เปลี่ยนชื่อหมวดหมู่ปัจจุบัน... F2"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4081
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4720
 msgid "Remove Current Category...\tCtrl+-"
 msgstr "ลบหมวดหมู่ปัจจุบัน... Ctrl+-"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4084
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4723
 msgid "Clear All Feed Videos..."
 msgstr "ล้างวิดีโอฟีดทั้งหมด..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4122
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4761
 msgid "An update is already in progress."
 msgstr "กำลังดำเนินการอัปเดตอยู่แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4140
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4779
 #, python-brace-format
 msgid "Updating Feed ({count} channels)"
 msgstr "กำลังอัปเดตฟีด ({count}ช่อง)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4142
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4781
 msgid "Starting..."
 msgstr "กำลังเริ่ม..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4173
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4812
 msgid "&Unsubscribe from this channel"
 msgstr "ยกเลิกการติดตามช่องนี้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4193
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4832
 msgid "Marked as seen."
 msgstr "ทำเครื่องหมายว่าเห็นแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4201
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4840
 msgid "There are no videos in this tab to mark as seen."
 msgstr "ไม่มีวิดีโอในแท็บนี้ให้ทำเครื่องหมายว่าดูแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4204
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4843
 #, python-brace-format
 msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการทำเครื่องหมายวิดีโอ{count}ทั้งหมดในแท็บนี้ว่าดูแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4206
-msgid "Confirm"
-msgstr "ยืนยัน"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4212
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4851
 msgid "All videos in the current tab have been marked as seen."
 msgstr "วิดีโอทั้งหมดในแท็บปัจจุบันถูกทำเครื่องหมายว่าดูแล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4259
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4898
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{channel}'?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการสมัครจาก '{channel}'?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4269
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4908
 msgid "Enter new category name:"
 msgstr "ป้อนชื่อหมวดหมู่ใหม่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4271
-msgid "Add Category"
-msgstr "เพิ่มหมวดหมู่"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4288 addon/globalPlugins/YoutubePlus/dialogs.py:4321
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4927 addon/globalPlugins/YoutubePlus/dialogs.py:4960
 msgid "A category with this name already exists."
 msgstr "มีหมวดหมู่ที่ใช้ชื่อนี้อยู่แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4292
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4931
 msgid "Error adding category."
 msgstr "เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4300
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4939
 msgid "This is a fixed tab and cannot be renamed."
 msgstr "นี่เป็นแท็บที่ตายตัวและไม่สามารถเปลี่ยนชื่อได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4305
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4944
 #, python-brace-format
 msgid "Enter new name for '{name}':"
 msgstr "ป้อนชื่อใหม่สำหรับ '{name}':"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4307
-msgid "Rename Category"
-msgstr "เปลี่ยนชื่อหมวดหมู่"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4325
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4964
 msgid "Error renaming category."
 msgstr "เกิดข้อผิดพลาดในการเปลี่ยนชื่อหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4333
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4972
 msgid "This is a fixed tab and cannot be removed."
 msgstr "นี่เป็นแท็บที่ตายตัวและไม่สามารถลบออกได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4338
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4977
 #, python-brace-format
 msgid "Are you sure you want to remove the '{name}' category?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ '{name}'"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4351
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4990
 #, python-brace-format
 msgid "Category '{name}' removed."
 msgstr "หมวดหมู่ '{name}' ถูกลบออก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4355
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4994
 msgid "Error removing category."
 msgstr "เกิดข้อผิดพลาดในการลบหมวดหมู่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4362
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5001
 msgid "Manage User Profiles"
 msgstr "จัดการโปรไฟล์ผู้ใช้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4374
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5013
 msgid "&Add"
 msgstr "&เพิ่ม"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4376
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5015
 msgid "&Rename"
 msgstr "&เปลี่ยนชื่อ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4378
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5017
 msgid "&Delete"
 msgstr "&ลบ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4421
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5060
 msgid "Enter new profile name:"
 msgstr "ป้อนชื่อโปรไฟล์ใหม่:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4423
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5062
 msgid "Add Profile"
 msgstr "เพิ่มโปรไฟล์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4439
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5078
 msgid "Profile already exists."
 msgstr "มีโปรไฟล์อยู่แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4439 addon/globalPlugins/YoutubePlus/dialogs.py:4457
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4471 addon/globalPlugins/YoutubePlus/dialogs.py:4478
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4483 addon/globalPlugins/YoutubePlus/dialogs.py:4498
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5078 addon/globalPlugins/YoutubePlus/dialogs.py:5096
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5110 addon/globalPlugins/YoutubePlus/dialogs.py:5117
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5122 addon/globalPlugins/YoutubePlus/dialogs.py:5137
 msgid "Error"
 msgstr "ข้อผิดพลาด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4445
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5084
 #, python-brace-format
 msgid "Rename profile '{name}' to:"
 msgstr "เปลี่ยนชื่อโปรไฟล์ '{name}' เป็น:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4447
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5086
 msgid "Rename Profile"
 msgstr "เปลี่ยนชื่อโปรไฟล์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4457
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5096
 msgid "A profile with this name already exists."
 msgstr "มีโปรไฟล์ชื่อนี้อยู่แล้ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4471
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5110
 #, python-brace-format
 msgid "Failed to rename profile: {e}"
 msgstr "ไม่สามารถเปลี่ยนชื่อโปรไฟล์:{e}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4478
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5117
 msgid "The default profile cannot be deleted."
 msgstr "ไม่สามารถลบโปรไฟล์เริ่มต้นได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4483
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5122
 msgid "Cannot delete the profile currently in use."
 msgstr "ไม่สามารถลบโปรไฟล์ที่ใช้งานอยู่ในปัจจุบันได้"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4486
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5125
 #, python-brace-format
 msgid "Delete profile '{name}' and all its data?"
 msgstr "ลบโปรไฟล์ '{name}' และข้อมูลทั้งหมดหรือไม่"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4488
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5127
 msgid "Confirm Delete"
 msgstr "ยืนยันการลบ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4498
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5137
 #, python-brace-format
 msgid "Failed to delete profile: {e}"
 msgstr "ไม่สามารถลบโปรไฟล์:{e}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4507
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5146
 msgid "The active profile has been modified. NVDA must be restarted to apply changes. Restart now?"
 msgstr "โปรไฟล์ที่ใช้งานอยู่ได้รับการแก้ไขแล้วต้องรีสตาร์ท NVDA เพื่อใช้การเปลี่ยนแปลงรีสตาร์ทเลยไหม?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4509 addon/globalPlugins/YoutubePlus/settings.py:285
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5148 addon/globalPlugins/YoutubePlus/settings.py:285
 msgid "Restart NVDA"
 msgstr "รีสตาร์ท NVDA"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4524
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5163
 msgid "Downloading..."
 msgstr "กำลังดาวน์โหลด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4538
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5177
 msgid "Field"
 msgstr "ช่อง"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4539
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5178
 msgid "Value"
 msgstr "ค่า"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4542
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5181
 msgid "File"
 msgstr "ชื่อไฟล์"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4543
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5182
 msgid "Progress"
 msgstr "ความคืบหน้า"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4544
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5183
 msgid "Size"
 msgstr "ขนาด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4545
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5184
 msgid "Speed"
 msgstr "ความเร็ว"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4546
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5185
 msgid "ETA"
 msgstr "คงเหลือ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4547
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5186
 msgid "Status"
 msgstr "สถานะ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4553
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5192
 msgid "Preparing..."
 msgstr "กำลังเริ่ม..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4564
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5203
 msgid "&Cancel"
 msgstr "ยกเลิก"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4623
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5262
 #, python-brace-format
 msgid "Downloading: {title}"
 msgstr "กำลังดาวน์โหลด: {title}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4644
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5283
 #, python-brace-format
 msgid "{pct}%"
-msgstr ""
+msgstr "{pct}%"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4651 addon/globalPlugins/YoutubePlus/dialogs.py:4662
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5290 addon/globalPlugins/YoutubePlus/dialogs.py:5301
 msgid "Downloading"
 msgstr "กำลังดาวน์โหลด"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4670
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5309
 msgid "Finishing..."
 msgstr "เสร็จสิ้น"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4687
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5326
 msgid "Cancelling..."
 msgstr "ยกเลิก"
 
@@ -2126,8 +2304,7 @@ msgstr "กู้คืนข้อมูลจากข้อมูลสำร
 #: addon/globalPlugins/YoutubePlus/settings.py:283
 #, python-brace-format
 msgid ""
-"The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply this change. "
-"Restart now?"
+"The active profile has been changed to '{profile_name}'. NVDA must be restarted to apply this change. Restart now?"
 msgstr "โปรไฟล์ที่ใช้งานอยู่ถูกเปลี่ยนเป็น '{profile_name}'ต้องรีสตาร์ท NVDA เพื่อใช้การเปลี่ยนแปลงนี้รีสตาร์ทเลยไหม?"
 
 #: addon/globalPlugins/YoutubePlus/settings.py:343
@@ -2203,17 +2380,17 @@ msgstr "YoutubePlus"
 msgid ""
 "YoutubePlus is an add-on for those who enjoy YouTube but find many web features difficult to access, such as "
 "reading video comments.\n"
-"We bring these features to you through the NVDA user interface in an accessible, shortcut-driven, and "
-"customizable format.\n"
+"We bring these features to you through the NVDA user interface in an accessible, shortcut-driven, and customizable "
+"format.\n"
 "Users do not need to deal with API keys or link any personal data to the add-on.\n"
 "\n"
 "features:       \n"
 "• You can follow your favorite channels and be certain that you will see every video they post without being "
 "filtered out by YouTube's algorithm.\n"
-"• we offer a Favorites system for videos, channels, playlists, and a Watch List for saving videos you're "
-"interested in but don't have time to watch yet.\n"
-"• built-in search system that displays results within the same accessible UI as other features, rather than "
-"just providing a search box that opens the web results.\n"
+"• we offer a Favorites system for videos, channels, playlists, and a Watch List for saving videos you're interested "
+"in but don't have time to watch yet.\n"
+"• built-in search system that displays results within the same accessible UI as other features, rather than just "
+"providing a search box that opens the web results.\n"
 "• included download feature for saving videos or audio files."
 msgstr ""
 "YoutubePlus เป็นส่วนเสริมสำหรับผู้ที่ชื่นชอบ YouTube แต่พบว่าคุณลักษณะทางเว็บมากมายเข้าถึงได้ยาก เช่น การอ่านความคิดเห็นของวิดีโอ\n"
@@ -2225,6 +2402,9 @@ msgstr ""
 "• เรานำเสนอระบบรายการโปรดสำหรับวิดีโอ ช่อง เพลย์ลิสต์ และรายการเฝ้าดูสำหรับบันทึกวิดีโอที่คุณสนใจแต่ยังไม่มีเวลาดู\n"
 "• ระบบค้นหาในตัวที่แสดงผลลัพธ์ภายใน UI ที่สามารถเข้าถึงได้เช่นเดียวกับคุณลักษณะอื่นๆ แทนที่จะจัดให้มีช่องค้นหาที่เปิดผลลัพธ์บนเว็บ\n"
 "• รวมคุณสมบัติการดาวน์โหลดสำหรับการบันทึกวิดีโอหรือไฟล์เสียง"
+
+#~ msgid "Upload Date"
+#~ msgstr "วันที่อัพโหลด"
 
 #, python-brace-format
 #~ msgid "Getting data for '{title}'..."
@@ -2258,8 +2438,8 @@ msgstr ""
 #~ msgstr "เปิดบน&เว็บ"
 
 #~ msgid ""
-#~ "This will permanently delete all your saved favorite videos, favorite channels, and subscription data. "
-#~ "This action cannot be undone.\n"
+#~ "This will permanently delete all your saved favorite videos, favorite channels, and subscription data. This "
+#~ "action cannot be undone.\n"
 #~ "\n"
 #~ "Are you sure you want to continue?"
 #~ msgstr ""

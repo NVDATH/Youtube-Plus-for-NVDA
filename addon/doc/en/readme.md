@@ -1,376 +1,336 @@
 # YoutubePlus for NVDA
 
-> YoutubePlus is an add-on for NVDA users who love YouTube but find many features on the website difficult to access — such as reading comments, following channels, or monitoring live chat.
->
-> We bring these features into NVDA's user interface in a form that is easy to navigate by keyboard, supports shortcuts, and is fully customizable — **with no API keys or Google/YouTube account login required**.
->
-> You can follow your favorite channels and be confident you will see every video from those channels, without YouTube's algorithm filtering them out. A Favorites system is included for videos, channels, playlists, and a Watch List to save content you're interested in but haven't had time to watch yet.
->
-> There is a built-in video search that displays results within the add-on's own UI — not just a search box that opens YouTube in the browser. A download feature is included for saving videos and audio as a convenience — if downloading is your primary need, dedicated tools are recommended.
->
-> What this add-on does **not** do is embed a video player. We believe the YouTube web player is already accessible enough on its own. If you still find it lacking, you can use other add-ons such as [browserNav](https://addonstore.nvaccess.org/?channel=stable&language=en&apiVersion=2025.3.2&addonId=browsernav) to improve the experience.
+> YoutubePlus is an add-on for people who love using YouTube but find many features on the website difficult to access — such as reading video comments.
+> We bring these features to you through NVDA's user interface in a form that is easy to navigate, supports keyboard shortcuts, and is fully customizable — without requiring you to deal with API keys or connect any personal accounts to the add-on.
+> You can follow your favorite channels and be confident that you will see every video from those channels, without YouTube's algorithm filtering them out.
+> We also provide a Favorites system for videos, channels, playlists, and a watch list to save content you're interested in but haven't had time to watch yet.
+> There is a built-in video search that displays results within the same user interface used throughout the add-on — not just a search box that opens YouTube in a browser.
+> A download feature is included for saving videos or audio files, though it is provided as a convenience rather than a primary focus. If downloading is your main need, there are other add-ons dedicated to this feature that you may want to explore.
+> The one thing this add-on does not do is embed a video player. We believe the YouTube web player is already accessible enough on its own. If you find it still lacking, you can use other add-ons such as [browserNav](https://addonstore.nvaccess.org/?channel=stable&language=en&apiVersion=2025.3.2&addonId=browsernav) to improve the experience.
 
----
+## Keyboard Shortcuts and Commands
 
-## Table of Contents
+This add-on uses a layered shortcut system to avoid conflicts with other add-ons or NVDA commands.
+Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the following keys to access each feature or window.
 
-- [Keyboard Shortcuts](#keyboard-shortcuts)
-- [Feature Details](#feature-details)
-  - [a: Add to... Menu](#a-add-to-menu)
-  - [d: Download Video/Audio](#d-download-videoaudio)
-  - [b: Download Subtitles](#b-download-subtitles)
-  - [e: Search YouTube](#e-search-youtube)
-  - [i: Video Info](#i-video-info)
-  - [t: Chapters / Timestamps](#t-chapters--timestamps)
-  - [l: Comments / Live Chat / Live Chat Replay](#l-comments--live-chat--live-chat-replay)
-  - [Favorites (f, c, p, w)](#favorites-f-c-p-w)
-  - [s: Subscription Feed](#s-subscription-feed)
-  - [m: Manage Subscriptions](#m-manage-subscriptions)
-  - [u: User Profile Manager](#u-user-profile-manager)
-  - [Video List](#video-list)
-- [Settings](#settings)
-- [Additional Information](#additional-information)
+**Note:** If the main shortcut (`NVDA+Y`) conflicts with another add-on, you can change it via `NVDA -> Preferences -> Input Gestures...` under the "YoutubePlus" category.
 
----
+### Keys available in the YoutubePlus layer
 
-## Keyboard Shortcuts
+* a: (add to...) — Opens a submenu letting you choose where to add the current video or channel
+* f: (open favorites video) — Opens the favorite videos window
+* c: (open favorites channel) — Opens the favorite channels window
+* p: (open favorites playlist) — Opens the favorite playlists window
+* w: (show watch list) — Opens the watch list window
+* d: (download) — Prompts you to confirm whether to download as video or audio only
+* e: (search) — Opens the video search window
+* q: (quick search) — Searches YouTube immediately using the currently selected text, or the clipboard content if nothing is selected — without opening the search dialog first
+* control+h: (search history) — Opens the Favorites window directly on the Search History tab
+* i: (info) — Opens the video details window
+* t: (show timestamp) — Displays timestamps or chapters if available
+* m: (open manage subscription) — Opens the subscription management window
+* s: (open subscription feed) — Shows videos from channels you follow
+* u: (open User Profile Manager) — Opens the User Profile management window
+* l: (show comment) — Displays comments (details explained below)
+* shift+l: (stop monitor live chat) — Stops live chat monitoring
+* r: (toggle automatic reading live chat) — Toggles automatic speech for incoming live chat messages
+* v: (show live chat) — Reopens the live chat window if you closed it while the stream is still active
+* y: (open YoutubePlus settings dialog) quick open NVDA settings then focus at YoutubePlus category.
+* h: (help) — Opens a window listing all available shortcuts
 
-This add-on uses a **Layer Command** system to avoid conflicts with other add-ons or NVDA commands.
+**Note:** For commands that act on a video directly, the add-on first checks the browser window you have open. If a YouTube video page is active, it uses that video's URL. If no video page is open, it checks the clipboard for a YouTube URL.
 
-**How to use:**
-1. Press **NVDA+Y** to enter YoutubePlus Command Mode (you will hear a notification sound).
-2. Press the corresponding letter to activate the desired feature.
+## Feature Details and Commands
 
-> **Note:** If `NVDA+Y` conflicts with another add-on, you can change it at `NVDA → Preferences → Input Gestures...` under the "YoutubePlus" category.
+### a: (add to...)
 
-> **URL detection:** For commands that require a video URL, the add-on first checks the **currently open browser window**. If no YouTube URL is found there, it automatically falls back to checking the **clipboard**.
+This command in the YoutubePlus layer sends video or channel information to the selected destination:
 
-### All keys in YoutubePlus mode
+* Add to Favorite Videos  (v)
+* Add to Favorite Channels  (c)
+* Add to Favorite Playlist  (p)
+* Subscribe to Channel  (s)
+* Add to Watch List  (w)
 
-| Key | Feature |
-|-----|---------|
-| **a** | "Add to..." menu (Favorites / Subscribe) |
-| **f** | Open Favorite Videos |
-| **c** | Open Favorite Channels |
-| **p** | Open Favorite Playlists |
-| **w** | Open Watch List |
-| **b** | Download subtitles |
-| **d** | Download video or audio |
-| **e** | Search YouTube |
-| **i** | Show video info |
-| **t** | Show Chapters / Timestamps |
-| **m** | Manage Subscriptions |
-| **s** | Open Subscription Feed |
-| **u** | Manage User Profiles |
-| **l** | Show comments or start live chat monitoring |
-| **Shift+L** | Stop live chat monitoring |
-| **r** | Toggle automatic live chat reading |
-| **v** | Reopen live chat window (while stream is still active) |
-| **y** | Open YoutubePlus Settings |
-| **h** | Open Help dialog |
+The add-on checks the currently open browser page first. If it is a YouTube video page, it extracts the URL and processes it according to your selection. If the page is not a YouTube video or no browser is open, it checks the clipboard for a YouTube URL.
 
----
+Most commands work with any type of YouTube URL, since the add-on can derive the needed information. For example, if you are on a video page and choose "Add to Favorite Channels," the add-on can extract the channel URL automatically. The same applies to subscribing to a channel.
 
-## Feature Details
+The only exception is playlists — you must have a YouTube playlist page open, or have a valid YouTube playlist URL copied to the clipboard.
 
-### a: Add to... Menu
+### d: (download video/audio)
 
-Opens a submenu to choose where to add the current video or channel:
+This command opens a small dialog asking whether you want to download the video as an MP4 file or audio only as M4A. You can set the download destination in the [Settings](#settings) section.
 
-- **Add to Favorite Videos** — saves the current video to Favorites
-- **Add to Favorite Channels** — saves the current video's channel to Favorites
-- **Add to Favorite Playlists** — saves the current playlist to Favorites
-- **Subscribe to Channel** — follows the channel through the add-on's Subscription system
-- **Add to Watch List** — saves the current video to Watch List for viewing later
+Note that the download feature is provided for convenience and may have limitations if used heavily. If you need to download large amounts of YouTube content, other dedicated tools are recommended.
 
-Most commands work with any YouTube URL format. For example, if you are on a video page and choose "Add to Favorite Channels," the add-on will extract the channel URL automatically.
+### e: (search)
 
-**Exception:** For Playlists, you must have a YouTube playlist page open, or have a valid playlist URL in the clipboard.
+This command opens a YouTube search window. Type your query in the search field and press Enter to search immediately. You can also Tab to adjust the number of results to display — the add-on remembers this value for future searches.
 
----
+The search field is a combo box that remembers your past searches: press the Down arrow (or Alt+Down) to drop down a list of previous keywords and pick one instead of retyping it.
 
-### d: Download Video/Audio
+Results are displayed in the same [video list](#video-list) format used throughout the add-on, not as a YouTube web page. You can access all video details the same way as any other video list in the add-on.
 
-Press **NVDA+Y → D** to open a dialog asking whether to download as:
+#### q: (quick search)
 
-- **Video file (MP4)** — downloads video with audio
-- **Audio file (M4A)** — downloads audio only
+A faster alternative to the search dialog above. Select some text in any application (or have a query copied to the clipboard if nothing is selected), then press Q in the YoutubePlus layer. The add-on searches YouTube immediately using that text and the saved result count from your last search — no dialog, no extra key presses.
 
-A progress dialog shows the download percentage while running. A **Cancel** button is available at any time.
+#### Search History
 
-Set the destination folder in [Settings](#settings).
+Every search you run — from either the search dialog or quick search — is saved automatically. Press **Control+H** in the YoutubePlus layer to jump straight to the Search History tab in the Favorites window, where you can:
 
-> **Note:** This feature is provided for convenience. For bulk downloading, dedicated tools are recommended.
+* Press Enter, or the **Search Again** button, to re-run a past search
+* Press **New Search (Alt+N)** to open the search dialog
+* Press Delete, or the **Remove** button, to remove a single entry
+* Press the **Clear All** button to clear the entire history
 
----
+### i: (video info)
 
-### b: Download Subtitles
+Displays the following details for the current video:
 
-Press **NVDA+Y → B** to fetch the list of available subtitle languages for the current video, then choose from a dialog. Subtitles are listed in two types:
+* Title
+* Channel
+* Duration
+* Uploaded
+* Views
+* Likes
+* Comments
+* Description
 
-- **(manual)** — subtitles created by the video creator or the community
-- **(auto)** — automatically generated captions by YouTube
+### t: (timestamp / chapter)
 
-Supported file formats: **SRT, VTT, TTML**, and **TXT** (plain text without timecodes). Configurable in [Settings](#settings).
+Displays the timestamp or chapter list for the video (if the creator included this information). If the add-on reports "No chapters found in this video," the video simply does not have chapter data.
 
----
+This window offers more convenience than reading chapters from the browser:
 
-### e: Search YouTube
+* A search field to filter the timestamp/chapter list — results update instantly without pressing Enter
+* The full list displayed with each section's description first, followed by its time position
+* A read-only text area for reading long chapter descriptions
+* An "Open Chapter" button — or press Space or Enter — to jump directly to that chapter in the video
+* Copy Title button (Alt+C) to copy the chapter name
+* Copy URL button (Alt+U) to copy the URL with the timestamp for that chapter
+* Export button (Alt+E) to save all timestamp/chapter data as a text file
 
-Press **NVDA+Y → E** to open the search window. Type your query and press Enter to search immediately. Press Tab to adjust the number of results (the add-on remembers this value for next time).
+### Favorites
 
-Results are displayed in the same [Video List](#video-list) format used throughout the add-on — not as a YouTube web page. Results may include videos, channels, and playlists.
+A window displaying your saved favorites, divided into 5 tabs by type:
 
----
+* **Video:** Lists your saved videos, organized into categories of your own making. A category tree sits on the left and the video list for the selected category sits on the right (see [Categories](#categories-video--watch-list-tabs) below). Includes Action and Copy buttons for each item (described below).
+* **Channel:** Lists your saved channels with a channel description panel. Includes buttons to open the channel and browse its content by type.
+* **Playlist:** Lists your saved playlists. Press Space, Enter, or Alt+V to expand all videos in a playlist. Includes an Open on Web button (Alt+W) to open the playlist in a browser.
+* **Watch List:** Lists your saved videos using the same category tree + list layout as the Video tab, with its own independent set of categories.
+* **Search History:** Lists every search you've run, with options to re-run, remove, or clear entries (see [Search History](#search-history) above).
 
-### i: Video Info
+#### Favorites window commands
 
-Press **NVDA+Y → I** to view the following details for the current video:
+* Press Control+1 through Control+5 to switch between tabs
+* Press Control+Up/Down to reorder tabs
+* Press Control+C (copy), Control+X (cut), or Control+V (paste) to reorder items
+    * Favorite Videos and Watch List support copying and moving items between each other, including items inside a category. The Video and Watch List tabs each keep their own separate category list, so when an item moves between them it's placed into whichever category is currently selected in the destination tab. Favorites Channels and Playlists only support moving items within their own list.
+* Press Alt+R or Delete to remove an item
+* Press Alt+N to add a new item from the clipboard — for channel and playlist tabs, the URL must match the tab type
+* Press **Alt+O (Sort...)** to open the sort dialog for the current tab — see [Sorting](#sorting) below
+* The search field filters results instantly as you type — no need to press Enter
 
-- Title
-- Channel
-- Duration
-- Upload date
-- View count
-- Like count
-- Comment count
-- Description
+#### Categories (Video & Watch List tabs)
 
----
+Both the Video and Watch List tabs let you organize items into categories of your own, using a tree view on the left, separate from the item list on the right. Each tab keeps its own categories — creating a category in one does not affect the other. There's always a default node for uncategorized items ("Videos" in the Video tab, "Watch List" in the Watch List tab).
 
-### t: Chapters / Timestamps
+With focus on the category tree:
 
-Press **NVDA+Y → T** to view the chapter or timestamp list for the current video (if the creator included this information). If the add-on reports "No chapters found," the video simply does not have chapter data.
+* Press **Control+=** to add a new category
+* Press **F2** to rename the selected category
+* Press **Delete** to remove the selected category — if it still contains items, you'll be asked whether to move them to the default node or delete them along with the category
+* Press **Control+Shift+Up** / **Control+Shift+Down** to reorder the selected category
+* Press Enter, or Tab, to move focus to the item list for that category
+* Right-click, or press the Application/Menu key, for a context menu — its contents depend on what's selected: a category node shows category management options (Add/Rename/Delete/Move), while the default node only shows Add Category
 
-This window includes:
+With focus on the item list (right side), right-click or press the Application/Menu key for the same Action menu used throughout the add-on (View Info, Comments, Download, Add to..., etc.) — separate from the category context menu on the tree.
 
-- **Search field** — filters the chapter list in real time; no need to press Enter
-- **Chapter list** — shows chapter title and start time
-- **Text area** — displays the selected chapter's name in a readable format
-- **Open Chapter button** (or press Space/Enter) — jumps directly to that chapter in the browser
-- **Copy Title button** — copies the chapter title
-- **Copy URL button** — copies the URL with the timestamp for that chapter
-- **Export button** — saves all chapters to a text file
+Cut, Copy, and Paste on the item list work as described above, and pasting always places items into whichever category is currently selected in the tree.
 
----
+#### Sorting
 
-### l: Comments / Live Chat / Live Chat Replay
+The **Sort... (Alt+O)** button is available on any tab with a sortable list — including Video, Watch List, and Search History. It opens a dialog with:
 
-YoutubePlus supports three types of content through this command:
+* **Sort by:** the field to sort on (Title, Channel, Duration, Upload Date, Date Added — fields vary slightly by tab)
+* **Ascending / Descending**
+* **Sort only the current category:** when checked, sorting only reorders items inside the category currently selected in the tree, leaving every other category untouched. Unchecked by default, meaning the sort applies across all categories at once.
+* **Apply permanently (saves to file):** when checked, the new order is written to disk immediately. When unchecked, the sort is temporary — it changes what you see right now but reverts the next time the list reloads or you search.
+* **Clear Sort:** discards any temporary sort and restores the saved order from disk.
 
-#### 1. Comments (for regular videos)
+#### Video list
 
-Press **NVDA+Y → L** while on a video page. The add-on fetches all comments. Pinned comments appear first, followed by all others in the sort order configured in Settings.
+In the video and watch list tabs, as well as any other view that shows a video list, you will find the **Action...** and **Copy...** buttons. These are standard controls across all video list views, with the subscription feed adding an extra "Unsubscribe from this channel" option.
 
-**The Comments window includes:**
+Press Enter on any item to open the video in your browser. or press space bar to perform quickAction that you can set it from [settings](#settings)
 
-- **Search field** — filters comments in real time
-- **Filter combo box** — preset filters:
-  - No Filter — shows all comments
-  - Filter by Selected Author — shows only comments from the selected commenter
-  - Show Super Chats Only
-  - Show Super Stickers Only
-  - Show Super Thanks Only
-- **Comment list** — shows commenter name and message; reply threading is supported
-- **Read-only text area** — shows the full text of the selected comment, useful for long comments
-- **Copy button** (Alt+C or Ctrl+C) — copies the selected comment
-- **Export button** (Alt+E) — saves all comments to a text file
+##### Action button
 
-#### 2. Live Chat (for active live streams)
+Press Alt+A to open the Action menu, which includes:
 
-For videos that are currently live, press L to open a window receiving incoming chat messages. Only messages received after activating this command are shown — no prior history is captured.
+* View Video Info...  (i)
+* View Comments / Replay...  (c)
+* View Chapters/Timestamps...  (t)
+* Download Video  (d)
+* Download Audio  (a)
+* Add to Favorite Videos  (f)
+* Add to Favorite Channels  (f)
+* Add to Watch List  (w)
+* Open video in browser  (b)
+* Open channel in browser  (h)
+* Show channel videos  (v)
+* Show channel shorts  (s)
+* Show channel live  (l)
+* Show channel playlist  (l)
+* Show channel podcast  (p)
 
-- Close and reopen the window with the **V** command as long as monitoring has not been stopped.
-- Use the **R** command to toggle automatic reading of new messages — ideal for streams with infrequent messages. For high-volume streams, turning auto-read off and scrolling manually in the window is recommended.
-- Use **Shift+L** to stop monitoring. When stopped, the add-on will ask whether you want to save the chat history to a file.
+##### Copy button
 
-**Related settings:**
-- **Automatically speak incoming live chat:** Reads new messages aloud as they arrive (same as the R command, but saved as a default preference).
-- **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages (default: 5 seconds).
-- **Message history limit:** Maximum messages stored in memory (default: 5,000). The add-on has a hard cap of 200,000 messages to prevent excessive memory use.
+Press Alt+C to open the Copy menu, which includes:
 
-#### 3. Live Chat Replay (for past streams)
+* Copy Title  (t)
+* Copy Video URL  (u)
+* Copy Channel Name  (c)
+* Copy Channel URL  (h)
+* Copy Summary  (s)
 
-For previously live videos where the channel has not removed the chat, pressing L will show a dialog asking whether to view **Comments** or the **Live Chat Replay**. The replay window has the same structure as the Comments window, with one addition:
+### Subscription feed
 
-- **Total Paid Amount** — shows the total donations (Super Chats / Super Stickers) collected during the stream
+A window displaying videos from channels you follow within the add-on. This is separate from your YouTube account subscriptions — no account linking or personal data is required.
 
----
+Unlike the Favorites window, this view uses standard tabs divided by content type:
 
-### Favorites (f, c, p, w)
+* **All:** All content types combined
+* **Video:** Regular videos only
+* **Shorts:** Short-form videos only
+* **Live:** Live streams and live stream replays
 
-The Favorites window is divided into 4 tabs, each accessible by separate commands or all within the same window.
+Beyond these default categories, you can create custom categories and configure which channels appear in each.
 
-| Key | Tab |
-|-----|-----|
-| **F** | Saved videos (Favorite Videos) |
-| **C** | Saved channels (Favorite Channels) |
-| **P** | Saved playlists (Favorite Playlists) |
-| **W** | Videos to watch later (Watch List) |
+#### Subscription feed commands
 
-#### Shortcuts in the Favorites window
+* Press Control+1 through Control+0 to jump to a category tab (up to 10 categories)
+* Press Control+Up/Down to reorder categories, same as in the Favorites window
+* Press F2 to rename a category (except the 4 default categories)
+* Press Control+= to add a new category
+* Press Control+- to remove a category (except the 4 default categories)
+* Access each video's Action and Copy buttons, or press Enter to open it in a browser
+* Press Delete or Alt+S to mark a video as seen — it will be removed from the list
+* Press Control+Delete to mark all videos in the current tab as seen
 
-- **Ctrl+1 to Ctrl+4** — switch between tabs
-- **Ctrl+Up/Down** — reorder tabs
-- **Ctrl+C / Ctrl+X / Ctrl+V** — copy/cut/paste to move items
-  _(Favorite Videos ↔ Watch List can be moved across each other; Channels and Playlists can only be moved within their own list)_
-- **F2** — manually rename the selected video/channel/playlist
-- **Alt+R or Delete** — remove the selected item
-- **Alt+N** — add a new item from a URL in the clipboard
-- **Alt+S** — move focus to the search field (results update in real time)
-- **Sort... button (Alt+O)** — sort the list:
-  - Sort by: Title, Channel, Duration, Date Added, or Upload Date
-  - Choose Ascending or Descending
-  - If "Apply permanently" is checked, the order is saved; otherwise it resets when you search or refresh
-  - Press "Clear Sort" to restore the original order
+Additional buttons in this window:
 
-#### Channel tab (Favorites)
+* **Mark as seen (Alt+S)** — removes the video from the list; Delete key also works
+* **Add new Subscription from clipboard URL (Alt+N)** — subscribes to a channel using the URL copied to the clipboard
+* **Update Feed (Alt+U)** — manually triggers an update for all subscribed channels; the add-on also auto-updates on NVDA startup by default
+* **More... (Alt+M)** — opens a submenu with additional options:
+    * Mark all in current tab as seen (Ctrl+Delete)  (a)
+    * Show all videos (including seen)  (v) — toggles between unseen-only and all videos; the setting is saved automatically
+    * Manage subscriptions...  (m)
+    * Add New Category...  Ctrl+=  (c)
+    * Rename Current Category...  F2  (r)
+    * Remove Current Category...  Ctrl+-
+    * Clear All Feed Videos... — removes all videos from the database without removing your subscriptions; useful if the database grows large and affects NVDA performance
 
-This tab offers more than a simple list — it also includes:
-- **Channel description text area** — shows the channel's bio/about text
-- **Open channel in browser button**
-- **Buttons to browse Videos / Shorts / Live** content from that channel directly
+### Manage subscription
 
-#### Playlist tab (Favorites)
+This window shows all channels you are subscribed to. The first section is the channel list, followed by management options for each channel:
 
-- Press **Space, Enter, or Alt+V** — expand all videos in the playlist
-- **Open on Web button (Alt+W)** — opens the playlist in the browser
+* **Filter by Category** — filter the channel list by category; defaults to "All"
+* **Assign to Categories** — choose which categories this channel's content should appear in
+* **Content Types to Fetch** — choose which content types to update for this channel (Videos, Shorts, Live); useful for channels that only publish certain types
+* **View Content... (Alt+C)** — browse the channel's content, same as the Action button
+* **Add new subscribe channel from Clipboard... (Alt+N)** — subscribe to a new channel using the URL in the clipboard
+* **Unsubscribe from this Channel (Alt+U)** — removes the channel from your subscriptions
+* **Save Changes** — **important:** you must press this before closing the window, or your changes will not be saved
 
----
+### User Profile Manager
 
-### s: Subscription Feed
-
-A window displaying videos from channels you follow through the add-on. This is **separate** from your YouTube account subscriptions — no login required.
-
-The default view has 4 tabs by content type:
-
-| Tab | Content |
-|-----|---------|
-| **All** | All content types combined |
-| **Video** | Regular videos only |
-| **Shorts** | Short-form videos only |
-| **Live** | Live streams and live replays |
-
-You can also create **custom categories** and configure which channels appear in each.
-
-#### Shortcuts in Subscription Feed
-
-- **Ctrl+1 to Ctrl+0** — jump to a category tab (up to 10 tabs)
-- **Ctrl+Up/Down** — reorder tabs/categories
-- **F2** — rename a category (except the 4 default tabs)
-- **Ctrl+= (Equals)** — add a new category
-- **Ctrl+- (Minus)** — remove a category (except the 4 default tabs)
-- **Delete or Alt+S** — mark a video as seen; it will be removed from the list
-- **Ctrl+Delete** — mark all videos in the current tab as seen
-
-#### Buttons in the Subscription Feed window
-
-- **Mark as seen (Alt+S)** — marks the selected video as seen
-- **Add new Subscription from clipboard URL (Alt+N)** — subscribes to a channel using the URL in the clipboard
-- **Update Feed (Alt+U)** — manually triggers an update from all subscribed channels (the add-on also auto-updates on NVDA startup)
-- **More... (Alt+M)** — additional options:
-  - Mark all in current tab as seen (Ctrl+Delete)
-  - Show all videos (including seen) — toggles between unseen-only and all videos; the setting is saved automatically
-  - Manage subscriptions...
-  - Add New Category... (Ctrl+=)
-  - Rename Current Category... (F2)
-  - Remove Current Category... (Ctrl+-)
-  - **Clear All Feed Videos...** — removes all videos from the database without removing your subscribed channels; useful when the database grows large and affects NVDA performance
-
----
-
-### m: Manage Subscriptions
-
-A window showing all channels you are subscribed to, with management options for each:
-
-- **Filter by Category** — filter the channel list by category (default: All)
-- **Assign to Categories** — choose which categories this channel's content should appear in
-- **Content Types to Fetch** — choose which content types to update for this channel (Videos, Shorts, Live); useful for channels that only publish certain types
-- **View Content... (Alt+C)** — browse the channel's content (same as the Action button)
-- **Add new subscribe channel from Clipboard... (Alt+N)** — subscribe to a new channel using the URL in the clipboard
-- **Unsubscribe from this Channel (Alt+U)** — removes the channel from your subscriptions
-- **Save Changes** — ⚠️ **Important:** you must press this before closing the window, or your changes will not be saved
-
----
-
-### u: User Profile Manager
-
-The add-on supports multiple **User Profiles** on the same machine. Each profile keeps its data completely separate (Favorites, Subscriptions, Watch List).
+This window manages your user profiles. The add-on comes with a "default" profile. You can add, delete, or rename profiles here. To switch between profiles, go to the add-on's Settings panel.
 
 In this window:
-- **F2** — rename the selected profile
-- **Delete** — delete the selected profile ⚠️ Deletion is permanent; all data in that profile will be lost
 
-To switch profiles, go to [Settings](#settings) → Active Profile, then restart NVDA.
+* Press F2 to rename the selected profile
+* Press Delete to remove the selected profile
 
----
+**Note:** Deleting a profile permanently deletes all data associated with it. Any saved videos, channels, or subscriptions in that profile will be lost.
 
-### Video List
+### l: (show comments)
 
-The video list is the standard UI used throughout the add-on — in search results, Favorites, Subscription Feed, and channel video browsing.
+There are three types of comments on YouTube videos:
 
-- Press **Enter** to open the video in the browser
-- Press **Space** to perform the Quick Action (configurable in Settings)
+* **Comment** — standard viewer comments on regular videos
+* **Live chat** — messages sent during a live stream
+* **Live chat replay** — the recorded live chat for a previously streamed video, if the channel owner has not removed it
 
-#### Action button (Alt+A)
+YoutubePlus supports access to all three types through this command.
 
-Opens the Action menu for the selected video:
+#### Live chat of...
 
-| Menu item | Shortcut |
-|-----------|---------|
-| View Video Info | i |
-| View Comments / Replay | c |
-| View Chapters/Timestamps | t |
-| Download Video | d |
-| Download Audio | a |
-| Download Subtitles | b |
-| Add to Favorite Videos | f |
-| Add to Favorite Channels | f |
-| Add to Watch List | w |
-| Open video in browser | o |
-| Open channel in browser | h |
-| Show channel videos | v |
-| Show channel shorts | s |
-| Show channel live | l |
+For currently live videos, press L and the add-on will open a new window displaying incoming chat messages. Only messages received after you activate the command are shown — earlier messages are not captured.
 
-#### Copy button (Alt+C)
+You can close this window and reopen it later with the V command in the YoutubePlus layer, as long as the stream is still active and NVDA has not been restarted.
 
-Opens the Copy menu:
+Use the R command to toggle whether NVDA reads new messages aloud as they arrive. This works well for streams with infrequent messages. For high-volume streams, it may be easier to turn auto-read off and scroll through the window manually.
 
-| Menu item | Shortcut |
-|-----------|---------|
-| Copy Title | t |
-| Copy Video URL | u |
-| Copy Channel Name | c |
-| Copy Channel URL | h |
-| Copy Summary | s |
+Press Shift+L to stop monitoring chat for the current video.
 
----
+Three settings directly affect this feature:
+
+- **Automatically speak incoming live chat:** When checked, NVDA reads new messages aloud immediately — the same function as the R command, but saved as a default preference.
+- **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default is 5 seconds.
+- **Message history limit:** The maximum number of messages stored in memory during a session. The live chat window shows only the most recent messages up to this limit (default: 5,000). The add-on keeps all messages in the background for export, up to a maximum of 200,000 to prevent excessive memory use.
+
+When a stream ends — or the add-on detects that it has ended — a dialog will automatically appear asking whether you want to export all collected messages. Press Yes to save the chat history as a file.
+
+#### Comments / Live chat replay
+
+For regular uploaded videos or archived streams, you can access comments the same way. If both live chat replay and standard comments are available, a dialog will ask which you want to load.
+
+There is no limit on the number of comments displayed, though loading may take time for videos with many comments.
+
+Comments are displayed with pinned comments first, followed by all others in the sort order configured in Settings (newest first or oldest first).
+
+#### Comment window sections
+
+* **Search field** — type to filter comments; results update instantly
+* **Filter combo box** — select a filter option (the add-on fills the search field automatically):
+    * No Filter — default; shows all comments
+    * Filter by Selected Author — shows only comments from the selected commenter
+    * Show Super Chats Only
+    * Show Super Stickers Only
+    * Show Super Thanks Only
+* **Comment list** — shows commenter name followed by their message
+* **Read-only text area** — scroll through the full text of the selected comment, useful when a comment is too long to display in full in the list
+* **Copy button (Alt+C or Ctrl+C)** — copies the selected comment
+* **Export button (Alt+E)** — saves all comments as a text file to the folder set in Settings
+* **Total paid amount field** — shown only for live chat replays; displays the total donations from viewers during the stream
 
 ## Settings
 
-Access via `NVDA → Preferences → Settings...` and select the **"YoutubePlus"** category.
+Access settings via `NVDA -> Preferences -> Settings...` and select the **"YoutubePlus"** category.
 
-| Setting | Description |
-|---------|-------------|
-| **Active Profile** | Select the active profile (requires NVDA restart after switching) |
-| **Manage Profiles** | Opens the User Profile Manager |
-| **Quick Action (Space bar)** | Defines what the Space key does in video list windows; all Action menu options are available |
-| **Notification mode** | How the add-on signals background activity: **Beep** (short tones), **Sound** (audio file), **Silent** (no audio, spoken messages still occur) |
-| **Default sort order** | Default display order: **Newest First** or **Oldest First** — applies to comments, chat, and channel video lists |
-| **Items to fetch** | Number of items retrieved per content type when browsing a channel or updating the feed (default: 20, range: 5–100) |
-| **Default content types** | Content types to fetch for newly subscribed channels: Videos, Shorts, Live |
-| **Background update interval** | How often the add-on automatically checks for new content from subscribed channels (disabled, or 15 minutes to 24 hours) |
-| **Automatically speak incoming live chat** | Reads new live chat messages aloud as they arrive |
-| **Live chat refresh interval** | How often (in seconds) the add-on checks for new messages (default: 5 seconds) |
-| **Message history limit** | Maximum number of chat messages stored in memory during a session (default: 5,000) |
-| **Cookie method (Experimental)** | Select the browser you are logged into on YouTube. The add-on will extract cookies from that browser to authenticate requests, which may help resolve the "Sign in to confirm you're not a bot" error. Note that this feature is experimental and results vary depending on the browser and system configuration. |
-| **Default subtitle format** | Subtitle file format for downloads: SRT, VTT, TTML, or TXT (plain text without timecodes) |
-| **Default download and export folder path** | Destination folder for downloaded videos, audio, and exported files |
-| **Backup data now** | Immediately backs up all data for the active profile (the add-on also performs an automatic daily backup) |
-| **Restore data from backup** | Shows available backups (up to the last 5 days) to choose from for restoration |
-
----
+- **Active Profile:** Select the profile to use. A restart is required after switching profiles.
+- **Manage Profile button:** Opens the User Profile Manager window.
+- **Quick Action (Space bar):** Choose what the Space key does in video list windows. All options from the Action menu are available.
+- **Notification mode:** Choose how the add-on signals background activity:
+  - *Beep:* Short beep tones
+  - *Sound:* Audio effect
+  - *Silent:* No audio notification (spoken responses still occur)
+- **Default sort order:** Choose whether lists (comments, channel videos) are sorted **Newest First** or **Oldest First**.
+- **Items to fetch:** How many items to retrieve per content type when browsing a channel, and for subscription feed updates. Default: 20.
+- **Default content types:** Choose which content types to fetch for newly subscribed channels: Videos, Shorts, and/or Live.
+- **Background update interval:** How often the add-on checks for new content from subscribed channels. Can be disabled or set from 15 minutes to 24 hours. The add-on also auto-updates on every NVDA startup by default.
+- **Automatically speak incoming live chat:** When checked, NVDA reads new chat messages aloud as they arrive.
+- **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default: 5 seconds.
+- **Message history limit:** Maximum number of chat messages stored in memory during a session.
+- **Default subtitle format:** Subtitle file format for downloads: SRT, VTT, TTML, or TXT (plain text without timecodes)
+- **Cookie method (Experimental):** Select the browser you are logged into on YouTube. The add-on will extract cookies from that browser to authenticate requests, which may help resolve the "Sign in to confirm you're not a bot" error. Note that this feature is experimental and results vary depending on the browser and system configuration.
+- **Default download and export folder path:** The destination folder for downloaded videos/audio and exported chat.
+- **Backup data now:** Manually backs up all data for the active profile. The add-on also performs an automatic daily backup in the background.
+- **Restore data from backup:** Shows a list of available backups (up to the last 5 days) so you can choose which date to restore from.
 
 ## Additional Information
 
@@ -378,12 +338,12 @@ This add-on relies on two main libraries: [pytchat](https://pypi.org/project/pyt
 
 ### About yt-dlp
 
-[yt-dlp](https://github.com/yt-dlp/yt-dlp) is one of the most powerful open-source tools for downloading video and audio from websites worldwide — supporting over 1,000 sites, not just YouTube. It is free, open-source, actively maintained by a global community, and contains no ads or malware unlike many browser-based download tools.
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) is one of the most powerful open-source tools for downloading video and audio from websites around the world — supporting over 1,000 sites, not just YouTube. It is free, open-source, and actively maintained by a global community, with no ads or malware unlike many browser-based download tools.
 
-**Usage guidelines to keep in mind:**
+That said, please keep the following usage guidelines in mind:
 
 1. **Fair Use:** Avoid fetching large amounts of data or sending repeated requests in a short time. YouTube may detect unusual activity and temporarily restrict access from your IP address.
 2. **Copyright and Privacy:** Any data or content retrieved should be for personal viewing or analysis only. Please respect each platform's Terms of Service and do not use the data in ways that infringe on copyright.
 3. **Responsibility:** You are responsible for how you use this software. The add-on developer provides only the interface for accessing YouTube data through the yt-dlp library.
 
-> **Tip:** If you need to process large amounts of data, space out your requests to maintain connection stability and avoid access restrictions.
+**Tip:** If you need to process large amounts of data, space out your requests to maintain connection stability and avoid access restrictions.

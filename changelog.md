@@ -1,3 +1,27 @@
+## 2026.6.23
+
+### New Features
+
+* **Quick Search (Layer: Q):** New layer command that searches YouTube immediately using the currently selected text, or clipboard content if nothing is selected — no dialog required.
+* **Search History:** Every search is now saved automatically. Access the full history via the new Search History tab in the Favorites window (Layer: Control+H). Actions available: re-run a search, remove individual entries, or clear all history.
+* **Search box history dropdown:** The search field in the Search dialog is now a combo box — press Down arrow or Alt+Down to browse and reselect previous keywords without retyping.
+* **Favorite Videos: category support:** The Video tab in the Favorites window now uses a split layout with a category tree on the left and a video list on the right. Users can create, rename, reorder, and delete categories to organize their saved videos. Items can be moved between categories using cut/copy/paste.
+* **Watch List: category support:** The Watch List tab now has the same category system as the Video tab, with its own independent set of categories. The default node is labeled "Watch List".
+* **Category keyboard shortcuts (Video & Watch List tabs):**
+  * Control+= — Add new category
+  * F2 — Rename selected category
+  * Delete — Remove selected category (prompts whether to move items to the default node or delete them along with the category)
+  * Control+Shift+Up / Control+Shift+Down — Reorder selected category
+* **Separate context menus in Video & Watch List:** Right-click or Application key on the category tree shows a category management menu; on the video list shows the video Action menu.
+* **Sort: current category only:** New checkbox in the Sort dialog — when checked, sorting applies only to the currently selected category, leaving other categories untouched.
+* **Sort: apply permanently:** New checkbox in the Sort dialog — when checked, the sorted order is written to disk immediately. When unchecked, the sort is temporary and reverts on next reload.
+* **Category delete: 3-way confirmation:** Deleting a category that still contains items now asks whether to move them to the default node or delete them along with the category, instead of always moving silently.
+
+### Improvements
+
+* **Cross-panel paste with category awareness:** Cut/copy/paste between the Video and Watch List tabs now places items into whichever category is currently selected in the destination tab. The clipboard is shared between both panels.
+* **Unified codebase for Video and Watch List:** Both panels now share the same base architecture (`BaseVideoListPanel`), reducing code duplication significantly and ensuring new features apply to both tabs automatically.
+
 ## 2026.6.13
 
 ### Bug Fixes

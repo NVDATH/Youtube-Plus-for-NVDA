@@ -57,6 +57,8 @@ Este complemento utiliza um sistema de **Comando em Camadas** para evitar confli
 | **b** | Baixar legendas |
 | **d** | Baixar vídeo ou áudio |
 | **e** | Pesquisar no YouTube |
+| **q** | Pesquisa Rápida — pesquisa no YouTube imediatamente usando o texto selecionado ou o conteúdo da área de transferência, sem abrir o diálogo de pesquisa |
+| **Control+H** | Abre a janela de Favoritos diretamente na aba Histórico de Pesquisa |
 | **i** | Mostrar informações do vídeo |
 | **t** | Mostrar Capítulos / Marcadores de Tempo |
 | **m** | Gerenciar Inscrições |
@@ -119,7 +121,22 @@ Formatos de arquivo suportados: **SRT, VTT, TTML** e **TXT** (texto simples sem 
 
 Pressione **NVDA+Y → E** para abrir a janela de pesquisa. Digite sua busca e pressione Enter para pesquisar imediatamente. Pressione Tab para ajustar o número de resultados (o complemento lembra desse valor para a próxima vez).
 
-Os resultados são exibidos no mesmo formato de [Lista de Vídeos](#lista-de-vídeos) usado em todo o complemento — e não como uma página da web do YouTube. Os resultados podem incluir vídeos, canais e playlists.
+O campo de pesquisa é uma caixa de combinação que lembra suas pesquisas anteriores: pressione a seta para baixo (ou Alt+Seta para baixo) para exibir uma lista de palavras-chave anteriores e selecionar uma em vez de redigitá-la.
+
+Os resultados são exibidos no mesmo formato de Lista de Vídeos usado em todo o complemento — e não como uma página da web do YouTube. Os resultados podem incluir vídeos, canais e playlists.
+
+#### q: Pesquisa Rápida
+
+Uma alternativa mais rápida ao diálogo de pesquisa. Selecione algum texto em qualquer aplicativo (ou tenha uma consulta copiada na área de transferência se nada estiver selecionado), depois pressione Q na camada do YoutubePlus. O complemento pesquisa no YouTube imediatamente usando esse texto e o número de resultados salvo da sua última pesquisa — sem diálogo, sem teclas extras.
+
+#### Histórico de Pesquisa
+
+Cada pesquisa que você realiza — pelo diálogo de pesquisa ou pela pesquisa rápida — é salva automaticamente. Pressione **Control+H** na camada do YoutubePlus para ir diretamente à aba Histórico de Pesquisa na janela de Favoritos, onde você pode:
+
+* Pressionar Enter, ou o botão **Pesquisar Novamente**, para repetir uma pesquisa anterior
+* Pressionar **Nova Pesquisa (Alt+N)** para abrir o diálogo de pesquisa
+* Pressionar Delete, ou o botão **Remover**, para remover uma entrada
+* Pressionar o botão **Limpar Tudo** para limpar todo o histórico
 
 ---
 
@@ -200,21 +217,22 @@ Para vídeos que já foram transmitidos ao vivo e onde o canal não removeu o ch
 
 ### Favoritos (f, c, p, w)
 
-A janela de Favoritos está dividida em 4 abas, cada uma acessível por comandos separados ou todas dentro da mesma janela.
+A janela de Favoritos está dividida em **5 abas**, cada uma acessível por comandos separados ou todas dentro da mesma janela.
 
 | Tecla | Aba |
 | ----- | ----- |
-| **F** | Vídeos salvos (Vídeos Favoritos) |
+| **F** | Vídeos salvos (Vídeos Favoritos) — suporta categorias |
 | **C** | Canais salvos (Canais Favoritos) |
 | **P** | Playlists salvas (Playlists Favoritas) |
-| **W** | Vídeos para assistir mais tarde (Lista de Assistir Mais Tarde) |
+| **W** | Vídeos para assistir mais tarde (Lista de Assistir Mais Tarde) — suporta categorias |
+| **Control+H** | Histórico de Pesquisa |
 
 #### Atalhos na janela de Favoritos
 
-- **Ctrl+1 a Ctrl+4** — alterna entre as abas
+- **Ctrl+1 a Ctrl+5** — alterna entre as abas
 - **Ctrl+Seta para cima/Seta para baixo** — reordena as abas
 - **Ctrl+C / Ctrl+X / Ctrl+V** — copia/recorta/cola para mover itens
-  _(Vídeos Favoritos ↔ Lista de Assistir Mais Tarde podem ser movidos entre si; Canais e Playlists só podem ser movidos dentro de sua própria lista)_
+  _(Vídeos Favoritos e Lista de Assistir Mais Tarde podem ser movidos entre si, incluindo itens dentro de uma categoria. Cada aba mantém sua própria lista de categorias separada, portanto, ao mover um item entre elas ele é colocado na categoria atualmente selecionada na aba de destino. Canais e Playlists só podem ser movidos dentro de sua própria lista.)_
 - **F2** — renomeia manualmente o vídeo/canal/playlist selecionado
 - **Alt+R ou Delete** — remove o item selecionado
 - **Alt+N** — adiciona um novo item a partir de uma URL na área de transferência
@@ -222,8 +240,26 @@ A janela de Favoritos está dividida em 4 abas, cada uma acessível por comandos
 - **Botão Ordenar... (Alt+O)** — ordena a lista:
   - Ordenar por: Título, Canal, Duração, Data de Adição ou Data de Envio
   - Escolha Crescente ou Decrescente
-  - Se "Aplicar permanentemente" estiver marcado, a ordem é salva; caso contrário, ela é redefinida ao pesquisar ou atualizar
-  - Pressione "Limpar Ordenação" para restaurar a ordem original
+  - **Ordenar apenas a categoria atual:** quando marcado, a ordenação se aplica apenas aos itens da categoria selecionada na árvore, sem afetar as demais. Desmarcado por padrão.
+  - **Aplicar permanentemente:** quando marcado, a ordem é salva no disco imediatamente; caso contrário, é temporária e é redefinida ao recarregar.
+  - Pressione **Limpar Ordenação** para restaurar a ordem original
+
+#### Categorias (Abas Vídeos e Lista de Assistir Mais Tarde)
+
+Ambas as abas permitem organizar itens em categorias usando uma exibição em árvore à esquerda, separada da lista de itens à direita. Cada aba mantém suas próprias categorias de forma independente. Sempre há um nó padrão para itens sem categoria ("Vídeos" na aba Vídeos, "Lista de Assistir Mais Tarde" na aba Lista).
+
+Com o foco na árvore de categorias:
+
+- **Ctrl+=** — adiciona uma nova categoria
+- **F2** — renomeia a categoria selecionada
+- **Delete** — remove a categoria selecionada — se ainda contiver itens, será perguntado se deseja movê-los para o nó padrão ou excluí-los junto com a categoria
+- **Ctrl+Shift+Seta para cima / Ctrl+Shift+Seta para baixo** — reordena a categoria selecionada
+- **Enter ou Tab** — move o foco para a lista de itens daquela categoria
+- **Clique direito ou tecla Aplicativo/Menu** — menu de contexto: em um nó de categoria mostra opções de gerenciamento (Adicionar/Renomear/Excluir/Mover); no nó padrão mostra apenas Adicionar Categoria
+
+Com o foco na lista de itens (direita), clique direito ou pressione a tecla Aplicativo/Menu para o mesmo menu Ação usado em todo o complemento — separado do menu de contexto da árvore.
+
+Recortar, Copiar e Colar na lista de itens sempre coloca os itens na categoria atualmente selecionada na árvore.
 
 #### Aba Canais (Favoritos)
 
@@ -237,9 +273,6 @@ Esta aba oferece mais do que uma simples lista — ela também inclui:
 
 - Pressione **Espaço, Enter ou Alt+V** — expande todos os vídeos da playlist
 - **Botão Abrir na Web (Alt+W)** — abre a playlist no navegador
-
----
-
 ### s: Feed de Inscrições
 
 Uma janela que exibe vídeos dos canais que você acompanha através do complemento. Isso é **independente** das inscrições da sua conta do YouTube — não é necessário fazer login.
