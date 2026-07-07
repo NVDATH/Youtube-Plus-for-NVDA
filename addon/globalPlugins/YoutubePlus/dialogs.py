@@ -4576,6 +4576,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         markSeenBtn.Bind(wx.EVT_BUTTON, self.on_mark_seen)
         listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_open_video)
         listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
+        listCtrl.Bind(wx.EVT_CONTEXT_MENU, self._on_list_right_click)
         listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, lambda e, p=panel: self._update_tab_button_states(p))
         listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, lambda e, p=panel: self._update_tab_button_states(p))
         self._populate_list_for_panel(panel, saved_position=saved_position, deleted_video_id=deleted_video_id)
@@ -4659,6 +4660,20 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         selected_index = listCtrl.GetFirstSelected()
         if selected_index == -1: return None
         return currentPage.videos[selected_index]
+
+    def _on_list_right_click(self, event):
+        video = self.get_selected_video_info()
+        if not video:
+            event.Skip()
+            return
+        menu = self.create_video_action_menu()
+        menu.AppendSeparator()
+        ID_UNSUB = wx.NewIdRef()
+        menu.Append(ID_UNSUB, _("&Unsubscribe from this channel"))
+        menu.Bind(wx.EVT_MENU, self.on_unsubscribe, id=ID_UNSUB)
+        self.PopupMenu(menu)
+        menu.Destroy()
+    
 
     def on_copy_menu(self, event):
         video = self.get_selected_video_info()
@@ -4999,7 +5014,7 @@ class ProfileManagementDialog(wx.Dialog):
     def __init__(self, parent):
         # Translators: Title of the profile management dialog
         super().__init__(parent, title=_("Manage User Profiles"))
-        self.base_data_path = os.path.join(globalVars.appArgs.configPath, "youtubePlus")
+        self.base_data_path = os.path.join(globalVars.appArgs.configPath, "YoutubePlus")
         self.needs_restart = False
         
         mainSizer = wx.BoxSizer(wx.VERTICAL)

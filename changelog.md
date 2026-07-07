@@ -1,3 +1,23 @@
+## 2026.7.7
+
+### New Features
+
+* Added right-click / Application key support in the Subscription Feed dialog — opens the same Action menu as the Action button, including the Unsubscribe option.
+
+### Bug Fixes
+
+* Fixed `[WinError 5] Access is denied` error when renaming a user profile — caused by SQLite connections opened with `with sqlite3.connect()` not being explicitly closed after the block exited, leaving file handles open on Windows.
+* Fixed profile rename failing silently when the folder name used in `ProfileManagementDialog` did not match the casing used by `get_profile_path()` (`youtubePlus` vs `YoutubePlus`).
+
+### Dependencies
+
+* Updated yt-dlp to v2026.7.4
+
+### Translations
+
+* Added Brazilian Portuguese (pt_BR) interface translation and documentation — contributed by EdilbertoFonseca
+* Added Spanish (es) interface translation and documentation — contributed by ana-giselle-ar86
+
 ## 2026.6.23
 
 ### New Features

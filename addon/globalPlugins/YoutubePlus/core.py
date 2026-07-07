@@ -1789,6 +1789,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, new_videos_to_cache)
                     con.commit()
+            con.close()  
             if self._update_aborted:
                 if progress_topic:
                     # Translators: Message shown in the progress dialog when the update is cancelled by the user.
@@ -2486,6 +2487,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     "INSERT OR IGNORE INTO seen_videos (video_id) VALUES (?)",
                     [(vid,) for vid in video_ids]
                 )
+            con.close()  
             if notify:
                 self._notify_callbacks("subscriptions_updated")
             return True
