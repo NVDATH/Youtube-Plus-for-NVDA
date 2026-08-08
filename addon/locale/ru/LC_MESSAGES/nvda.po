@@ -1,0 +1,2469 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: YoutubePlus\n"
+"POT-Creation-Date: 2026-07-11 17:38+0300\n"
+"PO-Revision-Date: 2026-07-11 17:38+0300\n"
+"Last-Translator: nvda.ru\n"
+"Language-Team: nvda.ru\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Basepath: ../../../globalPlugins\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: YoutubePlus/core.py:463
+msgid "Failed to get video data. Details: {}"
+msgstr "Не удалось получить данные видео. Подробности: {}"
+
+#: YoutubePlus/core.py:467
+msgid "An unexpected error occurred."
+msgstr "Произошла непредвиденная ошибка."
+
+#: YoutubePlus/core.py:480
+msgid "This command is for videos, but the current page is a playlist."
+msgstr ""
+"Эта команда предназначена для видео, но на текущей странице находится "
+"плейлист."
+
+#: YoutubePlus/core.py:487
+msgid ""
+"This command is for videos, but the current page appears to be a channel or "
+"playlist."
+msgstr ""
+"Эта команда предназначена для видео, но текущая страница, по-видимому, "
+"является каналом или плейлистом."
+
+#: YoutubePlus/core.py:741
+msgid "activate YoutubePlus"
+msgstr "активировать YoutubePlus"
+
+#: YoutubePlus/core.py:840
+#, python-brace-format
+msgid "Super Chat ({amount}): {paid_message}"
+msgstr "Super-чат ({amount}): {paid_message}"
+
+#: YoutubePlus/core.py:854
+#, python-brace-format
+msgid "Super Sticker ({amount})"
+msgstr "Super-стикер ({amount})"
+
+#: YoutubePlus/core.py:885
+#, python-brace-format
+msgid "YouTube System ({icon_type})"
+msgstr "Системное сообщение YouTube ({icon_type})"
+
+#: YoutubePlus/core.py:907
+#, python-brace-format
+msgid "{h} Hour"
+msgstr "{h} час"
+
+#: YoutubePlus/core.py:909
+#, python-brace-format
+msgid "{h} Hours"
+msgstr "{h} часа"
+
+#: YoutubePlus/core.py:914
+#, python-brace-format
+msgid "{m} Minute"
+msgstr "{m} минута"
+
+#: YoutubePlus/core.py:914
+#, python-brace-format
+msgid "{m} Minutes"
+msgstr "{m} минуты"
+
+#: YoutubePlus/core.py:917
+#, python-brace-format
+msgid "{s} Second"
+msgstr "{s} секунда"
+
+#: YoutubePlus/core.py:917
+#, python-brace-format
+msgid "{s} Seconds"
+msgstr "{s} секунды"
+
+#: YoutubePlus/core.py:952
+#, python-brace-format
+msgid "Info of {title}"
+msgstr "Информация о видео «{title}»"
+
+#: YoutubePlus/core.py:969
+msgid "This video has a live chat replay. What would you like to view?"
+msgstr "У этого видео есть повтор живого чата. Что вы хотите просмотреть?"
+
+#: YoutubePlus/core.py:969
+msgid "Choice"
+msgstr "Выбор"
+
+#: YoutubePlus/core.py:973
+#, python-brace-format
+msgid "Show {comment_count} &Comments"
+msgstr "Показать {comment_count} &комментариев"
+
+#: YoutubePlus/core.py:973
+msgid "Show &Live Chat Replay"
+msgstr "Показать &повтор живого чата"
+
+#: YoutubePlus/core.py:973 YoutubePlus/core.py:1879 YoutubePlus/dialogs.py:3650
+msgid "Ca&ncel"
+msgstr "О&тмена"
+
+#: YoutubePlus/core.py:1012
+msgid "This video has no comments."
+msgstr "У этого видео нет комментариев."
+
+#: YoutubePlus/core.py:1016
+#, python-brace-format
+msgid "Loading {count} comments..."
+msgstr "Загрузка {count} комментариев..."
+
+#: YoutubePlus/core.py:1019
+msgid "Loading live chat replay..."
+msgstr "Загрузка повтора живого чата..."
+
+#: YoutubePlus/core.py:1033
+msgid ""
+"Live stream detected. Please use the 'Monitor live chat' command instead."
+msgstr ""
+"Обнаружена прямая трансляция. Используйте команду «Отслеживать живой чат»."
+
+#: YoutubePlus/core.py:1049
+#, python-brace-format
+msgid "Title: {title}"
+msgstr "Название: {title}"
+
+#: YoutubePlus/core.py:1050
+#, python-brace-format
+msgid "Channel: {uploader}"
+msgstr "Канал: {uploader}"
+
+#: YoutubePlus/core.py:1051
+#, python-brace-format
+msgid "Duration: {duration}"
+msgstr "Длительность: {duration}"
+
+#: YoutubePlus/core.py:1052
+#, python-brace-format
+msgid "Uploaded: {upload_date}"
+msgstr "Опубликовано: {upload_date}"
+
+#: YoutubePlus/core.py:1053
+#, python-brace-format
+msgid "Views: {view_count}"
+msgstr "Просмотров: {view_count}"
+
+#: YoutubePlus/core.py:1054
+#, python-brace-format
+msgid "Likes: {like_count}"
+msgstr "Понравилось: {like_count}"
+
+#: YoutubePlus/core.py:1055
+#, python-brace-format
+msgid "Comments: {comment_count}"
+msgstr "Комментариев: {comment_count}"
+
+#: YoutubePlus/core.py:1057
+#, python-brace-format
+msgid ""
+"Description:\n"
+"{description}"
+msgstr ""
+"Описание:\n"
+"{description}"
+
+#: YoutubePlus/core.py:1069
+#, python-brace-format
+msgid "Could not get video info: {error}"
+msgstr "Не удалось получить информацию о видео: {error}"
+
+#: YoutubePlus/core.py:1073 YoutubePlus/core.py:1101 YoutubePlus/core.py:1149
+msgid "An unexpected error occurred. Please check the log for details."
+msgstr "Произошла непредвиденная ошибка. Подробности смотрите в журнале."
+
+#: YoutubePlus/core.py:1090
+#, python-brace-format
+msgid "Chapters for {title}"
+msgstr "Разделы видео «{title}»"
+
+#: YoutubePlus/core.py:1094
+msgid "No chapters found in this video."
+msgstr "В этом видео разделы не найдены."
+
+#: YoutubePlus/core.py:1097
+msgid "Failed to get chapters. Details: {}"
+msgstr "Не удалось получить разделы. Подробности: {}"
+
+#: YoutubePlus/core.py:1119
+#, python-brace-format
+msgid "{count} comments of {title}"
+msgstr "{count} комментариев к видео «{title}»"
+
+#: YoutubePlus/core.py:1136
+#, python-brace-format
+msgid "{count} live chat replay of {title}"
+msgstr "{count} сообщений повтора живого чата видео «{title}»"
+
+#: YoutubePlus/core.py:1144
+#, python-brace-format
+msgid "Could not load data: {error}"
+msgstr "Не удалось загрузить данные: {error}"
+
+#: YoutubePlus/core.py:1161
+msgid "Connection to live chat lost. The stream may have ended."
+msgstr "Соединение с живым чатом потеряно. Возможно, трансляция завершилась."
+
+#: YoutubePlus/core.py:1187
+msgid "To conserve memory, older chat messages have been discarded."
+msgstr "Для экономии памяти старые сообщения чата были удалены."
+
+#: YoutubePlus/core.py:1195
+#, python-brace-format
+msgid "Receiving live chat of {video_title}"
+msgstr "Получение сообщений живого чата видео «{video_title}»"
+
+#: YoutubePlus/core.py:1205
+msgid "An error occurred while receiving live chat. Monitoring stopped."
+msgstr "Произошла ошибка при получении живого чата. Мониторинг остановлен."
+
+#: YoutubePlus/core.py:1236
+#, python-brace-format
+msgid "Live chat saved to {filename}"
+msgstr "Живой чат сохранён в файл {filename}"
+
+#: YoutubePlus/core.py:1242
+msgid "Failed to save chat history."
+msgstr "Не удалось сохранить историю чата."
+
+#: YoutubePlus/core.py:1261
+#, python-brace-format
+msgid ""
+"The stream has ended. You have {count} chat messages.\n"
+"\n"
+"Would you like to save the chat history?"
+msgstr ""
+"Трансляция завершилась. У вас {count} сообщений чата.\n"
+"\n"
+"Хотите сохранить историю чата?"
+
+#: YoutubePlus/core.py:1262
+msgid "Save Chat History?"
+msgstr "Сохранить историю чата?"
+
+#: YoutubePlus/core.py:1283 YoutubePlus/core.py:2115
+#, python-brace-format
+msgid "Could not receive live chat: {error}"
+msgstr "Не удалось получить сообщения живого чата: {error}"
+
+#: YoutubePlus/core.py:1321
+msgid "Adding to favorites..."
+msgstr "Добавление в избранное..."
+
+#: YoutubePlus/core.py:1328
+msgid "The provided link is not for a single video."
+msgstr "Предоставленная ссылка не указывает на одно видео."
+
+#: YoutubePlus/core.py:1336
+msgid "This video is already in your favorites."
+msgstr "Это видео уже находится в избранном."
+
+#: YoutubePlus/core.py:1352
+#, python-brace-format
+msgid "Added '{title}' to favorites."
+msgstr "Видео «{title}» добавлено в избранное."
+
+#: YoutubePlus/core.py:1355
+msgid "Failed to add favorite. Details: {}"
+msgstr "Не удалось добавить в избранное. Подробности: {}"
+
+#: YoutubePlus/core.py:1366
+msgid "Adding to favorite channels..."
+msgstr "Добавление в избранные каналы..."
+
+#: YoutubePlus/core.py:1387
+msgid "This channel is already in your favorites."
+msgstr "Этот канал уже находится в избранном."
+
+#: YoutubePlus/core.py:1401
+#, python-brace-format
+msgid "Added '{channel}' to favorites."
+msgstr "Канал «{channel}» добавлен в избранное."
+
+#: YoutubePlus/core.py:1404
+msgid "Failed to add favorite."
+msgstr "Не удалось добавить в избранное."
+
+#: YoutubePlus/core.py:1412
+msgid "Adding playlist to favorites..."
+msgstr "Добавление плейлиста в избранное..."
+
+#: YoutubePlus/core.py:1430
+msgid "This playlist is already in your favorites."
+msgstr "Этот плейлист уже находится в избранном."
+
+#: YoutubePlus/core.py:1434
+msgid "Unknown Playlist"
+msgstr "Неизвестный плейлист"
+
+#: YoutubePlus/core.py:1448
+#, python-brace-format
+msgid "Added '{playlist}' to favorites."
+msgstr "Плейлист «{playlist}» добавлен в избранное."
+
+#: YoutubePlus/core.py:1451
+msgid "Failed to add favorite playlist."
+msgstr "Не удалось добавить плейлист в избранное."
+
+#: YoutubePlus/core.py:1494
+#, python-brace-format
+msgid "'{title}' is already in Watch List."
+msgstr "Видео «{title}» уже находится в списке просмотра."
+
+#: YoutubePlus/core.py:1508
+#, python-brace-format
+msgid "Added '{title}' to Watch List."
+msgstr "Видео «{title}» добавлено в список просмотра."
+
+#: YoutubePlus/core.py:1516
+msgid "Error: Could not add video to Watch List. Details: {}"
+msgstr "Ошибка: Не удалось добавить видео в список просмотра. Подробности: {}"
+
+#: YoutubePlus/core.py:1563 YoutubePlus/core.py:1573 YoutubePlus/core.py:2055
+#: YoutubePlus/dialogs.py:1690
+msgid "[Unavailable video]"
+msgstr "[Видео недоступно]"
+
+#: YoutubePlus/core.py:1584
+msgid "No videos found."
+msgstr "Видео не найдены."
+
+#: YoutubePlus/core.py:1591
+#, python-brace-format
+msgid "{count} videos in {playlist}"
+msgstr "{count} видео в плейлисте {playlist}"
+
+#: YoutubePlus/core.py:1591
+msgid "Playlist"
+msgstr "Плейлист"
+
+#: YoutubePlus/core.py:1596
+#, python-brace-format
+msgid "All {count} {type} from {channel}"
+msgstr "Все {count} {type} с канала {channel}"
+
+#: YoutubePlus/core.py:1596 YoutubePlus/core.py:1598 YoutubePlus/core.py:2063
+#: YoutubePlus/dialogs.py:1273 YoutubePlus/dialogs.py:1343
+#: YoutubePlus/dialogs.py:2270 YoutubePlus/dialogs.py:2563
+#: YoutubePlus/dialogs.py:2722 YoutubePlus/dialogs.py:2991
+msgid "Channel"
+msgstr "Канал"
+
+#: YoutubePlus/core.py:1598
+#, python-brace-format
+msgid "Recent {count} {type} from {channel}"
+msgstr "Последние {count} {type} с канала {channel}"
+
+#: YoutubePlus/core.py:1620
+msgid "Failed to fetch video list."
+msgstr "Не удалось получить список видео."
+
+#: YoutubePlus/core.py:1628
+msgid "Subscribing to channel..."
+msgstr "Подписка на канал..."
+
+#: YoutubePlus/core.py:1657
+#, python-brace-format
+msgid ""
+"You are already subscribed to '{channel}'.\n"
+"Would you like to unsubscribe instead?"
+msgstr ""
+"Вы уже подписаны на канал «{channel}».\n"
+"Хотите вместо этого отписаться?"
+
+#: YoutubePlus/core.py:1659
+msgid "Already Subscribed"
+msgstr "Уже подписаны"
+
+#: YoutubePlus/core.py:1680
+msgid "Unknown Channel"
+msgstr "Неизвестный канал"
+
+#: YoutubePlus/core.py:1695
+#, python-brace-format
+msgid "Subscribed to {channel}."
+msgstr "Подписка на канал {channel} оформлена."
+
+#: YoutubePlus/core.py:1698
+msgid "Failed to subscribe."
+msgstr "Не удалось подписаться."
+
+#: YoutubePlus/core.py:1718
+#, python-brace-format
+msgid "Successfully unsubscribed from {channel}"
+msgstr "Вы успешно отписались от канала {channel}"
+
+#: YoutubePlus/core.py:1721
+msgid "Failed to unsubscribe - channel not found in database"
+msgstr "Не удалось отписаться — канал не найден в базе данных"
+
+#: YoutubePlus/core.py:1725
+msgid "Critical error during unsubscribe."
+msgstr "Критическая ошибка при отписке."
+
+#: YoutubePlus/core.py:1747 YoutubePlus/core.py:1750
+msgid "No channels to update."
+msgstr "Нет каналов для обновления."
+
+#: YoutubePlus/core.py:1767
+#, python-brace-format
+msgid "Checking {channel} ({type})..."
+msgstr "Проверка канала {channel} ({type})..."
+
+#: YoutubePlus/core.py:1796 YoutubePlus/core.py:1799
+#: YoutubePlus/dialogs.py:4818
+msgid "Update cancelled."
+msgstr "Обновление отменено."
+
+#: YoutubePlus/core.py:1802
+#, python-brace-format
+msgid "Update complete. Found {count} new videos."
+msgstr "Обновление завершено. Найдено {count} новых видео."
+
+#: YoutubePlus/core.py:1809
+#, python-brace-format
+msgid "Found and added {count} new videos."
+msgstr "Найдено и добавлено {count} новых видео."
+
+#: YoutubePlus/core.py:1812
+msgid "No new videos found."
+msgstr "Новых видео не найдено."
+
+#: YoutubePlus/core.py:1818
+msgid "Error updating feed."
+msgstr "Ошибка при обновлении ленты."
+
+#: YoutubePlus/core.py:1836 YoutubePlus/core.py:1855 YoutubePlus/core.py:2519
+msgid "Unknown Video"
+msgstr "Неизвестное видео"
+
+#: YoutubePlus/core.py:1842
+msgid "Failed to get video info for download. Details: {}"
+msgstr "Не удалось получить информацию о видео для загрузки. Подробности: {}"
+
+#: YoutubePlus/core.py:1849 YoutubePlus/core.py:2294
+msgid "Getting video info for download..."
+msgstr "Получение информации о видео для загрузки..."
+
+#: YoutubePlus/core.py:1865
+#, python-brace-format
+msgid "Failed to start download: {error}"
+msgstr "Не удалось начать загрузку: {error}"
+
+#: YoutubePlus/core.py:1873
+msgid "What would you like to download?"
+msgstr "Что вы хотите загрузить?"
+
+#: YoutubePlus/core.py:1875
+#, python-brace-format
+msgid "Download: {title} ({duration})"
+msgstr "Загрузка: {title} ({duration})"
+
+#: YoutubePlus/core.py:1879
+msgid "Download &Video"
+msgstr "Загрузить &видео"
+
+#: YoutubePlus/core.py:1879 YoutubePlus/dialogs.py:919
+msgid "Download &Audio"
+msgstr "Загрузить &аудио"
+
+#: YoutubePlus/core.py:1968
+#, python-brace-format
+msgid "Starting download of {title}..."
+msgstr "Начало загрузки видео «{title}»..."
+
+#: YoutubePlus/core.py:1990
+#, python-brace-format
+msgid "Download complete: {title}"
+msgstr "Загрузка видео «{title}» завершена"
+
+#: YoutubePlus/core.py:1995
+msgid "Download cancelled."
+msgstr "Загрузка отменена."
+
+#: YoutubePlus/core.py:2000
+msgid ""
+"Audio-only format not found. Attempting to download a video file with audio "
+"instead..."
+msgstr ""
+"Формат только с аудио не найден. Выполняется попытка загрузить видеофайл со "
+"звуком..."
+
+#: YoutubePlus/core.py:2008
+#, python-brace-format
+msgid "Download complete (as MP4 video file): {title}"
+msgstr "Загрузка завершена (как видеофайл MP4): {title}"
+
+#: YoutubePlus/core.py:2014 YoutubePlus/core.py:2018
+msgid "Download failed."
+msgstr "Загрузка не удалась."
+
+#: YoutubePlus/core.py:2040
+#, python-brace-format
+msgid "Searching for '{query}'..."
+msgstr "Поиск по запросу «{query}»..."
+
+#: YoutubePlus/core.py:2066
+#, python-brace-format
+msgid "Playlist ({count})"
+msgstr "Плейлист ({count})"
+
+#: YoutubePlus/core.py:2070
+#, python-brace-format
+msgid "No results found for '{query}'."
+msgstr "По запросу «{query}» ничего не найдено."
+
+#: YoutubePlus/core.py:2074
+#, python-brace-format
+msgid "Search Results for '{query}'"
+msgstr "Результаты поиска по запросу «{query}»"
+
+#: YoutubePlus/core.py:2079
+msgid "Failed to perform search."
+msgstr "Не удалось выполнить поиск."
+
+#: YoutubePlus/core.py:2089
+#, python-brace-format
+msgid "Live chat of {title}"
+msgstr "Живой чат видео «{title}»"
+
+#: YoutubePlus/core.py:2089
+msgid "Live chat (stopped)"
+msgstr "Живой чат (остановлен)"
+
+#: YoutubePlus/core.py:2122
+msgid "Chat monitoring is not active."
+msgstr "Мониторинг чата не активен."
+
+#: YoutubePlus/core.py:2132
+msgid "Chat monitoring stopped."
+msgstr "Мониторинг чата остановлен."
+
+#: YoutubePlus/core.py:2144
+#, python-brace-format
+msgid "Live chat of {title} (stopped)"
+msgstr "Живой чат видео «{title}» (остановлен)"
+
+#: YoutubePlus/core.py:2164
+msgid "You haven't subscribed to any channels yet."
+msgstr "Вы ещё не подписались ни на один канал."
+
+#: YoutubePlus/core.py:2174
+msgid "Error loading subscription feed from database."
+msgstr "Ошибка загрузки ленты подписок из базы данных."
+
+#: YoutubePlus/core.py:2202
+msgid ""
+"This will permanently delete ALL videos from your subscription feed, leaving "
+"only the list of subscribed channels. This action cannot be undone.\n"
+"\n"
+"Are you sure you want to continue?"
+msgstr ""
+"Это действие навсегда удалит ВСЕ видео из вашей ленты подписок, оставив "
+"только список подписанных каналов. Это действие невозможно отменить.\n"
+"\n"
+"Вы уверены, что хотите продолжить?"
+
+#: YoutubePlus/core.py:2206
+msgid "Confirm Clearing All Videos"
+msgstr "Подтверждение удаления всех видео"
+
+#: YoutubePlus/core.py:2210
+msgid "Clearing all feed videos..."
+msgstr "Очистка всех видео ленты..."
+
+#: YoutubePlus/core.py:2226
+#, python-brace-format
+msgid "Clearing complete. All {count} videos were deleted."
+msgstr "Очистка завершена. Все {count} видео были удалены."
+
+#: YoutubePlus/core.py:2231
+msgid "An error occurred while clearing all videos."
+msgstr "При очистке всех видео произошла ошибка."
+
+#: YoutubePlus/core.py:2233
+msgid "an YoutubePlus layer commands."
+msgstr "команды слоя YoutubePlus."
+
+#: YoutubePlus/core.py:2248 YoutubePlus/core.py:2257 YoutubePlus/core.py:2268
+#: YoutubePlus/core.py:2282 YoutubePlus/core.py:2291
+msgid "YouTube URL not found in current window or clipboard."
+msgstr "В текущем окне или буфере обмена не найден URL YouTube."
+
+#: YoutubePlus/core.py:2260
+msgid "Getting video info..."
+msgstr "Получение информации о видео..."
+
+#: YoutubePlus/core.py:2271 YoutubePlus/dialogs.py:975
+msgid "Getting chapters..."
+msgstr "Получение разделов видео..."
+
+#: YoutubePlus/core.py:2276
+msgid "Download subtitles from current page or clipboard URL."
+msgstr "Загрузить субтитры с текущей страницы или URL из буфера обмена."
+
+#: YoutubePlus/core.py:2312
+msgid "No stream is currently being monitored."
+msgstr "В данный момент ни одна трансляция не отслеживается."
+
+#: YoutubePlus/core.py:2322
+msgid "Automatic message speaking enabled."
+msgstr "Автоматическое озвучивание сообщений включено."
+
+#: YoutubePlus/core.py:2322
+msgid "Automatic message speaking disabled."
+msgstr "Автоматическое озвучивание сообщений отключено."
+
+#: YoutubePlus/core.py:2324
+msgid "Show favorite videos dialog."
+msgstr "Показать диалог избранных видео."
+
+#: YoutubePlus/core.py:2331
+msgid "Show favorite channels dialog."
+msgstr "Показать диалог избранных каналов."
+
+#: YoutubePlus/core.py:2338
+msgid "Show favorite playlists dialog."
+msgstr "Показать диалог избранных плейлистов."
+
+#: YoutubePlus/core.py:2345
+msgid "Show watch list dialog."
+msgstr "Показать диалог списка просмотра."
+
+#: YoutubePlus/core.py:2352
+msgid "Show a menu to add the current page URL to favorites or subscriptions."
+msgstr ""
+"Показать меню для добавления URL текущей страницы в избранное или подписки."
+
+#: YoutubePlus/core.py:2357
+msgid "No specific YouTube URL found in the current window or clipboard."
+msgstr "В текущем окне или буфере обмена не найден URL YouTube."
+
+#: YoutubePlus/core.py:2366
+msgid "Add to Favorite &Videos"
+msgstr "Добавить в избранные &видео"
+
+#: YoutubePlus/core.py:2368
+msgid "Add to Favorite &Channels"
+msgstr "Добавить в избранные &каналы"
+
+#: YoutubePlus/core.py:2370
+msgid "Add to Favorite &Playlists"
+msgstr "Добавить в избранные &плейлисты"
+
+#: YoutubePlus/core.py:2372
+msgid "&Subscribe to Channel"
+msgstr "&Подписаться на канал"
+
+#: YoutubePlus/core.py:2374 YoutubePlus/dialogs.py:924
+msgid "Add to &Watch List"
+msgstr "Добавить в &список просмотра"
+
+#: YoutubePlus/core.py:2412
+msgid "Show subscription feed dialog."
+msgstr "Показать диалог ленты подписок."
+
+#: YoutubePlus/core.py:2416
+msgid "Search YouTube for videos, channels, or playlists."
+msgstr "Поиск видео, каналов или плейлистов на YouTube."
+
+#: YoutubePlus/core.py:2423
+msgid "Open favorites dialog on Search History tab."
+msgstr "Открыть диалог избранного на вкладке «История поиска»."
+
+#: YoutubePlus/core.py:2441
+msgid ""
+"Search YouTube using selected text or clipboard content and show results "
+"directly."
+msgstr ""
+"Выполнить поиск на YouTube, используя выделенный текст или содержимое буфера "
+"обмена, и сразу показать результаты."
+
+#: YoutubePlus/core.py:2460
+msgid "No text selected and clipboard is empty."
+msgstr "Текст не выделен, и буфер обмена пуст."
+
+#: YoutubePlus/core.py:2467
+msgid "Show manage subscriptions dialog."
+msgstr "Показать диалог управления подписками."
+
+#: YoutubePlus/core.py:2498
+msgid "Show user profile manager dialog."
+msgstr "Показать диалог управления профилями пользователя."
+
+#: YoutubePlus/core.py:2505
+msgid "Opens YoutubePlus settings dialog."
+msgstr "Открывает диалог настроек YoutubePlus."
+
+#: YoutubePlus/core.py:2555
+msgid "No subtitles available for this video."
+msgstr "Для этого видео нет субтитров."
+
+#: YoutubePlus/core.py:2562
+msgid "Failed to get subtitle info. Details: {}"
+msgstr "Не удалось получить информацию о субтитрах. Подробности: {}"
+
+#: YoutubePlus/core.py:2575
+msgid "Select subtitle language:"
+msgstr "Выберите язык субтитров:"
+
+#: YoutubePlus/core.py:2577
+#, python-brace-format
+msgid "Download subtitles: {title}"
+msgstr "Загрузка субтитров: {title}"
+
+#: YoutubePlus/core.py:2597
+#, python-brace-format
+msgid "Downloading subtitles for {title}..."
+msgstr "Загрузка субтитров для видео {title}..."
+
+#: YoutubePlus/core.py:2627
+#, python-brace-format
+msgid "Subtitles downloaded: {title}"
+msgstr "Субтитры загружены: {title}"
+
+#: YoutubePlus/core.py:2630
+msgid "Subtitle download failed. Details: {}"
+msgstr "Не удалось загрузить субтитры. Подробности: {}"
+
+#: YoutubePlus/dialogs.py:82 YoutubePlus/dialogs.py:840
+msgid "Press Escape again to close."
+msgstr "Нажмите Escape ещё раз, чтобы закрыть."
+
+#: YoutubePlus/dialogs.py:100 YoutubePlus/dialogs.py:253
+#: YoutubePlus/dialogs.py:433 YoutubePlus/dialogs.py:679
+#: YoutubePlus/dialogs.py:3196 YoutubePlus/dialogs.py:3710
+#: YoutubePlus/dialogs.py:3845 YoutubePlus/dialogs.py:4063
+#: YoutubePlus/dialogs.py:4375 YoutubePlus/dialogs.py:5042
+msgid "C&lose"
+msgstr "&Закрыть"
+
+#: YoutubePlus/dialogs.py:119
+msgid "YouTubePlus Help & Shortcuts"
+msgstr "Справка и сочетания клавиш YouTubePlus"
+
+#: YoutubePlus/dialogs.py:127
+msgid ""
+"YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
+"\n"
+"--- Core Actions (from a YouTube window/URL) ---\n"
+"- L: Get comments from the current URL (Live Chat, Replay, or Comments)\n"
+"- I: Get video info\n"
+"- T: Show video chapters/timestamps\n"
+"- D: Download video/audio from the current URL\n"
+"- B: download sub title from the current URL\n"
+"- E: Search YouTube\n"
+"- Q: Quick search — searches immediately using selected text or clipboard "
+"content, no dialog\n"
+"- Control+H: Open Favorites window on the Search History tab\n"
+"\n"
+"--- Favorites & Subscriptions ---\n"
+"- A: Show the \"Add to...\" menu (for favorites/subscriptions)\n"
+"- F: Show favorite videos dialog\n"
+"- C: Show favorite channels dialog\n"
+"- P: Show favorite playlists dialog\n"
+"- W: Show watch list dialog\n"
+"- S: Show subscription feed dialog\n"
+"- M: Show Manage Subscriptions dialog\n"
+"- U: Show User Profile Manager Dialog\n"
+"\n"
+"--- Live Chat Monitoring (while active) ---\n"
+"- Shift+L: Stop live chat monitoring\n"
+"- V: Show live chat messages dialog\n"
+"- R: Toggle automatic speaking of incoming messages\n"
+"- Y: open YoutubePlus settings dialog\n"
+"\n"
+"--- Additional Keyboard Shortcuts (within addon dialogs) ---\n"
+"**In Favorites and Subscription Feed Dialogs:**\n"
+"- Ctrl+1 through 9: Jump to a specific tab\n"
+"- Ctrl+Up/Down or Left/Right: Reorder tabs\n"
+"\n"
+"**In the Subscription Feed Dialog:**\n"
+"- F2: Rename the current category\n"
+"- Ctrl+Equals: Add a new category\n"
+"- Ctrl+Minus: Remove the current category\n"
+"- Delete: Mark the selected video as seen\n"
+"- Ctrl+Delete: Mark all videos in the current tab as seen\n"
+"\n"
+"**In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**\n"
+"- Delete: Remove the selected item from favorites\n"
+"- F2: rename item\n"
+"- Control+c / control+x > control+v : copy or cut then paste item to move "
+"position, supports multiple selection and moving items between the Video and "
+"Watch List tabs\n"
+"- Alt+O: Open the Sort dialog for the current tab (sort by field, optionally "
+"limited to the current category, optionally saved permanently)\n"
+"\n"
+"**In the Video and Watch List tabs (category tree, left side):**\n"
+"- Control+=: Add a new category\n"
+"- F2: Rename the selected category\n"
+"- Delete: Remove the selected category (asks whether to move or delete its "
+"items)\n"
+"- Control+Shift+Up / Control+Shift+Down: Reorder the selected category\n"
+"- Application/Menu key or right-click: Category context menu on the tree, "
+"video Action menu on the item list\n"
+"\n"
+"--- Help ---\n"
+"- H: Show this help dialog\n"
+msgstr ""
+"Команды слоя YouTubePlus (активируются нажатием NVDA+Y)\n"
+"\n"
+"--- Основные действия (из окна YouTube или по URL) ---\n"
+"- L: Получить комментарии по текущему URL (живой чат, повтор или обычные "
+"комментарии)\n"
+"- I: Получить информацию о видео\n"
+"- T: Показать разделы/таймкоды видео\n"
+"- D: Загрузить видео/аудио по текущему URL\n"
+"- B: Загрузить субтитры по текущему URL\n"
+"- E: Выполнить поиск на YouTube\n"
+"- Q: Быстрый поиск — немедленный поиск по выделенному тексту или содержимому "
+"буфера обмена, без диалога\n"
+"- Control+H: Открыть окно избранного на вкладке «История поиска»\n"
+"\n"
+"--- Избранное и подписки ---\n"
+"- A: Показать меню «Добавить в...» (для избранного/подписок)\n"
+"- F: Показать диалог избранных видео\n"
+"- C: Показать диалог избранных каналов\n"
+"- P: Показать диалог избранных плейлистов\n"
+"- W: Показать диалог списка просмотра\n"
+"- S: Показать диалог ленты подписок\n"
+"- M: Показать диалог управления подписками\n"
+"- U: Показать диалог управления профилями пользователя\n"
+"\n"
+"--- Мониторинг живого чата (пока активен) ---\n"
+"- Shift+L: Остановить мониторинг живого чата\n"
+"- V: Показать диалог сообщений живого чата\n"
+"- R: Включить/выключить автоматическое озвучивание входящих сообщений\n"
+"- Y: Открыть диалог настроек YoutubePlus\n"
+"\n"
+"--- Дополнительные сочетания клавиш (в диалогах дополнения) ---\n"
+"**В диалогах избранного и ленты подписок:**\n"
+"- Ctrl+1...9: Перейти на определённую вкладку\n"
+"- Ctrl+Вверх/Вниз или Влево/Вправо: Изменить порядок вкладок\n"
+"\n"
+"**В диалоге ленты подписок:**\n"
+"- F2: Переименовать текущую категорию\n"
+"- Ctrl+Знак равно (=): Добавить новую категорию\n"
+"- Ctrl+Знак минус (-): Удалить текущую категорию\n"
+"- Delete: Пометить выбранное видео как просмотренное\n"
+"- Ctrl+Delete: Пометить все видео на текущей вкладке как просмотренные\n"
+"\n"
+"**В любом диалоге избранного (Видео, Каналы, Плейлисты, Список просмотра):"
+"**\n"
+"- Delete: Удалить выбранный элемент из избранного\n"
+"- F2: переименовать элемент\n"
+"- Control+C / Control+X > Control+V: скопировать или вырезать, затем "
+"вставить элемент для перемещения; поддерживается множественный выбор и "
+"перемещение элементов между вкладками «Видео» и «Список просмотра»\n"
+"- Alt+O: Открыть диалог сортировки для текущей вкладки (сортировка по полю, "
+"опционально только в текущей категории, опционально с сохранением)\n"
+"\n"
+"**На вкладках «Видео» и «Список просмотра» (дерево категорий, левая сторона):"
+"**\n"
+"- Control+=: Добавить новую категорию\n"
+"- F2: Переименовать выбранную категорию\n"
+"- Delete: Удалить выбранную категорию (запрашивает, переместить или удалить "
+"её элементы)\n"
+"- Control+Shift+Вверх / Control+Shift+Вниз: Изменить порядок выбранной "
+"категории\n"
+"- Клавиша «Контекстное меню» или щелчок правой кнопкой мыши: контекстное "
+"меню категорий на дереве, меню «Действие» на списке элементов\n"
+"\n"
+"--- Справка ---\n"
+"- H: Показать это окно справки\n"
+
+#: YoutubePlus/dialogs.py:196 YoutubePlus/dialogs.py:207
+msgid "Author"
+msgstr "Автор"
+
+#: YoutubePlus/dialogs.py:198 YoutubePlus/dialogs.py:209
+msgid "Message"
+msgstr "Сообщение"
+
+#: YoutubePlus/dialogs.py:200 YoutubePlus/dialogs.py:211
+#: YoutubePlus/dialogs.py:237
+msgid "Time"
+msgstr "Время"
+
+#: YoutubePlus/dialogs.py:227 YoutubePlus/dialogs.py:415
+#: YoutubePlus/dialogs.py:644 YoutubePlus/dialogs.py:3176
+msgid "&Search:"
+msgstr "&Поиск:"
+
+#: YoutubePlus/dialogs.py:235 YoutubePlus/dialogs.py:1272
+#: YoutubePlus/dialogs.py:1341 YoutubePlus/dialogs.py:2989
+#: YoutubePlus/dialogs.py:3700
+msgid "Title"
+msgstr "Название"
+
+#: YoutubePlus/dialogs.py:245
+msgid "&Open Chapter"
+msgstr "&Открыть раздел"
+
+#: YoutubePlus/dialogs.py:247
+msgid "&Copy Title"
+msgstr "&Копировать название"
+
+#: YoutubePlus/dialogs.py:249
+msgid "Copy &URL"
+msgstr "Копировать &URL"
+
+#: YoutubePlus/dialogs.py:251 YoutubePlus/dialogs.py:431
+#: YoutubePlus/dialogs.py:671
+msgid "&Export"
+msgstr "&Экспорт"
+
+#: YoutubePlus/dialogs.py:333 YoutubePlus/dialogs.py:886
+msgid "Opening in browser..."
+msgstr "Открытие в браузере..."
+
+#: YoutubePlus/dialogs.py:338 YoutubePlus/dialogs.py:892
+#, python-brace-format
+msgid "Error opening browser: {error}"
+msgstr "Ошибка при открытии браузера: {error}"
+
+#: YoutubePlus/dialogs.py:348
+#, python-brace-format
+msgid "Copied timestamp: {text}"
+msgstr "Скопирована временная метка: {text}"
+
+#: YoutubePlus/dialogs.py:357
+#, python-brace-format
+msgid "Copied URL: {url}"
+msgstr "Скопирован URL: {url}"
+
+#: YoutubePlus/dialogs.py:375 YoutubePlus/dialogs.py:817
+msgid "Export complete"
+msgstr "Экспорт завершён"
+
+#: YoutubePlus/dialogs.py:379 YoutubePlus/dialogs.py:578
+#: YoutubePlus/dialogs.py:821
+#, python-brace-format
+msgid "Error exporting file: {error}"
+msgstr "Ошибка при экспорте файла: {error}"
+
+#: YoutubePlus/dialogs.py:383 YoutubePlus/dialogs.py:582
+#: YoutubePlus/dialogs.py:825
+msgid "An unexpected error occurred during export."
+msgstr "Во время экспорта произошла непредвиденная ошибка."
+
+#: YoutubePlus/dialogs.py:429 YoutubePlus/dialogs.py:669
+msgid "&Copy"
+msgstr "&Копировать"
+
+#: YoutubePlus/dialogs.py:554
+msgid "message copied"
+msgstr "сообщение скопировано"
+
+#: YoutubePlus/dialogs.py:557
+msgid "No message selected"
+msgstr "Не выбрано ни одного сообщения"
+
+#: YoutubePlus/dialogs.py:574
+msgid "Export message complete"
+msgstr "Экспорт сообщения завершён"
+
+#: YoutubePlus/dialogs.py:651 YoutubePlus/dialogs.py:658
+#: YoutubePlus/dialogs.py:732
+msgid "No Filter"
+msgstr "Без фильтра"
+
+#: YoutubePlus/dialogs.py:652 YoutubePlus/dialogs.py:725
+msgid "Filter by Selected Author"
+msgstr "Фильтр по выбранному автору"
+
+#: YoutubePlus/dialogs.py:653 YoutubePlus/dialogs.py:734
+msgid "Show Super Chats Only"
+msgstr "Показывать только Super-чаты"
+
+#: YoutubePlus/dialogs.py:654 YoutubePlus/dialogs.py:736
+msgid "Show Super Stickers Only"
+msgstr "Показывать только Super-стикеры"
+
+#: YoutubePlus/dialogs.py:655 YoutubePlus/dialogs.py:738
+msgid "Show Super Thanks Only"
+msgstr "Показывать только Super-благодарности"
+
+#: YoutubePlus/dialogs.py:715
+msgid "Total Paid Amount:\n"
+msgstr "Общая сумма пожертвований:\n"
+
+#: YoutubePlus/dialogs.py:795 YoutubePlus/dialogs.py:1112
+#: YoutubePlus/dialogs.py:3951
+msgid "Copied"
+msgstr "Скопировано"
+
+#: YoutubePlus/dialogs.py:798
+msgid "Nothing selected"
+msgstr "Ничего не выбрано"
+
+#: YoutubePlus/dialogs.py:882 YoutubePlus/dialogs.py:956
+#: YoutubePlus/dialogs.py:959 YoutubePlus/dialogs.py:970
+#: YoutubePlus/dialogs.py:972 YoutubePlus/dialogs.py:1030
+#: YoutubePlus/dialogs.py:1040 YoutubePlus/dialogs.py:1052
+#: YoutubePlus/dialogs.py:1064
+msgid "Video ID not found."
+msgstr "Идентификатор видео не найден."
+
+#: YoutubePlus/dialogs.py:914
+msgid "View Video &Info..."
+msgstr "Просмотреть &информацию о видео..."
+
+#: YoutubePlus/dialogs.py:915
+msgid "View &Comments / Replay..."
+msgstr "Просмотреть &комментарии / повтор..."
+
+#: YoutubePlus/dialogs.py:916
+msgid "View Chap&ters/Timestamps..."
+msgstr "Просмотреть &разделы/таймкоды..."
+
+#: YoutubePlus/dialogs.py:918
+msgid "&Download Video"
+msgstr "&Загрузить видео"
+
+#: YoutubePlus/dialogs.py:920
+msgid "Download Su&btitles"
+msgstr "Загрузить су&бтитры"
+
+#: YoutubePlus/dialogs.py:922
+msgid "Add to &Favorite Videos"
+msgstr "Добавить в избранные &видео"
+
+#: YoutubePlus/dialogs.py:923
+msgid "Add to &Favorite Channels"
+msgstr "Добавить в избранные &каналы"
+
+#: YoutubePlus/dialogs.py:926
+msgid "&Open video in browser"
+msgstr "&Открыть видео в браузере"
+
+#: YoutubePlus/dialogs.py:927
+msgid "Open c&hannel in browser"
+msgstr "Открыть &канал в браузере"
+
+#: YoutubePlus/dialogs.py:929
+msgid "Show channel &videos"
+msgstr "Показать &видео канала"
+
+#: YoutubePlus/dialogs.py:930
+msgid "Show channel &shorts"
+msgstr "Показать &shorts канала"
+
+#: YoutubePlus/dialogs.py:931
+msgid "Show channel &live"
+msgstr "Показать &трансляции канала"
+
+#: YoutubePlus/dialogs.py:932
+msgid "Show channel &playlist"
+msgstr "Показать &плейлисты канала"
+
+#: YoutubePlus/dialogs.py:933
+msgid "Show channel &podcast"
+msgstr "Показать &подкасты канала"
+
+#: YoutubePlus/dialogs.py:962
+msgid "Getting subtitle info..."
+msgstr "Получение информации о субтитрах..."
+
+#: YoutubePlus/dialogs.py:983
+msgid "Could not get video ID to add to favorites."
+msgstr "Не удалось получить идентификатор видео для добавления в избранное."
+
+#: YoutubePlus/dialogs.py:993
+msgid "Could not get video ID to find the channel."
+msgstr "Не удалось получить идентификатор видео для поиска канала."
+
+#: YoutubePlus/dialogs.py:1098 YoutubePlus/dialogs.py:1105
+#: YoutubePlus/dialogs.py:3946
+#, python-brace-format
+msgid "Title: {title}\n"
+msgstr "Название: {title}\n"
+
+#: YoutubePlus/dialogs.py:1099 YoutubePlus/dialogs.py:1106
+#, python-brace-format
+msgid "Channel: {channel}\n"
+msgstr "Канал: {channel}\n"
+
+#: YoutubePlus/dialogs.py:1100 YoutubePlus/dialogs.py:1107
+#: YoutubePlus/dialogs.py:3947
+msgid "URL: "
+msgstr "URL: "
+
+#: YoutubePlus/dialogs.py:1121
+msgid "Error: Channel information not found for this item."
+msgstr "Ошибка: Информация о канале для этого элемента не найдена."
+
+#: YoutubePlus/dialogs.py:1131 YoutubePlus/dialogs.py:1262
+#: YoutubePlus/dialogs.py:2223 YoutubePlus/dialogs.py:2475
+#: YoutubePlus/dialogs.py:2724 YoutubePlus/dialogs.py:2993
+#: YoutubePlus/dialogs.py:3152 YoutubePlus/dialogs.py:3702
+#: YoutubePlus/dialogs.py:3829 YoutubePlus/dialogs.py:4043
+#: YoutubePlus/dialogs.py:4283 YoutubePlus/dialogs.py:4458
+#: YoutubePlus/settings.py:130
+msgid "Videos"
+msgstr "Видео"
+
+#: YoutubePlus/dialogs.py:1132 YoutubePlus/dialogs.py:2476
+#: YoutubePlus/dialogs.py:4043 YoutubePlus/dialogs.py:4284
+#: YoutubePlus/dialogs.py:4459 YoutubePlus/dialogs.py:4608
+#: YoutubePlus/settings.py:130
+msgid "Shorts"
+msgstr "Shorts"
+
+#: YoutubePlus/dialogs.py:1133 YoutubePlus/dialogs.py:2477
+#: YoutubePlus/dialogs.py:4043 YoutubePlus/dialogs.py:4285
+#: YoutubePlus/dialogs.py:4460 YoutubePlus/dialogs.py:4609
+#: YoutubePlus/settings.py:130
+msgid "Live"
+msgstr "Трансляции"
+
+#: YoutubePlus/dialogs.py:1134 YoutubePlus/dialogs.py:2478
+#: YoutubePlus/dialogs.py:3154 YoutubePlus/dialogs.py:4286
+msgid "Playlists"
+msgstr "Плейлисты"
+
+#: YoutubePlus/dialogs.py:1135 YoutubePlus/dialogs.py:2479
+#: YoutubePlus/dialogs.py:4287
+msgid "Podcasts"
+msgstr "Подкасты"
+
+#: YoutubePlus/dialogs.py:1139
+msgid "Content"
+msgstr "Содержимое"
+
+#: YoutubePlus/dialogs.py:1143 YoutubePlus/dialogs.py:2486
+#: YoutubePlus/dialogs.py:4294
+#, python-brace-format
+msgid "Fetching {type} from {channel}..."
+msgstr "Получение {type} с канала {channel}..."
+
+#: YoutubePlus/dialogs.py:1274 YoutubePlus/dialogs.py:1342
+#: YoutubePlus/dialogs.py:3702 YoutubePlus/dialogs.py:4558
+msgid "Duration"
+msgstr "Длительность"
+
+#: YoutubePlus/dialogs.py:1275
+msgid "Uploaded Date"
+msgstr "Дата загрузки"
+
+#: YoutubePlus/dialogs.py:1276 YoutubePlus/dialogs.py:1344
+#: YoutubePlus/dialogs.py:2567 YoutubePlus/dialogs.py:2995
+msgid "Date Added"
+msgstr "Дата добавления"
+
+#: YoutubePlus/dialogs.py:1310 YoutubePlus/dialogs.py:3706
+#: YoutubePlus/dialogs.py:4562
+msgid "&Action..."
+msgstr "&Действие..."
+
+#: YoutubePlus/dialogs.py:1311 YoutubePlus/dialogs.py:3707
+#: YoutubePlus/dialogs.py:3841 YoutubePlus/dialogs.py:4564
+msgid "&Copy..."
+msgstr "&Копировать..."
+
+#: YoutubePlus/dialogs.py:1313 YoutubePlus/dialogs.py:2288
+#: YoutubePlus/dialogs.py:2735 YoutubePlus/dialogs.py:3369
+msgid "&Remove"
+msgstr "&Удалить"
+
+#: YoutubePlus/dialogs.py:1381
+msgid "Error: Could not save data."
+msgstr "Ошибка: Не удалось сохранить данные."
+
+#: YoutubePlus/dialogs.py:1509
+#, python-brace-format
+msgid "The default {label} category cannot be deleted."
+msgstr "Категорию по умолчанию «{label}» нельзя удалить."
+
+#: YoutubePlus/dialogs.py:1534
+msgid "&Add Category"
+msgstr "&Добавить категорию"
+
+#: YoutubePlus/dialogs.py:1536
+msgid "&Rename Category"
+msgstr "&Переименовать категорию"
+
+#: YoutubePlus/dialogs.py:1537
+msgid "&Delete Category"
+msgstr "&Удалить категорию"
+
+#: YoutubePlus/dialogs.py:1539
+msgid "Move &Up"
+msgstr "Переместить в&верх"
+
+#: YoutubePlus/dialogs.py:1540
+msgid "Move &Down"
+msgstr "Переместить в&низ"
+
+#: YoutubePlus/dialogs.py:1555
+msgid "Category name:"
+msgstr "Название категории:"
+
+#: YoutubePlus/dialogs.py:1555 YoutubePlus/dialogs.py:4925
+msgid "Add Category"
+msgstr "Добавить категорию"
+
+#: YoutubePlus/dialogs.py:1569
+#, python-brace-format
+msgid "Category '{name}' added."
+msgstr "Категория «{name}» добавлена."
+
+#: YoutubePlus/dialogs.py:1572
+msgid "New name:"
+msgstr "Новое название:"
+
+#: YoutubePlus/dialogs.py:1572 YoutubePlus/dialogs.py:4961
+msgid "Rename Category"
+msgstr "Переименовать категорию"
+
+#: YoutubePlus/dialogs.py:1584
+#, python-brace-format
+msgid "Renamed to '{name}'."
+msgstr "Переименовано в «{name}»."
+
+#: YoutubePlus/dialogs.py:1593
+#, python-brace-format
+msgid "Delete category '{name}'?"
+msgstr "Удалить категорию «{name}»?"
+
+#: YoutubePlus/dialogs.py:1594 YoutubePlus/dialogs.py:3598
+#: YoutubePlus/dialogs.py:4860
+msgid "Confirm"
+msgstr "Подтверждение"
+
+#: YoutubePlus/dialogs.py:1601
+#, python-brace-format
+msgid "Category '{name}' deleted."
+msgstr "Категория «{name}» удалена."
+
+#: YoutubePlus/dialogs.py:1606
+#, python-brace-format
+msgid ""
+"Category '{name}' contains {count} item(s).\n"
+"\n"
+"Move them to '{default}', or delete them along with the category?"
+msgstr ""
+"Категория «{name}» содержит {count} элементов.\n"
+"\n"
+"Переместить их в «{default}» или удалить вместе с категорией?"
+
+#: YoutubePlus/dialogs.py:1609
+msgid "Delete Category"
+msgstr "Удалить категорию"
+
+#: YoutubePlus/dialogs.py:1612
+#, python-brace-format
+msgid "&Move to {default}"
+msgstr "&Переместить в {default}"
+
+#: YoutubePlus/dialogs.py:1613
+msgid "&Delete items too"
+msgstr "&Удалить элементы тоже"
+
+#: YoutubePlus/dialogs.py:1613
+msgid "Cancel"
+msgstr "Отмена"
+
+#: YoutubePlus/dialogs.py:1623
+#, python-brace-format
+msgid "Category '{name}' deleted. {count} item(s) moved to {default}."
+msgstr "Категория «{name}» удалена. {count} элементов перемещено в {default}."
+
+#: YoutubePlus/dialogs.py:1627
+#, python-brace-format
+msgid "Category '{name}' and its {count} item(s) deleted."
+msgstr "Категория «{name}» и её {count} элементов удалены."
+
+#: YoutubePlus/dialogs.py:1662
+msgid "Category"
+msgstr "Категория"
+
+#: YoutubePlus/dialogs.py:1809 YoutubePlus/dialogs.py:3752
+#: YoutubePlus/dialogs.py:3931 YoutubePlus/dialogs.py:4683
+msgid "Copy &Title"
+msgstr "Копировать &название"
+
+#: YoutubePlus/dialogs.py:1810 YoutubePlus/dialogs.py:3754
+#: YoutubePlus/dialogs.py:4685
+msgid "Copy Video &URL"
+msgstr "Копировать &URL видео"
+
+#: YoutubePlus/dialogs.py:1811 YoutubePlus/dialogs.py:3756
+#: YoutubePlus/dialogs.py:4687
+msgid "Copy &Channel Name"
+msgstr "Копировать &название канала"
+
+#: YoutubePlus/dialogs.py:1812 YoutubePlus/dialogs.py:3758
+#: YoutubePlus/dialogs.py:4689
+msgid "Copy C&hannel URL"
+msgstr "Копировать &URL канала"
+
+#: YoutubePlus/dialogs.py:1814 YoutubePlus/dialogs.py:3761
+#: YoutubePlus/dialogs.py:3935 YoutubePlus/dialogs.py:4692
+msgid "Copy &Summary"
+msgstr "Копировать &описание"
+
+#: YoutubePlus/dialogs.py:1829 YoutubePlus/dialogs.py:2346
+#: YoutubePlus/dialogs.py:4312 YoutubePlus/dialogs.py:4708
+msgid "No valid YouTube URL found in clipboard."
+msgstr "В буфере обмена не найден действительный URL YouTube."
+
+#: YoutubePlus/dialogs.py:1832 YoutubePlus/dialogs.py:2350
+#: YoutubePlus/dialogs.py:2911 YoutubePlus/dialogs.py:4316
+#: YoutubePlus/dialogs.py:4712
+msgid "Could not read from clipboard."
+msgstr "Не удалось прочитать данные из буфера обмена."
+
+#: YoutubePlus/dialogs.py:1844 YoutubePlus/dialogs.py:2855
+#, python-brace-format
+msgid "Are you sure you want to remove '{title}'?"
+msgstr "Вы уверены, что хотите удалить «{title}»?"
+
+#: YoutubePlus/dialogs.py:1846
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected items?"
+msgstr "Вы уверены, что хотите удалить {count} выбранных элементов?"
+
+#: YoutubePlus/dialogs.py:1847 YoutubePlus/dialogs.py:2436
+#: YoutubePlus/dialogs.py:2860 YoutubePlus/dialogs.py:4994
+msgid "Confirm Removal"
+msgstr "Подтверждение удаления"
+
+#: YoutubePlus/dialogs.py:1859
+msgid "Item removed."
+msgstr "Элемент удалён."
+
+#: YoutubePlus/dialogs.py:1860
+#, python-brace-format
+msgid "{count} items removed."
+msgstr "{count} элементов удалено."
+
+#: YoutubePlus/dialogs.py:1868
+msgid "Enter new title:"
+msgstr "Введите новое название:"
+
+#: YoutubePlus/dialogs.py:1868
+msgid "Rename"
+msgstr "Переименовать"
+
+#: YoutubePlus/dialogs.py:1897 YoutubePlus/dialogs.py:2573
+#: YoutubePlus/dialogs.py:3001 YoutubePlus/dialogs.py:3427
+msgid "Sort List"
+msgstr "Сортировка списка"
+
+#: YoutubePlus/dialogs.py:1899 YoutubePlus/dialogs.py:2576
+#: YoutubePlus/dialogs.py:3004 YoutubePlus/dialogs.py:3430
+msgid "Sort by:"
+msgstr "Сортировать по:"
+
+#: YoutubePlus/dialogs.py:1908 YoutubePlus/dialogs.py:2588
+#: YoutubePlus/dialogs.py:3016 YoutubePlus/dialogs.py:3442
+msgid "&Ascending"
+msgstr "По &возрастанию"
+
+#: YoutubePlus/dialogs.py:1909 YoutubePlus/dialogs.py:2590
+#: YoutubePlus/dialogs.py:3018 YoutubePlus/dialogs.py:3444
+msgid "&Descending"
+msgstr "По &убыванию"
+
+#: YoutubePlus/dialogs.py:1917
+msgid "Sort only the current &category"
+msgstr "Сортировать только &текущую категорию"
+
+#: YoutubePlus/dialogs.py:1920 YoutubePlus/dialogs.py:2598
+#: YoutubePlus/dialogs.py:3026
+msgid "&Apply permanently (saves to file)"
+msgstr "&Применить постоянно (сохранить в файл)"
+
+#: YoutubePlus/dialogs.py:1927 YoutubePlus/dialogs.py:2604
+#: YoutubePlus/dialogs.py:3032 YoutubePlus/dialogs.py:3455
+msgid "C&lear Sort"
+msgstr "С&бросить сортировку"
+
+#: YoutubePlus/dialogs.py:1953 YoutubePlus/dialogs.py:2629
+#: YoutubePlus/dialogs.py:3057 YoutubePlus/dialogs.py:3476
+msgid "Sort cleared."
+msgstr "Сортировка сброшена."
+
+#: YoutubePlus/dialogs.py:2005 YoutubePlus/dialogs.py:2654
+#: YoutubePlus/dialogs.py:3082
+msgid "List sorted and saved."
+msgstr "Список отсортирован и сохранён."
+
+#: YoutubePlus/dialogs.py:2015 YoutubePlus/dialogs.py:2659
+#: YoutubePlus/dialogs.py:3087
+msgid "List sorted temporarily."
+msgstr "Список временно отсортирован."
+
+#: YoutubePlus/dialogs.py:2030
+#, python-brace-format
+msgid "{count} item(s) copied."
+msgstr "{count} элементов скопировано."
+
+#: YoutubePlus/dialogs.py:2039
+#, python-brace-format
+msgid "{count} item(s) cut."
+msgstr "{count} элементов вырезано."
+
+#: YoutubePlus/dialogs.py:2043 YoutubePlus/dialogs.py:2537
+#: YoutubePlus/dialogs.py:2813
+msgid "Clipboard is empty."
+msgstr "Буфер обмена пуст."
+
+#: YoutubePlus/dialogs.py:2098
+msgid "Cut"
+msgstr "Вырезать"
+
+#: YoutubePlus/dialogs.py:2098
+msgid "Copy"
+msgstr "Копировать"
+
+#: YoutubePlus/dialogs.py:2103
+#, python-brace-format
+msgid ""
+"{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
+msgstr ""
+"{op} «{title}» из {src} в {dst} — этот элемент уже существует. Заменить его?"
+
+#: YoutubePlus/dialogs.py:2107
+#, python-brace-format
+msgid "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
+msgstr ""
+"{op} из {src} в {dst} — {count} элементов уже существует. Заменить все?"
+
+#: YoutubePlus/dialogs.py:2110
+msgid "Confirm Replace"
+msgstr "Подтверждение замены"
+
+#: YoutubePlus/dialogs.py:2175
+#, python-brace-format
+msgid "{count} item(s) pasted to {cat}."
+msgstr "{count} элементов вставлено в {cat}."
+
+#: YoutubePlus/dialogs.py:2177
+#, python-brace-format
+msgid "{done} item(s) pasted to {cat}, {skipped} skipped."
+msgstr "{done} элементов вставлено в {cat}, {skipped} пропущено."
+
+#: YoutubePlus/dialogs.py:2180
+msgid "All items already exist in this list."
+msgstr "Все элементы уже существуют в этом списке."
+
+#: YoutubePlus/dialogs.py:2208
+msgid "Favorite Videos"
+msgstr "Избранные видео"
+
+#: YoutubePlus/dialogs.py:2220
+msgid "Add &new favorite video from clipboard"
+msgstr "Добавить &новое избранное видео из буфера обмена"
+
+#: YoutubePlus/dialogs.py:2230 YoutubePlus/dialogs.py:2245
+#: YoutubePlus/dialogs.py:3155
+msgid "Watch List"
+msgstr "Список просмотра"
+
+#: YoutubePlus/dialogs.py:2242
+msgid "Add &new watch list from clipboard"
+msgstr "Добавить &новый элемент в список просмотра из буфера обмена"
+
+#: YoutubePlus/dialogs.py:2272 YoutubePlus/dialogs.py:2565
+msgid "Subscribers"
+msgstr "Подписчики"
+
+#: YoutubePlus/dialogs.py:2275
+msgid "Channel Description"
+msgstr "Описание канала"
+
+#: YoutubePlus/dialogs.py:2282
+msgid "Open channel on &browser"
+msgstr "Открыть канал в &браузере"
+
+#: YoutubePlus/dialogs.py:2284
+msgid "View &channel Content..."
+msgstr "Просмотреть &содержимое канала..."
+
+#: YoutubePlus/dialogs.py:2286
+msgid "Add &new favorite channel from clipboard"
+msgstr "Добавить &новый избранный канал из буфера обмена"
+
+#: YoutubePlus/dialogs.py:2320 YoutubePlus/dialogs.py:2375
+#: YoutubePlus/dialogs.py:2949 YoutubePlus/dialogs.py:3785
+#: YoutubePlus/dialogs.py:3884 YoutubePlus/dialogs.py:4613
+msgid "N/A"
+msgstr "Н/Д"
+
+#: YoutubePlus/dialogs.py:2429
+msgid "this channel"
+msgstr "этот канал"
+
+#: YoutubePlus/dialogs.py:2431
+#, python-brace-format
+msgid "Are you sure you want to remove '{name}'?"
+msgstr "Вы уверены, что хотите удалить «{name}»?"
+
+#: YoutubePlus/dialogs.py:2434
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected channels?"
+msgstr "Вы уверены, что хотите удалить {count} выбранных каналов?"
+
+#: YoutubePlus/dialogs.py:2456
+msgid "Channel removed."
+msgstr "Канал удалён."
+
+#: YoutubePlus/dialogs.py:2457
+#, python-brace-format
+msgid "{count} channels removed."
+msgstr "{count} каналов удалено."
+
+#: YoutubePlus/dialogs.py:2472 YoutubePlus/dialogs.py:4279
+msgid "Error: Channel URL not found."
+msgstr "Ошибка: URL канала не найден."
+
+#: YoutubePlus/dialogs.py:2532 YoutubePlus/dialogs.py:2808
+msgid "Cut."
+msgstr "Вырезано."
+
+#: YoutubePlus/dialogs.py:2558 YoutubePlus/dialogs.py:2834
+msgid "Moved."
+msgstr "Перемещено."
+
+#: YoutubePlus/dialogs.py:2681
+msgid "Enter new channel name:"
+msgstr "Введите новое название канала:"
+
+#: YoutubePlus/dialogs.py:2682
+msgid "Rename Channel"
+msgstr "Переименовать канал"
+
+#: YoutubePlus/dialogs.py:2720 YoutubePlus/dialogs.py:3827
+msgid "Playlist Title"
+msgstr "Название плейлиста"
+
+#: YoutubePlus/dialogs.py:2729 YoutubePlus/dialogs.py:3837
+msgid "Show &Videos..."
+msgstr "Показать &видео..."
+
+#: YoutubePlus/dialogs.py:2731
+msgid "Open on &browser"
+msgstr "Открыть в &браузере"
+
+#: YoutubePlus/dialogs.py:2733
+msgid "Add &new favorite playlist from clipboard"
+msgstr "Добавить &новый избранный плейлист из буфера обмена"
+
+#: YoutubePlus/dialogs.py:2853
+msgid "this playlist"
+msgstr "этот плейлист"
+
+#: YoutubePlus/dialogs.py:2858
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected playlists?"
+msgstr "Вы уверены, что хотите удалить {count} выбранных плейлистов?"
+
+#: YoutubePlus/dialogs.py:2880
+msgid "Playlist removed."
+msgstr "Плейлист удалён."
+
+#: YoutubePlus/dialogs.py:2881
+#, python-brace-format
+msgid "{count} playlists removed."
+msgstr "{count} плейлистов удалено."
+
+#: YoutubePlus/dialogs.py:2899
+msgid "Error: Could not save playlist list."
+msgstr "Ошибка: Не удалось сохранить список плейлистов."
+
+#: YoutubePlus/dialogs.py:2907
+msgid "No valid YouTube playlist URL found in clipboard."
+msgstr "В буфере обмена не найден действительный URL плейлиста YouTube."
+
+#: YoutubePlus/dialogs.py:2964
+#, python-brace-format
+msgid "Fetching videos from '{playlist}'..."
+msgstr "Получение видео из плейлиста «{playlist}»..."
+
+#: YoutubePlus/dialogs.py:3109
+msgid "Enter new playlist title:"
+msgstr "Введите новое название плейлиста:"
+
+#: YoutubePlus/dialogs.py:3110
+msgid "Rename Playlist"
+msgstr "Переименовать плейлист"
+
+#: YoutubePlus/dialogs.py:3146
+msgid "Favorites - YoutubePlus"
+msgstr "Избранное - YoutubePlus"
+
+#: YoutubePlus/dialogs.py:3153
+msgid "Channels"
+msgstr "Каналы"
+
+#: YoutubePlus/dialogs.py:3156
+msgid "Search History"
+msgstr "История поиска"
+
+#: YoutubePlus/dialogs.py:3179
+msgid "S&ort..."
+msgstr "С&ортировка..."
+
+#: YoutubePlus/dialogs.py:3281
+#, python-brace-format
+msgid "{tab_name} - Favorites - YoutubePlus"
+msgstr "{tab_name} - Избранное - YoutubePlus"
+
+#: YoutubePlus/dialogs.py:3356 YoutubePlus/dialogs.py:3419
+msgid "Keyword"
+msgstr "Ключевое слово"
+
+#: YoutubePlus/dialogs.py:3358 YoutubePlus/dialogs.py:3420
+msgid "Results"
+msgstr "Результаты"
+
+#: YoutubePlus/dialogs.py:3360 YoutubePlus/dialogs.py:3421
+msgid "Searched At"
+msgstr "Время поиска"
+
+#: YoutubePlus/dialogs.py:3365
+msgid "Search &Again"
+msgstr "Искать &снова"
+
+#: YoutubePlus/dialogs.py:3367
+msgid "&New Search"
+msgstr "&Новый поиск"
+
+#: YoutubePlus/dialogs.py:3371
+msgid "&Clear All"
+msgstr "&Очистить всё"
+
+#: YoutubePlus/dialogs.py:3509
+msgid "List sorted."
+msgstr "Список отсортирован."
+
+#: YoutubePlus/dialogs.py:3591
+msgid "Search history entry removed."
+msgstr "Запись истории поиска удалена."
+
+#: YoutubePlus/dialogs.py:3596
+msgid "Clear all search history?"
+msgstr "Очистить всю историю поиска?"
+
+#: YoutubePlus/dialogs.py:3615
+msgid "Search YouTube"
+msgstr "Поиск на YouTube"
+
+#: YoutubePlus/dialogs.py:3632
+msgid "&Search for:"
+msgstr "&Искать:"
+
+#: YoutubePlus/dialogs.py:3642
+msgid "Number of &results to fetch:"
+msgstr "Количество &результатов для получения:"
+
+#: YoutubePlus/dialogs.py:3648
+msgid "&Search"
+msgstr "&Найти"
+
+#: YoutubePlus/dialogs.py:3677
+msgid "Please enter a search term."
+msgstr "Пожалуйста, введите поисковый запрос."
+
+#: YoutubePlus/dialogs.py:3709 YoutubePlus/dialogs.py:3843
+msgid "Load All"
+msgstr "Загрузить всё"
+
+#: YoutubePlus/dialogs.py:3835
+msgid "Add to &Favorites"
+msgstr "Добавить в &избранное"
+
+#: YoutubePlus/dialogs.py:3839
+msgid "Open on &Browser"
+msgstr "Открыть в &браузере"
+
+#: YoutubePlus/dialogs.py:3907 YoutubePlus/dialogs.py:3976
+msgid "Playlist URL not found."
+msgstr "URL плейлиста не найден."
+
+#: YoutubePlus/dialogs.py:3910
+#, python-brace-format
+msgid "Fetching videos from '{title}'..."
+msgstr "Получение видео из «{title}»..."
+
+#: YoutubePlus/dialogs.py:3933
+msgid "Copy Playlist &URL"
+msgstr "Копировать &URL плейлиста"
+
+#: YoutubePlus/dialogs.py:4001
+msgid "Manage Subscriptions"
+msgstr "Управление подписками"
+
+#: YoutubePlus/dialogs.py:4018
+msgid "Subscribed &Channels:"
+msgstr "Подписанные &каналы:"
+
+#: YoutubePlus/dialogs.py:4021 YoutubePlus/dialogs.py:4556
+msgid "Channel Name"
+msgstr "Название канала"
+
+#: YoutubePlus/dialogs.py:4026
+msgid "Filter by Category:"
+msgstr "Фильтр по категории:"
+
+#: YoutubePlus/dialogs.py:4035
+msgid "Assign to Categories"
+msgstr "Назначить категориям"
+
+#: YoutubePlus/dialogs.py:4040
+msgid "Content Types to Fetch"
+msgstr "Типы контента для получения"
+
+#: YoutubePlus/dialogs.py:4046
+msgid "Actions"
+msgstr "Действия"
+
+#: YoutubePlus/dialogs.py:4049
+msgid "View &Content..."
+msgstr "Просмотреть &содержимое..."
+
+#: YoutubePlus/dialogs.py:4051
+msgid "Add &new subscribe channel from Clipboard..."
+msgstr "Добавить &новый канал для подписки из буфера обмена..."
+
+#: YoutubePlus/dialogs.py:4053
+msgid "&Unsubscribe from this Channel"
+msgstr "&Отписаться от этого канала"
+
+#: YoutubePlus/dialogs.py:4125
+msgid "Changes saved."
+msgstr "Изменения сохранены."
+
+#: YoutubePlus/dialogs.py:4157
+msgid "All Channels"
+msgstr "Все каналы"
+
+#: YoutubePlus/dialogs.py:4327
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{name}'?"
+msgstr "Вы уверены, что хотите отписаться от канала «{name}»?"
+
+#: YoutubePlus/dialogs.py:4329 YoutubePlus/dialogs.py:4915
+msgid "Confirm Unsubscribe"
+msgstr "Подтверждение отписки"
+
+#: YoutubePlus/dialogs.py:4351
+msgid "Subscription Feed"
+msgstr "Лента подписок"
+
+#: YoutubePlus/dialogs.py:4369
+msgid "Add &new Subscription from clipboard URL."
+msgstr "Добавить &новую подписку из URL в буфере обмена."
+
+#: YoutubePlus/dialogs.py:4371
+msgid "&Update Feed"
+msgstr "&Обновить ленту"
+
+#: YoutubePlus/dialogs.py:4373
+msgid "&More..."
+msgstr "&Ещё..."
+
+#: YoutubePlus/dialogs.py:4457
+msgid "All"
+msgstr "Все"
+
+#: YoutubePlus/dialogs.py:4519
+msgid "Error reordering tabs."
+msgstr "Ошибка при изменении порядка вкладок."
+
+#: YoutubePlus/dialogs.py:4544
+#, python-brace-format
+msgid "Subscription Feed - {tab_name} - YoutubePlus"
+msgstr "Лента подписок - {tab_name} - YoutubePlus"
+
+#: YoutubePlus/dialogs.py:4552
+msgid "Video Title"
+msgstr "Название видео"
+
+#: YoutubePlus/dialogs.py:4554
+msgid "Type"
+msgstr "Тип"
+
+#: YoutubePlus/dialogs.py:4566
+msgid "Mark as &Seen"
+msgstr "Пометить как &просмотренное"
+
+#: YoutubePlus/dialogs.py:4607 YoutubePlus/dialogs.py:4616
+msgid "Video"
+msgstr "Видео"
+
+#: YoutubePlus/dialogs.py:4672 YoutubePlus/dialogs.py:4827
+msgid "&Unsubscribe from this channel"
+msgstr "&Отписаться от этого канала"
+
+#: YoutubePlus/dialogs.py:4723
+msgid "Mark &all in current tab as seen (control+delete)"
+msgstr "Пометить &все на текущей вкладке как просмотренные (control+delete)"
+
+#: YoutubePlus/dialogs.py:4725
+msgid "Show all &videos (including seen)"
+msgstr "Показать все &видео (включая просмотренные)"
+
+#: YoutubePlus/dialogs.py:4725
+msgid "Show only &unseen videos"
+msgstr "Показать только &непросмотренные видео"
+
+#: YoutubePlus/dialogs.py:4728
+msgid "&Manage subscriptions..."
+msgstr "&Управление подписками..."
+
+#: YoutubePlus/dialogs.py:4731
+msgid "Add New &Category...\tCtrl+="
+msgstr "Добавить новую &категорию...\tCtrl+="
+
+#: YoutubePlus/dialogs.py:4733
+msgid "&Rename Current Category...\tF2"
+msgstr "&Переименовать текущую категорию...\tF2"
+
+#: YoutubePlus/dialogs.py:4735
+msgid "Remove Current Category...\tCtrl+-"
+msgstr "Удалить текущую категорию...\tCtrl+-"
+
+#: YoutubePlus/dialogs.py:4738
+msgid "Clear All Feed Videos..."
+msgstr "Очистить все видео ленты..."
+
+#: YoutubePlus/dialogs.py:4776
+msgid "An update is already in progress."
+msgstr "Обновление уже выполняется."
+
+#: YoutubePlus/dialogs.py:4794
+#, python-brace-format
+msgid "Updating Feed ({count} channels)"
+msgstr "Обновление ленты ({count} каналов)"
+
+#: YoutubePlus/dialogs.py:4796
+msgid "Starting..."
+msgstr "Начало..."
+
+#: YoutubePlus/dialogs.py:4847
+msgid "Marked as seen."
+msgstr "Помечено как просмотренное."
+
+#: YoutubePlus/dialogs.py:4855
+msgid "There are no videos in this tab to mark as seen."
+msgstr "На этой вкладке нет видео для пометки как просмотренных."
+
+#: YoutubePlus/dialogs.py:4858
+#, python-brace-format
+msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
+msgstr ""
+"Вы уверены, что хотите пометить все {count} видео на этой вкладке как "
+"просмотренные?"
+
+#: YoutubePlus/dialogs.py:4866
+msgid "All videos in the current tab have been marked as seen."
+msgstr "Все видео на текущей вкладке были помечены как просмотренные."
+
+#: YoutubePlus/dialogs.py:4913
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{channel}'?"
+msgstr "Вы уверены, что хотите отписаться от канала «{channel}»?"
+
+#: YoutubePlus/dialogs.py:4923
+msgid "Enter new category name:"
+msgstr "Введите новое название категории:"
+
+#: YoutubePlus/dialogs.py:4942 YoutubePlus/dialogs.py:4975
+msgid "A category with this name already exists."
+msgstr "Категория с таким названием уже существует."
+
+#: YoutubePlus/dialogs.py:4946
+msgid "Error adding category."
+msgstr "Ошибка при добавлении категории."
+
+#: YoutubePlus/dialogs.py:4954
+msgid "This is a fixed tab and cannot be renamed."
+msgstr "Это фиксированная вкладка, её нельзя переименовать."
+
+#: YoutubePlus/dialogs.py:4959
+#, python-brace-format
+msgid "Enter new name for '{name}':"
+msgstr "Введите новое название для «{name}»:"
+
+#: YoutubePlus/dialogs.py:4979
+msgid "Error renaming category."
+msgstr "Ошибка при переименовании категории."
+
+#: YoutubePlus/dialogs.py:4987
+msgid "This is a fixed tab and cannot be removed."
+msgstr "Это фиксированная вкладка, её нельзя удалить."
+
+#: YoutubePlus/dialogs.py:4992
+#, python-brace-format
+msgid "Are you sure you want to remove the '{name}' category?"
+msgstr "Вы уверены, что хотите удалить категорию «{name}»?"
+
+#: YoutubePlus/dialogs.py:5005
+#, python-brace-format
+msgid "Category '{name}' removed."
+msgstr "Категория «{name}» удалена."
+
+#: YoutubePlus/dialogs.py:5009
+msgid "Error removing category."
+msgstr "Ошибка при удалении категории."
+
+#: YoutubePlus/dialogs.py:5016
+msgid "Manage User Profiles"
+msgstr "Управление профилями пользователя"
+
+#: YoutubePlus/dialogs.py:5028
+msgid "&Add"
+msgstr "&Добавить"
+
+#: YoutubePlus/dialogs.py:5030
+msgid "&Rename"
+msgstr "&Переименовать"
+
+#: YoutubePlus/dialogs.py:5032
+msgid "&Delete"
+msgstr "&Удалить"
+
+#: YoutubePlus/dialogs.py:5075
+msgid "Enter new profile name:"
+msgstr "Введите новое имя профиля:"
+
+#: YoutubePlus/dialogs.py:5077
+msgid "Add Profile"
+msgstr "Добавить профиль"
+
+#: YoutubePlus/dialogs.py:5093
+msgid "Profile already exists."
+msgstr "Такой профиль уже существует."
+
+#: YoutubePlus/dialogs.py:5093 YoutubePlus/dialogs.py:5111
+#: YoutubePlus/dialogs.py:5125 YoutubePlus/dialogs.py:5132
+#: YoutubePlus/dialogs.py:5137 YoutubePlus/dialogs.py:5152
+msgid "Error"
+msgstr "Ошибка"
+
+#: YoutubePlus/dialogs.py:5099
+#, python-brace-format
+msgid "Rename profile '{name}' to:"
+msgstr "Переименовать профиль «{name}» в:"
+
+#: YoutubePlus/dialogs.py:5101
+msgid "Rename Profile"
+msgstr "Переименование профиля"
+
+#: YoutubePlus/dialogs.py:5111
+msgid "A profile with this name already exists."
+msgstr "Профиль с таким именем уже существует."
+
+#: YoutubePlus/dialogs.py:5125
+#, python-brace-format
+msgid "Failed to rename profile: {e}"
+msgstr "Не удалось переименовать профиль: {e}"
+
+#: YoutubePlus/dialogs.py:5132
+msgid "The default profile cannot be deleted."
+msgstr "Профиль по умолчанию нельзя удалить."
+
+#: YoutubePlus/dialogs.py:5137
+msgid "Cannot delete the profile currently in use."
+msgstr "Нельзя удалить профиль, который используется в данный момент."
+
+#: YoutubePlus/dialogs.py:5140
+#, python-brace-format
+msgid "Delete profile '{name}' and all its data?"
+msgstr "Удалить профиль «{name}» и все его данные?"
+
+#: YoutubePlus/dialogs.py:5142
+msgid "Confirm Delete"
+msgstr "Подтверждение удаления"
+
+#: YoutubePlus/dialogs.py:5152
+#, python-brace-format
+msgid "Failed to delete profile: {e}"
+msgstr "Не удалось удалить профиль: {e}"
+
+#: YoutubePlus/dialogs.py:5161
+msgid ""
+"The active profile has been modified. NVDA must be restarted to apply "
+"changes. Restart now?"
+msgstr ""
+"Активный профиль был изменён. Для применения изменений необходимо "
+"перезапустить NVDA. Перезапустить сейчас?"
+
+#: YoutubePlus/dialogs.py:5163 YoutubePlus/settings.py:285
+msgid "Restart NVDA"
+msgstr "Перезапуск NVDA"
+
+#: YoutubePlus/dialogs.py:5178
+msgid "Downloading..."
+msgstr "Загрузка..."
+
+#: YoutubePlus/dialogs.py:5192
+msgid "Field"
+msgstr "Поле"
+
+#: YoutubePlus/dialogs.py:5193
+msgid "Value"
+msgstr "Значение"
+
+#: YoutubePlus/dialogs.py:5196
+msgid "File"
+msgstr "Файл"
+
+#: YoutubePlus/dialogs.py:5197
+msgid "Progress"
+msgstr "Выполнение"
+
+#: YoutubePlus/dialogs.py:5198
+msgid "Size"
+msgstr "Размер"
+
+#: YoutubePlus/dialogs.py:5199
+msgid "Speed"
+msgstr "Скорость"
+
+#: YoutubePlus/dialogs.py:5200
+msgid "ETA"
+msgstr "Осталось"
+
+#: YoutubePlus/dialogs.py:5201
+msgid "Status"
+msgstr "Статус"
+
+#: YoutubePlus/dialogs.py:5207
+msgid "Preparing..."
+msgstr "Подготовка..."
+
+#: YoutubePlus/dialogs.py:5218
+msgid "&Cancel"
+msgstr "&Отмена"
+
+#: YoutubePlus/dialogs.py:5277
+#, python-brace-format
+msgid "Downloading: {title}"
+msgstr "Загрузка: {title}"
+
+#: YoutubePlus/dialogs.py:5298
+#, python-brace-format
+msgid "{pct}%"
+msgstr "{pct}%"
+
+#: YoutubePlus/dialogs.py:5305 YoutubePlus/dialogs.py:5316
+msgid "Downloading"
+msgstr "Загрузка"
+
+#: YoutubePlus/dialogs.py:5324
+msgid "Finishing..."
+msgstr "Завершение..."
+
+#: YoutubePlus/dialogs.py:5341
+msgid "Cancelling..."
+msgstr "Отмена..."
+
+#: YoutubePlus/lib/optparse.py:134
+#, python-format
+msgid "no such option: %s"
+msgstr "нет такой опции: %s"
+
+#: YoutubePlus/lib/optparse.py:145
+#, python-format
+msgid "ambiguous option: %s (%s?)"
+msgstr "неоднозначная опция: %s (%s?)"
+
+#: YoutubePlus/lib/optparse.py:371
+#, python-format
+msgid "Usage: %s\n"
+msgstr "Использование: %s\n"
+
+#: YoutubePlus/lib/optparse.py:390
+msgid "Usage"
+msgstr "Использование"
+
+#: YoutubePlus/lib/optparse.py:412 YoutubePlus/lib/optparse.py:413
+msgid "integer"
+msgstr "целое число"
+
+#: YoutubePlus/lib/optparse.py:414
+msgid "floating-point"
+msgstr "число с плавающей точкой"
+
+#: YoutubePlus/lib/optparse.py:415
+msgid "complex"
+msgstr "комплексное число"
+
+#: YoutubePlus/lib/optparse.py:423
+#, python-format
+msgid "option %s: invalid %s value: %r"
+msgstr "опция %s: недопустимое значение %s: %r"
+
+#: YoutubePlus/lib/optparse.py:431
+#, python-format
+msgid "option %s: invalid choice: %r (choose from %s)"
+msgstr "опция %s: недопустимый выбор: %r (выберите из %s)"
+
+#: YoutubePlus/lib/optparse.py:1228
+msgid "show this help message and exit"
+msgstr "показать это сообщение справки и выйти"
+
+#: YoutubePlus/lib/optparse.py:1233
+msgid "show program's version number and exit"
+msgstr "показать номер версии программы и выйти"
+
+#: YoutubePlus/lib/optparse.py:1256
+msgid "%prog [options]"
+msgstr "%prog [опции]"
+
+#: YoutubePlus/lib/optparse.py:1476 YoutubePlus/lib/optparse.py:1514
+#, python-format
+msgid "%(option)s option requires %(number)d argument"
+msgid_plural "%(option)s option requires %(number)d arguments"
+msgstr[0] "опция %(option)s требует %(number)d аргумент"
+msgstr[1] "опция %(option)s требует %(number)d аргумента"
+msgstr[2] "опция %(option)s требует %(number)d аргументов"
+
+#: YoutubePlus/lib/optparse.py:1486
+#, python-format
+msgid "%s option does not take a value"
+msgstr "опция %s не принимает значение"
+
+#: YoutubePlus/lib/optparse.py:1602
+msgid "Options"
+msgstr "Опции"
+
+#: YoutubePlus/settings.py:24
+msgid "Youtube Plus"
+msgstr "Youtube Plus"
+
+#: YoutubePlus/settings.py:30
+msgid "Active &Profile (Requires Restart):"
+msgstr "&Активный профиль (требуется перезапуск):"
+
+#: YoutubePlus/settings.py:36 YoutubePlus/settings.py:259
+#: YoutubePlus/settings.py:264
+msgid "default"
+msgstr "по умолчанию"
+
+#: YoutubePlus/settings.py:41
+msgid "&Manage Profiles..."
+msgstr "&Управление профилями..."
+
+#: YoutubePlus/settings.py:45
+msgid "&Quick Action (Space bar):"
+msgstr "&Быстрое действие (пробел):"
+
+#: YoutubePlus/settings.py:48
+msgid "Open video URL"
+msgstr "Открыть URL видео"
+
+#: YoutubePlus/settings.py:50
+msgid "View video info"
+msgstr "Просмотреть информацию о видео"
+
+#: YoutubePlus/settings.py:52
+msgid "View comments"
+msgstr "Просмотреть комментарии"
+
+#: YoutubePlus/settings.py:54
+msgid "View chapters"
+msgstr "Просмотреть разделы"
+
+#: YoutubePlus/settings.py:56
+msgid "Download video"
+msgstr "Загрузить видео"
+
+#: YoutubePlus/settings.py:58
+msgid "Download audio"
+msgstr "Загрузить аудио"
+
+#: YoutubePlus/settings.py:60
+msgid "Download subtitles"
+msgstr "Загрузить субтитры"
+
+#: YoutubePlus/settings.py:62
+msgid "Add to Favorites video"
+msgstr "Добавить в избранное видео"
+
+#: YoutubePlus/settings.py:64
+msgid "Add to Favorites channel"
+msgstr "Добавить в избранное канал"
+
+#: YoutubePlus/settings.py:66
+msgid "Add to Watch List"
+msgstr "Добавить в список просмотра"
+
+#: YoutubePlus/settings.py:68
+msgid "Copy video URL"
+msgstr "Копировать URL видео"
+
+#: YoutubePlus/settings.py:70
+msgid "Copy video title"
+msgstr "Копировать название видео"
+
+#: YoutubePlus/settings.py:72
+msgid "Copy channel name"
+msgstr "Копировать название канала"
+
+#: YoutubePlus/settings.py:74
+msgid "Copy channel URL"
+msgstr "Копировать URL канала"
+
+#: YoutubePlus/settings.py:76
+msgid "Copy video summary"
+msgstr "Копировать описание видео"
+
+#: YoutubePlus/settings.py:78
+msgid "Open video channel"
+msgstr "Открыть канал видео"
+
+#: YoutubePlus/settings.py:80
+msgid "Show channel videos"
+msgstr "Показать видео канала"
+
+#: YoutubePlus/settings.py:82
+msgid "Show channel shorts"
+msgstr "Показать shorts канала"
+
+#: YoutubePlus/settings.py:84
+msgid "Show channel lives"
+msgstr "Показать трансляции канала"
+
+#: YoutubePlus/settings.py:86
+msgid "Show channel playlists"
+msgstr "Показать плейлисты канала"
+
+#: YoutubePlus/settings.py:88
+msgid "Show channel podcasts"
+msgstr "Показать подкасты канала"
+
+#: YoutubePlus/settings.py:105
+msgid "&Notification mode:"
+msgstr "&Режим уведомлений:"
+
+#: YoutubePlus/settings.py:108
+msgid "Beep"
+msgstr "Звуковой сигнал"
+
+#: YoutubePlus/settings.py:108
+msgid "Sound"
+msgstr "Звук"
+
+#: YoutubePlus/settings.py:108
+msgid "Silent"
+msgstr "Без звука"
+
+#: YoutubePlus/settings.py:115
+msgid "Default &sort order:"
+msgstr "Порядок &сортировки по умолчанию:"
+
+#: YoutubePlus/settings.py:117
+msgid "Newest First"
+msgstr "Сначала новые"
+
+#: YoutubePlus/settings.py:117
+msgid "Oldest First"
+msgstr "Сначала старые"
+
+#: YoutubePlus/settings.py:124
+msgid "&Items to fetch for each content type:"
+msgstr "&Элементов для получения каждого типа контента:"
+
+#: YoutubePlus/settings.py:128
+msgid "Default content &types for new subscriptions:"
+msgstr "&Типы контента по умолчанию для новых подписок:"
+
+#: YoutubePlus/settings.py:143
+msgid "Disabled"
+msgstr "Отключено"
+
+#: YoutubePlus/settings.py:143
+msgid "15 minutes"
+msgstr "15 минут"
+
+#: YoutubePlus/settings.py:143
+msgid "30 minutes"
+msgstr "30 минут"
+
+#: YoutubePlus/settings.py:143
+msgid "1 hour"
+msgstr "1 час"
+
+#: YoutubePlus/settings.py:143
+msgid "2 hours"
+msgstr "2 часа"
+
+#: YoutubePlus/settings.py:144
+msgid "4 hours"
+msgstr "4 часа"
+
+#: YoutubePlus/settings.py:144
+msgid "6 hours"
+msgstr "6 часов"
+
+#: YoutubePlus/settings.py:144
+msgid "12 hours"
+msgstr "12 часов"
+
+#: YoutubePlus/settings.py:144
+msgid "24 hours"
+msgstr "24 часа"
+
+#: YoutubePlus/settings.py:148
+msgid "Background &update interval:"
+msgstr "&Интервал фонового обновления:"
+
+#: YoutubePlus/settings.py:159
+msgid "&Automatically speak incoming live chat"
+msgstr "&Автоматически озвучивать входящие сообщения живого чата"
+
+#: YoutubePlus/settings.py:163
+msgid "&Live chat refresh interval (seconds):"
+msgstr "&Интервал обновления живого чата (секунды):"
+
+#: YoutubePlus/settings.py:167
+msgid "Message &history limit (live chat):"
+msgstr "&Лимит истории сообщений (живой чат):"
+
+#: YoutubePlus/settings.py:195
+msgid "&Cookie method (Experimental - may not work):"
+msgstr "&Метод Cookie (Экспериментально — может не работать):"
+
+#: YoutubePlus/settings.py:197
+msgid "Do not use cookies (Default)"
+msgstr "Не использовать cookies (по умолчанию)"
+
+#: YoutubePlus/settings.py:198
+msgid "Chrome"
+msgstr "Chrome"
+
+#: YoutubePlus/settings.py:199
+msgid "Firefox"
+msgstr "Firefox"
+
+#: YoutubePlus/settings.py:200
+msgid "Edge"
+msgstr "Edge"
+
+#: YoutubePlus/settings.py:201
+msgid "Opera"
+msgstr "Opera"
+
+#: YoutubePlus/settings.py:202
+msgid "Brave"
+msgstr "Brave"
+
+#: YoutubePlus/settings.py:203
+msgid "Vivaldi"
+msgstr "Vivaldi"
+
+#: YoutubePlus/settings.py:222
+msgid "Default subtitle &format:"
+msgstr "Формат субтитров по умолчанию:"
+
+#: YoutubePlus/settings.py:232
+msgid "Default download and &export folder path:"
+msgstr "Путь к папке загрузки и &экспорта по умолчанию:"
+
+#: YoutubePlus/settings.py:237
+msgid "&Browse..."
+msgstr "&Обзор..."
+
+#: YoutubePlus/settings.py:243
+msgid "Bac&kup data now"
+msgstr "Создать &резервную копию данных сейчас"
+
+#: YoutubePlus/settings.py:247
+msgid "&Restore data from backup..."
+msgstr "&Восстановить данные из резервной копии..."
+
+#: YoutubePlus/settings.py:283
+#, python-brace-format
+msgid ""
+"The active profile has been changed to '{profile_name}'. NVDA must be "
+"restarted to apply this change. Restart now?"
+msgstr ""
+"Активный профиль изменён на «{profile_name}». Для применения изменений "
+"необходимо перезапустить NVDA. Перезапустить сейчас?"
+
+#: YoutubePlus/settings.py:343
+msgid "Select cookies.txt file"
+msgstr "Выберите файл cookies.txt"
+
+#: YoutubePlus/settings.py:354
+msgid "Select default folder to export files"
+msgstr "Выберите папку по умолчанию для экспорта файлов"
+
+#: YoutubePlus/settings.py:365
+#, python-brace-format
+msgid ""
+"Backup completed successfully.\n"
+"{filename}"
+msgstr ""
+"Резервное копирование успешно завершено.\n"
+"{filename}"
+
+#: YoutubePlus/settings.py:367
+msgid "Backup"
+msgstr "Резервная копия"
+
+#: YoutubePlus/settings.py:373
+#, python-brace-format
+msgid "Backup failed: {error}"
+msgstr "Не удалось создать резервную копию: {error}"
+
+#: YoutubePlus/settings.py:375
+msgid "Backup Error"
+msgstr "Ошибка резервного копирования"
+
+#: YoutubePlus/settings.py:385
+#, python-brace-format
+msgid "No backup files found for profile '{profile}'."
+msgstr "Не найдено файлов резервных копий для профиля «{profile}»."
+
+#: YoutubePlus/settings.py:387
+msgid "Restore"
+msgstr "Восстановить"
+
+#: YoutubePlus/settings.py:405
+#, python-brace-format
+msgid ""
+"Restore data from {date} for profile '{profile}'?\n"
+"This will overwrite all current data and requires a restart."
+msgstr ""
+"Восстановить данные от {date} для профиля «{profile}»?\n"
+"Это перезапишет все текущие данные и потребует перезапуска."
+
+#: YoutubePlus/settings.py:408
+msgid "Confirm Restore"
+msgstr "Подтверждение восстановления"
+
+#: YoutubePlus/settings.py:415
+msgid ""
+"YoutubePlus Data restored successfully. NVDA must be restarted to apply the "
+"changes. Restart now?"
+msgstr ""
+"Данные YoutubePlus успешно восстановлены. Для применения изменений "
+"необходимо перезапустить NVDA. Перезапустить сейчас?"
+
+#: YoutubePlus/settings.py:420
+#, python-brace-format
+msgid "Restore failed: {error}"
+msgstr "Не удалось восстановить данные: {error}"
+
+#: YoutubePlus/settings.py:422
+msgid "Restore Error"
+msgstr "Ошибка восстановления"
