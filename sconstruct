@@ -141,19 +141,22 @@ if os.path.exists(extractor_dir):
                 os.remove(item_path)
 
 # Fix security warnings in bunnycdn.py (Line 32 and 44)
-bunny_file = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib", "yt_dlp", "downloader", "bunnycdn.py")
-if os.path.exists(bunny_file):
-    print(f"Applying security patch to {bunny_file}...")
-    with open(bunny_file, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    with open(bunny_file, "w", encoding="utf-8") as f:
-        for i, line in enumerate(lines):
-            # Comment out lines 32 and 44 to clear CodeQL security alerts
-            if i + 1 in [32, 44]:
-                f.write(f"# Fixed by SCons: {line}")
-            else:
-                f.write(line)
-    print("Security patch applied successfully.")
+# TEMPORARILY DISABLED for testing whether the NVDA add-on store / GitHub
+# CodeQL scan has fixed the false-positive that made this patch necessary.
+# Re-enable by uncommenting this block before shipping a real release.
+# bunny_file = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib", "yt_dlp", "downloader", "bunnycdn.py")
+# if os.path.exists(bunny_file):
+#     print(f"Applying security patch to {bunny_file}...")
+#     with open(bunny_file, "r", encoding="utf-8") as f:
+#         lines = f.readlines()
+#     with open(bunny_file, "w", encoding="utf-8") as f:
+#         for i, line in enumerate(lines):
+#             # Comment out lines 32 and 44 to clear CodeQL security alerts
+#             if i + 1 in [32, 44]:
+#                 f.write(f"# Fixed by SCons: {line}")
+#             else:
+#                 f.write(line)
+#     print("Security patch applied successfully.")
 
 # ---------- Add-on builder ----------
 def createAddonBundleFromPath(path, dest):

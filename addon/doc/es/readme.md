@@ -29,6 +29,7 @@ Presiona **NVDA+Y** para ingresar al modo de comando de YoutubePlus, luego presi
 * control+h: (historial de búsqueda) — Abre la ventana de Favoritos directamente en la pestaña Historial de búsqueda
 * i: (información) — Abre la ventana de detalles del video
 * t: (mostrar marca de tiempo) — Muestra las marcas de tiempo o capítulos si están disponibles
+* g: (obtener descripción de la miniatura) — Descarga la miniatura del video y la envía a la aplicación Be My Eyes para obtener una descripción en vivo
 * m: (abrir administrar suscripciones) — Abre la ventana de administración de suscripciones
 * s: (abrir feed de suscripciones) — Muestra los videos de los canales que sigues
 * u: (abrir Administrador de Perfiles de Usuario) — Abre la ventana de administración de Perfiles de Usuario
@@ -113,6 +114,14 @@ Esta ventana ofrece más comodidad que leer los capítulos desde el navegador:
 * Botón Copiar URL (Alt+U) para copiar la URL con la marca de tiempo de ese capítulo.
 * Botón Exportar (Alt+E) para guardar todos los datos de marcas de tiempo/capítulos como un archivo de texto.
 
+### g: (obtener descripción de la miniatura)
+
+Descarga la miniatura del video y la envía a la aplicación **Be My Eyes** para obtener una descripción en vivo, sin salir de NVDA. También está disponible desde el menú Acción del video y como Acción rápida configurable (barra espaciadora).
+
+El complemento siempre elige la miniatura de mayor resolución que reporta yt-dlp, para que la imagen enviada a Be My Eyes sea siempre la mejor disponible.
+
+**Nota:** Esta función requiere que la aplicación [Be My Eyes](https://www.bemyeyes.com/) esté instalada por separado en tu sistema — el complemento no la instala ni la incluye. Si no está instalada, escucharás un mensaje indicando que no se pudo abrir la aplicación.
+
 ### Favoritos
 
 Una ventana que muestra tus favoritos guardados, dividida en **5 pestañas** por tipo:
@@ -175,6 +184,7 @@ Presiona Alt+A para abrir el menú Acción, que incluye:
 * Ver información del video...  (i)
 * Ver comentarios / Reproducción...  (c)
 * Ver capítulos/marcas de tiempo...  (t)
+* Obtener descripción de la miniatura (Be My Eyes)...  (g)
 * Descargar video  (d)
 * Descargar audio  (a)
 * Descargar subtítulos  (b)
@@ -186,6 +196,8 @@ Presiona Alt+A para abrir el menú Acción, que incluye:
 * Mostrar videos del canal  (v)
 * Mostrar shorts del canal  (s)
 * Mostrar transmisiones en vivo del canal  (l)
+* Mostrar listas de reproducción del canal  (p)
+* Mostrar podcast del canal  (p)
 
 ##### Botón Copiar
 

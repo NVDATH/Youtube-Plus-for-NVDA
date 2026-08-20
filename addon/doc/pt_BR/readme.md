@@ -22,6 +22,7 @@
   - [e: Pesquisar no YouTube](#e-pesquisar-no-youtube)
   - [i: Informações do Vídeo](#i-informações-do-vídeo)
   - [t: Capítulos / Marcadores de Tempo](#t-capítulos--marcadores-de-tempo)
+  - [g: Obter Descrição da Miniatura (Be My Eyes)](#g-obter-descrição-da-miniatura-be-my-eyes)
   - [l: Comentários / Chat ao Vivo / Reprise do Chat ao Vivo](#l-comentários--chat-ao-vivo--reprise-do-chat-ao-vivo)
   - [Favoritos (f, c, p, w)](#favoritos-f-c-p-w)
   - [s: Feed de Inscrições](#s-feed-de-inscrições)
@@ -61,6 +62,7 @@ Este complemento utiliza um sistema de **Comando em Camadas** para evitar confli
 | **Control+H** | Abre a janela de Favoritos diretamente na aba Histórico de Pesquisa |
 | **i** | Mostrar informações do vídeo |
 | **t** | Mostrar Capítulos / Marcadores de Tempo |
+| **g** | Obter descrição da miniatura do vídeo via Be My Eyes |
 | **m** | Gerenciar Inscrições |
 | **s** | Abrir Feed de Inscrições |
 | **u** | Gerenciar Perfis de Usuário |
@@ -168,6 +170,16 @@ Esta janela inclui:
 - **Botão Copiar Título** — copia o título do capítulo
 - **Botão Copiar URL** — copia a URL com o marcador de tempo para aquele capítulo
 - **Botão Exportar** — salva todos os capítulos em um arquivo de texto
+
+---
+
+### g: Obter Descrição da Miniatura (Be My Eyes)
+
+Pressione **NVDA+Y → G** para baixar a miniatura do vídeo e enviá-la ao aplicativo **Be My Eyes** para obter uma descrição ao vivo, sem sair do NVDA. Também disponível no menu **Ação** do vídeo (Alt+A) e como uma Ação Rápida configurável (Barra de espaço).
+
+O complemento sempre escolhe a miniatura de maior resolução relatada pelo yt-dlp, garantindo que a imagem enviada ao Be My Eyes seja sempre a melhor disponível.
+
+> **Nota:** Este recurso requer que o aplicativo [Be My Eyes](https://www.bemyeyes.com/) esteja instalado separadamente no seu sistema — o complemento não o instala nem o inclui. Se ele não estiver instalado, você ouvirá uma mensagem informando que não foi possível abri-lo.
 
 ---
 
@@ -357,6 +369,7 @@ Abre o menu de Ações para o vídeo selecionado:
 | Ver Informações do Vídeo | i |
 | Ver Comentários / Reprise | c |
 | Ver Capítulos/Marcadores de Tempo | t |
+| Obter Descrição da Miniatura (Be My Eyes) | g |
 | Baixar Vídeo | d |
 | Baixar Áudio | a |
 | Baixar Legendas | b |
@@ -368,6 +381,8 @@ Abre o menu de Ações para o vídeo selecionado:
 | Mostrar vídeos do canal | v |
 | Mostrar shorts do canal | s |
 | Mostrar lives do canal | l |
+| Mostrar playlists do canal | p |
+| Mostrar podcasts do canal | p |
 
 #### Botão Copiar (Alt+C)
 

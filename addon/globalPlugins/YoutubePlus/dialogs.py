@@ -109,6 +109,7 @@ class BaseInfoDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook) # Bind to the mixin's method
 
     def onClose(self, event):
+        gui.mainFrame.postPopup() 
         self.Destroy()
         
 class HelpDialog(BaseInfoDialog):
@@ -130,6 +131,7 @@ class HelpDialog(BaseInfoDialog):
 - L: Get comments from the current URL (Live Chat, Replay, or Comments)
 - I: Get video info
 - T: Show video chapters/timestamps
+- G: Describe the video's thumbnail using Be My Eyes (requires the Be My Eyes app to be installed separately)
 - D: Download video/audio from the current URL
 - B: download sub title from the current URL
 - E: Search YouTube
@@ -272,6 +274,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
         self.copyTitleBtn.Bind(wx.EVT_BUTTON, self.on_copy_text)
         self.copyUrlBtn.Bind(wx.EVT_BUTTON, self.on_copy_url)
         self.exportBtn.Bind(wx.EVT_BUTTON, self.on_export)
+        self.closeBtn.Bind(wx.EVT_BUTTON, lambda e: self.Close())
         self.closeBtn.Bind(wx.EVT_BUTTON, lambda e: self.Close())
         self.Bind(wx.EVT_CLOSE, lambda e: self.Destroy())
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
@@ -897,6 +900,7 @@ class VideoActionMixin:
         ID_VIEW_INFO = wx.NewIdRef()
         ID_VIEW_COMMENTS = wx.NewIdRef()
         ID_SHOW_CHAPTERS = wx.NewIdRef() 
+        ID_DESCRIBE_THUMB = wx.NewIdRef()
         ID_DOWNLOAD_VID = wx.NewIdRef()
         ID_DOWNLOAD_AUD = wx.NewIdRef()
         ID_DOWNLOAD_SUB = wx.NewIdRef()
@@ -914,6 +918,7 @@ class VideoActionMixin:
         menu.Append(ID_VIEW_INFO, _("View Video &Info..."))
         menu.Append(ID_VIEW_COMMENTS, _("View &Comments / Replay..."))
         menu.Append(ID_SHOW_CHAPTERS, _("View Chap&ters/Timestamps...")) 
+        menu.Append(ID_DESCRIBE_THUMB, _("&Get Thumbnail Description (Be My Eyes)..."))
         menu.AppendSeparator()
         menu.Append(ID_DOWNLOAD_VID, _("&Download Video"))
         menu.Append(ID_DOWNLOAD_AUD, _("Download &Audio"))
@@ -933,7 +938,8 @@ class VideoActionMixin:
         menu.Append(ID_SHOW_PODCAST, _("Show channel &podcast"))
         menu.Bind(wx.EVT_MENU, self.on_view_info, id=ID_VIEW_INFO)
         menu.Bind(wx.EVT_MENU, self.on_view_comments, id=ID_VIEW_COMMENTS)
-        menu.Bind(wx.EVT_MENU, self.on_show_chapters, id=ID_SHOW_CHAPTERS)  # <--- ✅ เพิ่ม Event Binding ใหม่
+        menu.Bind(wx.EVT_MENU, self.on_show_chapters, id=ID_SHOW_CHAPTERS)
+        menu.Bind(wx.EVT_MENU, self.on_describe_thumbnail, id=ID_DESCRIBE_THUMB)
         menu.Bind(wx.EVT_MENU, self.on_download_video, id=ID_DOWNLOAD_VID)
         menu.Bind(wx.EVT_MENU, self.on_download_audio, id=ID_DOWNLOAD_AUD)
         menu.Bind(wx.EVT_MENU, self.on_download_subtitles, id=ID_DOWNLOAD_SUB)
@@ -974,7 +980,19 @@ class VideoActionMixin:
         # Translators: Status message when fetching chapters.
         ui.message(_("Getting chapters..."))
         threading.Thread(target=self.core._show_chapters_worker, args=(url, ), daemon=True).start()
-        
+
+    def on_describe_thumbnail(self, event):
+        """Downloads the selected video's thumbnail and sends it to Be My Eyes."""
+        video = self.get_selected_video_info()
+        if not video:
+            # Translators: Error message.
+            return ui.message(_("Video ID not found."))
+        video_id = video.get('id') or video.get('video_id')
+        if not video_id:
+            return ui.message(_("Video ID not found."))
+        url = f"https://youtube.com/watch?v={video_id}"
+        threading.Thread(target=self.core.describe_thumbnail_worker, args=(url,), daemon=True).start()
+
     def on_add_to_fav_video(self, event):
         video = self.get_selected_video_info()
         video_id = video.get('id') or video.get('video_id')
@@ -1208,6 +1226,8 @@ class VideoActionMixin:
             self._view_channel_content("playlists")
         elif action == "show_channel_podcasts":
             self._view_channel_content("podcasts")
+        elif action == "describe_thumbnail":
+            self.on_describe_thumbnail(None)
 
 class BaseVideoListPanel(wx.Panel, VideoActionMixin):
     # Class-level clipboard shared across all instances (enables cross-list paste)
@@ -2296,6 +2316,7 @@ class FavChannelPanel(wx.Panel):
 
         self.SetSizer(mainSizer)
         self.core.register_callback("fav_channel_updated", self.refresh_favChannel)
+        self.core.register_callback("fav_channel_item_updated", self._on_channel_item_updated)
         self._load_channel()
         self._populate_list()
         has_any_items = self.listCtrl.GetItemCount() > 0
@@ -2309,20 +2330,52 @@ class FavChannelPanel(wx.Panel):
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_channel_select)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_channel_select)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
-        
+
+    def _on_channel_item_updated(self, data=None):
+        """
+        Keep the in-memory self.channel list in sync when core writes a
+        background metadata refresh, so on_close() doesn't clobber it.
+        Preserves the currently focused/selected row across the refresh.
+        """
+        if not data or not data.get('channel_url'):
+            return
+        channel_url = data['channel_url']
+        for item in self.channel:
+            if item.get('channel_url') == channel_url:
+                for key in ('channel_name', 'subscriber_count', 'description', 'last_synced'):
+                    if key in data and data[key] is not None:
+                        item[key] = data[key]
+                break
+        # Remember the currently selected item (by object reference) so
+        # on_search's own restore-selection logic can find it again
+        # after the list is rebuilt, instead of losing focus to the top.
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index != -1 and selected_index < len(self.filtered_channel):
+            self.last_selected_item_before_search = self.filtered_channel[selected_index]
+        self.on_search("")
+
     def _on_channel_select(self, event):
         if self._is_programmatic_selection:
             return
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index != -1:
             item = self.filtered_channel[selected_index]
-            # Translators: Default text when no description is available.
-            self.descriptionText.SetValue(item.get('description', _("N/A")))
+            self.descriptionText.SetValue(self._format_channel_description(item))
         else:
             self.descriptionText.SetValue("")
 
+    def _format_channel_description(self, item):
+        # Translators: Default text when no description is available.
+        description = item.get('description') or _("N/A")
+        last_synced = item.get('last_synced')
+        if last_synced:
+            # Translators: Prefix line shown above a channel's description. {time} is the last-synced timestamp.
+            return _("Last synced: {time}\n\n{description}").format(time=last_synced, description=description)
+        return description
+
     def on_close(self, event):
         self.core.unregister_callback("fav_channel_updated", self.refresh_favChannel)
+        self.core.unregister_callback("fav_channel_item_updated", self._on_channel_item_updated)
         self._save_channel()
         
     def refresh_favChannel(self, data=None):
@@ -2762,15 +2815,22 @@ class FavPlaylistPanel(wx.Panel):
         self._save_playlists()
 
     def on_playlist_item_update(self, data):
-        """Handles a targeted update for a single playlist's video count."""
+        """Handles a targeted background update for a single playlist's
+        metadata (title, uploader, video_count)."""
         playlist_id = data.get('playlist_id')
-        new_count = data.get('new_count')
-        if not playlist_id or new_count is None:
+        if not playlist_id:
             return
         for index, item in enumerate(self.filtered_playlists):
             if item.get('playlist_id') == playlist_id:
-                item['video_count'] = new_count
-                self.listCtrl.SetItem(index, 2, str(new_count))
+                for key in ('video_count', 'playlist_title', 'uploader', 'uploader_url'):
+                    if key in data and data[key] is not None:
+                        item[key] = data[key]
+                if data.get('playlist_title') is not None:
+                    self.listCtrl.SetItem(index, 0, data['playlist_title'])
+                if data.get('uploader') is not None:
+                    self.listCtrl.SetItem(index, 1, data['uploader'])
+                if data.get('video_count') is not None:
+                    self.listCtrl.SetItem(index, 2, str(data['video_count']))
                 break
 
     def on_list_key_down(self, event):
@@ -3685,12 +3745,14 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """A dialog to display a list of videos, now with a full action menu."""
     _escape_protection = True   
 
-    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_count_to_update=None, source_url=None, content_type_label="videos", is_collection=False):
+    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_playlist_data_to_update=None, channel_url_to_update=None, new_channel_data_to_update=None, source_url=None, content_type_label="videos", is_collection=False):
         super().__init__(parent, title=title)
         self.videos = video_list
         self.core = core_instance
         self.playlist_id_to_update = playlist_id_to_update
-        self.new_count_to_update = new_count_to_update
+        self.new_playlist_data_to_update = new_playlist_data_to_update
+        self.channel_url_to_update = channel_url_to_update
+        self.new_channel_data_to_update = new_channel_data_to_update
         self.is_collection = is_collection
         self.source_url = source_url
         self.content_type_label = content_type_label
@@ -3771,10 +3833,16 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             menu.Destroy()
     
     def on_close(self, event):
-        if self.playlist_id_to_update and self.new_count_to_update is not None:
+        if self.playlist_id_to_update and self.new_playlist_data_to_update:
             threading.Thread(
-                target=self.core._update_playlist_count_worker,
-                args=(self.playlist_id_to_update, self.new_count_to_update),
+                target=self.core._update_playlist_data_worker,
+                args=(self.playlist_id_to_update, self.new_playlist_data_to_update),
+                daemon=True
+            ).start()
+        if self.channel_url_to_update and self.new_channel_data_to_update:
+            threading.Thread(
+                target=self.core._update_channel_data_worker,
+                args=(self.channel_url_to_update, self.new_channel_data_to_update),
                 daemon=True
             ).start()
         self.Destroy()

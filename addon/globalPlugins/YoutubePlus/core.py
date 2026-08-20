@@ -82,6 +82,7 @@ from .dialogs import (
     DownloadProgressDialog
 )
 from . import utils 
+from . import attachments
 from .errors import NetworkRetryError, HandledError
 import globalVars
 import addonHandler
@@ -1453,12 +1454,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.is_long_task_running = False
             self._stop_indicator()
             
-    def _update_playlist_count_worker(self, playlist_id, new_count):
+    def _update_playlist_data_worker(self, playlist_id, new_data):
         """
-        Safely updates the video_count for a specific playlist and notifies the UI
-        with specific data for a targeted update.
+        Safely updates playlist metadata (title, uploader, video_count) for a
+        specific favorited playlist and notifies the UI with targeted update data.
         """
-        if not playlist_id or new_count is None:
+        if not playlist_id or not new_data:
             return
         with self._fav_file_lock:
             fav_playlist_path = self.get_profile_path("fav_playlist.json")
@@ -1466,17 +1467,100 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             item_updated = False
             for playlist in playlists:
                 if playlist.get('playlist_id') == playlist_id:
-                    if playlist.get('video_count') != new_count:
-                        playlist['video_count'] = new_count
-                        item_updated = True
+                    for key, val in new_data.items():
+                        if val is not None and playlist.get(key) != val:
+                            playlist[key] = val
+                            item_updated = True
                     break
             if item_updated:
                 try:
                     self._save_json_list(fav_playlist_path, playlists)
-                    update_data = {'playlist_id': playlist_id, 'new_count': new_count}
+                    update_data = {'playlist_id': playlist_id, **new_data}
                     self._notify_callbacks("fav_playlist_item_updated", update_data)
                 except IOError:
                     log.error("Could not save updated playlist file.")
+
+    def _update_channel_data_worker(self, channel_url, new_data):
+        """
+        Safely updates channel metadata (name, subscriber_count, description)
+        for a specific favorited channel and notifies the UI with targeted update data.
+        """
+        if not channel_url or not new_data:
+            return
+        with self._fav_file_lock:
+            fav_channel_path = self.get_profile_path("fav_channel.json")
+            channels = self._load_json_list(fav_channel_path)
+            item_updated = False
+            for channel in channels:
+                if channel.get('channel_url') == channel_url:
+                    for key, val in new_data.items():
+                        if val is not None and channel.get(key) != val:
+                            channel[key] = val
+                            item_updated = True
+                    break
+            if item_updated:
+                try:
+                    self._save_json_list(fav_channel_path, channels)
+                    update_data = {'channel_url': channel_url, **new_data}
+                    self._notify_callbacks("fav_channel_item_updated", update_data)
+                except IOError:
+                    log.error("Could not save updated channel file.")
+
+    def describe_thumbnail_worker(self, url):
+        """
+        Fetches the video's largest available thumbnail via yt-dlp,
+        downloads it to a temp file, and hands it off to Be My Eyes for
+        a live description. Mirrors the start/stop indicator + notify
+        pattern used by the other single-video workers (see
+        _show_chapters_worker).
+        """
+        clean_url = self._validate_video_url_and_notify(url)
+        if not clean_url:
+            return
+        self._start_indicator()
+        try:
+            info = self.get_video_info(clean_url)
+            thumbnails = info.get('thumbnails') or []
+            thumbnail_url = None
+            if thumbnails:
+                # Pick the entry with the largest reported resolution
+                # rather than trusting yt-dlp's 'thumbnail' pick, so the
+                # image handed to Be My Eyes is always the biggest one
+                # yt-dlp knows about.
+                best = max(
+                    thumbnails,
+                    key=lambda t: (t.get('width') or 0) * (t.get('height') or 0)
+                )
+                thumbnail_url = best.get('url')
+            if not thumbnail_url:
+                thumbnail_url = info.get('thumbnail')
+            if not thumbnail_url:
+                # Translators: Error message when a video has no thumbnail available.
+                self._notify_error(_("No thumbnail available for this video."))
+                return
+            # Translators: Status message shown while the thumbnail image is downloading.
+            wx.CallAfter(ui.message, _("Downloading thumbnail..."))
+            file_path = attachments.download_to_temp(thumbnail_url)
+            if attachments.send_to_bemyeyes(file_path):
+                # Translators: Success message once the thumbnail has been sent to the Be My Eyes app.
+                self._notify_success(_("Thumbnail sending to Be My Eyes..."))
+            else:
+                # Translators: Error message when the Be My Eyes app could not be launched.
+                self._notify_error(_("Could not open Be My Eyes. Is it installed?"))
+        except (DownloadError, NetworkRetryError) as e:
+            # Translators: Error message when video info could not be fetched to find its thumbnail.
+            self._notify_error(_("Could not get video information. Details: {}").format(e),
+                log_message=f"Could not get info for thumbnail on {url}: {e}")
+        except OSError as e:
+            # Translators: Error message when the thumbnail image could not be downloaded or converted.
+            self._notify_error(_("Could not download the thumbnail image."),
+                log_message=f"Thumbnail download failed for {url}: {e}")
+        except Exception as e:
+            log.exception("Unexpected error in 'Describe Thumbnail' worker.")
+            # Translators: General error message encouraging the user to check the log file for more technical information.
+            self._notify_error(_("An unexpected error occurred. Please check the log for details."))
+        finally:
+            self._stop_indicator()
 
     def add_to_watchlist_worker(self, url, mark_seen=False):
         self._start_indicator()
@@ -1529,7 +1613,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         try:
             is_playlist = 'list=' in url
             playlist_id_to_update = None
-            new_count_to_update = None
+            new_playlist_data_to_update = None
+            channel_url_to_update = None
+            new_channel_data_to_update = None
             ydl_opts = {
                 'quiet': True,
                 'no_warnings': True,
@@ -1585,7 +1671,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
             if is_playlist:
                 playlist_id_to_update = info.get('id')
-                new_count_to_update = info.get('playlist_count') or len(info.get('entries', []))
+                new_playlist_data_to_update = {
+                    'video_count': info.get('playlist_count') or len(info.get('entries', [])),
+                    'playlist_title': info.get('title'),
+                    'uploader': info.get('uploader'),
+                    'uploader_url': info.get('uploader_url'),
+                }
                 # Translators: Title of the video list dialog for a playlist. 
                 # {count} is the number of videos, {playlist} is the playlist name.
                 dialog_title = _("{count} videos in {playlist}").format(count=len(video_list), playlist=info.get('title', _("Playlist")))
@@ -1596,6 +1687,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     dialog_title = _("All {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
                 else:
                     dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
+                channel_url_to_update = info.get('channel_url') or info.get('uploader_url')
+                new_channel_data_to_update = {
+                    'channel_name': info.get('channel') or info.get('uploader'),
+                    'subscriber_count': info.get('channel_follower_count'),
+                    'description': (info.get('description', '')[:500] if info.get('description') else None),
+                    'last_synced': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
             def show_dialog():
                 if is_collection:
                     dialog = ChannelCollectionDialog(
@@ -1607,7 +1705,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     dialog = ChannelVideoDialog(
                         gui.mainFrame, dialog_title, video_list, self,
                         playlist_id_to_update=playlist_id_to_update,
-                        new_count_to_update=new_count_to_update,
+                        new_playlist_data_to_update=new_playlist_data_to_update,
+                        channel_url_to_update=channel_url_to_update,
+                        new_channel_data_to_update=new_channel_data_to_update,
                         source_url=url if not is_playlist else None,
                         content_type_label=content_type_label,
                     )
@@ -2294,6 +2394,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         ui.message(_("Getting video info for download..."))
         threading.Thread(target=self._download_choice_worker, args=(url, ), daemon=True).start()
 
+    @script(description="Describe the video's thumbnail using Be My Eyes, from current page or clipboard URL.")
+    def script_describeThumbnail(self, gesture):
+        messy_url = self._find_youtube_url()
+        if not messy_url:
+            # Translators: Error message shown when the add-on cannot find a YouTube URL neither in the active browser window nor in the clipboard.
+            return ui.message(_("YouTube URL not found in current window or clipboard."))
+        url = self._clean_youtube_url(messy_url)
+        threading.Thread(target=self.describe_thumbnail_worker, args=(url,), daemon=True).start()
+
     @script(description="Show help dialog.")
     def script_displayHelp(self, gesture):
         gui.mainFrame.prePopup()
@@ -2702,5 +2811,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:v": "showMessagesDialog",
         "kb:u": "showUserProfileManagerDialog",
         "kb:y": "openSettings",
-        "kb:h": "displayHelp"
+        "kb:h": "displayHelp",
+        "kb:g": "describeThumbnail"
     }

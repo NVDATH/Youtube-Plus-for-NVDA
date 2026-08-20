@@ -1,3 +1,25 @@
+## 2026.8.19
+
+### New Features
+
+* **Describe Thumbnail (Be My Eyes):** New action available from the video Action menu and as a selectable Quick Action — downloads the video's largest available thumbnail and sends it straight to the Be My Eyes app for a live AI/volunteer description, without leaving NVDA.
+* Favorite Channels now automatically refresh channel name, subscriber count, and description in the background whenever you browse a favorited channel's content — no extra network requests needed.
+* Favorite Playlists now also sync playlist title and channel/uploader name in the background (previously only video count was refreshed).
+* Favorite Channels now show a "Last synced" timestamp above the channel description.
+
+### Bug Fixes
+
+* Fixed background channel updates being silently overwritten if the Favorites window was left open.
+* Fixed channel list losing focus position after a background refresh.
+
+### Dependencies
+
+* Updated yt-dlp to v2026.8.19
+
+### Translations
+
+* Added Russian (ru) interface translation and documentation — contributed by nvda-ru
+
 ## 2026.7.7
 
 ### New Features

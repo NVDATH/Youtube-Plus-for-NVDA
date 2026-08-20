@@ -22,6 +22,7 @@
   - [e: ค้นหาวิดีโอ](#e-ค้นหาวิดีโอ)
   - [i: ข้อมูลวิดีโอ](#i-ข้อมูลวิดีโอ)
   - [t: Chapters / Timestamps](#t-chapters--timestamps)
+  - [g: ขอคำอธิบายภาพปก (Be My Eyes)](#g-ขอคำอธิบายภาพปก-be-my-eyes)
   - [l: แสดงคอมเมนต์ / แชทสด / แชทย้อนหลัง](#l-แสดงคอมเมนต์--แชทสด--แชทย้อนหลัง)
   - [Favorites (f, c, p, w)](#favorites-f-c-p-w)
   - [s: Subscription Feed](#s-subscription-feed)
@@ -61,6 +62,7 @@
 | **Control+H** | เปิดหน้าต่าง Favorites ไปยังแท็บ Search History โดยตรง |
 | **i** | แสดงข้อมูลวิดีโอ |
 | **t** | แสดง Chapters / Timestamps |
+| **g** | ขอคำอธิบายภาพปกวิดีโอผ่าน Be My Eyes |
 | **m** | จัดการ Subscription |
 | **s** | เปิด Subscription Feed |
 | **u** | จัดการ User Profile |
@@ -168,6 +170,16 @@
 - **ปุ่ม Copy Title** — คัดลอกชื่อ Chapter
 - **ปุ่ม Copy URL** — คัดลอก URL พร้อม Timestamp ของ Chapter นั้น
 - **ปุ่ม Export** — บันทึก Chapters ทั้งหมดเป็นไฟล์ข้อความ
+
+---
+
+### g: ขอคำอธิบายภาพปก (Be My Eyes)
+
+กด **NVDA+Y → G** เพื่อดาวน์โหลดภาพปก (Thumbnail) ของวิดีโอ แล้วส่งไปยังแอป **Be My Eyes** เพื่อขอคำอธิบายภาพแบบสด ๆ โดยไม่ต้องออกจาก NVDA เลย นอกจากนี้ยังเรียกใช้ได้จากเมนู **Action** (Alt+A) หรือกำหนดให้เป็น **Quick Action** (Space bar) ก็ได้
+
+ส่วนเสริมจะเลือกภาพปกที่มีความละเอียดสูงสุดเท่าที่ yt-dlp รายงานไว้เสมอ เพื่อให้ได้คำอธิบายภาพที่แม่นยำที่สุด
+
+> **หมายเหตุ:** ฟีเจอร์นี้ต้องติดตั้งแอป [Be My Eyes](https://www.bemyeyes.com/) แยกต่างหากในเครื่องของคุณเอง — ส่วนเสริมนี้ไม่ได้ติดตั้งหรือแนบแอปดังกล่าวมาให้ หากยังไม่ได้ติดตั้งไว้ จะได้ยินข้อความแจ้งว่าไม่สามารถเปิดแอปได้
 
 ---
 
@@ -359,6 +371,7 @@ Cut, Copy, Paste ในรายการวิดีโอจะวางรา
 | View Video Info | i |
 | View Comments / Replay | c |
 | View Chapters/Timestamps | t |
+| Get Thumbnail Description (Be My Eyes) | g |
 | Download Video | d |
 | Download Audio | a |
 | Download Subtitles | b |
