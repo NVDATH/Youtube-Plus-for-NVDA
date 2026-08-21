@@ -28,6 +28,7 @@ Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the follow
 * control+h: (search history) — Opens the Favorites window directly on the Search History tab
 * i: (info) — Opens the video details window
 * t: (show timestamp) — Displays timestamps or chapters if available
+* g: (get thumbnail description) — Downloads the video's thumbnail and sends it to the Be My Eyes app for a live description
 * m: (open manage subscription) — Opens the subscription management window
 * s: (open subscription feed) — Shows videos from channels you follow
 * u: (open User Profile Manager) — Opens the User Profile management window
@@ -112,6 +113,14 @@ This window offers more convenience than reading chapters from the browser:
 * Copy URL button (Alt+U) to copy the URL with the timestamp for that chapter
 * Export button (Alt+E) to save all timestamp/chapter data as a text file
 
+### g: (get thumbnail description)
+
+Downloads the video's thumbnail and sends it to the **Be My Eyes** app for a live description, without leaving NVDA. Also available from the video's Action menu and as a configurable Quick Action (Space bar).
+
+The add-on always picks the highest-resolution thumbnail reported by yt-dlp, so the image sent to Be My Eyes is the best one available.
+
+**Note:** This requires the [Be My Eyes](https://www.bemyeyes.com/) app to be installed separately on your system — the add-on does not install or bundle it. If it isn't installed, you'll hear a message saying the app could not be opened.
+
 ### Favorites
 
 A window displaying your saved favorites, divided into 5 tabs by type:
@@ -173,6 +182,7 @@ Press Alt+A to open the Action menu, which includes:
 * View Video Info...  (i)
 * View Comments / Replay...  (c)
 * View Chapters/Timestamps...  (t)
+* Get Thumbnail Description (Be My Eyes)...  (g)
 * Download Video  (d)
 * Download Audio  (a)
 * Add to Favorite Videos  (f)
