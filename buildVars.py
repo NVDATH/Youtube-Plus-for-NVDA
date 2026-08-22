@@ -7,7 +7,7 @@ def _(x):
 # Add-on information variables
 addon_info = {
     "addon_name": "YoutubePlus",
-    "addon_version": "2026.8.19",
+    "addon_version": "2026.8.21",
 # Translators: Summary for this add-on
     "addon_summary": _("YouTubePlus"),
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -21,8 +21,7 @@ Features:
 • Built-in search with saved search history, plus a Quick Search shortcut that searches instantly using selected text or clipboard content.
 • Browse a channel's videos, shorts, streams, playlists, and podcasts directly, without leaving the accessible interface.
 • Read comments and follow live chat replays.
-• Read comments and follow live chat replays.
-• Send a video's thumbnail straight to the Be My Eyes app for a live description (Be My Eyes must be installed
+• Send a video's thumbnail straight to the Be My Eyes app for a live description (Be My Eyes must be installed)
 • Download videos, audio, or subtitles (with multiple format options) for offline use.
 • Supports multiple user profiles, with backup and restore built in."""),
     "addon_author": "NVDA_TH <nvdainth@gmail.com>, assisted by A.I.",

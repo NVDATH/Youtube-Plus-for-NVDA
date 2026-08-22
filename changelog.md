@@ -1,4 +1,23 @@
-## 2026.8.19
+## 2026.8.21
+
+### Improvements
+
+* "Describe Thumbnail" (NVDA+Y -> G) is now context-aware: it describes
+  the channel avatar when the current page/URL is a channel, and the
+  playlist cover when it's a playlist, in addition to the existing video
+  thumbnail behavior on video pages.
+* When Be My Eyes can't be launched (most likely because it isn't
+  installed), YoutubePlus now offers to open its Microsoft Store page
+  directly, instead of only reporting the error.
+
+### New Features
+
+* Added a "Describe Avatar (Be My Eyes)" button to the Favorite Channels
+  panel.
+* Added a "Describe Cover (Be My Eyes)" button to the Favorite Playlists
+  panel.
+  
+  ## 2026.8.19
 
 ### New Features
 

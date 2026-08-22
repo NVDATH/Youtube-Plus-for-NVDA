@@ -175,11 +175,13 @@ Esta janela inclui:
 
 ### g: Obter Descrição da Miniatura (Be My Eyes)
 
-Pressione **NVDA+Y → G** para baixar a miniatura do vídeo e enviá-la ao aplicativo **Be My Eyes** para obter uma descrição ao vivo, sem sair do NVDA. Também disponível no menu **Ação** do vídeo (Alt+A) e como uma Ação Rápida configurável (Barra de espaço).
+Pressione **NVDA+Y → G** para baixar uma imagem e enviá-la ao aplicativo **Be My Eyes** para obter uma descrição ao vivo, sem sair do NVDA. Este comando se adapta ao contexto: descreve a miniatura do vídeo quando você está em uma página de vídeo, o avatar do canal quando está em uma página de canal, e a capa da playlist quando está em uma página de playlist — usando a mesma ordem de detecção de URL dos demais comandos (primeiro a janela do navegador ativa, depois a área de transferência). Também disponível no menu **Ação** do vídeo (Alt+A, apenas miniaturas de vídeo) e como uma Ação Rápida configurável (Barra de espaço).
 
-O complemento sempre escolhe a miniatura de maior resolução relatada pelo yt-dlp, garantindo que a imagem enviada ao Be My Eyes seja sempre a melhor disponível.
+O complemento sempre escolhe a imagem de maior resolução relatada pelo yt-dlp, garantindo que o arquivo enviado ao Be My Eyes seja sempre o melhor disponível.
 
-> **Nota:** Este recurso requer que o aplicativo [Be My Eyes](https://www.bemyeyes.com/) esteja instalado separadamente no seu sistema — o complemento não o instala nem o inclui. Se ele não estiver instalado, você ouvirá uma mensagem informando que não foi possível abri-lo.
+Você também pode descrever o avatar de um canal ou a capa de uma playlist diretamente pela janela de Favoritos, sem precisar ter essa página aberta em lugar nenhum — veja os botões **Descrever Avatar** e **Descrever Capa** em [Favoritos](#favoritos-f-c-p-w) mais abaixo.
+
+> **Nota:** Este recurso requer que o aplicativo [Be My Eyes](https://www.bemyeyes.com/) esteja instalado separadamente no seu sistema — o complemento não o instala nem o inclui. Se ele não estiver instalado, o YoutubePlus vai oferecer para abrir a página dele na Microsoft Store, para que você possa instalá-lo na hora.
 
 ---
 
@@ -280,11 +282,13 @@ Esta aba oferece mais do que uma simples lista — ela também inclui:
 - **Área de texto da descrição do canal** — mostra a biografia/informações sobre o canal
 - **Botão Abrir canal no navegador**
 - **Botões para navegar pelos conteúdos de Vídeos / Shorts / Ao Vivo** daquele canal diretamente
+- **Botão Descrever Avatar (Alt+D)** — envia o avatar do canal ao Be My Eyes para uma descrição ao vivo
 
 #### Aba Playlists (Favoritos)
 
 - Pressione **Espaço, Enter ou Alt+V** — expande todos os vídeos da playlist
 - **Botão Abrir na Web (Alt+W)** — abre a playlist no navegador
+- **Botão Descrever Capa (Alt+D)** — envia a imagem de capa da playlist ao Be My Eyes para uma descrição ao vivo
 ### s: Feed de Inscrições
 
 Uma janela que exibe vídeos dos canais que você acompanha através do complemento. Isso é **independente** das inscrições da sua conta do YouTube — não é necessário fazer login.

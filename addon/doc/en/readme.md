@@ -115,19 +115,21 @@ This window offers more convenience than reading chapters from the browser:
 
 ### g: (get thumbnail description)
 
-Downloads the video's thumbnail and sends it to the **Be My Eyes** app for a live description, without leaving NVDA. Also available from the video's Action menu and as a configurable Quick Action (Space bar).
+Downloads a thumbnail image and sends it to the **Be My Eyes** app for a live description, without leaving NVDA. This command is context-aware: it describes the video thumbnail when you're on a video page, the channel avatar when you're on a channel page, and the playlist cover when you're on a playlist page — using the same URL-detection order as every other command (active browser window first, then clipboard). Also available from the video's Action menu (video thumbnails only) and as a configurable Quick Action (Space bar).
 
-The add-on always picks the highest-resolution thumbnail reported by yt-dlp, so the image sent to Be My Eyes is the best one available.
+The add-on always picks the highest-resolution image reported by yt-dlp, so the file sent to Be My Eyes is the best one available.
 
-**Note:** This requires the [Be My Eyes](https://www.bemyeyes.com/) app to be installed separately on your system — the add-on does not install or bundle it. If it isn't installed, you'll hear a message saying the app could not be opened.
+You can also describe a channel's avatar or a playlist's cover directly from the Favorites window, without needing that page open anywhere — see the **Describe Avatar** and **Describe Cover** buttons in [Favorites](#favorites) below.
+
+**Note:** This requires the [Be My Eyes](https://www.bemyeyes.com/) app to be installed separately on your system — the add-on does not install or bundle it. If it isn't installed, YoutubePlus will offer to open its Microsoft Store page for you so you can install it right away.
 
 ### Favorites
 
 A window displaying your saved favorites, divided into 5 tabs by type:
 
 * **Video:** Lists your saved videos, organized into categories of your own making. A category tree sits on the left and the video list for the selected category sits on the right (see [Categories](#categories-video--watch-list-tabs) below). Includes Action and Copy buttons for each item (described below).
-* **Channel:** Lists your saved channels with a channel description panel. Includes buttons to open the channel and browse its content by type.
-* **Playlist:** Lists your saved playlists. Press Space, Enter, or Alt+V to expand all videos in a playlist. Includes an Open on Web button (Alt+W) to open the playlist in a browser.
+* **Channel:** Lists your saved channels with a channel description panel. Includes buttons to open the channel, browse its content by type, and describe its avatar via Be My Eyes (Alt+D).
+* **Playlist:** Lists your saved playlists. Press Space, Enter, or Alt+V to expand all videos in a playlist. Includes an Open on Web button (Alt+W) and a Describe Cover button (Alt+D) to get a Be My Eyes description of the playlist's cover image.
 * **Watch List:** Lists your saved videos using the same category tree + list layout as the Video tab, with its own independent set of categories.
 * **Search History:** Lists every search you've run, with options to re-run, remove, or clear entries (see [Search History](#search-history) above).
 

@@ -440,7 +440,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             video_id = match.group(1)
             return f"https://www.youtube.com/watch?v={video_id}"
         return url
-    
+
+    def _detect_url_type(self, url):
+        """
+        Classifies a YouTube URL as 'playlist', 'channel', or 'video'.
+        Shared by get_video_info and describe_thumbnail_worker so the two
+        stay in agreement about what kind of URL they're looking at.
+        """
+        if not url:
+            return 'video'
+        if 'list=' in url and 'v=' not in url:
+            return 'playlist'
+        if re.search(r'/channel/|/c/|/@', url, re.IGNORECASE):
+            return 'channel'
+        return 'video'
+
     def get_data_for_url(self, url):
         """
         The main worker entry point for getting any video data.
@@ -565,11 +579,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         Now with corrected logic to prevent infinite playlist fetching.
         """
         log.debug("Attempting to get info for: %s", url_or_id)
-        channel_regex = re.compile(r"/channel/|/c/|/@")
-        is_channel = isinstance(url_or_id, str) and bool(channel_regex.search(url_or_id))
+        url_type = self._detect_url_type(url_or_id) if isinstance(url_or_id, str) else 'video'
         if extra_opts is None:
             extra_opts = {}
-        if is_channel:
+        if url_type == 'playlist':
+            # Probe a single entry so the playlist's own metadata/thumbnail
+            # populates, mirroring the channel fetch_channel_details path.
+            extra_opts['playlistend'] = 1
+        elif url_type == 'channel':
             if fetch_channel_details:
                 extra_opts['playlistend'] = 1
             else:
@@ -1506,20 +1523,52 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 except IOError:
                     log.error("Could not save updated channel file.")
 
+    def _offer_bemyeyes_install(self):
+        """
+        Runs on the main thread (via wx.CallAfter) when launching Be My
+        Eyes failed -- most likely because it isn't installed. Offers to
+        open its Microsoft Store page so the user doesn't have to go
+        hunting for the download link themselves.
+        """
+        self._play_sound(220, 200, "error.wav")
+        if wx.MessageBox(
+            # Translators: Prompt asking whether to open the Microsoft Store page for Be My Eyes after launching it failed.
+            _("Could not open Be My Eyes. It may not be installed.\n\nOpen the Microsoft Store to install it?"),
+            # Translators: Title of the Be My Eyes install prompt dialog.
+            _("Be My Eyes Not Found"),
+            wx.YES_NO | wx.ICON_QUESTION
+        ) == wx.YES:
+            if not attachments.open_bemyeyes_install_page():
+                # Translators: Error message when even the fallback web page could not be opened.
+                ui.message(_("Could not open the Microsoft Store page."))
+
     def describe_thumbnail_worker(self, url):
         """
-        Fetches the video's largest available thumbnail via yt-dlp,
-        downloads it to a temp file, and hands it off to Be My Eyes for
-        a live description. Mirrors the start/stop indicator + notify
-        pattern used by the other single-video workers (see
-        _show_chapters_worker).
+        Fetches the largest available thumbnail for a video, channel, or
+        playlist via yt-dlp, downloads it to a temp file, and hands it off
+        to Be My Eyes for a live description. The URL type is auto-detected
+        so NVDA+Y -> G works whether the user is on a video, channel, or
+        playlist page (or has the corresponding URL on the clipboard).
+        Mirrors the start/stop indicator + notify pattern used by the other
+        single-item workers (see _show_chapters_worker).
         """
-        clean_url = self._validate_video_url_and_notify(url)
-        if not clean_url:
+        if not url:
+            # Translators: Error message when no URL could be determined for the thumbnail request.
+            self._notify_error(_("No URL to describe."))
             return
+        url_type = self._detect_url_type(url)
+        # Translators: Status messages announcing the fetch, keyed by URL type. Spoken
+        # before the progress indicator starts, so the announcement always leads and
+        # any indicator beep (for a slow fetch) follows -- not the other way around.
+        downloading_messages = {
+            'video': _("Downloading thumbnail..."),
+            'channel': _("Downloading channel avatar..."),
+            'playlist': _("Downloading playlist cover..."),
+        }
+        wx.CallAfter(ui.message, downloading_messages[url_type])
         self._start_indicator()
         try:
-            info = self.get_video_info(clean_url)
+            info = self.get_video_info(url)
             thumbnails = info.get('thumbnails') or []
             thumbnail_url = None
             if thumbnails:
@@ -1535,25 +1584,27 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not thumbnail_url:
                 thumbnail_url = info.get('thumbnail')
             if not thumbnail_url:
-                # Translators: Error message when a video has no thumbnail available.
-                self._notify_error(_("No thumbnail available for this video."))
+                # Translators: Error messages when no thumbnail/avatar/cover is available, keyed by URL type.
+                no_thumb_messages = {
+                    'video': _("No thumbnail available for this video."),
+                    'channel': _("No avatar available for this channel."),
+                    'playlist': _("No cover available for this playlist."),
+                }
+                self._notify_error(no_thumb_messages[url_type])
                 return
-            # Translators: Status message shown while the thumbnail image is downloading.
-            wx.CallAfter(ui.message, _("Downloading thumbnail..."))
             file_path = attachments.download_to_temp(thumbnail_url)
             if attachments.send_to_bemyeyes(file_path):
-                # Translators: Success message once the thumbnail has been sent to the Be My Eyes app.
+                # Translators: Success message once the image has been sent to the Be My Eyes app.
                 self._notify_success(_("Thumbnail sending to Be My Eyes..."))
             else:
-                # Translators: Error message when the Be My Eyes app could not be launched.
-                self._notify_error(_("Could not open Be My Eyes. Is it installed?"))
+                wx.CallAfter(self._offer_bemyeyes_install)
         except (DownloadError, NetworkRetryError) as e:
-            # Translators: Error message when video info could not be fetched to find its thumbnail.
-            self._notify_error(_("Could not get video information. Details: {}").format(e),
+            # Translators: Error message when info could not be fetched to find the thumbnail/avatar/cover.
+            self._notify_error(_("Could not get information. Details: {}").format(e),
                 log_message=f"Could not get info for thumbnail on {url}: {e}")
         except OSError as e:
-            # Translators: Error message when the thumbnail image could not be downloaded or converted.
-            self._notify_error(_("Could not download the thumbnail image."),
+            # Translators: Error message when the image could not be downloaded or converted.
+            self._notify_error(_("Could not download the image."),
                 log_message=f"Thumbnail download failed for {url}: {e}")
         except Exception as e:
             log.exception("Unexpected error in 'Describe Thumbnail' worker.")

@@ -116,19 +116,21 @@ Esta ventana ofrece más comodidad que leer los capítulos desde el navegador:
 
 ### g: (obtener descripción de la miniatura)
 
-Descarga la miniatura del video y la envía a la aplicación **Be My Eyes** para obtener una descripción en vivo, sin salir de NVDA. También está disponible desde el menú Acción del video y como Acción rápida configurable (barra espaciadora).
+Descarga una imagen y la envía a la aplicación **Be My Eyes** para obtener una descripción en vivo, sin salir de NVDA. Este comando se adapta al contexto: describe la miniatura del video cuando estás en una página de video, el avatar del canal cuando estás en una página de canal, y la portada de la lista de reproducción cuando estás en una página de lista de reproducción — usando el mismo orden de detección de URL que el resto de comandos (primero la ventana del navegador activa, luego el portapapeles). También está disponible desde el menú Acción del video (solo miniaturas de video) y como Acción rápida configurable (barra espaciadora).
 
-El complemento siempre elige la miniatura de mayor resolución que reporta yt-dlp, para que la imagen enviada a Be My Eyes sea siempre la mejor disponible.
+El complemento siempre elige la imagen de mayor resolución que reporta yt-dlp, para que el archivo enviado a Be My Eyes sea siempre el mejor disponible.
 
-**Nota:** Esta función requiere que la aplicación [Be My Eyes](https://www.bemyeyes.com/) esté instalada por separado en tu sistema — el complemento no la instala ni la incluye. Si no está instalada, escucharás un mensaje indicando que no se pudo abrir la aplicación.
+También puedes describir el avatar de un canal o la portada de una lista de reproducción directamente desde la ventana de Favoritos, sin necesidad de tener esa página abierta — consulta los botones **Describir Avatar** y **Describir Portada** en [Favoritos](#favoritos) más abajo.
+
+**Nota:** Esta función requiere que la aplicación [Be My Eyes](https://www.bemyeyes.com/) esté instalada por separado en tu sistema — el complemento no la instala ni la incluye. Si no está instalada, YoutubePlus te ofrecerá abrir su página en la Microsoft Store para que puedas instalarla al instante.
 
 ### Favoritos
 
 Una ventana que muestra tus favoritos guardados, dividida en **5 pestañas** por tipo:
 
 * **Video:** Enumera tus videos guardados, organizados en categorías propias. Un árbol de categorías se sitúa a la izquierda y la lista de videos de la categoría seleccionada a la derecha (ver [Categorías](#categorías-pestañas-video-y-lista-de-seguimiento) más abajo).
-* **Canal:** Enumera tus canales guardados con un panel de descripción del canal. Incluye botones para abrir el canal y explorar su contenido por tipo.
-* **Lista de reproducción:** Enumera tus listas de reproducción guardadas. Presiona Espacio, Enter o Alt+V para expandir todos los videos de una lista de reproducción. Incluye un botón Abrir en la Web (Alt+W) para abrir la lista de reproducción en un navegador.
+* **Canal:** Enumera tus canales guardados con un panel de descripción del canal. Incluye botones para abrir el canal, explorar su contenido por tipo, y describir su avatar mediante Be My Eyes (Alt+D).
+* **Lista de reproducción:** Enumera tus listas de reproducción guardadas. Presiona Espacio, Enter o Alt+V para expandir todos los videos de una lista de reproducción. Incluye un botón Abrir en la Web (Alt+W) y un botón Describir Portada (Alt+D) para obtener una descripción de Be My Eyes de la imagen de portada de la lista de reproducción.
 * **Lista de seguimiento:** Enumera tus videos guardados con el mismo diseño de árbol + lista que la pestaña Video, con su propio conjunto independiente de categorías.
 * **Historial de búsqueda:** Muestra todas las búsquedas realizadas, con opciones para repetir, eliminar o borrar entradas.
 

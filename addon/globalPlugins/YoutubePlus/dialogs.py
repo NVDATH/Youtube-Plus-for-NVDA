@@ -2302,6 +2302,8 @@ class FavChannelPanel(wx.Panel):
         self.openBtn = wx.Button(self, label=_("Open channel on &browser"))
         # Translators: Button to view content of the selected channel.
         self.viewContentBtn = wx.Button(self, label=_("View &channel Content..."))
+        # Translators: Button to get a description of the selected channel's avatar via Be My Eyes.
+        self.describeAvatarBtn = wx.Button(self, label=_("&Describe Avatar (Be My Eyes)..."))
         # Translators: Button to add a new channel from clipboard content.
         self.addBtn = wx.Button(self, label=_("Add &new favorite channel from clipboard"))
         # translator: Button to remove the selected channel from favorites. The '&' precedes the shortcut key.
@@ -2309,6 +2311,7 @@ class FavChannelPanel(wx.Panel):
 
         btnSizer.Add(self.openBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.viewContentBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.describeAvatarBtn, 0, wx.RIGHT, 5)
         btnSizer.AddStretchSpacer()
         btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
@@ -2327,6 +2330,7 @@ class FavChannelPanel(wx.Panel):
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.openBtn.Bind(wx.EVT_BUTTON, self.on_open)
         self.viewContentBtn.Bind(wx.EVT_BUTTON, self.on_view_channel_content)
+        self.describeAvatarBtn.Bind(wx.EVT_BUTTON, self.on_describe_avatar)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_channel_select)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_channel_select)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
@@ -2461,6 +2465,7 @@ class FavChannelPanel(wx.Panel):
         has_selection = self.listCtrl.GetFirstSelected() != -1
         self.openBtn.Enable(has_selection)
         self.viewContentBtn.Enable(has_selection)
+        self.describeAvatarBtn.Enable(has_selection)
         self.removeBtn.Enable(has_selection)
         has_any_items = self.listCtrl.GetItemCount() > 0
         if self.descriptionBox.GetStaticBox().IsShown() != has_any_items:
@@ -2514,7 +2519,18 @@ class FavChannelPanel(wx.Panel):
         if selected_index == -1: return
         item = self.filtered_channel[selected_index]
         if item.get("channel_url"): webbrowser.open(item.get("channel_url"))
-    
+
+    def on_describe_avatar(self, event):
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index == -1:
+            return
+        item = self.filtered_channel[selected_index]
+        channel_url = item.get("channel_url")
+        if not channel_url:
+            # Translators: Error message when a channel has no URL on record.
+            return ui.message(_("Error: Channel URL not found."))
+        threading.Thread(target=self.core.describe_thumbnail_worker, args=(channel_url,), daemon=True).start()
+
     def on_view_channel_content(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
@@ -2782,6 +2798,8 @@ class FavPlaylistPanel(wx.Panel):
         self.showVideosBtn = wx.Button(self, label=_("Show &Videos..."))
         # Translators: Button to open the playlist on the YouTube website.
         self.openWebBtn = wx.Button(self, label=_("Open on &browser"))
+        # Translators: Button to get a description of the selected playlist's cover via Be My Eyes.
+        self.describeCoverBtn = wx.Button(self, label=_("&Describe Cover (Be My Eyes)..."))
         # Translators: Button to add a new favorite playlist from the clipboard.
         self.addBtn = wx.Button(self, label=_("Add &new favorite playlist from clipboard"))
         # Translators: Button to remove the selected playlist from favorites.
@@ -2789,6 +2807,7 @@ class FavPlaylistPanel(wx.Panel):
 
         btnSizer.Add(self.showVideosBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.openWebBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.describeCoverBtn, 0, wx.RIGHT, 5)
         btnSizer.AddStretchSpacer()
         btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.removeBtn, 0, wx.RIGHT, 5)
@@ -2804,6 +2823,7 @@ class FavPlaylistPanel(wx.Panel):
 
         self.showVideosBtn.Bind(wx.EVT_BUTTON, self.on_show_videos)
         self.openWebBtn.Bind(wx.EVT_BUTTON, self.on_open_web)
+        self.describeCoverBtn.Bind(wx.EVT_BUTTON, self.on_describe_cover)
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add)
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_show_videos)
@@ -2897,6 +2917,7 @@ class FavPlaylistPanel(wx.Panel):
         has_items = self.listCtrl.GetItemCount() > 0
         self.showVideosBtn.Enable(has_items)
         self.openWebBtn.Enable(has_items)
+        self.describeCoverBtn.Enable(has_items)
         self.removeBtn.Enable(has_items)
     
     def on_remove(self, event):
@@ -3029,7 +3050,18 @@ class FavPlaylistPanel(wx.Panel):
         if selected_index == -1: return
         playlist = self.filtered_playlists[selected_index]
         webbrowser.open(playlist.get('playlist_url'))
-            
+
+    def on_describe_cover(self, event):
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index == -1:
+            return
+        playlist = self.filtered_playlists[selected_index]
+        playlist_url = playlist.get('playlist_url')
+        if not playlist_url:
+            # Translators: Error message when a playlist has no URL on record.
+            return ui.message(_("Error: Playlist URL not found."))
+        threading.Thread(target=self.core.describe_thumbnail_worker, args=(playlist_url,), daemon=True).start()
+
     def refresh_favPlaylists(self, data=None):
         if not self.listCtrl:
             return

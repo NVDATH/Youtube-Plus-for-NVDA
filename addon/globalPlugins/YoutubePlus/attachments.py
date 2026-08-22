@@ -17,10 +17,14 @@ import ctypes
 import os
 import tempfile
 import urllib.request
+import webbrowser
 
 from logHandler import log
 
 BEMYEYES_AUMID = "BeMyEyes.BeMyEyes_7yeb8xxw19svt!App"
+# Microsoft Store product ID for Be My Eyes (Windows app), used to build
+# both the ms-windows-store: deep link and the apps.microsoft.com fallback.
+BEMYEYES_STORE_PRODUCT_ID = "9MSW46LTDWGF"
 
 _USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -100,3 +104,27 @@ def send_to_bemyeyes(file_path: str) -> bool:
     target = f"shell:appsFolder\\{BEMYEYES_AUMID}"
     result = ctypes.windll.shell32.ShellExecuteW(None, "open", target, file_path, None, 1)
     return result > 32
+
+
+def open_bemyeyes_install_page() -> bool:
+    """
+    Opens the Microsoft Store to the Be My Eyes app page. Prefers the
+    ms-windows-store: deep link, which opens straight into the Store app
+    with no browser detour, and falls back to the apps.microsoft.com web
+    page if that URI scheme doesn't resolve for some reason (older
+    Windows builds, N/KN editions without the Store, etc.). Some
+    webbrowser.py controllers return False on failure instead of raising,
+    so both cases are checked.
+    """
+    store_uri = f"ms-windows-store://pdp/?productid={BEMYEYES_STORE_PRODUCT_ID}"
+    web_url = f"https://apps.microsoft.com/detail/{BEMYEYES_STORE_PRODUCT_ID.lower()}"
+    try:
+        if webbrowser.open(store_uri):
+            return True
+    except Exception as e:
+        log.warning(f"YoutubePlus: ms-windows-store URI failed, falling back to web link: {e}")
+    try:
+        return bool(webbrowser.open(web_url))
+    except Exception as e:
+        log.error(f"YoutubePlus: could not open Be My Eyes Store page: {e}")
+        return False
