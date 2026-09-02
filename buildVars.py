@@ -7,7 +7,7 @@ def _(x):
 # Add-on information variables
 addon_info = {
     "addon_name": "YoutubePlus",
-    "addon_version": "2026.8.21",
+    "addon_version": "2026.9.3",
 # Translators: Summary for this add-on
     "addon_summary": _("YouTubePlus"),
     # Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -28,7 +28,7 @@ Features:
     "addon_url": "https://nvda.in.th/youtube-plus",
     "addon_docFileName": "readme.html",
     "addon_minimumNVDAVersion": "2025.1",
-    "addon_lastTestedNVDAVersion": "2026.1",
+    "addon_lastTestedNVDAVersion": "2026.2",
     "addon_updateChannel": "stable",
 }
 

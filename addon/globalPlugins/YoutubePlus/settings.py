@@ -221,6 +221,76 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
 
+        self.formatPane = wx.CollapsiblePane(self, label=self._get_format_pane_label(False), style=wx.CP_DEFAULT_STYLE)
+        self.formatPane.Collapse(True)
+        paneContent = self.formatPane.GetPane()
+        paneSizer = wx.BoxSizer(wx.VERTICAL)
+        paneHelper = gui.guiHelper.BoxSizerHelper(self, sizer=paneSizer)
+
+        # Translators: Label for a setting to choose the preferred video resolution for downloads.
+        paneHelper.addItem(wx.StaticText(paneContent, label=_("Preferred &video quality:")))
+        self.video_quality_values = ["best", "2160", "1440", "1080", "720", "480", "360"]
+        video_quality_choices = [
+            # Translators: Video quality options for downloads.
+            _("Best available"), _("2160p (4K)"), _("1440p (2K)"), _("1080p"), _("720p"), _("480p"), _("360p"),
+        ]
+        self.videoQualityCombo = paneHelper.addItem(wx.ComboBox(paneContent, choices=video_quality_choices, style=wx.CB_READONLY))
+        current_vq = config.conf["YoutubePlus"].get("videoQuality", "best")
+        try:
+            self.videoQualityCombo.SetSelection(self.video_quality_values.index(current_vq))
+        except ValueError:
+            self.videoQualityCombo.SetSelection(0)
+
+        # Translators: Label for a setting to choose the preferred video container/file type for downloads.
+        paneHelper.addItem(wx.StaticText(paneContent, label=_("Preferred video co&ntainer:")))
+        self.video_container_values = ["mp4", "mkv", "webm"]
+        video_container_choices = [
+            # Translators: Video container format options for downloads.
+            _("MP4 (most compatible)"), _("MKV (best quality, no re-encoding)"), _("WebM"),
+        ]
+        self.videoContainerCombo = paneHelper.addItem(wx.ComboBox(paneContent, choices=video_container_choices, style=wx.CB_READONLY))
+        current_vc = config.conf["YoutubePlus"].get("videoContainer", "mp4")
+        try:
+            self.videoContainerCombo.SetSelection(self.video_container_values.index(current_vc))
+        except ValueError:
+            self.videoContainerCombo.SetSelection(0)
+
+        # Translators: Label for a setting to choose the preferred audio bitrate when converting audio downloads.
+        paneHelper.addItem(wx.StaticText(paneContent, label=_("Preferred audio q&uality (when converting):")))
+        self.audio_quality_values = ["best", "320", "256", "192", "128", "96"]
+        audio_quality_choices = [
+            # Translators: Audio quality/bitrate options for downloads.
+            _("Best available"), _("320 kbps"), _("256 kbps"), _("192 kbps"), _("128 kbps"), _("96 kbps"),
+        ]
+        self.audioQualityCombo = paneHelper.addItem(wx.ComboBox(paneContent, choices=audio_quality_choices, style=wx.CB_READONLY))
+        current_aq = config.conf["YoutubePlus"].get("audioQuality", "best")
+        try:
+            self.audioQualityCombo.SetSelection(self.audio_quality_values.index(current_aq))
+        except ValueError:
+            self.audioQualityCombo.SetSelection(0)
+
+        # Translators: Label for a setting to choose the preferred audio file format for downloads.
+        paneHelper.addItem(wx.StaticText(paneContent, label=_("Preferred audio for&mat:")))
+        self.audio_format_values = ["source", "mp3", "wav", "m4a", "flac", "opus", "vorbis"]
+        audio_format_choices = [
+            # Translators: Audio format options for downloads. "Best available (no conversion)" keeps
+            # whatever format YouTube already serves, without needing FFmpeg to convert it.
+            _("Best available (no conversion)"), _("MP3"), _("WAV"), _("M4A/AAC"), _("FLAC"), _("Opus"), _("Vorbis (OGG)"),
+        ]
+        self.audioFormatCombo = paneHelper.addItem(wx.ComboBox(paneContent, choices=audio_format_choices, style=wx.CB_READONLY))
+        current_af = config.conf["YoutubePlus"].get("audioFormat", "source")
+        try:
+            self.audioFormatCombo.SetSelection(self.audio_format_values.index(current_af))
+        except ValueError:
+            self.audioFormatCombo.SetSelection(0)
+
+        paneSizer.Fit(paneContent)
+        paneContent.SetSizer(paneSizer)
+        sHelper.addItem(self.formatPane, flag=wx.EXPAND)
+        self.formatPane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_format_pane_toggle)
+
+        sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=5)
+
         # Translators: Label for a setting to choose the default subtitle format for downloads.
         sHelper.addItem(wx.StaticText(self, label=_("Default subtitle &format:")))
         self.subtitle_format_values = ["srt", "vtt", "ttml", "txt"]
@@ -251,6 +321,35 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.restoreBtn.Bind(wx.EVT_BUTTON, self.on_restore)
         
         sHelper.addItem(wx.StaticLine(self, style=wx.LI_HORIZONTAL), flag=wx.EXPAND | wx.TOP | wx.BOTTOM, border=10)
+
+        # wx.CollapsiblePane's built-in toggle button doesn't participate in the
+        # dialog's native mnemonic/accelerator dispatch, so the "&D" underline
+        # alone only responds to Alt+D while the pane itself has focus. An
+        # accelerator table is the mechanism wx provides for a shortcut that
+        # works panel-wide regardless of which child control currently has
+        # focus, so we use that instead of relying on the mnemonic.
+        toggle_format_pane_id = wx.NewIdRef()
+        self.Bind(wx.EVT_MENU, self.on_toggle_format_pane, id=toggle_format_pane_id)
+        self.SetAcceleratorTable(wx.AcceleratorTable([
+            (wx.ACCEL_ALT, ord('D'), toggle_format_pane_id),
+        ]))
+
+    def on_toggle_format_pane(self, event):
+        is_expanded = self.formatPane.IsExpanded()
+        self.formatPane.Collapse(is_expanded)
+        self.formatPane.SetLabel(self._get_format_pane_label(not is_expanded))
+        self.Layout()
+        self.formatPane.SetFocus()
+
+    def _get_format_pane_label(self, is_expanded):
+        # Translators: Label for the collapsible section holding advanced download quality/format options.
+        base = _("&Download Quality and Format Options")
+        if is_expanded:
+            # Translators: Suffix appended to the label above when the section is currently expanded.
+            return base + _(" (expanded)")
+        else:
+            # Translators: Suffix appended to the label above when the section is currently collapsed.
+            return base + _(" (collapsed)")
 
     def _get_available_profiles(self):
         """Helper to scan directories for profiles."""
@@ -289,6 +388,12 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         if gui.messageBox(message, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
             globalCommands.commands.script_restart(None)
         
+    def on_format_pane_toggle(self, event):
+        is_expanded = self.formatPane.IsExpanded()
+        self.formatPane.SetLabel(self._get_format_pane_label(is_expanded))
+        self.Layout()
+        event.Skip()
+
     def onSave(self):
         new_profile = self.profileCombo.GetStringSelection()
         if new_profile != self.old_profile:
@@ -332,6 +437,10 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["YoutubePlus"]["cookieMode"] = selection_map_cookie.get(self.cookieModeCombo.GetSelection(), 'none')
         #"""
         config.conf["YoutubePlus"]["subtitleFormat"] = self.subtitle_format_values[self.subtitleFormatCombo.GetSelection()]
+        config.conf["YoutubePlus"]["videoQuality"] = self.video_quality_values[self.videoQualityCombo.GetSelection()]
+        config.conf["YoutubePlus"]["videoContainer"] = self.video_container_values[self.videoContainerCombo.GetSelection()]
+        config.conf["YoutubePlus"]["audioQuality"] = self.audio_quality_values[self.audioQualityCombo.GetSelection()]
+        config.conf["YoutubePlus"]["audioFormat"] = self.audio_format_values[self.audioFormatCombo.GetSelection()]
         config.conf["YoutubePlus"]["exportPath"] = self.exportPathTextCtrl.GetValue()
         
         if GlobalPlugin.instance:

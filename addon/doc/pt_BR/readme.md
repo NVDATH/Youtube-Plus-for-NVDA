@@ -1,444 +1,370 @@
-# YoutubePlus para NVDA
+# YoutubePlus for NVDA
 
-> O YoutubePlus é um complemento para usuários do NVDA que adoram o YouTube, mas consideram muitos recursos do site difíceis de acessar — como ler comentários, acompanhar canais ou monitorar o chat ao vivo.
->
-> Trazemos esses recursos para a interface de usuário do NVDA em um formato de fácil navegação pelo teclado, com suporte a atalhos e totalmente personalizável — **sem a necessidade de chaves de API ou login em contas do Google/YouTube**.
->
-> Você pode acompanhar seus canais favoritos e ter a certeza de que verá todos os vídeos deles, sem que o algoritmo do YouTube os filtre. Um sistema de Favoritos está incluso para vídeos, canais, playlists, além de uma Lista de Assistir Mais Tarde para salvar conteúdos nos quais você tem interesse, mas ainda não teve tempo de assistir.
->
-> Há uma busca de vídeos integrada que exibe os resultados na própria interface do complemento — e não apenas uma caixa de pesquisa que abre o YouTube no navegador. Uma função de download está inclusa para salvar vídeos e áudios por conveniência — se o download for a sua necessidade principal, recomenda-se o uso de ferramentas dedicadas.
->
-> O que este complemento **não** faz é embutir um reprodutor de vídeo. Acreditamos que o reprodutor web do YouTube já é acessível o suficiente por si só. Se você ainda achar que ele deixa a desejar, pode utilizar outros complementos, como o [browserNav](https://addonstore.nvaccess.org/?channel=stable&language=en&apiVersion=2025.3.2&addonId=browsernav), para melhorar a experiência.
+> O YoutubePlus é um complemento para pessoas que adoram usar o YouTube, mas acham muitos recursos do site difíceis de acessar — como ler os comentários dos vídeos.
+> Trazemos esses recursos para você através da interface de usuário do NVDA, em um formato fácil de navegar, com suporte a atalhos de teclado e totalmente personalizável — sem exigir que você lide com chaves de API ou conecte qualquer conta pessoal ao complemento.
+> Você pode seguir seus canais favoritos e ter certeza de que verá todos os vídeos desses canais, sem que o algoritmo do YouTube os filtre.
+> Também oferecemos um sistema de Favoritos para vídeos, canais, playlists, e uma lista de reprodução posterior para salvar conteúdo que interessa a você, mas que ainda não teve tempo de assistir.
+> Há uma busca de vídeo integrada que exibe os resultados dentro da mesma interface de usuário utilizada em todo o complemento — não apenas uma caixa de busca que abre o YouTube em um navegador.
+> Um recurso de download está incluído para salvar vídeos ou arquivos de áudio, embora seja oferecido como uma conveniência e não como o foco principal. Se baixar é sua necessidade principal, existem outros complementos dedicados a esse recurso que você pode querer explorar.
+> A única coisa que este complemento não faz é incorporar um player de vídeo. Acreditamos que o player web do YouTube já é acessível o suficiente por si só. Se você ainda achar insuficiente, pode usar outros complementos como o [browserNav](https://addonstore.nvaccess.org/?channel=stable&language=en&apiVersion=2025.3.2&addonId=browsernav) para melhorar a experiência.
 
----
+## Atalhos de teclado e comandos
 
-## Sumário
+Este complemento usa um sistema de atalhos em camadas para evitar conflitos com outros complementos ou comandos do NVDA.
+Pressione **NVDA+Y** para entrar no modo de comandos do YoutubePlus e, em seguida, pressione uma das teclas abaixo para acessar cada recurso ou janela.
 
-- [Atalhos de Teclado](#atalhos-de-teclado)
-- [Detalhes dos Recursos](#detalhes-dos-recursos)
-  - [a: Menu Adicionar para...](#a-menu-adicionar-para)
-  - [d: Baixar Vídeo/Áudio](#d-baixar-vídeoáudio)
-  - [b: Baixar Legendas](#b-baixar-legendas)
-  - [e: Pesquisar no YouTube](#e-pesquisar-no-youtube)
-  - [i: Informações do Vídeo](#i-informações-do-vídeo)
-  - [t: Capítulos / Marcadores de Tempo](#t-capítulos--marcadores-de-tempo)
-  - [g: Obter Descrição da Miniatura (Be My Eyes)](#g-obter-descrição-da-miniatura-be-my-eyes)
-  - [l: Comentários / Chat ao Vivo / Reprise do Chat ao Vivo](#l-comentários--chat-ao-vivo--reprise-do-chat-ao-vivo)
-  - [Favoritos (f, c, p, w)](#favoritos-f-c-p-w)
-  - [s: Feed de Inscrições](#s-feed-de-inscrições)
-  - [m: Gerenciar Inscrições](#m-gerenciar-inscrições)
-  - [u: Gerenciador de Perfis de Usuário](#u-gerenciador-de-perfis-de-usuário)
-  - [Lista de Vídeos](#lista-de-vídeos)
-- [Configurações](#configurações)
-- [Informações Adicionais](#informações-adicionais)
+**Nota:** Se o atalho principal (`NVDA+Y`) entrar em conflito com outro complemento, você pode alterá-lo em `NVDA -> Preferências -> Gestos de Entrada...` na categoria "YoutubePlus".
 
----
+### Teclas disponíveis na camada do YoutubePlus
 
-## Atalhos de Teclado
+* a: (add to...) — Abre um submenu para você escolher onde adicionar o vídeo ou canal atual
+* f: (open favorites video) — Abre a janela de vídeos favoritos
+* c: (open favorites channel) — Abre a janela de canais favoritos
+* p: (open favorites playlist) — Abre a janela de playlists favoritas
+* w: (show watch list) — Abre a janela da lista de reprodução posterior
+* d: (download) — Pergunta se você deseja baixar como vídeo ou apenas áudio
+* e: (search) — Abre a janela de busca de vídeos
+* q: (quick search) — Busca no YouTube imediatamente usando o texto atualmente selecionado, ou o conteúdo da área de transferência se nada estiver selecionado — sem abrir a caixa de diálogo de busca primeiro
+* control+h: (search history) — Abre a janela de Favoritos diretamente na aba de Histórico de Busca
+* i: (info) — Abre a janela de detalhes do vídeo
+* t: (show timestamp) — Exibe marcações de tempo ou capítulos, se disponíveis
+* g: (get thumbnail description) — Baixa a miniatura do vídeo e a envia ao aplicativo Be My Eyes para obter uma descrição ao vivo
+* m: (open manage subscription) — Abre a janela de gerenciamento de inscrições
+* s: (open subscription feed) — Mostra vídeos dos canais que você segue
+* u: (open User Profile Manager) — Abre a janela de gerenciamento de perfis de usuário
+* l: (show comment) — Exibe comentários (detalhes explicados abaixo)
+* shift+l: (stop monitor live chat) — Para o monitoramento do chat ao vivo
+* r: (toggle automatic reading live chat) — Ativa/desativa a leitura automática das mensagens recebidas do chat ao vivo
+* v: (show live chat) — Reabre a janela do chat ao vivo caso você a tenha fechado enquanto a transmissão ainda estava ativa
+* y: (open YoutubePlus settings dialog) abre rapidamente as configurações do NVDA e foca na categoria YoutubePlus
+* h: (help) — Abre uma janela listando todos os atalhos disponíveis
 
-Este complemento utiliza um sistema de **Comando em Camadas** para evitar conflitos com outros complementos ou comandos do NVDA.
+**Nota:** Para comandos que atuam diretamente sobre um vídeo, o complemento primeiro verifica a janela do navegador aberta. Se uma página de vídeo do YouTube estiver ativa, ele usa a URL desse vídeo. Se nenhuma página de vídeo estiver aberta, ele verifica a área de transferência em busca de uma URL do YouTube.
 
-**Como usar:**
+## Detalhes de recursos e comandos
 
-1. Pressione **NVDA+Y** para entrar no Modo de Comando do YoutubePlus (você ouvirá um som de notificação).
-2. Pressione a letra correspondente para ativar o recurso desejado.
+### a: (add to...)
 
-> **Nota:** Se o atalho `NVDA+Y` conflitar com outro complemento, você pode alterá-lo em `NVDA → Preferências → Definir comandos...` sob a categoria "YoutubePlus".
-> **Detecção de URL:** Para comandos que exigem a URL de um vídeo, o complemento verifica primeiro a **janela do navegador atualmente aberta**. Se nenhuma URL do YouTube for encontrada ali, ele passa automaticamente a verificar a **área de transferência**.
+Este comando na camada do YoutubePlus envia informações do vídeo ou canal para o destino selecionado:
 
-### Todas as teclas no modo YoutubePlus
+* Add to Favorite Videos (v)
+* Add to Favorite Channels (c)
+* Add to Favorite Playlist (p)
+* Subscribe to Channel (s)
+* Add to Watch List (w)
 
-| Tecla | Recurso |
-| ----- | --------- |
-| **a** | Menu "Adicionar para..." (Favoritos / Inscrever-se) |
-| **f** | Abrir Vídeos Favoritos |
-| **c** | Abrir Canais Favoritos |
-| **p** | Abrir Playlists Favoritas |
-| **w** | Abrir Lista de Assistir Mais Tarde |
-| **b** | Baixar legendas |
-| **d** | Baixar vídeo ou áudio |
-| **e** | Pesquisar no YouTube |
-| **q** | Pesquisa Rápida — pesquisa no YouTube imediatamente usando o texto selecionado ou o conteúdo da área de transferência, sem abrir o diálogo de pesquisa |
-| **Control+H** | Abre a janela de Favoritos diretamente na aba Histórico de Pesquisa |
-| **i** | Mostrar informações do vídeo |
-| **t** | Mostrar Capítulos / Marcadores de Tempo |
-| **g** | Obter descrição da miniatura do vídeo via Be My Eyes |
-| **m** | Gerenciar Inscrições |
-| **s** | Abrir Feed de Inscrições |
-| **u** | Gerenciar Perfis de Usuário |
-| **l** | Mostrar comentários ou iniciar monitoramento do chat ao vivo |
-| **Shift+L** | Parar monitoramento do chat ao vivo |
-| **r** | Alternar a leitura automática do chat ao vivo |
-| **v** | Reabrir a janela do chat ao vivo (enquanto a transmissão ainda estiver ativa) |
-| **y** | Abrir Configurações do YoutubePlus |
-| **h** | Abrir diálogo de Ajuda |
+O complemento primeiro verifica a página do navegador aberta atualmente. Se for uma página de vídeo do YouTube, ele extrai a URL e a processa de acordo com sua seleção. Se a página não for um vídeo do YouTube ou nenhum navegador estiver aberto, ele verifica a área de transferência em busca de uma URL do YouTube.
 
----
+A maioria dos comandos funciona com qualquer tipo de URL do YouTube, já que o complemento consegue derivar as informações necessárias. Por exemplo, se você estiver em uma página de vídeo e escolher "Add to Favorite Channels", o complemento pode extrair automaticamente a URL do canal. O mesmo se aplica para se inscrever em um canal.
 
-## Detalhes dos Recursos
+A única exceção são as playlists — você precisa ter uma página de playlist do YouTube aberta, ou uma URL válida de playlist do YouTube copiada na área de transferência.
 
-### a: Menu Adicionar para...
+### d: (download video/audio)
 
-Abre um submenu para escolher onde adicionar o vídeo ou canal atual:
+Este comando abre uma pequena caixa de diálogo perguntando se você deseja baixar o vídeo ou apenas o áudio. Você pode definir o destino do download, e ajustar a qualidade/formato com mais detalhes, na seção de [Configurações](#configurações).
 
-- **Adicionar aos Vídeos Favoritos** — salva o vídeo atual nos Favoritos
-- **Adicionar aos Canais Favoritos** — salva o canal do vídeo atual nos Favoritos
-- **Adicionar às Playlists Favoritas** — salva a playlist atual nos Favoritos
-- **Inscrever-se no Canal** — acompanha o canal através do sistema de Inscrições do complemento
-- **Adicionar à Lista de Assistir Mais Tarde** — salva o vídeo atual na Lista de Assistir Mais Tarde para ver depois
+**Downloads de vídeo exigem o FFmpeg.** O YouTube não oferece mais a maioria dos vídeos como um único arquivo combinado de vídeo e áudio, então mesclar os fluxos separados exige o FFmpeg. O YoutubePlus não inclui o FFmpeg junto (para evitar inchar desnecessariamente a configuração do NVDA de cada usuário) — se o FFmpeg não for encontrado no seu sistema ao baixar um vídeo, e a ferramenta `winget` do Windows estiver disponível, o YoutubePlus vai oferecer para instalá-lo automaticamente com uma simples pergunta de Sim/Não; depois de instalado, seu download continua automaticamente, sem precisar reiniciar o NVDA. Se nem o FFmpeg nem o `winget` estiverem disponíveis, você será avisado e o download será cancelado de forma limpa.
 
-A maioria dos comandos funciona com qualquer formato de URL do YouTube. Por exemplo, se você estiver na página de um vídeo e escolher "Adicionar aos Canais Favoritos", o complemento extrairá a URL do canal automaticamente.
+Downloads somente de áudio não precisam do FFmpeg por padrão. Ele só é necessário se você tiver escolhido um formato de áudio diferente de "Best available (no conversion)" nas opções avançadas de formato abaixo, já que converter para outro formato de áudio também passa pelo FFmpeg.
 
-**Exceção:** Para Playlists, você deve estar com a página de uma playlist do YouTube aberta ou ter uma URL de playlist válida na área de transferência.
+Note que o recurso de download é oferecido por conveniência e pode ter limitações se usado intensamente. Se você precisar baixar grandes quantidades de conteúdo do YouTube, outras ferramentas dedicadas são recomendadas.
 
----
+### e: (search)
 
-### d: Baixar Vídeo/Áudio
+Este comando abre uma janela de busca do YouTube. Digite sua consulta no campo de busca e pressione Enter para buscar imediatamente. Você também pode usar Tab para ajustar o número de resultados a exibir — o complemento lembra esse valor para buscas futuras.
 
-Pressione **NVDA+Y → D** para abrir um diálogo perguntando se deseja baixar como:
+O campo de busca é uma caixa de combinação que lembra suas buscas anteriores: pressione a seta para baixo (ou Alt+Baixo) para abrir uma lista de palavras-chave anteriores e escolher uma em vez de digitá-la novamente.
 
-- **Arquivo de vídeo (MP4)** — baixa o vídeo com áudio
-- **Arquivo de áudio (M4A)** — baixa apenas o áudio
+Os resultados são exibidos no mesmo formato de [lista de vídeos](#lista-de-vídeos) usado em todo o complemento, não como uma página web do YouTube. Você pode acessar todos os detalhes do vídeo da mesma forma que em qualquer outra lista de vídeos do complemento.
 
-Um diálogo de progresso mostra a porcentagem do download enquanto ele é executado. O botão **Cancelar** está disponível a qualquer momento.
+#### q: (quick search)
 
-Defina a pasta de destino nas [Configurações](#configurações).
+Uma alternativa mais rápida à caixa de diálogo de busca acima. Selecione algum texto em qualquer aplicativo (ou tenha uma consulta copiada na área de transferência se nada estiver selecionado), depois pressione Q na camada do YoutubePlus. O complemento busca no YouTube imediatamente usando esse texto e o número de resultados salvo da sua última busca — sem diálogo, sem pressionamentos de tecla extras.
 
-> **Nota:** Este recurso é fornecido por conveniência. Para downloads em lote, recomendam-se ferramentas dedicadas.
+#### Histórico de Busca
 
----
+Toda busca que você faz — seja pela caixa de diálogo de busca ou pela busca rápida — é salva automaticamente. Pressione **Control+H** na camada do YoutubePlus para ir direto à aba de Histórico de Busca na janela de Favoritos, onde você pode:
 
-### b: Baixar Legendas
+* Pressionar Enter, ou o botão **Search Again**, para executar novamente uma busca anterior
+* Pressionar **New Search (Alt+N)** para abrir a caixa de diálogo de busca
+* Pressionar Delete, ou o botão **Remove**, para remover uma única entrada
+* Pressionar o botão **Clear All** para limpar todo o histórico
 
-Pressione **NVDA+Y → B** para obter a lista de idiomas de legenda disponíveis para o vídeo atual e, em seguida, escolha em um diálogo. As legendas são listadas em dois tipos:
+### i: (video info)
 
-- **(manual)** — legendas criadas pelo criador do vídeo ou pela comunidade
-- **(auto)** — legendas geradas automaticamente pelo YouTube
+Exibe os seguintes detalhes do vídeo atual:
 
-Formatos de arquivo suportados: **SRT, VTT, TTML** e **TXT** (texto simples sem marcadores de tempo). Configurável nas [Configurações](#configurações).
+* Título
+* Canal
+* Duração
+* Data de upload
+* Visualizações
+* Curtidas
+* Comentários
+* Descrição
 
----
+### t: (timestamp / chapter)
 
-### e: Pesquisar no YouTube
+Exibe a lista de marcações de tempo ou capítulos do vídeo (se o criador incluiu essa informação). Se o complemento informar "No chapters found in this video", o vídeo simplesmente não possui dados de capítulos.
 
-Pressione **NVDA+Y → E** para abrir a janela de pesquisa. Digite sua busca e pressione Enter para pesquisar imediatamente. Pressione Tab para ajustar o número de resultados (o complemento lembra desse valor para a próxima vez).
+Esta janela oferece mais conveniência do que ler os capítulos pelo navegador:
 
-O campo de pesquisa é uma caixa de combinação que lembra suas pesquisas anteriores: pressione a seta para baixo (ou Alt+Seta para baixo) para exibir uma lista de palavras-chave anteriores e selecionar uma em vez de redigitá-la.
+* Um campo de busca para filtrar a lista de marcações de tempo/capítulos — os resultados são atualizados instantaneamente sem pressionar Enter
+* A lista completa exibida com a descrição de cada seção primeiro, seguida de sua posição no tempo
+* Uma área de texto somente leitura para ler descrições longas de capítulos
+* Um botão "Open Chapter" — ou pressione Espaço ou Enter — para pular diretamente para aquele capítulo no vídeo
+* Botão Copy Title (Alt+C) para copiar o nome do capítulo
+* Botão Copy URL (Alt+U) para copiar a URL com a marcação de tempo daquele capítulo
+* Botão Export (Alt+E) para salvar todos os dados de marcação de tempo/capítulos como um arquivo de texto
 
-Os resultados são exibidos no mesmo formato de Lista de Vídeos usado em todo o complemento — e não como uma página da web do YouTube. Os resultados podem incluir vídeos, canais e playlists.
+### g: (get thumbnail description)
 
-#### q: Pesquisa Rápida
-
-Uma alternativa mais rápida ao diálogo de pesquisa. Selecione algum texto em qualquer aplicativo (ou tenha uma consulta copiada na área de transferência se nada estiver selecionado), depois pressione Q na camada do YoutubePlus. O complemento pesquisa no YouTube imediatamente usando esse texto e o número de resultados salvo da sua última pesquisa — sem diálogo, sem teclas extras.
-
-#### Histórico de Pesquisa
-
-Cada pesquisa que você realiza — pelo diálogo de pesquisa ou pela pesquisa rápida — é salva automaticamente. Pressione **Control+H** na camada do YoutubePlus para ir diretamente à aba Histórico de Pesquisa na janela de Favoritos, onde você pode:
-
-* Pressionar Enter, ou o botão **Pesquisar Novamente**, para repetir uma pesquisa anterior
-* Pressionar **Nova Pesquisa (Alt+N)** para abrir o diálogo de pesquisa
-* Pressionar Delete, ou o botão **Remover**, para remover uma entrada
-* Pressionar o botão **Limpar Tudo** para limpar todo o histórico
-
----
-
-### i: Informações do Vídeo
-
-Pressione **NVDA+Y → I** para visualizar os seguintes detalhes do vídeo atual:
-
-- Título
-- Canal
-- Duração
-- Data de envio
-- Contagem de visualizações
-- Contagem de curtidas
-- Contagem de comentários
-- Descrição
-
----
-
-### t: Capítulos / Marcadores de Tempo
-
-Pressione **NVDA+Y → T** para visualizar a lista de capítulos ou marcadores de tempo do vídeo atual (se o criador incluiu essas informações). Se o complemento informar "Nenhum capítulo encontrado", o vídeo simplesmente não possui dados de capítulos.
-
-Esta janela inclui:
-
-- **Campo de pesquisa** — filtra a lista de capítulos em tempo real; não é necessário pressionar Enter
-- **Lista de capítulos** — mostra o título do capítulo e o tempo de início
-- **Área de texto** — exibe o nome do capítulo selecionado em um formato legível
-- **Botão Abrir Capítulo** (o pressione Espaço/Enter) — pula direto para aquele capítulo no navegador
-- **Botão Copiar Título** — copia o título do capítulo
-- **Botão Copiar URL** — copia a URL com o marcador de tempo para aquele capítulo
-- **Botão Exportar** — salva todos os capítulos em um arquivo de texto
-
----
-
-### g: Obter Descrição da Miniatura (Be My Eyes)
-
-Pressione **NVDA+Y → G** para baixar uma imagem e enviá-la ao aplicativo **Be My Eyes** para obter uma descrição ao vivo, sem sair do NVDA. Este comando se adapta ao contexto: descreve a miniatura do vídeo quando você está em uma página de vídeo, o avatar do canal quando está em uma página de canal, e a capa da playlist quando está em uma página de playlist — usando a mesma ordem de detecção de URL dos demais comandos (primeiro a janela do navegador ativa, depois a área de transferência). Também disponível no menu **Ação** do vídeo (Alt+A, apenas miniaturas de vídeo) e como uma Ação Rápida configurável (Barra de espaço).
+Baixa uma imagem e a envia ao aplicativo **Be My Eyes** para obter uma descrição ao vivo, sem sair do NVDA. Este comando se adapta ao contexto: descreve a miniatura do vídeo quando você está em uma página de vídeo, o avatar do canal quando está em uma página de canal, e a capa da playlist quando está em uma página de playlist — usando a mesma ordem de detecção de URL dos demais comandos (primeiro a janela do navegador ativa, depois a área de transferência). Também disponível no menu Action do vídeo (Alt+A, apenas miniaturas de vídeo) e como uma Quick Action configurável (Barra de espaço).
 
 O complemento sempre escolhe a imagem de maior resolução relatada pelo yt-dlp, garantindo que o arquivo enviado ao Be My Eyes seja sempre o melhor disponível.
 
-Você também pode descrever o avatar de um canal ou a capa de uma playlist diretamente pela janela de Favoritos, sem precisar ter essa página aberta em lugar nenhum — veja os botões **Descrever Avatar** e **Descrever Capa** em [Favoritos](#favoritos-f-c-p-w) mais abaixo.
+Você também pode descrever o avatar de um canal ou a capa de uma playlist diretamente pela janela de Favoritos, sem precisar ter essa página aberta em lugar nenhum — veja os botões **Describe Avatar** e **Describe Cover** em [Favoritos](#favoritos) mais abaixo.
 
-> **Nota:** Este recurso requer que o aplicativo [Be My Eyes](https://www.bemyeyes.com/) esteja instalado separadamente no seu sistema — o complemento não o instala nem o inclui. Se ele não estiver instalado, o YoutubePlus vai oferecer para abrir a página dele na Microsoft Store, para que você possa instalá-lo na hora.
+**Nota:** Este recurso requer que o aplicativo [Be My Eyes](https://www.bemyeyes.com/) esteja instalado separadamente no seu sistema — o complemento não o instala nem o inclui. Se ele não estiver instalado, o YoutubePlus vai oferecer para abrir a página dele na Microsoft Store, para que você possa instalá-lo na hora.
 
----
+### Favoritos
 
-### l: Comentários / Chat ao Vivo / Reprise do Chat ao Vivo
+Uma janela exibindo seus favoritos salvos, divididos em 5 abas por tipo:
 
-O YoutubePlus suporta três tipos de conteúdo através deste comando:
+* **Video:** Lista seus vídeos salvos, organizados em categorias criadas por você. Uma árvore de categorias fica à esquerda e a lista de vídeos da categoria selecionada fica à direita (veja [Categorias](#categorias-abas-vídeo-e-lista-de-reprodução-posterior) abaixo). Inclui botões de Action e Copy para cada item (descritos abaixo).
+* **Channel:** Lista seus canais salvos com um painel de descrição do canal. Inclui botões para abrir o canal, navegar pelo seu conteúdo por tipo, e descrever seu avatar via Be My Eyes (Alt+D).
+* **Playlist:** Lista suas playlists salvas. Pressione Espaço, Enter ou Alt+V para expandir todos os vídeos de uma playlist. Inclui um botão Open on Web (Alt+W) e um botão Describe Cover (Alt+D) para obter uma descrição de Be My Eyes da imagem de capa da playlist.
+* **Watch List:** Lista seus vídeos salvos usando o mesmo layout de árvore de categorias + lista da aba Video, com seu próprio conjunto independente de categorias.
+* **Search History:** Lista cada busca que você já fez, com opções para executar novamente, remover ou limpar entradas (veja [Histórico de Busca](#histórico-de-busca) acima).
 
-#### 1. Comentários (para vídeos normais)
+#### Comandos da janela de Favoritos
 
-Pressione **NVDA+Y → L** enquanto estiver na página de um vídeo. O complemento obterá todos os comentários. Os comentários fixados aparecem primeiro, seguidos por todos os outros na ordem de classificação configurada nas Configurações.
+* Pressione Control+1 a Control+5 para alternar entre abas
+* Pressione Control+Cima/Baixo para reordenar abas
+* Pressione Control+C (copiar), Control+X (recortar), ou Control+V (colar) para reordenar itens
+    * Favorite Videos e Watch List oferecem suporte a copiar e mover itens entre si, incluindo itens dentro de uma categoria. As abas Video e Watch List mantêm cada uma sua própria lista de categorias separada, então quando um item se move entre elas, ele é colocado na categoria atualmente selecionada na aba de destino. Favorite Channels e Playlists só oferecem suporte a mover itens dentro de sua própria lista.
+* Pressione Alt+R ou Delete para remover um item
+* Pressione Alt+N para adicionar um novo item da área de transferência — para as abas de canal e playlist, a URL deve corresponder ao tipo da aba
+* Pressione **Alt+O (Sort...)** para abrir a caixa de diálogo de ordenação da aba atual — veja [Ordenação](#ordenação) abaixo
+* O campo de busca filtra os resultados instantaneamente enquanto você digita — não é necessário pressionar Enter
 
-**A janela de Comentários inclui:**
+#### Categorias (abas Vídeo e Lista de Reprodução Posterior)
 
-- **Campo de pesquisa** — filtra os comentários em tempo real
-- **Caixa de combinação de filtro** — filtros predefinidos:
-  - Sem Filtro — mostra todos os comentários
-  - Filtrar por Autor Selecionado — mostra apenas comentários do comentarista selecionado
-  - Mostrar Apenas Super Chats
-  - Mostrar Apenas Super Stickers
-  - Mostrar Apenas Valeu Demais
-- **Lista de comentários** — mostra o nome do comentarista e a mensagem; há suporte para tópicos de respostas
-- **Área de texto somente leitura** — mostra o texto completo do comentário selecionado, útil para comentários longos
-- **Botão Copiar** (Alt+C ou Ctrl+C) — copia o comentário selecionado
-- **Botão Exportar** (Alt+E) — salva todos os comentários em um arquivo de texto
-
-#### 2. Chat ao Vivo (para transmissões ao vivo ativas)
-
-Para vídeos que estão transmitindo ao vivo no momento, pressione L para abrir uma janela que recebe as mensagens do chat. Apenas as mensagens recebidas após a ativação deste comando são exibidas — o histórico anterior não é capturado.
-
-- Feche e reabra a janela com o comando **V**, desde que o monitoramento não tenha sido interrompido.
-- Use o comando **R** para alternar a leitura automática de novas mensagens — ideal para transmissões com mensagens pouco frequentes. Para transmissões com grande volume de mensagens, recomenda-se desativar a leitura automática e rolar manualmente pela janela.
-- Use **Shift+L** para parar o monitoramento. Quando interrompido, o complemento perguntará se você deseja salvar o histórico do chat em um arquivo.
-
-**Configurações relacionadas:**
-
-- **Falar chat ao vivo recebido automaticamente:** Lê novas mensagens em voz alta à medida que chegam (o mesmo que o comando R, mas salvo como uma preferência padrão).
-- **Intervalo de atualização do chat ao vivo:** Com que frequência (inércia em segundos) o complemento verifica se há novas mensagens (padrão: 5 segundos).
-- **Limite do histórico de mensagens:** Máximo de mensagens armazenadas na memória (padrão: 5.000). O complemento possui um limite máximo fixo de 200.000 mensagens para evitar o uso excessivo de memória.
-
-#### 3. Reprise do Chat ao Vivo (para transmissões anteriores)
-
-Para vídeos que já foram transmitidos ao vivo e onde o canal não removeu o chat, pressionar L exibirá um diálogo perguntando se deseja visualizar os **Comentários** ou a **Reprise do Chat ao Vivo**. A janela de reprise tem a mesma estrutura da janela de Comentários, com uma adição:
-
-- **Valor Pago Total** — mostra o total de doações (Super Chats / Super Stickers) arrecadadas durante a transmissão
-
----
-
-### Favoritos (f, c, p, w)
-
-A janela de Favoritos está dividida em **5 abas**, cada uma acessível por comandos separados ou todas dentro da mesma janela.
-
-| Tecla | Aba |
-| ----- | ----- |
-| **F** | Vídeos salvos (Vídeos Favoritos) — suporta categorias |
-| **C** | Canais salvos (Canais Favoritos) |
-| **P** | Playlists salvas (Playlists Favoritas) |
-| **W** | Vídeos para assistir mais tarde (Lista de Assistir Mais Tarde) — suporta categorias |
-| **Control+H** | Histórico de Pesquisa |
-
-#### Atalhos na janela de Favoritos
-
-- **Ctrl+1 a Ctrl+5** — alterna entre as abas
-- **Ctrl+Seta para cima/Seta para baixo** — reordena as abas
-- **Ctrl+C / Ctrl+X / Ctrl+V** — copia/recorta/cola para mover itens
-  _(Vídeos Favoritos e Lista de Assistir Mais Tarde podem ser movidos entre si, incluindo itens dentro de uma categoria. Cada aba mantém sua própria lista de categorias separada, portanto, ao mover um item entre elas ele é colocado na categoria atualmente selecionada na aba de destino. Canais e Playlists só podem ser movidos dentro de sua própria lista.)_
-- **F2** — renomeia manualmente o vídeo/canal/playlist selecionado
-- **Alt+R ou Delete** — remove o item selecionado
-- **Alt+N** — adiciona um novo item a partir de uma URL na área de transferência
-- **Alt+S** — move o foco para o campo de pesquisa (os resultados são atualizados em tempo real)
-- **Botão Ordenar... (Alt+O)** — ordena a lista:
-  - Ordenar por: Título, Canal, Duração, Data de Adição ou Data de Envio
-  - Escolha Crescente ou Decrescente
-  - **Ordenar apenas a categoria atual:** quando marcado, a ordenação se aplica apenas aos itens da categoria selecionada na árvore, sem afetar as demais. Desmarcado por padrão.
-  - **Aplicar permanentemente:** quando marcado, a ordem é salva no disco imediatamente; caso contrário, é temporária e é redefinida ao recarregar.
-  - Pressione **Limpar Ordenação** para restaurar a ordem original
-
-#### Categorias (Abas Vídeos e Lista de Assistir Mais Tarde)
-
-Ambas as abas permitem organizar itens em categorias usando uma exibição em árvore à esquerda, separada da lista de itens à direita. Cada aba mantém suas próprias categorias de forma independente. Sempre há um nó padrão para itens sem categoria ("Vídeos" na aba Vídeos, "Lista de Assistir Mais Tarde" na aba Lista).
+Tanto a aba Video quanto a de Lista de Reprodução Posterior permitem organizar itens em categorias próprias, usando uma visualização em árvore à esquerda, separada da lista de itens à direita. Cada aba mantém suas próprias categorias — criar uma categoria em uma não afeta a outra. Sempre há um nó padrão para itens sem categoria ("Videos" na aba Video, "Watch List" na aba Lista de Reprodução Posterior).
 
 Com o foco na árvore de categorias:
 
-- **Ctrl+=** — adiciona uma nova categoria
-- **F2** — renomeia a categoria selecionada
-- **Delete** — remove a categoria selecionada — se ainda contiver itens, será perguntado se deseja movê-los para o nó padrão ou excluí-los junto com a categoria
-- **Ctrl+Shift+Seta para cima / Ctrl+Shift+Seta para baixo** — reordena a categoria selecionada
-- **Enter ou Tab** — move o foco para a lista de itens daquela categoria
-- **Clique direito ou tecla Aplicativo/Menu** — menu de contexto: em um nó de categoria mostra opções de gerenciamento (Adicionar/Renomear/Excluir/Mover); no nó padrão mostra apenas Adicionar Categoria
+* Pressione **Control+=** para adicionar uma nova categoria
+* Pressione **F2** para renomear a categoria selecionada
+* Pressione **Delete** para remover a categoria selecionada — se ela ainda contiver itens, você será perguntado se deseja movê-los para o nó padrão ou excluí-los junto com a categoria
+* Pressione **Control+Shift+Cima** / **Control+Shift+Baixo** para reordenar a categoria selecionada
+* Pressione Enter, ou Tab, para mover o foco para a lista de itens daquela categoria
+* Clique com o botão direito, ou pressione a tecla Aplicativo/Menu, para um menu de contexto — seu conteúdo depende do que está selecionado: um nó de categoria mostra opções de gerenciamento de categoria (Adicionar/Renomear/Excluir/Mover), enquanto o nó padrão mostra apenas Add Category
 
-Com o foco na lista de itens (direita), clique direito ou pressione a tecla Aplicativo/Menu para o mesmo menu Ação usado em todo o complemento — separado do menu de contexto da árvore.
+Com o foco na lista de itens (lado direito), clique com o botão direito ou pressione a tecla Aplicativo/Menu para o mesmo menu Action usado em todo o complemento (View Info, Comments, Download, Add to..., etc.) — separado do menu de contexto de categoria da árvore.
 
-Recortar, Copiar e Colar na lista de itens sempre coloca os itens na categoria atualmente selecionada na árvore.
+Recortar, Copiar e Colar na lista de itens funcionam conforme descrito acima, e colar sempre coloca os itens na categoria atualmente selecionada na árvore.
 
-#### Aba Canais (Favoritos)
+#### Ordenação
 
-Esta aba oferece mais do que uma simples lista — ela também inclui:
+O botão **Sort... (Alt+O)** está disponível em qualquer aba com uma lista ordenável — incluindo Video, Watch List, e Search History. Ele abre uma caixa de diálogo com:
 
-- **Área de texto da descrição do canal** — mostra a biografia/informações sobre o canal
-- **Botão Abrir canal no navegador**
-- **Botões para navegar pelos conteúdos de Vídeos / Shorts / Ao Vivo** daquele canal diretamente
-- **Botão Descrever Avatar (Alt+D)** — envia o avatar do canal ao Be My Eyes para uma descrição ao vivo
+* **Sort by:** o campo pelo qual ordenar (Title, Channel, Duration, Upload Date, Date Added — os campos variam ligeiramente por aba)
+* **Ascending / Descending**
+* **Sort only the current category:** quando marcado, a ordenação reordena apenas os itens dentro da categoria atualmente selecionada na árvore, deixando todas as outras categorias intocadas. Desmarcado por padrão, o que significa que a ordenação se aplica a todas as categorias de uma vez.
+* **Apply permanently (saves to file):** quando marcado, a nova ordem é gravada no disco imediatamente. Quando desmarcado, a ordenação é temporária — ela muda o que você vê agora, mas volta ao normal na próxima vez que a lista for recarregada ou você buscar algo.
+* **Clear Sort:** descarta qualquer ordenação temporária e restaura a ordem salva no disco.
 
-#### Aba Playlists (Favoritos)
+#### Lista de vídeos
 
-- Pressione **Espaço, Enter ou Alt+V** — expande todos os vídeos da playlist
-- **Botão Abrir na Web (Alt+W)** — abre a playlist no navegador
-- **Botão Descrever Capa (Alt+D)** — envia a imagem de capa da playlist ao Be My Eyes para uma descrição ao vivo
-### s: Feed de Inscrições
+Nas abas de vídeo e lista de reprodução posterior, assim como em qualquer outra visualização que mostre uma lista de vídeos, você encontrará os botões **Action...** e **Copy...**. Esses são controles padrão em todas as visualizações de lista de vídeos, com o feed de inscrições adicionando uma opção extra de "Unsubscribe from this channel".
 
-Uma janela que exibe vídeos dos canais que você acompanha através do complemento. Isso é **independente** das inscrições da sua conta do YouTube — não é necessário fazer login.
+Pressione Enter em qualquer item para abrir o vídeo no seu navegador, ou pressione a barra de espaço para executar a Quick Action que você pode definir em [Configurações](#configurações).
 
-A visualização padrão possui 4 abas por tipo de conteúdo:
+##### Botão Action
 
-| Aba | Conteúdo |
-| ----- | --------- |
-| **Tudo** | Todos os tipos de conteúdo combinados |
-| **Vídeo** | Apenas vídeos normais |
-| **Shorts** | Apenas vídeos de formato curto (Shorts) |
-| **Ao Vivo** | Transmissões ao vivo e reprises de lives |
+Pressione Alt+A para abrir o menu Action, que inclui:
 
-Você também pode criar **categorias personalizadas** e configurar quais canais aparecem em cada uma delas.
+* View Video Info... (i)
+* View Comments / Replay... (c)
+* View Chapters/Timestamps... (t)
+* Get Thumbnail Description (Be My Eyes)... (g)
+* Download Video (d)
+* Download Audio (a)
+* Add to Favorite Videos (f)
+* Add to Favorite Channels (f)
+* Add to Watch List (w)
+* Open video in browser (b)
+* Open channel in browser (h)
+* Show channel videos (v)
+* Show channel shorts (s)
+* Show channel live (l)
+* Show channel playlist (l)
+* Show channel podcast (p)
 
-#### Atalhos no Feed de Inscrições
+##### Botão Copy
 
-- **Ctrl+1 a Ctrl+0** — pula para uma aba de categoria (até 10 abas)
-- **Ctrl+Seta para cima/Seta para baixo** — reordena as abas/categorias
-- **F2** — renomeia uma categoria (exceto as 4 abas padrão)
-- **Ctrl+= (Igual)** — adiciona uma nova categoria
-- **Ctrl+- (Ífen)** — remove uma categoria (exceto as 4 abas padrão)
-- **Delete ou Alt+S** — marca um vídeo como visto; ele será removido da lista
-- **Ctrl+Delete** — marca todos os vídeos da aba atual como vistos
+Pressione Alt+C para abrir o menu Copy, que inclui:
 
-#### Botões na janela do Feed de Inscrições
+* Copy Title (t)
+* Copy Video URL (u)
+* Copy Channel Name (c)
+* Copy Channel URL (h)
+* Copy Summary (s)
 
-- **Marcar como visto (Alt+S)** — marca o vídeo selecionado como visto
-- **Adicionar nova Inscrição a partir da URL da área de transferência (Alt+N)** — inscreve-se em um canal usando a URL que estiver na área de transferência
-- **Atualizar Feed (Alt+U)** — aciona manualmente uma atualização de todos os canais inscritos (o complemento também se atualiza automaticamente ao iniciar o NVDA)
-- **Mais... (Alt+M)** — opções adicionais:
-  - Marcar todos na aba atual como vistos (Ctrl+Delete)
-  - Mostrar todos os vídeos (incluindo vistos) — alterna entre apenas não vistos e todos os vídeos; a configuração é salva automaticamente
-  - Gerenciar inscrições...
-  - Adicionar Nova Categoria... (Ctrl+=)
-  - Renomear Categoria Atual... (F2)
-  - Remover Categoria Atual... (Ctrl+-)
-  - **Limpar Todos os Vídeos do Feed...** — remove todos os vídeos do banco de dados sem remover os canais inscritos; útil quando o banco de dados cresce muito e afeta o desempenho do NVDA
+### Feed de inscrições
 
----
+Uma janela exibindo vídeos dos canais que você segue dentro do complemento. Isso é independente das inscrições da sua conta do YouTube — nenhuma vinculação de conta ou dado pessoal é necessário.
 
-### m: Gerenciar Inscrições
+Diferente da janela de Favoritos, esta visualização usa abas padrão divididas por tipo de conteúdo:
 
-Uma janela que mostra todos os canais nos quais você está inscrito, com opções de gerenciamento para cada um:
+* **All:** Todos os tipos de conteúdo combinados
+* **Video:** Apenas vídeos normais
+* **Shorts:** Apenas vídeos curtos
+* **Live:** Transmissões ao vivo e repetições de transmissões ao vivo
 
-- **Filtrar por Categoria** — filtra a lista de canais por categoria (padrão: Tudo)
-- **Atribuir a Categorias** — escolhe em quais categorias o conteúdo deste canal deve aparecer
-- **Tipos de Conteúdo a Obter** — escolhe quais tipos de conteúdo atualizar para este canal (Vídeos, Shorts, Ao Vivo); útil para canais que publicam apenas certos tipos
-- **Visualizar Conteúdo... (Alt+C)** — navega pelo conteúdo do canal (o mesmo que o botão Ação)
-- **Adicionar novo canal de inscrição a partir da Área de Transferência... (Alt+N)** — inscreve-se em um novo canal usando a URL que estiver na área de transferência
-- **Cancelar Inscrição deste Canal (Alt+U)** — remove o canal das suas inscrições
-- **Salvar Alterações** — ⚠️ **Importante:** você deve pressionar este botão antes de fechar a janela, caso contrário, suas alterações não serão salvas
+Além dessas categorias padrão, você pode criar categorias personalizadas e configurar quais canais aparecem em cada uma.
 
----
+#### Comandos do feed de inscrições
 
-### u: Gerenciador de Perfis de Usuário
+* Pressione Control+1 a Control+0 para pular para uma aba de categoria (até 10 categorias)
+* Pressione Control+Cima/Baixo para reordenar categorias, assim como na janela de Favoritos
+* Pressione F2 para renomear uma categoria (exceto as 4 categorias padrão)
+* Pressione Control+= para adicionar uma nova categoria
+* Pressione Control+- para remover uma categoria (exceto as 4 categorias padrão)
+* Acesse os botões Action e Copy de cada vídeo, ou pressione Enter para abri-lo em um navegador
+* Pressione Delete ou Alt+S para marcar um vídeo como visto — ele será removido da lista
+* Pressione Control+Delete para marcar todos os vídeos da aba atual como vistos
 
-O complemento suporta múltiplos **Perfis de Usuário** na mesma máquina. Cada perfil mantém seus dados completamente separados (Favoritos, Inscrições, Lista de Assistir Mais Tarde).
+Botões adicionais nesta janela:
+
+* **Mark as seen (Alt+S)** — remove o vídeo da lista; a tecla Delete também funciona
+* **Add new Subscription from clipboard URL (Alt+N)** — inscreve-se em um canal usando a URL copiada na área de transferência
+* **Update Feed (Alt+U)** — dispara manualmente uma atualização para todos os canais inscritos; o complemento também se atualiza automaticamente ao iniciar o NVDA por padrão
+* **More... (Alt+M)** — abre um submenu com opções adicionais:
+    * Mark all in current tab as seen (Ctrl+Delete) (a)
+    * Show all videos (including seen) (v) — alterna entre mostrar apenas os não vistos e mostrar todos os vídeos; a configuração é salva automaticamente
+    * Manage subscriptions... (m)
+    * Add New Category... Ctrl+= (c)
+    * Rename Current Category... F2 (r)
+    * Remove Current Category... Ctrl+-
+    * Clear All Feed Videos... — remove todos os vídeos do banco de dados sem remover suas inscrições; útil se o banco de dados crescer muito e afetar o desempenho do NVDA
+
+### Gerenciar inscrições
+
+Esta janela mostra todos os canais aos quais você está inscrito. A primeira seção é a lista de canais, seguida de opções de gerenciamento para cada canal:
+
+* **Filter by Category** — filtra a lista de canais por categoria; o padrão é "All"
+* **Assign to Categories** — escolha em quais categorias o conteúdo deste canal deve aparecer
+* **Content Types to Fetch** — escolha quais tipos de conteúdo atualizar para este canal (Videos, Shorts, Live); útil para canais que publicam apenas determinados tipos
+* **View Content... (Alt+C)** — navegue pelo conteúdo do canal, igual ao botão Action
+* **Add new subscribe channel from Clipboard... (Alt+N)** — inscreva-se em um novo canal usando a URL na área de transferência
+* **Unsubscribe from this Channel (Alt+U)** — remove o canal das suas inscrições
+* **Save Changes** — **importante:** você precisa pressionar este botão antes de fechar a janela, ou suas alterações não serão salvas
+
+### Gerenciador de perfis de usuário
+
+Esta janela gerencia seus perfis de usuário. O complemento vem com um perfil "default". Você pode adicionar, excluir ou renomear perfis aqui. Para alternar entre perfis, vá ao painel de Configurações do complemento.
 
 Nesta janela:
 
-- **F2** — renomeia o perfil selecionado
-- **Delete** — exclui o perfil selecionado ⚠️ A exclusão é permanente; todos os dados daquele perfil serão perdidos
+* Pressione F2 para renomear o perfil selecionado
+* Pressione Delete para remover o perfil selecionado
 
-Para alternar de perfil, vá em [Configurações](#configurações) → Perfil Ativo e, em seguida, reinicie o NVDA.
+**Nota:** Excluir um perfil apaga permanentemente todos os dados associados a ele. Quaisquer vídeos, canais ou inscrições salvos naquele perfil serão perdidos.
 
----
+### l: (show comments)
 
-### Lista de Vídeos
+Existem três tipos de comentários em vídeos do YouTube:
 
-A lista de vídeos é a interface padrão usada em todo o complemento — nos resultados de pesquisa, Favoritos, Feed de Inscrições e na navegação de vídeos de canais.
+* **Comment** — comentários padrão de espectadores em vídeos comuns
+* **Live chat** — mensagens enviadas durante uma transmissão ao vivo
+* **Live chat replay** — o chat ao vivo gravado de um vídeo transmitido anteriormente, caso o dono do canal não o tenha removido
 
-- Pressione **Enter** para abrir o vídeo no navegador
-- Pressione **Espaço** para realizar a Ação Rápida (configurável nas Configurações)
+O YoutubePlus oferece acesso aos três tipos através deste comando.
 
-#### Botão Ação (Alt+A)
+#### Live chat of...
 
-Abre o menu de Ações para o vídeo selecionado:
+Para vídeos atualmente ao vivo, pressione L e o complemento abrirá uma nova janela exibindo as mensagens de chat recebidas. Somente as mensagens recebidas após você ativar o comando são exibidas — mensagens anteriores não são capturadas.
 
-| Item do menu | Atalho |
-| ----------- | --------- |
-| Ver Informações do Vídeo | i |
-| Ver Comentários / Reprise | c |
-| Ver Capítulos/Marcadores de Tempo | t |
-| Obter Descrição da Miniatura (Be My Eyes) | g |
-| Baixar Vídeo | d |
-| Baixar Áudio | a |
-| Baixar Legendas | b |
-| Adicionar aos Vídeos Favoritos | f |
-| Adicionar aos Canais Favoritos | f |
-| Adicionar à Lista de Assistir Mais Tarde | w |
-| Abrir vídeo no navegador | o |
-| Abrir canal no navegador | h |
-| Mostrar vídeos do canal | v |
-| Mostrar shorts do canal | s |
-| Mostrar lives do canal | l |
-| Mostrar playlists do canal | p |
-| Mostrar podcasts do canal | p |
+Você pode fechar esta janela e reabri-la mais tarde com o comando V na camada do YoutubePlus, desde que a transmissão ainda esteja ativa e o NVDA não tenha sido reiniciado.
 
-#### Botão Copiar (Alt+C)
+Use o comando R para alternar se o NVDA lê as novas mensagens em voz alta à medida que chegam. Isso funciona bem para transmissões com mensagens pouco frequentes. Para transmissões de alto volume, pode ser mais fácil desativar a leitura automática e rolar a janela manualmente.
 
-Abre o menu de Cópia:
+Pressione Shift+L para parar de monitorar o chat do vídeo atual.
 
-| Item do menu | Atalho |
-| ----------- | --------- |
-| Copiar Título | t |
-| Copiar URL do Vídeo | u |
-| Copiar Nome do Canal | c |
-| Copiar URL do Canal | h |
-| Copiar Resumo | s |
+Três configurações afetam diretamente este recurso:
 
----
+- **Automatically speak incoming live chat:** quando marcado, o NVDA lê as novas mensagens em voz alta imediatamente — a mesma função do comando R, mas salva como preferência padrão.
+- **Live chat refresh interval:** com que frequência (em segundos) o complemento verifica novas mensagens. O padrão é 5 segundos.
+- **Message history limit:** o número máximo de mensagens armazenadas na memória durante uma sessão. A janela de chat ao vivo mostra apenas as mensagens mais recentes até esse limite (padrão: 5.000). O complemento mantém todas as mensagens em segundo plano para exportação, até um máximo de 200.000, para evitar uso excessivo de memória.
+
+Quando uma transmissão termina — ou o complemento detecta que ela terminou — uma caixa de diálogo aparecerá automaticamente perguntando se você deseja exportar todas as mensagens coletadas. Pressione Sim para salvar o histórico do chat como um arquivo.
+
+#### Comments / Live chat replay
+
+Para vídeos enviados normalmente ou transmissões arquivadas, você pode acessar os comentários da mesma forma. Se tanto a repetição do chat ao vivo quanto os comentários padrão estiverem disponíveis, uma caixa de diálogo perguntará qual você deseja carregar.
+
+Não há limite para o número de comentários exibidos, embora o carregamento possa demorar em vídeos com muitos comentários.
+
+Os comentários são exibidos com os comentários fixados primeiro, seguidos de todos os outros na ordem de classificação configurada nas Configurações (mais recentes primeiro ou mais antigos primeiro).
+
+#### Seções da janela de comentários
+
+* **Campo de busca** — digite para filtrar comentários; os resultados são atualizados instantaneamente
+* **Caixa de combinação de filtro** — selecione uma opção de filtro (o complemento preenche o campo de busca automaticamente):
+    * No Filter — padrão; mostra todos os comentários
+    * Filter by Selected Author — mostra apenas comentários do autor selecionado
+    * Show Super Chats Only
+    * Show Super Stickers Only
+    * Show Super Thanks Only
+* **Lista de comentários** — mostra o nome do autor seguido de sua mensagem
+* **Área de texto somente leitura** — role pelo texto completo do comentário selecionado, útil quando um comentário é longo demais para ser exibido por completo na lista
+* **Botão Copy (Alt+C ou Ctrl+C)** — copia o comentário selecionado
+* **Botão Export (Alt+E)** — salva todos os comentários como um arquivo de texto na pasta definida nas Configurações
+* **Campo de valor total pago** — exibido apenas para repetições de chat ao vivo; mostra o total de doações dos espectadores durante a transmissão
 
 ## Configurações
 
-Acesse através de `NVDA → Preferências → Configurações...` e selecione a categoria **"YoutubePlus"**.
+Acesse as configurações em `NVDA -> Preferências -> Configurações...` e selecione a categoria **"YoutubePlus"**.
 
-| Configuração | Descrição |
-| --------- | ------------- |
-| **Perfil Ativo** | Seleciona o perfil ativo (requer a reinicialização do NVDA após a alteração) |
-| **Gerenciar Perfis** | Abre o Gerenciador de Perfis de Usuário |
-| **Ação Rápida (Barra de espaço)** | Define o que a tecla Espaço faz nas janelas de lista de vídeos; todas as opções do menu de Ação estão disponíveis |
-| **Modo de notificação** | Como o complemento sinaliza atividades em segundo plano: **Bip** (tons curtos), **Som** (arquivo de áudio), **Silencioso** (sem áudio, mensagens faladas ainda ocorrem) |
-| **Ordem de classificação padrão** | Ordem de exibição padrão: **Mais recentes primeiro** ou **Mais antigos primeiro** — aplica-se a comentários, chat e listas de vídeos de canais |
-| **Itens a obter** | Número de itens recuperados por tipo de conteúdo ao navegar em um canal ou atualizar o feed (padrão: 20, intervalo: 5–100) |
-| **Tipos de conteúdo padrão** | Tipos de conteúdo a obter para canais recém-inscritos: Vídeos, Shorts, Ao Vivo |
-| **Intervalo de atualização em segundo plano** | Com que frequência o complemento verifica automaticamente se há novos conteúdos nos canais inscritos (desativado, ou de 15 minutos a 24 horas) |
-| **Falar chat ao vivo recebido automaticamente** | Lê novas mensagens do chat ao vivo em voz alta à medida que chegam |
-| **Intervalo de atualização do chat ao vivo** | Com que frequência (em segundos) o complemento verifica se há novas mensagens (padrão: 5 segundos) |
-| **Limite do histórico de mensagens** | Número máximo de mensagens de chat armazenadas na memória durante uma sessão (padrão: 5.000) |
-| **Método de Cookies (Experimental)** | Selecione o navegador no qual você está logado no YouTube. O complemento extrairá os cookies desse navegador para autenticar as requisições, o que pode ajudar a resolver o erro "Faça login para confirmar que você não é um robô". Note que este recurso é experimental e os resultados variam dependendo do navegador e da configuração do sistema. |
-| **Formato de legenda padrão** | Formato de arquivo de legenda para downloads: SRT, VTT, TTML ou TXT (texto simples sem marcadores de tempo) |
-| **Caminho padrão da pasta de download e exportação** | Pasta de destino para vídeos baixados, áudios e arquivos exportados |
-| **Fazer backup dos dados agora** | Faz o backup imediato de todos os dados do perfil ativo (o complemento também realiza um backup automático diário) |
-| **Restaurar dados a partir do backup** | Mostra os backups disponíveis (até os últimos 5 dias) para escolher para a restauração |
+- **Active Profile:** Selecione o perfil a ser usado. É necessário reiniciar após trocar de perfil.
+- **Manage Profile button:** Abre a janela do Gerenciador de Perfis de Usuário.
+- **Quick Action (Space bar):** Escolha o que a tecla Espaço faz nas janelas de lista de vídeos. Todas as opções do menu Action estão disponíveis.
+- **Notification mode:** Escolha como o complemento sinaliza a atividade em segundo plano:
+  - *Beep:* Bipes curtos
+  - *Sound:* Efeito sonoro
+  - *Silent:* Sem notificação sonora (as respostas faladas continuam ocorrendo)
+- **Default sort order:** Escolha se as listas (comentários, vídeos do canal) são ordenadas por **Newest First** ou **Oldest First**.
+- **Items to fetch:** Quantos itens obter por tipo de conteúdo ao navegar por um canal, e para atualizações do feed de inscrições. Padrão: 20.
+- **Default content types:** Escolha quais tipos de conteúdo buscar para canais recém-inscritos: Videos, Shorts, e/ou Live.
+- **Background update interval:** Com que frequência o complemento verifica novo conteúdo dos canais inscritos. Pode ser desativado ou definido de 15 minutos a 24 horas. O complemento também se atualiza automaticamente a cada inicialização do NVDA por padrão.
+- **Automatically speak incoming live chat:** quando marcado, o NVDA lê novas mensagens de chat em voz alta à medida que chegam.
+- **Live chat refresh interval:** Com que frequência (em segundos) o complemento verifica novas mensagens. Padrão: 5 segundos.
+- **Message history limit:** Número máximo de mensagens de chat armazenadas na memória durante uma sessão.
+- **Default subtitle format:** Formato do arquivo de legenda para downloads: SRT, VTT, TTML, ou TXT (texto simples sem marcações de tempo)
+- **Download Quality and Format Options (Alt+D):** Uma seção recolhível (recolhida por padrão — pressione Alt+D em qualquer lugar da página de Configurações, ou ative-a diretamente, para expandir/recolher) contendo:
+  - *Preferred video quality:* A melhor disponível, ou um limite de resolução de 2160p até 360p.
+  - *Preferred video container:* MP4, MKV ou WebM.
+  - *Preferred audio quality (when converting):* A melhor disponível, ou uma taxa de bits de 320 até 96 kbps. Só se aplica quando o formato de áudio abaixo não é "Best available."
+  - *Preferred audio format:* Best available (sem conversão, o padrão — baixa o formato que o YouTube já fornece, sem precisar do FFmpeg), ou converte para MP3, WAV, M4A/AAC, FLAC, Opus ou Vorbis (OGG) — qualquer uma dessas conversões exige o FFmpeg, assim como os downloads de vídeo.
+- **Cookie method (Experimental):** Selecione o navegador em que você está conectado ao YouTube. O complemento extrairá os cookies desse navegador para autenticar as solicitações, o que pode ajudar a resolver o erro "Sign in to confirm you're not a bot". Note que este recurso é experimental e os resultados variam conforme o navegador e a configuração do sistema.
+- **Default download and export folder path:** A pasta de destino para vídeos/áudio baixados e chat exportado.
+- **Backup data now:** Faz backup manual de todos os dados do perfil ativo. O complemento também realiza um backup diário automático em segundo plano.
+- **Restore data from backup:** Mostra uma lista de backups disponíveis (até os últimos 5 dias) para você escolher de qual data restaurar.
 
----
+## Informações adicionais
 
-## Informações Adicionais
-
-Este complemento conta com duas bibliotecas principais: [pytchat](https://pypi.org/project/pytchat/) para o monitoramento do chat ao vivo, e [yt-dlp](https://pypi.org/project/yt-dlp/) para todos os outros acessos a dados do YouTube. Expressamos nossos sinceros agradecimentos aos desenvolvedores de ambas as bibliotecas.
+Este complemento depende de duas bibliotecas principais: [pytchat](https://pypi.org/project/pytchat/) para monitoramento de chat ao vivo, e [yt-dlp](https://pypi.org/project/yt-dlp/) para todo o restante do acesso a dados do YouTube. Estendemos nossos sinceros agradecimentos aos desenvolvedores de ambas as bibliotecas.
 
 ### Sobre o yt-dlp
 
-O [yt-dlp](https://github.com/yt-dlp/yt-dlp) é uma das ferramentas de código aberto mais poderosas para baixar vídeos e áudios de sites em todo o mundo — suportando mais de 1.000 sites, não apenas o YouTube. Ele é gratuito, de código aberto, mantido ativamente por uma comunidade global e não contém anúncios ou malwares, ao contrário de muitas ferramentas de download baseadas no navegador.
+O [yt-dlp](https://github.com/yt-dlp/yt-dlp) é uma das ferramentas de código aberto mais poderosas para baixar vídeo e áudio de sites ao redor do mundo — com suporte a mais de 1.000 sites, não apenas o YouTube. É gratuito, de código aberto, e mantido ativamente por uma comunidade global, sem anúncios ou malware, ao contrário de muitas ferramentas de download baseadas em navegador.
 
-**Diretrizes de uso para ter em mente:**
+Dito isso, tenha em mente as seguintes diretrizes de uso:
 
-1. **Uso Justo:** Evite obter grandes quantidades de dados ou enviar requisições repetidas em um curto espaço de tempo. O YouTube pode detectar atividade incomum e restringir temporariamente o acesso do seu endereço IP.
-2. **Direitos Autorais e Privacidade:** Quaisquer dados ou conteúdos recuperados devem ser apenas para visualização ou análise pessoal. Por favor, respeite os Termos de Serviço de cada plataforma e não utilize os dados de maneiras que infrinjam os direitos autorais.
-3. **Responsabilidade:** Você é responsável por como utiliza este software. O desenvolvedor do complemento fornece apenas a interface para acessar os dados do YouTube através da biblioteca yt-dlp.
+1. **Fair Use:** Evite buscar grandes quantidades de dados ou enviar solicitações repetidas em pouco tempo. O YouTube pode detectar atividade incomum e restringir temporariamente o acesso a partir do seu endereço IP.
+2. **Copyright and Privacy:** Qualquer dado ou conteúdo obtido deve ser apenas para visualização ou análise pessoal. Por favor, respeite os Termos de Serviço de cada plataforma e não use os dados de forma que infrinja direitos autorais.
+3. **Responsibility:** Você é responsável por como usa este software. O desenvolvedor do complemento fornece apenas a interface para acessar dados do YouTube através da biblioteca yt-dlp.
 
-> **Dica:** Se você precisar processar grandes quantidades de dados, espaçe suas requisições para manter a estabilidade da conexão e evitar restrições de acesso.
+**Dica:** Se você precisar processar grandes quantidades de dados, espace suas solicitações para manter a estabilidade da conexão e evitar restrições de acesso.

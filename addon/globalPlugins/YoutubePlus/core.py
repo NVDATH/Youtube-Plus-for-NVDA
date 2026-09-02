@@ -29,12 +29,15 @@ import nvwave
 import gui
 import wx
 import concurrent.futures
+import subprocess
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote
 from collections import OrderedDict
 from logHandler import log
 import unicodedata
 import sys
+import shutil
+import winreg
 import virtualBuffers
 import extensionPoints
 from comtypes import COMError
@@ -214,6 +217,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self._pause_indicator_event = threading.Event()
         self.choice_made_event = threading.Event()
         self.user_choice = None
+        self._ffmpeg_choice_event = threading.Event()
+        self._ffmpeg_user_choice = None
 
         self.update_timer = wx.Timer(gui.mainFrame)
         gui.mainFrame.Bind(wx.EVT_TIMER, self.on_auto_update_tick, self.update_timer)
@@ -2114,22 +2119,175 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             f.write('\n'.join(lines_out))
         return txt_path
 
+    def _refresh_path_env_from_registry(self):
+        """
+        Re-reads PATH from both HKCU and HKLM Environment registry keys and
+        merges it into this process's os.environ['PATH']. Needed because
+        installers like winget update the persistent (registry) PATH, but a
+        long-running process like NVDA doesn't pick that up automatically --
+        without this, a freshly-installed ffmpeg would stay invisible to
+        shutil.which() until NVDA is restarted.
+        """
+        try:
+            paths = [os.environ.get('PATH', '')]
+            for hive, subkey in [
+                (winreg.HKEY_CURRENT_USER, r'Environment'),
+                (winreg.HKEY_LOCAL_MACHINE, r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'),
+            ]:
+                try:
+                    with winreg.OpenKey(hive, subkey) as key:
+                        value, _reg_type = winreg.QueryValueEx(key, 'Path')
+                        paths.append(value)
+                except OSError:
+                    pass
+            os.environ['PATH'] = os.pathsep.join(p for p in paths if p)
+        except Exception:
+            log.exception("YoutubePlus: failed to refresh PATH from registry after FFmpeg install.")
+
+    def _find_ffmpeg_path(self):
+        """
+        Locates ffmpeg.exe. Prefers the normal PATH lookup, but falls back to
+        WinGet's per-user Links folder -- winget updates the registry PATH on
+        install, but a long-running process like NVDA won't see that until
+        restarted, so this fallback lets a freshly-installed FFmpeg be used
+        immediately by yt-dlp (via ffmpeg_location) without an NVDA restart.
+        """
+        ffmpeg_path = shutil.which("ffmpeg")
+        if ffmpeg_path:
+            return ffmpeg_path
+        local_appdata = os.environ.get("LOCALAPPDATA", "")
+        if local_appdata:
+            winget_link = os.path.join(local_appdata, "Microsoft", "WinGet", "Links", "ffmpeg.exe")
+            if os.path.exists(winget_link):
+                os.environ["PATH"] = os.path.dirname(winget_link) + os.pathsep + os.environ.get("PATH", "")
+                return winget_link
+        return None
+
+    def _ask_install_ffmpeg(self):
+        """Runs on the main thread. Asks the user whether to auto-install FFmpeg via winget."""
+        result = wx.MessageBox(
+            # Translators: Prompt asking whether to automatically install FFmpeg via winget, needed for video downloads.
+            _("FFmpeg was not found on this system, which is required to download videos. Would you like YoutubePlus to install it automatically via winget?"),
+            # Translators: Title of the FFmpeg installation prompt dialog.
+            _("FFmpeg Required"),
+            wx.YES_NO | wx.ICON_QUESTION
+        )
+        self._ffmpeg_user_choice = (result == wx.YES)
+        self._ffmpeg_choice_event.set()
+
+    def _ensure_ffmpeg_available(self):
+        """
+        Returns a path to ffmpeg.exe (installing it via winget first if
+        necessary) so the caller can pass it straight into yt-dlp's
+        ffmpeg_location option -- returns None if the download should be
+        aborted. Used both for video downloads (always, since merging is
+        mandatory) and for audio downloads when the user has selected a
+        format that requires conversion. Pauses the progress indicator while waiting on the user's
+        yes/no answer so it doesn't keep beeping through a decision point;
+        resumes it right after (which also means it keeps beeping throughout
+        the winget install itself, since that runs in this same thread).
+        """
+        ffmpeg_path = self._find_ffmpeg_path()
+        if ffmpeg_path:
+            return ffmpeg_path
+        if not shutil.which("winget"):
+            # Translators: Error shown when neither FFmpeg nor winget can be found, so a video download cannot proceed.
+            wx.CallAfter(ui.message, _("Could not find FFmpeg or winget on this system. Video downloads require FFmpeg. Please install FFmpeg manually or update the Windows App Installer."))
+            return None
+        self._pause_indicator()
+        self._ffmpeg_choice_event.clear()
+        self._ffmpeg_user_choice = None
+        wx.CallAfter(self._ask_install_ffmpeg)
+        self._ffmpeg_choice_event.wait()
+        self._resume_indicator()
+        if not self._ffmpeg_user_choice:
+            wx.CallAfter(ui.message, _("Download cancelled."))
+            return None
+        # Translators: Status message shown while FFmpeg is being installed automatically via winget.
+        wx.CallAfter(ui.message, _("Installing FFmpeg via winget..."))
+        # Translators: Shown in the download progress window's title/filename fields while FFmpeg
+        # is installing, so it's clear this isn't the video's own filename.
+        wx.CallAfter(self._notify_callbacks, "download_started", {'title': _("FFmpeg (via winget)")})
+        # Kick the progress dialog into a dedicated "installing" pulse mode, since
+        # winget's own install progress isn't parsed here (unlike yt-dlp's
+        # progress_hooks, subprocess.run() gives us no data until it exits) --
+        # without this the dialog just sits at "Preparing..." with no activity.
+        wx.CallAfter(self._notify_callbacks, "download_progress", {'status': 'installing'})
+        try:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            result = subprocess.run(
+                ["winget", "install", "--id", "Gyan.FFmpeg", "-e",
+                 "--silent", "--accept-package-agreements", "--accept-source-agreements"],
+                startupinfo=startupinfo,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+            log.debug(f"YoutubePlus: winget install exit code {result.returncode}. stdout: {result.stdout} stderr: {result.stderr}")
+        except Exception as e:
+            log.error(f"YoutubePlus: winget install failed to run: {e}")
+            # Translators: Error shown when running winget to install FFmpeg fails outright.
+            wx.CallAfter(ui.message, _("Failed to install FFmpeg."))
+            return None
+        self._refresh_path_env_from_registry()
+        ffmpeg_path = self._find_ffmpeg_path()
+        if ffmpeg_path:
+            # Translators: Success message shown once FFmpeg has been installed automatically.
+            wx.CallAfter(ui.message, _("FFmpeg installed successfully."))
+            return ffmpeg_path
+        else:
+            log.error("YoutubePlus: winget install finished but ffmpeg still not found.")
+            # Translators: Error shown when the FFmpeg installation via winget did not result in a usable ffmpeg.
+            wx.CallAfter(ui.message, _("FFmpeg installation did not complete successfully."))
+            return None
+
     def _perform_download_worker(self, url, choice, title):
-        # Translators: Status message shown when a download process begins. {title} is the video title.
-        wx.CallAfter(ui.message, _("Starting download of {title}...").format(title=title))
         self._download_cancelled = False
+        resolved_ffmpeg_path = None
         try:
             self.is_long_task_running = True
+            audio_format = config.conf["YoutubePlus"].get("audioFormat", "source")
+            needs_ffmpeg = (choice == 'video') or (choice == 'audio' and audio_format != 'source')
+            if needs_ffmpeg:
+                resolved_ffmpeg_path = self._ensure_ffmpeg_available()
+                if not resolved_ffmpeg_path:
+                    wx.CallAfter(self._notify_callbacks, "download_progress", {'status': 'error'})
+                    return
+            # Translators: Status message shown when a download process begins. {title} is the video title.
+            wx.CallAfter(ui.message, _("Starting download of {title}...").format(title=title))
             save_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
             output_template = os.path.join(save_path, '%(title)s.%(ext)s')
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
             opts = {'progress_hooks': [self._download_progress_hook]}
+            if needs_ffmpeg:
+                opts['ffmpeg_location'] = resolved_ffmpeg_path
             if choice == 'video':
-                opts['format'] = 'best[ext=mp4]/best[ext=webm]/best'
+                # YouTube no longer serves progressive (muxed) streams for most
+                # videos, so merging separate video+audio via FFmpeg is required.
+                video_quality = config.conf["YoutubePlus"].get("videoQuality", "best")
+                video_container = config.conf["YoutubePlus"].get("videoContainer", "mp4")
+                height_filter = f"[height<={video_quality}]" if video_quality != "best" else ""
+                opts['format'] = (
+                    f'bv*{height_filter}[ext={video_container}]+ba[ext=m4a]/'
+                    f'b{height_filter}[ext={video_container}]/'
+                    f'bv*{height_filter}+ba/b{height_filter}/best'
+                )
+                opts['merge_output_format'] = video_container
                 opts['outtmpl'] = output_template
             elif choice == 'audio':
-                opts['format'] = 'bestaudio[acodec=aac]/140/bestaudio[ext=m4a]/bestaudio'
+                if audio_format == 'source':
+                    opts['format'] = 'bestaudio[acodec=aac]/140/bestaudio[ext=m4a]/bestaudio'
+                else:
+                    opts['format'] = 'bestaudio/best'
+                    audio_quality = config.conf["YoutubePlus"].get("audioQuality", "best")
+                    postprocessor = {'key': 'FFmpegExtractAudio', 'preferredcodec': audio_format}
+                    if audio_quality != 'best':
+                        postprocessor['preferredquality'] = audio_quality
+                    opts['postprocessors'] = [postprocessor]
                 opts['outtmpl'] = output_template
             wx.CallAfter(self._notify_callbacks, "download_started", {'title': title})
             try:

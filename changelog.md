@@ -1,3 +1,22 @@
+## 2026.9.3
+
+### New Features
+
+* Video downloads now merge separate video and audio streams via FFmpeg, since YouTube has dropped combined progressive streams for most videos. If FFmpeg isn't found on your system, YoutubePlus offers to install it automatically via winget with a single Yes/No prompt.
+* Added a new "Download Quality and Format Options" section (Alt+D) in Settings, letting you set a preferred video quality (Best down to 360p), video container (MP4/MKV/WebM), audio quality when converting (Best down to 96 kbps), and audio format (keep the original, or convert to MP3, WAV, M4A/AAC, FLAC, Opus, or Vorbis).
+
+### Improvements
+
+* Fixed: after a background subscription feed update, the video list now reliably keeps (or regains) keyboard focus, instead of sometimes reloading correctly but leaving the list unresponsive to the keyboard until manually re-focused.
+
+### Bug Fixes
+
+* Fixed video downloads failing with a "Requested format is not available" error on most videos, caused by YouTube's removal of the combined video+audio formats this feature previously relied on.
+
+### Translations
+
+* Corrected and completed translations for Thai, Ukrainian, Russian, Spanish, and Brazilian Portuguese — including a number of pre-existing incorrect or missing translations found during this update, in addition to strings for the new features above.
+
 ## 2026.8.21
 
 ### Improvements

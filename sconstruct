@@ -141,9 +141,10 @@ if os.path.exists(extractor_dir):
                 os.remove(item_path)
 
 # Fix security warnings in bunnycdn.py (Line 32 and 44)
-# TEMPORARILY DISABLED for testing whether the NVDA add-on store / GitHub
-# CodeQL scan has fixed the false-positive that made this patch necessary.
-# Re-enable by uncommenting this block before shipping a real release.
+# DISABLED PERMANENTLY: confirmed clean through the 2026.8.21 release --
+# the NVDA add-on store / GitHub CodeQL false-positive that made this
+# patch necessary has been resolved upstream. Left commented out below
+# for reference only.
 # bunny_file = os.path.join("addon", "globalPlugins", "YoutubePlus", "lib", "yt_dlp", "downloader", "bunnycdn.py")
 # if os.path.exists(bunny_file):
 #     print(f"Applying security patch to {bunny_file}...")

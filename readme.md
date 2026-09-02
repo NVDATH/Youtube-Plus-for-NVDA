@@ -61,7 +61,11 @@ The only exception is playlists — you must have a YouTube playlist page open, 
 
 ### d: (download video/audio)
 
-This command opens a small dialog asking whether you want to download the video as an MP4 file or audio only as M4A. You can set the download destination in the [Settings](#settings) section.
+This command opens a small dialog asking whether you want to download the video or audio only. You can set the download destination, and fine-tune quality/format, in the [Settings](#settings) section.
+
+**Video downloads require FFmpeg.** YouTube no longer serves most videos as a single combined video+audio file, so merging the separate streams needs FFmpeg. YoutubePlus does not bundle FFmpeg itself (to avoid bloating every user's NVDA config with a copy of it) — if FFmpeg isn't found on your system when you download a video, and Windows' `winget` tool is available, YoutubePlus will offer to install it automatically for you with a single Yes/No prompt; once installed, your download continues automatically with no NVDA restart needed. If neither FFmpeg nor `winget` is available, you'll be told so and the download is cancelled cleanly.
+
+Audio-only downloads don't need FFmpeg by default. It's only required if you've chosen an audio format other than "Best available (no conversion)" in the advanced format settings below, since converting to a different audio format also goes through FFmpeg.
 
 Note that the download feature is provided for convenience and may have limitations if used heavily. If you need to download large amounts of YouTube content, other dedicated tools are recommended.
 
@@ -339,6 +343,11 @@ Access settings via `NVDA -> Preferences -> Settings...` and select the **"Youtu
 - **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default: 5 seconds.
 - **Message history limit:** Maximum number of chat messages stored in memory during a session.
 - **Default subtitle format:** Subtitle file format for downloads: SRT, VTT, TTML, or TXT (plain text without timecodes)
+- **Download Quality and Format Options (Alt+D):** A collapsible section (collapsed by default — press Alt+D anywhere in the Settings page, or activate it directly, to expand/collapse it) containing:
+  - *Preferred video quality:* Best available, or a resolution cap from 2160p down to 360p.
+  - *Preferred video container:* MP4, MKV, or WebM.
+  - *Preferred audio quality (when converting):* Best available, or a bitrate from 320 down to 96 kbps. Only applies when the audio format below isn't "Best available."
+  - *Preferred audio format:* Best available (no conversion, the default — downloads whatever format YouTube already serves, no FFmpeg needed), or convert to MP3, WAV, M4A/AAC, FLAC, Opus, or Vorbis (OGG) — any of these conversions requires FFmpeg, same as video downloads.
 - **Cookie method (Experimental):** Select the browser you are logged into on YouTube. The add-on will extract cookies from that browser to authenticate requests, which may help resolve the "Sign in to confirm you're not a bot" error. Note that this feature is experimental and results vary depending on the browser and system configuration.
 - **Default download and export folder path:** The destination folder for downloaded videos/audio and exported chat.
 - **Backup data now:** Manually backs up all data for the active profile. The add-on also performs an automatic daily backup in the background.

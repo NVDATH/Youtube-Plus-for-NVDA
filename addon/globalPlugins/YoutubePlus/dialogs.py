@@ -19,8 +19,8 @@ import addonHandler
 import api
 from functools import wraps
 import json
-import threading 
-import controlTypes 
+import threading
+import controlTypes
 import sqlite3
 from logHandler import log
 import shutil
@@ -35,7 +35,7 @@ def copy_to_clipboard(text):
 
 confspec = {
     "activeProfile": "string(default='default')",
-    "quickAction": "string(default='open_video')", 
+    "quickAction": "string(default='open_video')",
     "progressIndicatorMode": "string(default='beep')",
     "sortOrder": "string(default='newest')",
     "playlist_fetch_count": "integer(default=20, min=5, max=100)",
@@ -49,6 +49,10 @@ confspec = {
     "exportPath": "string()",
     "subDialogViewMode": "string(default='unseen')",
     "searchResultCount": "integer(default=20, min=5, max=100)",
+    "videoQuality": "string(default='best')",
+    "videoContainer": "string(default='mp4')",
+    "audioQuality": "string(default='best')",
+    "audioFormat": "string(default='source')",
     "favVideoLastCatId": "string(default='__default__')",
     "watchListLastCatId": "string(default='__default__')",
 }
@@ -85,11 +89,11 @@ class BaseDialogMixin:
             return
         self._escape_pending = False
         event.Skip()
-        
-    
+
+
 class BaseInfoDialog(BaseDialogMixin, wx.Dialog):
     """A base dialog for showing read-only text content."""
-    
+
     def __init__(self, parent, title, text_content):
         super().__init__(parent, title=title)
         panel = wx.Panel(self)
@@ -109,12 +113,12 @@ class BaseInfoDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook) # Bind to the mixin's method
 
     def onClose(self, event):
-        gui.mainFrame.postPopup() 
+        gui.mainFrame.postPopup()
         self.Destroy()
-        
+
 class HelpDialog(BaseInfoDialog):
     """Dialog to show help text, inherits from BaseInfoDialog."""
-    
+
     def __init__(self, parent):
         # Translators: Title of the YoutubePlus help dialog.
         title = _("YouTubePlus Help & Shortcuts")
@@ -185,8 +189,8 @@ class HelpDialog(BaseInfoDialog):
 
 class InfoDialog(BaseInfoDialog):
     """Dialog to show video info, inherits from BaseInfoDialog."""
-    _escape_protection = True   
-    
+    _escape_protection = True
+
     def __init__(self, parent, title, info_text):
         super(InfoDialog, self).__init__(parent, title, info_text)
 
@@ -213,7 +217,7 @@ class CommentsListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.InsertColumn(2, _("Time"), width=150)
 
 class TimestampDialog(BaseDialogMixin, wx.Dialog):
-    _escape_protection = True   
+    _escape_protection = True
 
     def __init__(self, parent, title, chapters_data, video_url):
         super().__init__(parent, title=title)
@@ -238,7 +242,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
         # Translators: Column header for chapter start times.
         self.listCtrl.InsertColumn(1, _("Time"), width=100)
         mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, 10)
-        
+
         self.currentTextElement = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
         mainSizer.Add(self.currentTextElement, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
@@ -253,7 +257,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
         self.exportBtn = wx.Button(panel, label=_("&Export"))
         # Translators: Button to close the dialog.
         self.closeBtn = wx.Button(panel, label=_("C&lose"))
-        
+
         btnSizer.Add(self.openBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.copyTitleBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.copyUrlBtn, 0, wx.RIGHT, 5)
@@ -264,7 +268,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
         panel.SetSizer(mainSizer)
         self.SetSize((700, 500))
         self.CentreOnScreen()
-        
+
         self.populate_list()
         self.searchTextCtrl.Bind(wx.EVT_TEXT, self.on_search)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
@@ -278,9 +282,9 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
         self.closeBtn.Bind(wx.EVT_BUTTON, lambda e: self.Close())
         self.Bind(wx.EVT_CLOSE, lambda e: self.Destroy())
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
-        
-        wx.CallAfter(self.listCtrl.SetFocus)     
-   
+
+        wx.CallAfter(self.listCtrl.SetFocus)
+
     def on_list_item_selected(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index != -1:
@@ -324,7 +328,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
                 self.on_open(event)
                 return
             event.Skip()
-            
+
     def on_open(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index != -1:
@@ -358,7 +362,7 @@ class TimestampDialog(BaseDialogMixin, wx.Dialog):
             copy_to_clipboard(timestamp_url)
             # Translators: Message confirming that the URL has been copied.
             ui.message(_("Copied URL: {url}").format(url=timestamp_url))
-    
+
     def on_export(self, event):
         default_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.expanduser("~/Desktop")
         safeTitle = sanitize_filename(f"{self.GetTitle()}")
@@ -409,7 +413,7 @@ class MessagesDialog(wx.Dialog):
         self.messages = self.messages[-message_limit:]
         self.filteredMessages = self.messages[:]
         self.last_selected_obj = None
-        
+
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -442,7 +446,7 @@ class MessagesDialog(wx.Dialog):
         mainSizer.Fit(self)
         self.SetMinSize((700, 500))
         self.CentreOnScreen()
-        
+
         self.searchTextCtrl.Bind(wx.EVT_TEXT, self.onSearch)
         self.copyBtn.Bind(wx.EVT_BUTTON, self.onCopy)
         self.exportBtn.Bind(wx.EVT_BUTTON, self.onExport)
@@ -452,7 +456,7 @@ class MessagesDialog(wx.Dialog):
         self.messagesListBox.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onMessageSelected)
         self.messagesListBox.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.onMessageSelected)
         self.Bind(wx.EVT_CLOSE, self.onClose)
-        
+
         self.updateList()
 
         last_index = self.core_instance.last_message_index
@@ -546,7 +550,7 @@ class MessagesDialog(wx.Dialog):
                     wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
                     wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self.messagesListBox.EnsureVisible(new_index)
-                
+
     def onCopy(self, event):
         selected = self.messagesListBox.GetFirstSelected()
         if selected != -1:
@@ -604,7 +608,7 @@ class MessagesDialog(wx.Dialog):
             return
             if event.ControlDown() and event.GetKeyCode() == ord('W'):
                 self.Close()
-                return          
+                return
         if event.GetKeyCode() == wx.WXK_ESCAPE: self.Close()
         else: event.Skip()
 
@@ -627,7 +631,7 @@ class MessagesDialog(wx.Dialog):
                 self.core_instance.last_message_index = -1
         else:
             self.core_instance.last_message_index = selected_index
-            
+
         MessagesDialog._instance = None
         self.Destroy()
 
@@ -663,7 +667,7 @@ class CommentsDialog(wx.Dialog):
 
         self.commentsListBox = CommentsListCtrl(self.panel)
         mainSizer.Add(self.commentsListBox, 1, wx.EXPAND | wx.ALL, 10)
-        
+
         self.currentTextElement = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY)
         mainSizer.Add(self.currentTextElement, 0, wx.EXPAND | wx.ALL, 5)
 
@@ -672,8 +676,8 @@ class CommentsDialog(wx.Dialog):
         self.copyBtn = wx.Button(self.panel, label=_("&Copy"))
         # Translators: Button to export comments to a text file.
         self.exportBtn = wx.Button(self.panel, label=_("&Export"))
-        self.totalAmountTextCtrl = wx.TextCtrl(self.panel, style=wx.TE_READONLY | wx.TE_MULTILINE | wx.TE_LEFT) 
-        self.totalAmountTextCtrl.SetMinSize((150, -1)) 
+        self.totalAmountTextCtrl = wx.TextCtrl(self.panel, style=wx.TE_READONLY | wx.TE_MULTILINE | wx.TE_LEFT)
+        self.totalAmountTextCtrl.SetMinSize((150, -1))
         bottomBtnSizer.Add(self.totalAmountTextCtrl, 1, wx.EXPAND | wx.RIGHT, 5)
 
         bottomBtnSizer.Add(self.copyBtn, 0, wx.RIGHT, 5)
@@ -681,13 +685,13 @@ class CommentsDialog(wx.Dialog):
         # Translators: Button to close the dialog.
         self.closeBtn = wx.Button(self.panel, label=_("C&lose"))
         bottomBtnSizer.Add(self.closeBtn, 0)
-        
+
         mainSizer.Add(bottomBtnSizer, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
         self.panel.SetSizer(mainSizer) # << CHANGE: อ้างอิง self.panel
         mainSizer.Fit(self)
         self.SetMinSize((700, 500))
         self.CentreOnScreen()
-        
+
         self.filterComboBox.Bind(wx.EVT_COMBOBOX, self.on_filter_select)
         self.copyBtn.Bind(wx.EVT_BUTTON, self.onCopy)
         self.exportBtn.Bind(wx.EVT_BUTTON, self.onExport)
@@ -698,13 +702,13 @@ class CommentsDialog(wx.Dialog):
         self.searchTextCtrl.Bind(wx.EVT_TEXT, self.onSearch)
         self.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
         self.Bind(wx.EVT_CLOSE, self.onClose)
-        
+
         self.totalAmountTextCtrl.Hide()
         self.populateList()
         if self.is_replay_data:
             self.update_total_amount_display()
         wx.CallAfter(self.commentsListBox.SetFocus)
-        
+
     def update_total_amount_display(self):
         from .core import GlobalPlugin
         if not self.is_replay_data:
@@ -721,7 +725,7 @@ class CommentsDialog(wx.Dialog):
         else:
             self.totalAmountTextCtrl.Show(False)
         self.panel.Layout()
-        
+
     def on_filter_select(self, event):
         selection = self.filterComboBox.GetStringSelection()
         keyword = ""
@@ -744,7 +748,7 @@ class CommentsDialog(wx.Dialog):
             self.searchTextCtrl.SetValue(keyword)
         else:
             self.refreshComments()
-            
+
     def refreshComments(self):
         searchText = self.searchTextCtrl.GetValue().lower()
         log.debug("Filtering comments with text: %s", searchText)
@@ -875,7 +879,7 @@ class CommentsDialog(wx.Dialog):
 
 class VideoActionMixin:
     """A mixin to provide a standardized 'Action' menu for any video list dialog."""
-    
+
     def on_open_video(self, event):
         """Handles opening the selected video in a web browser."""
         video = self.get_selected_video_info()
@@ -899,7 +903,7 @@ class VideoActionMixin:
         menu = wx.Menu()
         ID_VIEW_INFO = wx.NewIdRef()
         ID_VIEW_COMMENTS = wx.NewIdRef()
-        ID_SHOW_CHAPTERS = wx.NewIdRef() 
+        ID_SHOW_CHAPTERS = wx.NewIdRef()
         ID_DESCRIBE_THUMB = wx.NewIdRef()
         ID_DOWNLOAD_VID = wx.NewIdRef()
         ID_DOWNLOAD_AUD = wx.NewIdRef()
@@ -917,7 +921,7 @@ class VideoActionMixin:
         # Translators: Menu items for video actions.
         menu.Append(ID_VIEW_INFO, _("View Video &Info..."))
         menu.Append(ID_VIEW_COMMENTS, _("View &Comments / Replay..."))
-        menu.Append(ID_SHOW_CHAPTERS, _("View Chap&ters/Timestamps...")) 
+        menu.Append(ID_SHOW_CHAPTERS, _("View Chap&ters/Timestamps..."))
         menu.Append(ID_DESCRIBE_THUMB, _("&Get Thumbnail Description (Be My Eyes)..."))
         menu.AppendSeparator()
         menu.Append(ID_DOWNLOAD_VID, _("&Download Video"))
@@ -1033,12 +1037,12 @@ class VideoActionMixin:
         if not video_id: return
         url = f"https://www.youtube.com/watch?v={video_id}"
         threading.Thread(
-            target=self.core.add_to_watchlist_worker, 
-            args=(url,), 
-            kwargs={'mark_seen': is_actually_sub_dialog}, 
+            target=self.core.add_to_watchlist_worker,
+            args=(url,),
+            kwargs={'mark_seen': is_actually_sub_dialog},
             daemon=True
         ).start()
-        
+
     def on_view_info(self, event):
         video = self.get_selected_video_info()
         if not video: return
@@ -1077,7 +1081,7 @@ class VideoActionMixin:
         video = self.get_selected_video_info()
         if not video: return
         video_id = video.get('id') or video.get('video_id')
-        if not video_id: 
+        if not video_id:
             # Translators: Error message.
             return ui.message(_("Video ID not found."))
         url = f"https://youtube.com/watch?v={video_id}"
@@ -1128,7 +1132,7 @@ class VideoActionMixin:
             api.copyToClip(text_to_copy)
             # Translators: Confirmation message when something is copied.
             ui.message(_("Copied"))
-            
+
     def _view_channel_content(self, content_type):
         video = self.get_selected_video_info()
         if not video: return
@@ -1168,7 +1172,7 @@ class VideoActionMixin:
             'is_collection': is_collection,
         }
         threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
-        
+
     def handle_video_list_keys(self, event):
         """
         Universal handler for Enter and Space keys.
@@ -1197,7 +1201,7 @@ class VideoActionMixin:
         elif action == "download_audio":
             self.on_download_audio(None)
         elif action == "download_subtitles":
-            self.on_download_subtitles(None)        
+            self.on_download_subtitles(None)
         elif action == "add_to_fav_video":
             self.on_add_to_fav_video(None)
         elif action == "add_to_fav_channel":
@@ -2281,7 +2285,7 @@ class FavChannelPanel(wx.Panel):
         self._current_sort = None
         self._is_programmatic_selection = False
         self.fav_file_path = self.core.get_profile_path("fav_channel.json")
-        #_escape_protection = True   
+        #_escape_protection = True
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2381,7 +2385,7 @@ class FavChannelPanel(wx.Panel):
         self.core.unregister_callback("fav_channel_updated", self.refresh_favChannel)
         self.core.unregister_callback("fav_channel_item_updated", self._on_channel_item_updated)
         self._save_channel()
-        
+
     def refresh_favChannel(self, data=None):
         if not self.listCtrl:
             return
@@ -2394,7 +2398,7 @@ class FavChannelPanel(wx.Panel):
                 self.listCtrl.SetItemState(last_index, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
                 self.listCtrl.EnsureVisible(last_index)
         self._update_button_states()
-    
+
     def on_add(self, event):
         try:
             url = api.getClipData()
@@ -2436,7 +2440,7 @@ class FavChannelPanel(wx.Panel):
                 self._is_first_load = False
         finally:
             self.listCtrl.Thaw()
-            
+
     def on_search(self, search_text):
         search_text = search_text.lower()
         if search_text and self.last_selected_item_before_search is None:
@@ -2460,7 +2464,7 @@ class FavChannelPanel(wx.Panel):
         elif search_text and self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
-            
+
     def _update_button_states(self):
         has_selection = self.listCtrl.GetFirstSelected() != -1
         self.openBtn.Enable(has_selection)
@@ -2472,7 +2476,7 @@ class FavChannelPanel(wx.Panel):
             self.descriptionBox.GetStaticBox().Show(has_any_items)
             self.descriptionBox.ShowItems(has_any_items)
             self.GetSizer().Layout()
-        
+
     def on_remove(self, event):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -2513,7 +2517,7 @@ class FavChannelPanel(wx.Panel):
         # Translators: Notification after multiple channels are successfully removed. {count} is the number removed.
         self.core._notify_delete(_("Channel removed.") if count == 1 else
                                  _("{count} channels removed.").format(count=count))
-                                 
+
     def on_open(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
@@ -2565,11 +2569,11 @@ class FavChannelPanel(wx.Panel):
         menu.Bind(wx.EVT_MENU, on_menu_select)
         self.PopupMenu(menu)
         menu.Destroy()
-        
+
     def on_list_key_down(self, event):
         key_code = event.GetKeyCode()
         if key_code == wx.WXK_F2:
-            self.on_rename_channel() 
+            self.on_rename_channel()
             return
         if event.ControlDown():
             if key_code == ord('X'):
@@ -2582,12 +2586,12 @@ class FavChannelPanel(wx.Panel):
                 self.on_list_copy()
                 return
         if key_code in [wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER, wx.WXK_SPACE]:
-            self.on_open(event) 
+            self.on_open(event)
         elif key_code == wx.WXK_DELETE:
             self.on_remove(event)
         else:
             event.Skip()
-        
+
     def on_list_cut(self):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -2769,7 +2773,7 @@ class FavChannelPanel(wx.Panel):
             wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
         )
         wx.CallAfter(self.listCtrl.SetFocus)
-        
+
 class FavPlaylistPanel(wx.Panel):
     def __init__(self, parent, core_instance):
         wx.Panel.__init__(self, parent)
@@ -2780,7 +2784,7 @@ class FavPlaylistPanel(wx.Panel):
         self.last_selected_item_before_search = None
         self._current_sort = None
         self.fav_file_path = self.core.get_profile_path("fav_playlist.json")
-        #_escape_protection = True   
+        #_escape_protection = True
 
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -2814,11 +2818,11 @@ class FavPlaylistPanel(wx.Panel):
         mainSizer.Add(btnSizer, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         self.SetSizer(mainSizer)
-        
+
         self.core.register_callback("fav_playlist_updated", self.refresh_favPlaylists)
         self.core.register_callback("fav_playlist_item_updated", self.on_playlist_item_update)
         self._load_playlists()
-        self._populate_list()  
+        self._populate_list()
         self._update_button_states()
 
         self.showVideosBtn.Bind(wx.EVT_BUTTON, self.on_show_videos)
@@ -2828,7 +2832,7 @@ class FavPlaylistPanel(wx.Panel):
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.on_show_videos)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
-        
+
     def on_close(self, event):
         self.core.unregister_callback("fav_playlist_updated", self.refresh_favPlaylists)
         self.core.unregister_callback("fav_playlist_item_updated", self.on_playlist_item_update)
@@ -2869,12 +2873,12 @@ class FavPlaylistPanel(wx.Panel):
                 self.on_list_copy()
                 return
         if key_code == wx.WXK_RETURN or key_code == wx.WXK_SPACE:
-            self.on_show_videos(event) 
+            self.on_show_videos(event)
         elif key_code == wx.WXK_DELETE:
             self.on_remove(event)
         else:
             event.Skip()
-        
+
     def on_list_cut(self):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -2912,14 +2916,14 @@ class FavPlaylistPanel(wx.Panel):
         self._cut_indices = None
         # Translators: Notification spoken by NVDA after one or more playlist items are successfully moved.
         ui.message(_("Moved."))
-        
+
     def _update_button_states(self):
         has_items = self.listCtrl.GetItemCount() > 0
         self.showVideosBtn.Enable(has_items)
         self.openWebBtn.Enable(has_items)
         self.describeCoverBtn.Enable(has_items)
         self.removeBtn.Enable(has_items)
-    
+
     def on_remove(self, event):
         selected = []
         idx = self.listCtrl.GetFirstSelected()
@@ -2959,8 +2963,8 @@ class FavPlaylistPanel(wx.Panel):
         # Translators: Notification after one playlist is successfully removed.
         # Translators: Notification after multiple playlists are successfully removed. {count} is the number removed.
         self.core._notify_delete(_("Playlist removed.") if count == 1 else
-                                 _("{count} playlists removed.").format(count=count))        
-                                 
+                                 _("{count} playlists removed.").format(count=count))
+
     def _load_playlists(self):
         with self.core._fav_file_lock:
             try:
@@ -3002,7 +3006,7 @@ class FavPlaylistPanel(wx.Panel):
         if search_text:
             self.filtered_playlists = [
                 item for item in self.playlists
-                if search_text in item.get('playlist_title', '').lower() or 
+                if search_text in item.get('playlist_title', '').lower() or
                    search_text in item.get('uploader', '').lower()
             ]
         else:
@@ -3020,7 +3024,7 @@ class FavPlaylistPanel(wx.Panel):
         elif search_text and self.listCtrl.GetItemCount() > 0:
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
-            
+
     def _populate_list(self):
         self.listCtrl.Freeze()
         try:
@@ -3036,7 +3040,7 @@ class FavPlaylistPanel(wx.Panel):
                 self._is_first_load = False
         finally:
             self.listCtrl.Thaw()
-            
+
     def on_show_videos(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
@@ -3044,7 +3048,7 @@ class FavPlaylistPanel(wx.Panel):
         # Translators: Message shown while fetching videos from a playlist. {playlist} is the playlist title.
         dialog_title_template = _("Fetching videos from '{playlist}'...").format(playlist=playlist['playlist_title'])
         threading.Thread(target=self.core._view_channel_worker, args=(playlist['playlist_url'], dialog_title_template), daemon=True).start()
-        
+
     def on_open_web(self, event):
         selected_index = self.listCtrl.GetFirstSelected()
         if selected_index == -1: return
@@ -3220,11 +3224,11 @@ class FavPlaylistPanel(wx.Panel):
             wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED
         )
         wx.CallAfter(self.listCtrl.SetFocus)
-        
-class FavsDialog(BaseDialogMixin, wx.Dialog):
-    _instance = None 
 
-    def __new__(cls, *args, **kwargs): 
+class FavsDialog(BaseDialogMixin, wx.Dialog):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             return super(FavsDialog, cls).__new__(cls, *args, **kwargs)
         cls._instance.Raise()
@@ -3323,7 +3327,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         if not current_page or not hasattr(current_page, 'on_sort'):
             return
         current_page.on_sort(event)
-    
+
     def on_tab_changed(self, event):
         self._update_dialog_title()
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
@@ -3361,7 +3365,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         self.searchLabel.Show(has_items)
         self.searchCtrl.Show(has_items)
         self._mainPanel.Layout()
-        
+
     def _update_dialog_title(self):
         """Helper method to update the dialog's title based on the current tab."""
         currentPage = self.notebook.GetCurrentPage()
@@ -3381,7 +3385,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             if hasattr(current_page, '_focus_item'):
                 current_page._focus_item(0)
             current_page.listCtrl.SetFocus()
-            
+
     def _build_tabs(self, select_tab_id=None):
         self.notebook.DeleteAllPages()
         self.panels = {}
@@ -3395,7 +3399,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
             if visual_index != -1:
                 self.notebook.SetSelection(visual_index)
         wx.CallLater(100, self._focus_initial_tab)
-        
+
     def _move_tab(self, direction):
         current_index = self.notebook.GetSelection()
         new_index = current_index + direction
@@ -3404,7 +3408,7 @@ class FavsDialog(BaseDialogMixin, wx.Dialog):
         tab_to_move = self.ordered_tabs.pop(current_index)
         self.ordered_tabs.insert(new_index, tab_to_move)
         wx.CallAfter(self._build_tabs, select_tab_id=tab_to_move['id'])
-        
+
     def on_char_hook(self, event):
         control_down = event.ControlDown()
         key_code = event.GetKeyCode()
@@ -3709,7 +3713,7 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
 
         history_file = self.core.get_profile_path("search_history.json")
         history_data = self.core._load_json_list(history_file)
-        
+
         self.history_keywords = []
         for item in history_data:
             kw = item.get('keyword', '')
@@ -3719,12 +3723,12 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=mainSizer)
-        
+
         # Translators: Label for the search query input field.
         sHelper.addItem(wx.StaticText(panel, label=_("&Search for:")))
-        
+
         self.queryText = sHelper.addItem(wx.ComboBox(
-            panel, 
+            panel,
             value="", # ให้ค่าเริ่มต้นเป็นช่องว่างเปล่า
             choices=self.history_keywords, # ยัดประวัติการค้นหาเข้าไปให้เป็นตัวเลือก
             style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER
@@ -3753,10 +3757,10 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.searchBtn.Bind(wx.EVT_BUTTON, self.on_search)
         self.cancelBtn.Bind(wx.EVT_BUTTON, self.on_close)
-        
+
         self.queryText.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         wx.CallAfter(self.queryText.SetFocus)
-        
+
     def on_close(self, event):
         self.Destroy()
 
@@ -3775,7 +3779,7 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
 
 class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """A dialog to display a list of videos, now with a full action menu."""
-    _escape_protection = True   
+    _escape_protection = True
 
     def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_playlist_data_to_update=None, channel_url_to_update=None, new_channel_data_to_update=None, source_url=None, content_type_label="videos", is_collection=False):
         super().__init__(parent, title=title)
@@ -3825,7 +3829,7 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.closeBtn.Bind(wx.EVT_BUTTON, self.on_close)
         self.listCtrl.Bind(wx.EVT_KEY_DOWN, self.on_list_key_down)
         wx.CallAfter(self.listCtrl.SetFocus)
-        
+
     def get_selected_video_info(self):
         """Required method for the Action Mixin."""
         selected_index = self.listCtrl.GetFirstSelected()
@@ -3859,11 +3863,11 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 copy_type = id_map.get(e.GetId())
                 if copy_type:
                     self.on_copy(copy_type)
-            
+
             menu.Bind(wx.EVT_MENU, on_select)
             self.PopupMenu(menu)
             menu.Destroy()
-    
+
     def on_close(self, event):
         if self.playlist_id_to_update and self.new_playlist_data_to_update:
             threading.Thread(
@@ -3878,7 +3882,7 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 daemon=True
             ).start()
         self.Destroy()
-        
+
     def _populate_list(self):
         for index, video in enumerate(self.videos):
             # Translators: Default text for a video title if it's missing.
@@ -3902,23 +3906,23 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             'load_all': True,
         }
         self.Destroy()
-        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()     
-     
+        threading.Thread(target=self.core._view_channel_worker, kwargs=thread_kwargs, daemon=True).start()
+
 class ChannelCollectionDialog(BaseDialogMixin, wx.Dialog):
     """
     Browse dialog for playlist-based content types (playlists, podcasts).
     Shows list of playlists with title + video count.
     Enter/Space expands a playlist into ChannelVideoDialog.
     """
-    _escape_protection = True   
+    _escape_protection = True
 
     def __init__(self, parent, title, items, core_instance, source_url=None, content_type_label=""):
         super().__init__(parent, title=title)
-        self.items = items          
+        self.items = items
         self.core = core_instance
         self    .source_url = source_url
         self.content_type_label = content_type_label
-    
+
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -4436,7 +4440,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """
     The definitive, fully-featured tabbed subscription feed dialog with all fixes applied.
     """
-    _instance = None 
+    _instance = None
 
     def __new__(cls, *args, **kwargs):  # <--- ✅ เพิ่มเมธอดนี้ทั้งหมด
         if cls._instance is None:
@@ -4460,7 +4464,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.pending_focus_info = None
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        
+
         self.notebook = wx.Notebook(panel)
         mainSizer.Add(self.notebook, 1, wx.EXPAND | wx.ALL, 5)
 
@@ -4484,12 +4488,12 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         panel.SetSizer(mainSizer)
         self.SetSize((950, 600))
         self.CentreOnScreen()
-        
+
         self._build_all_tabs()
-        
+
         self.core.register_callback("subscriptions_updated", self._on_subscriptions_updated)
         self.core.register_callback("sub_feed_progress", self._on_progress_update)
-        
+
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(wx.EVT_CHAR_HOOK, self.on_char_hook)
         self.addBtn.Bind(wx.EVT_BUTTON, self.on_add_subscription)
@@ -4519,6 +4523,19 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         return positions
 
     def _on_subscriptions_updated(self):
+        # NOTE: wx.Notebook.AddPage() -- when adding the first page to a
+        # notebook just emptied by DeleteAllPages() -- forces this dialog's
+        # top-level window to the OS foreground as a side effect, regardless
+        # of what the user was focused on before a background update fired.
+        # An earlier version of this method tried to detect that and hand
+        # focus back to wherever it was previously, but calling .SetFocus()
+        # on another add-on's window from the outside like that corrupted
+        # its internal list/tree state (confirmed in testing) -- worse than
+        # the focus-stealing itself. So we've accepted the tradeoff: this
+        # dialog may steal foreground focus during a background update if
+        # it's left open, but at least ends up in a fully working state
+        # afterward. The user can simply switch back to what they were
+        # doing; that's preferable to a corrupted control elsewhere.
         currentPage = self.notebook.GetCurrentPage()
         last_tab_id = currentPage.tab_id if currentPage else "all"
         saved_positions = self._save_all_tab_positions()
@@ -4530,9 +4547,9 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self._build_all_tabs(
             select_tab_id=last_tab_id,
             saved_positions=saved_positions,
-            deleted_video_id=deleted_id
+            deleted_video_id=deleted_id,
         )
-        
+
     def _build_all_tabs(self, select_tab_id=None, saved_positions=None, deleted_video_id=None):
         try:
             con = sqlite3.connect(self.db_path)
@@ -4576,6 +4593,15 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 saved_position=saved_positions.get(str(tab_info['id']), 0) if saved_positions else 0,
                 deleted_video_id=deleted_video_id
             )
+            # NOTE: wx.Notebook.AddPage(), when adding the first page to a
+            # notebook just emptied by DeleteAllPages(), forces its native
+            # tab control to take focus -- which yanks this dialog's
+            # top-level window to the OS foreground as a side effect, even
+            # if the user was focused somewhere else entirely (another
+            # app's own wx window, e.g.) when the background update fired.
+            # We can't stop wx from doing this; previous_active_window
+            # (captured before this method ran) is used below to hand
+            # focus back afterward if that happened.
             self.notebook.AddPage(page, tab_info['name'])
         tab_to_select_id = str(select_tab_id) if select_tab_id is not None else config.conf["YoutubePlus"].get("lastSubTabId", "all")
         initial_selection = 0
@@ -4586,9 +4612,19 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.notebook.SetSelection(initial_selection)
         if self.notebook.GetPageCount() > 0:
             self._update_dialog_title()
-            self.notebook.GetCurrentPage().SetFocus()
-        self.pending_focus_info = None  
-        
+            # Always focus the actual list control (not the tab page panel --
+            # the panel itself isn't the widget NVDA needs focused to
+            # announce the current row). wx.Notebook.AddPage() above already
+            # forces this dialog to the OS foreground as a side effect of
+            # rebuilding the tabs regardless of where focus was before, so
+            # there's no longer a "don't steal focus" case to preserve --
+            # once the dialog has already become the foreground window, the
+            # least-broken thing we can do is make sure its own list is
+            # left in a focused, usable state rather than nowhere at all
+            # (see the original bug this whole investigation started from).
+            self.notebook.GetCurrentPage().listCtrl.SetFocus()
+        self.pending_focus_info = None
+
     def _move_tab(self, direction):
         """
         Moves the current tab and then safely rebuilds the entire notebook UI
@@ -4617,7 +4653,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             log.error("Failed to reorder tabs: %s", e)
             # Translators: Error message when tab reordering fails.
             ui.message(_("Error reordering tabs."))
-            
+
     def on_tab_changed(self, event):
         """
         Called when the user selects a different tab.
@@ -4639,7 +4675,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if not currentPage: return
         tab_title = self.notebook.GetPageText(self.notebook.GetSelection())
         active_profile = config.conf["YoutubePlus"]["activeProfile"]
-        # Translators: The title of the subscription feed dialog. 
+        # Translators: The title of the subscription feed dialog.
         # {tab_name} is the name of the current tab. {profile} is the active user profile name.
         full_title = _("Subscription Feed - {tab_name} - YoutubePlus").format(tab_name=tab_title) + " - [{profile}]".format(profile=active_profile)
         self.SetTitle(full_title)
@@ -4699,7 +4735,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
                 videos_to_show = [v for v in self.all_videos if v.get('channel_url') in channel_urls]
             except Exception as e:
                 log.error("Failed to filter videos for category %s: %s", tab_id, e)
-        
+
         panel.listCtrl.DeleteAllItems()
         panel.videos = videos_to_show
         # Translators: Map for content type display names.
@@ -4752,7 +4788,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         panel.actionBtn.Enable(has_selection)
         panel.copyBtn.Enable(has_selection)
         panel.markSeenBtn.Enable(has_selection)
-        
+
     def get_selected_video_info(self):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage: return None
@@ -4773,7 +4809,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         menu.Bind(wx.EVT_MENU, self.on_unsubscribe, id=ID_UNSUB)
         self.PopupMenu(menu)
         menu.Destroy()
-    
+
 
     def on_copy_menu(self, event):
         video = self.get_selected_video_info()
@@ -4853,7 +4889,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             menu.Bind(wx.EVT_MENU, on_menu_select)
             self.PopupMenu(menu)
             menu.Destroy()
-            
+
     def on_toggle_view(self):
         self.view_mode = 'all' if self.view_mode == 'unseen' else 'unseen'
         currentPage = self.notebook.GetCurrentPage()
@@ -4869,14 +4905,14 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         dlg = ManageSubscriptionsDialog(self, self.core)
         dlg.ShowModal()
         wx.CallAfter(self.notebook.GetCurrentPage().SetFocus)
-        
+
     def on_update_feed(self, event):
         if self.core.is_long_task_running:
             # Translators: Message shown when an update is already happening.
             ui.message(_("An update is already in progress."))
             return
         threading.Thread(target=self._show_progress_and_update_worker, daemon=True).start()
-    
+
     def _show_progress_and_update_worker(self):
         try:
             con = sqlite3.connect(self.db_path)
@@ -4916,7 +4952,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             self.progress_dialog = None
             # Translators: Notification when update is cancelled by user.
             ui.message(_("Update cancelled."))
-            
+
     def on_action_menu(self, event):
         video = self.get_selected_video_info()
         if not video: return
@@ -4945,7 +4981,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.core.mark_videos_as_seen(video_id):
             # Translators: Brief notification when a video is marked as seen.
             self.core._notify_delete(_("Marked as seen."))
-            
+
     def on_mark_all_seen(self, event=None):
         currentPage = self.notebook.GetCurrentPage()
         if not currentPage or not hasattr(currentPage, 'videos'): return
@@ -4964,7 +5000,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if self.core.mark_videos_as_seen(video_ids):
             # Translators: Success message after marking all videos in a tab as seen.
             self.core._notify_delete(_("All videos in the current tab have been marked as seen."))
-            
+
     def on_list_key_down(self, event):
         """Handles key presses on the list, including all shortcuts."""
         control_down = event.ControlDown()
@@ -5003,8 +5039,8 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             self.handle_video_list_keys(event)
             return
         else:
-            event.Skip()            
-            
+            event.Skip()
+
     def on_unsubscribe(self, event):
         video = self.get_selected_video_info()
         if not video: return
@@ -5016,7 +5052,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         if wx.MessageBox(msg, title, wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
             return
         threading.Thread(target=self.core.unsubscribe_from_channel_worker, args=(video['channel_url'], video['channel_name']), daemon=True).start()
-        
+
     def on_add_category(self):
         """Handles adding a new user-defined category."""
         # Translators: Prompt for category name entry.
@@ -5108,21 +5144,21 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
             # Translators: Generic error for removal failure.
             self.core._notify_error(_("Error removing category."))
         wx.CallAfter(self.notebook.GetCurrentPage().SetFocus)
-        
+
 class ProfileManagementDialog(wx.Dialog):
-    
+
     def __init__(self, parent):
         # Translators: Title of the profile management dialog
         super().__init__(parent, title=_("Manage User Profiles"))
         self.base_data_path = os.path.join(globalVars.appArgs.configPath, "YoutubePlus")
         self.needs_restart = False
-        
+
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         sHelper = gui.guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
-        
+
         # Translators: Label for the profiles list
         self.profilesList = sHelper.addItem(wx.ListBox(self, choices=self._get_profiles(), style=wx.LB_SINGLE))
-        
+
         buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Translators: Button to add a new profile
         self.addButton = wx.Button(self, label=_("&Add"))
@@ -5130,18 +5166,18 @@ class ProfileManagementDialog(wx.Dialog):
         self.renameButton = wx.Button(self, label=_("&Rename"))
         # Translators: Button to delete a profile
         self.deleteButton = wx.Button(self, label=_("&Delete"))
-        
+
         buttonSizer.Add(self.addButton)
         buttonSizer.Add(self.renameButton)
         buttonSizer.Add(self.deleteButton)
-        
+
         mainSizer.Add(sHelper.sizer, proportion=1, flag=wx.ALL | wx.EXPAND, border=10)
         mainSizer.Add(buttonSizer, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=10)
-        
+
         # Translators: Button to close the dialog
         closeBtn = wx.Button(self, id=wx.ID_CANCEL, label=_("C&lose"))
         mainSizer.Add(closeBtn, flag=wx.ALIGN_RIGHT | wx.ALL, border=10)
-        
+
         self.SetSizer(mainSizer)
         mainSizer.Fit(self)
 
@@ -5263,7 +5299,7 @@ class ProfileManagementDialog(wx.Dialog):
         title = _("Restart NVDA")
         if gui.messageBox(msg, title, wx.YES_NO | wx.ICON_QUESTION) == wx.YES:
             globalCommands.commands.script_restart(None)
-            
+
 class DownloadProgressDialog(wx.Dialog):
     _ROW_FILENAME = 0
     _ROW_PROGRESS = 1
@@ -5415,6 +5451,20 @@ class DownloadProgressDialog(wx.Dialog):
                 # Translators: Status while downloading (size unknown).
                 self._set_value(self._ROW_STATUS, _("Downloading"))
 
+        elif status == 'installing':
+            # No live progress data is available here -- unlike yt-dlp's
+            # progress_hooks, winget runs as a single blocking subprocess call
+            # with no streamed output, so Progress/Size/Speed/ETA stay honest
+            # placeholders rather than fabricated numbers.
+            if not self._is_pulse_mode:
+                self._is_pulse_mode = True
+                self._pulse_timer.Start(150)
+            self._set_value(self._ROW_PROGRESS, "-")
+            self._set_value(self._ROW_SPEED, "-")
+            self._set_value(self._ROW_ETA, "-")
+            # Translators: Status shown in the download progress dialog while FFmpeg installs via winget.
+            self._set_value(self._ROW_STATUS, _("Installing FFmpeg..."))
+
         elif status == 'finished':
             self._pulse_timer.Stop()
             self._is_pulse_mode = False
@@ -5434,13 +5484,13 @@ class DownloadProgressDialog(wx.Dialog):
         if not self._closed:
             self.core.cancel_download()
         self._safe_close()
-        
+
     def _on_cancel(self, event):
         self.core.cancel_download()
         self.cancelBtn.Disable()
         self._set_value(self._ROW_STATUS, _("Cancelling..."))
         self._cancel_timeout_timer = wx.CallLater(3000, self._safe_close)
-        
+
     def _safe_close(self):
         if self._closed:
             return
