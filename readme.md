@@ -75,7 +75,22 @@ This command opens a YouTube search window. Type your query in the search field 
 
 The search field is a combo box that remembers your past searches: press the Down arrow (or Alt+Down) to drop down a list of previous keywords and pick one instead of retyping it.
 
-Results are displayed in the same [video list](#video-list) format used throughout the add-on, not as a YouTube web page. You can access all video details the same way as any other video list in the add-on.
+Below the query field, four filters let you narrow down results, and can be combined freely (e.g. Playlists uploaded this month, sorted by view count):
+
+* **Content type:** Videos (default), Channels, or Playlists
+* **Duration:** Any, Short (under 4 minutes), Medium (4-20 minutes), or Long (over 20 minutes)
+* **Upload date:** Any, Past hour, Today, This week, This month, or This year
+* **Sort by:** Relevance (default), Upload date, or View count
+
+Results are displayed in the same [video list](#video-list) format used throughout the add-on, not as a YouTube web page. A Channels result opens/copies its channel URL and shows a reduced Action menu (no download, comments, or other video-only actions); a Playlists result expands into its own video list, the same way a favorite playlist does.
+
+#### Searching within a channel
+
+The **Within channel** field restricts the search to a single channel's own videos instead of all of YouTube. When it's set, the four filters above don't apply to a channel's own search page and are hidden.
+
+Start typing a channel name and a dropdown suggests channels from your Search History, Favorite Channels, and Subscribed Channels. If what you typed doesn't match any of those (for example, a channel you've never searched or favorited before), the add-on looks it up on YouTube and shows a picker so you can confirm which channel you meant — it never guesses silently. You can also paste a channel URL directly instead of typing a name.
+
+You can also open this dialog pre-filled with a channel already: from the Favorites window's Channel tab, select a channel and press the **Search in this channel...** button.
 
 #### q: (quick search)
 
@@ -83,9 +98,9 @@ A faster alternative to the search dialog above. Select some text in any applica
 
 #### Search History
 
-Every search you run — from either the search dialog or quick search — is saved automatically. Press **Control+H** in the YoutubePlus layer to jump straight to the Search History tab in the Favorites window, where you can:
+Every search you run — from either the search dialog or quick search — is saved automatically, along with any filters used (including a channel set via "Within channel"). Press **Control+H** in the YoutubePlus layer to jump straight to the Search History tab in the Favorites window, where you can:
 
-* Press Enter, or the **Search Again** button, to re-run a past search
+* Press Enter, or the **Search Again** button, to re-run a past search with the exact same filters (or the same channel, for a channel-scoped search) — a channel-scoped entry is shown as "keyword (in Channel Name)" in the list so it's clear at a glance
 * Press **New Search (Alt+N)** to open the search dialog
 * Press Delete, or the **Remove** button, to remove a single entry
 * Press the **Clear All** button to clear the entire history
@@ -132,7 +147,7 @@ You can also describe a channel's avatar or a playlist's cover directly from the
 A window displaying your saved favorites, divided into 5 tabs by type:
 
 * **Video:** Lists your saved videos, organized into categories of your own making. A category tree sits on the left and the video list for the selected category sits on the right (see [Categories](#categories-video--watch-list-tabs) below). Includes Action and Copy buttons for each item (described below).
-* **Channel:** Lists your saved channels with a channel description panel. Includes buttons to open the channel, browse its content by type, and describe its avatar via Be My Eyes (Alt+D).
+* **Channel:** Lists your saved channels with a channel description panel. Includes buttons to open the channel, browse its content by type, search within the channel, and describe its avatar via Be My Eyes (Alt+D).
 * **Playlist:** Lists your saved playlists. Press Space, Enter, or Alt+V to expand all videos in a playlist. Includes an Open on Web button (Alt+W) and a Describe Cover button (Alt+D) to get a Be My Eyes description of the playlist's cover image.
 * **Watch List:** Lists your saved videos using the same category tree + list layout as the Video tab, with its own independent set of categories.
 * **Search History:** Lists every search you've run, with options to re-run, remove, or clear entries (see [Search History](#search-history) above).

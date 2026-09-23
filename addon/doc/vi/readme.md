@@ -75,7 +75,22 @@ Lệnh này mở cửa sổ tìm kiếm YouTube. Gõ từ khóa vào ô tìm ki�
 
 Ô tìm kiếm là một combo box ghi nhớ các lần tìm trước: nhấn mũi tên Xuống (hoặc Alt+Xuống) để mở danh sách các từ khóa đã tìm và chọn một từ khóa thay vì gõ lại.
 
-Kết quả hiển thị theo cùng định dạng [danh sách video](#danh-sách-video) được dùng xuyên suốt add-on, chứ không phải một trang web YouTube. Bạn xem chi tiết video theo cách giống hệt mọi danh sách video khác trong add-on.
+Bên dưới ô từ khóa có bốn bộ lọc để thu hẹp kết quả, và bạn có thể kết hợp tự do các bộ lọc này (ví dụ: danh sách phát đăng trong tháng này, sắp xếp theo lượt xem):
+
+* **Content type:** Videos (mặc định), Channels hoặc Playlists
+* **Duration:** Any, Short (dưới 4 phút), Medium (4-20 phút) hoặc Long (trên 20 phút)
+* **Upload date:** Any, Past hour, Today, This week, This month hoặc This year
+* **Sort by:** Relevance (mặc định), Upload date hoặc View count
+
+Kết quả hiển thị theo cùng định dạng [danh sách video](#danh-sách-video) được dùng xuyên suốt add-on, chứ không phải một trang web YouTube. Một kết quả loại Channels sẽ mở/sao chép URL kênh và hiện menu Action rút gọn (không có tải xuống, bình luận, hay các hành động chỉ dành riêng cho video); một kết quả loại Playlists sẽ mở rộng thành danh sách video riêng của nó, giống như một danh sách phát yêu thích.
+
+#### Tìm kiếm trong một kênh
+
+Ô **Within channel** giới hạn việc tìm kiếm chỉ trong các video của một kênh, thay vì toàn bộ YouTube. Khi ô này có giá trị, bốn bộ lọc ở trên không áp dụng được cho trang tìm kiếm riêng của kênh nên sẽ bị ẩn đi.
+
+Bắt đầu gõ tên kênh, một danh sách thả xuống sẽ gợi ý các kênh từ Lịch sử tìm kiếm, Kênh yêu thích, và Kênh đã đăng ký của bạn. Nếu những gì bạn gõ không khớp với bất kỳ mục nào trong số đó (ví dụ: một kênh bạn chưa từng tìm hay thêm vào yêu thích trước đây), add-on sẽ tìm kênh đó trên YouTube và hiện danh sách để bạn xác nhận đúng kênh mình muốn — add-on sẽ không bao giờ tự đoán ngầm. Bạn cũng có thể dán trực tiếp URL của kênh thay vì gõ tên.
+
+Bạn cũng có thể mở hộp thoại này với kênh đã được điền sẵn: từ thẻ Channel trong cửa sổ Yêu thích, chọn một kênh rồi nhấn nút **Search in this channel...**.
 
 #### q: (tìm nhanh)
 
@@ -83,9 +98,9 @@ Kết quả hiển thị theo cùng định dạng [danh sách video](#danh-sác
 
 #### Lịch sử tìm kiếm (Search History)
 
-Mọi lần tìm kiếm của bạn, dù từ hộp thoại tìm kiếm hay tìm nhanh, đều được lưu tự động. Nhấn **Control+H** trong lớp YoutubePlus để chuyển thẳng đến thẻ Lịch sử tìm kiếm trong cửa sổ Yêu thích. Tại đây bạn có thể:
+Mọi lần tìm kiếm của bạn, dù từ hộp thoại tìm kiếm hay tìm nhanh, đều được lưu tự động, cùng với các bộ lọc đã dùng (kể cả kênh được đặt qua "Within channel"). Nhấn **Control+H** trong lớp YoutubePlus để chuyển thẳng đến thẻ Lịch sử tìm kiếm trong cửa sổ Yêu thích. Tại đây bạn có thể:
 
-* Nhấn Enter, hoặc nút **Search Again** (Tìm lại), để chạy lại một lần tìm trước đó
+* Nhấn Enter, hoặc nút **Search Again** (Tìm lại), để chạy lại một lần tìm trước đó với đúng các bộ lọc đã dùng (hoặc đúng kênh cũ, nếu là tìm kiếm giới hạn trong một kênh) — một mục tìm kiếm giới hạn trong kênh sẽ hiển thị trong danh sách dưới dạng "từ khóa (in Tên kênh)" để bạn nhận ra ngay
 * Nhấn **New Search (Alt+N)** (Tìm kiếm mới) để mở hộp thoại tìm kiếm
 * Nhấn Delete, hoặc nút **Remove** (Xóa), để xóa một mục
 * Nhấn nút **Clear All** (Xóa tất cả) để xóa toàn bộ lịch sử
@@ -132,7 +147,7 @@ Bạn cũng có thể mô tả ảnh đại diện của kênh hoặc ảnh bìa
 Cửa sổ hiển thị các mục bạn đã lưu, chia thành 5 thẻ theo loại:
 
 * **Video:** Liệt kê các video đã lưu, được sắp xếp vào những danh mục do bạn tự tạo. Cây danh mục nằm bên trái, danh sách video của danh mục đang chọn nằm bên phải (xem phần [Danh mục](#danh-mục-thẻ-video-và-watch-list) bên dưới). Mỗi mục đều có nút Action (Hành động) và Copy (Sao chép), mô tả ở dưới.
-* **Channel (Kênh):** Liệt kê các kênh đã lưu, kèm khung mô tả kênh. Có các nút để mở kênh, duyệt nội dung của kênh theo loại, và mô tả ảnh đại diện qua Be My Eyes (Alt+D).
+* **Channel (Kênh):** Liệt kê các kênh đã lưu, kèm khung mô tả kênh. Có các nút để mở kênh, duyệt nội dung của kênh theo loại, tìm kiếm trong kênh, và mô tả ảnh đại diện qua Be My Eyes (Alt+D).
 * **Playlist (Danh sách phát):** Liệt kê các danh sách phát đã lưu. Nhấn Space, Enter hoặc Alt+V để mở rộng và xem tất cả video trong một danh sách phát. Có nút Open on Web (Mở trên web) (Alt+W) và nút Describe Cover (Mô tả ảnh bìa) (Alt+D) để nhận mô tả của ảnh bìa danh sách phát từ Be My Eyes.
 * **Watch List (Danh sách xem sau):** Liệt kê các video đã lưu theo cùng bố cục (cây danh mục + danh sách) với thẻ Video, nhưng có bộ danh mục độc lập riêng.
 * **Search History (Lịch sử tìm kiếm):** Liệt kê mọi lần tìm kiếm bạn đã thực hiện, với các lựa chọn tìm lại, xóa từng mục hoặc xóa toàn bộ (xem phần [Lịch sử tìm kiếm](#lịch-sử-tìm-kiếm-search-history) ở trên).

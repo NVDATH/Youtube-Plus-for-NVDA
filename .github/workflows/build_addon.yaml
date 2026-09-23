@@ -30,7 +30,7 @@ jobs:
       - name: Append Changelog to Readme
         run: |
           echo "" >> readme.md
-          echo "## Changelog" >> readme.md
+          echo "# Changelog" >> readme.md
           cat changelog.md >> readme.md
 
       - name: Build Add-on and Pot file

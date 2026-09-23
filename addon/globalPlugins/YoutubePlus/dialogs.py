@@ -13,6 +13,7 @@ import gui
 import config
 import os
 import re
+import urllib.parse
 import unicodedata
 import webbrowser
 import addonHandler
@@ -881,8 +882,43 @@ class VideoActionMixin:
     """A mixin to provide a standardized 'Action' menu for any video list dialog."""
 
     def on_open_video(self, event):
-        """Handles opening the selected video in a web browser."""
+        """
+        Handles activating the selected search-result row. Search results
+        can mix videos, channels, and playlists in one list (see
+        core._Youtube_worker), so this dispatches per item type: a channel
+        opens directly in the browser, a playlist opens its video list the
+        same way "Show channel playlists" does, and anything else is treated
+        as a plain video (the original, and still the common, case).
+        """
         video = self.get_selected_video_info()
+        if not video:
+            # Translators: Error message when video ID is missing.
+            ui.message(_("Video ID not found."))
+            return
+        if video.get('is_channel'):
+            url = video.get('channel_url')
+            if not url:
+                # Translators: Error message when a channel result has no URL on record.
+                ui.message(_("Channel URL not found."))
+                return
+            # Translators: Message shown when opening a channel in the browser.
+            ui.message(_("Opening in browser..."))
+            try:
+                webbrowser.open(url)
+            except Exception as e:
+                log.warning("Failed to open URL in browser.", exc_info=True)
+                ui.message(_("Error opening browser: {error}").format(error=e))
+            return
+        if video.get('is_collection'):
+            playlist_url = video.get('playlist_url')
+            if not playlist_url:
+                # Translators: Error message when a playlist result has no URL on record.
+                ui.message(_("Playlist URL not found."))
+                return
+            # Translators: Status shown while fetching videos from a playlist. {title} is the playlist name.
+            title_template = _("Fetching videos from '{title}'...").format(title=video.get('title', ''))
+            threading.Thread(target=self.core._view_channel_worker, args=(playlist_url, title_template), daemon=True).start()
+            return
         video_id = video.get('id') or video.get('video_id')
         if not video_id:
             # Translators: Error message when video ID is missing.
@@ -900,6 +936,14 @@ class VideoActionMixin:
 
     def create_video_action_menu(self):
         """Creates and returns a wx.Menu with common video actions."""
+        selected = self.get_selected_video_info()
+        if selected and selected.get('is_channel'):
+            # A channel-type search result isn't a video -- most of this
+            # menu (view info, comments, chapters, downloads, watch list)
+            # doesn't apply to it. Route to a purpose-built reduced menu
+            # instead of showing actions that would silently misfire against
+            # a channel id/URL where a video id was expected.
+            return self._create_channel_action_menu()
         menu = wx.Menu()
         ID_VIEW_INFO = wx.NewIdRef()
         ID_VIEW_COMMENTS = wx.NewIdRef()
@@ -959,6 +1003,52 @@ class VideoActionMixin:
         menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('podcasts'), id=ID_SHOW_PODCAST)
         return menu
 
+    def _create_channel_action_menu(self):
+        """
+        Reduced action menu for a channel-type search result -- only
+        actions that make sense against a channel URL, none of the
+        video-specific ones (info/comments/chapters/downloads/watch list)
+        that create_video_action_menu builds for an actual video.
+        """
+        menu = wx.Menu()
+        ID_OPEN_WEB = wx.NewIdRef()
+        ID_DESCRIBE_AVATAR = wx.NewIdRef()
+        ID_ADD_FAV_CHAN = wx.NewIdRef()
+        ID_SHOW_VIDS = wx.NewIdRef()
+        ID_SHOW_SHORTS = wx.NewIdRef()
+        ID_SHOW_LIVE = wx.NewIdRef()
+        ID_SHOW_PLAYLIST = wx.NewIdRef()
+        ID_SHOW_PODCAST = wx.NewIdRef()
+        # Translators: Menu item to open the selected channel in a browser.
+        menu.Append(ID_OPEN_WEB, _("&Open channel in browser"))
+        # Translators: Menu item to describe a channel's avatar image via Be My Eyes.
+        menu.Append(ID_DESCRIBE_AVATAR, _("&Describe Avatar (Be My Eyes)..."))
+        # Translators: Menu item to add the selected channel to favorites.
+        menu.Append(ID_ADD_FAV_CHAN, _("Add to &Favorite Channels"))
+        menu.AppendSeparator()
+        menu.Append(ID_SHOW_VIDS, _("Show channel &videos"))
+        menu.Append(ID_SHOW_SHORTS, _("Show channel &shorts"))
+        menu.Append(ID_SHOW_LIVE, _("Show channel &live"))
+        menu.Append(ID_SHOW_PLAYLIST, _("Show channel &playlist"))
+        menu.Append(ID_SHOW_PODCAST, _("Show channel &podcast"))
+        menu.Bind(wx.EVT_MENU, self.on_open_video, id=ID_OPEN_WEB)
+        menu.Bind(wx.EVT_MENU, self.on_describe_channel_avatar, id=ID_DESCRIBE_AVATAR)
+        menu.Bind(wx.EVT_MENU, self.on_add_to_fav_channel, id=ID_ADD_FAV_CHAN)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('videos'), id=ID_SHOW_VIDS)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('shorts'), id=ID_SHOW_SHORTS)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('streams'), id=ID_SHOW_LIVE)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('playlists'), id=ID_SHOW_PLAYLIST)
+        menu.Bind(wx.EVT_MENU, lambda e: self._view_channel_content('podcasts'), id=ID_SHOW_PODCAST)
+        return menu
+
+    def on_describe_channel_avatar(self, event):
+        """Downloads the selected channel result's avatar and sends it to Be My Eyes."""
+        video = self.get_selected_video_info()
+        if not video or not video.get('channel_url'):
+            # Translators: Error message when a channel has no URL on record.
+            return ui.message(_("Error: Channel URL not found."))
+        threading.Thread(target=self.core.describe_thumbnail_worker, args=(video['channel_url'],), daemon=True).start()
+
     def on_download_subtitles(self, event):
         video = self.get_selected_video_info()
         if not video:
@@ -1009,6 +1099,18 @@ class VideoActionMixin:
 
     def on_add_to_fav_channel(self, event):
         video = self.get_selected_video_info()
+        if not video:
+            # Translators: Error message.
+            ui.message(_("Could not get video ID to find the channel."))
+            return
+        if video.get('is_channel'):
+            channel_url = video.get('channel_url')
+            if not channel_url:
+                # Translators: Error message.
+                ui.message(_("Could not get video ID to find the channel."))
+                return
+            threading.Thread(target=self.core.add_channel_to_favorites_worker, args=(channel_url,), daemon=True).start()
+            return
         video_id = video.get('id') or video.get('video_id')
         if not video_id:
             # Translators: Error message.
@@ -1099,6 +1201,7 @@ class VideoActionMixin:
         video = self.get_selected_video_info()
         if not video: return
         is_collection = video.get('is_collection', False)
+        is_channel = video.get('is_channel', False)
         video_id = video.get('id') or video.get('video_id')
         if not video_id: return
         text_to_copy = ""
@@ -1107,6 +1210,8 @@ class VideoActionMixin:
         elif copy_type == 'url':
             if is_collection:
                 text_to_copy = video.get('playlist_url', f"https://www.youtube.com/playlist?list={video_id}")
+            elif is_channel:
+                text_to_copy = video.get('channel_url', '')
             else:
                 text_to_copy = f"https://youtu.be/{video_id}"
         elif copy_type == 'channel_name':
@@ -1120,6 +1225,12 @@ class VideoActionMixin:
                     _("Title: {title}\n").format(title=video.get('title', '')) +
                     _("Channel: {channel}\n").format(channel=video.get('channel_name', '')) +
                     _("URL: ") + video.get('playlist_url', f"https://www.youtube.com/playlist?list={video_id}")
+                )
+            elif is_channel:
+                # Translators: Labels used when copying a channel search result's summary to clipboard.
+                text_to_copy = (
+                    _("Channel: {channel}\n").format(channel=video.get('channel_name', '')) +
+                    _("URL: ") + video.get('channel_url', '')
                 )
             else:
                 # Translators: Labels used when copying video summary to clipboard.
@@ -1188,6 +1299,34 @@ class VideoActionMixin:
 
     def run_quick_action(self, event=None):
         action = config.conf["YoutubePlus"].get("quickAction", "open_video")
+        selected = self.get_selected_video_info()
+        if selected and selected.get('is_channel'):
+            # Quick Action dispatches whatever the user configured in
+            # Settings, which assumes a video-shaped item. A channel-type
+            # search result isn't one -- most of these actions would take
+            # the channel's id/URL where a video id was expected and fail
+            # against yt-dlp with a confusing "This video is unavailable"
+            # error (exactly what showed up in the log: a channel id run
+            # through _get_info_worker / _direct_download_worker). Only
+            # dispatch the subset that's actually meaningful for a channel;
+            # remap "describe_thumbnail" to the channel-avatar equivalent;
+            # anything else gets a clear message instead of a background
+            # failure the user has to go dig out of the log.
+            channel_safe_actions = {
+                "open_video", "open_channel", "add_to_fav_channel",
+                "copy_url", "copy_title", "copy_channel_name",
+                "copy_channel_url", "copy_summary",
+                "show_channel_videos", "show_channel_shorts",
+                "show_channel_lives", "show_channel_playlists",
+                "show_channel_podcasts",
+            }
+            if action == "describe_thumbnail":
+                self.on_describe_channel_avatar(None)
+                return
+            if action not in channel_safe_actions:
+                # Translators: Message shown when the configured Quick Action doesn't apply to a channel search result.
+                ui.message(_("This action isn't available for a channel result."))
+                return
         if action == "open_video":
             self.on_open_video(None)
         elif action == "info":
@@ -2306,6 +2445,8 @@ class FavChannelPanel(wx.Panel):
         self.openBtn = wx.Button(self, label=_("Open channel on &browser"))
         # Translators: Button to view content of the selected channel.
         self.viewContentBtn = wx.Button(self, label=_("View &channel Content..."))
+        # Translators: Button to search within the selected channel's own videos.
+        self.searchInChannelBtn = wx.Button(self, label=_("S&earch in this channel..."))
         # Translators: Button to get a description of the selected channel's avatar via Be My Eyes.
         self.describeAvatarBtn = wx.Button(self, label=_("&Describe Avatar (Be My Eyes)..."))
         # Translators: Button to add a new channel from clipboard content.
@@ -2315,6 +2456,7 @@ class FavChannelPanel(wx.Panel):
 
         btnSizer.Add(self.openBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.viewContentBtn, 0, wx.RIGHT, 5)
+        btnSizer.Add(self.searchInChannelBtn, 0, wx.RIGHT, 5)
         btnSizer.Add(self.describeAvatarBtn, 0, wx.RIGHT, 5)
         btnSizer.AddStretchSpacer()
         btnSizer.Add(self.addBtn, 0, wx.RIGHT, 5)
@@ -2334,6 +2476,7 @@ class FavChannelPanel(wx.Panel):
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.openBtn.Bind(wx.EVT_BUTTON, self.on_open)
         self.viewContentBtn.Bind(wx.EVT_BUTTON, self.on_view_channel_content)
+        self.searchInChannelBtn.Bind(wx.EVT_BUTTON, self.on_search_in_channel)
         self.describeAvatarBtn.Bind(wx.EVT_BUTTON, self.on_describe_avatar)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_channel_select)
         self.listCtrl.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_channel_select)
@@ -2465,10 +2608,26 @@ class FavChannelPanel(wx.Panel):
             self.listCtrl.SetItemState(0, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED, wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
             self.listCtrl.EnsureVisible(0)
 
+    def on_search_in_channel(self, event):
+        selected_index = self.listCtrl.GetFirstSelected()
+        if selected_index == -1:
+            return
+        item = self.filtered_channel[selected_index]
+        channel_url = item.get("channel_url")
+        channel_name = item.get("channel_name")
+        if not channel_url:
+            # Translators: Error message when a channel has no URL on record.
+            return ui.message(_("Error: Channel URL not found."))
+        gui.mainFrame.prePopup()
+        dialog = SearchDialog(gui.mainFrame, self.core, initial_channel=(channel_name, channel_url))
+        dialog.Show()
+        gui.mainFrame.postPopup()
+
     def _update_button_states(self):
         has_selection = self.listCtrl.GetFirstSelected() != -1
         self.openBtn.Enable(has_selection)
         self.viewContentBtn.Enable(has_selection)
+        self.searchInChannelBtn.Enable(has_selection)
         self.describeAvatarBtn.Enable(has_selection)
         self.removeBtn.Enable(has_selection)
         has_any_items = self.listCtrl.GetItemCount() > 0
@@ -3487,13 +3646,27 @@ class SearchHistoryPanel(wx.Panel):
         self.removeBtn.Bind(wx.EVT_BUTTON, self.on_remove)
         self.clearAllBtn.Bind(wx.EVT_BUTTON, self.on_clear_all)
 
+    def _format_history_keyword(self, item):
+        """
+        Display text for the Keyword column: a channel-scoped entry
+        (see core._add_search_history) is shown as "keyword (in Channel)"
+        so it's clear from the list alone that it isn't a plain global
+        search -- the stored 'keyword' field itself is left untouched.
+        """
+        keyword = item.get('keyword', '')
+        channel_name = item.get('channel_name')
+        if channel_name:
+            # Translators: How a channel-scoped search is shown in the search history list. {keyword} is the search text, {channel} is the channel it was restricted to.
+            return _("{keyword} (in {channel})").format(keyword=keyword, channel=channel_name)
+        return keyword
+
     def _load_and_populate(self):
         if not self or not self.listCtrl or not self.listCtrl.IsShown():
             return
         self.history = self.core._load_json_list(self.history_file)
         self.listCtrl.DeleteAllItems()
         for index, item in enumerate(self.history):
-            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.InsertItem(index, self._format_history_keyword(item))
             self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
             self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
         if self.listCtrl.GetItemCount() > 0:
@@ -3591,7 +3764,7 @@ class SearchHistoryPanel(wx.Panel):
         self.history.sort(key=sort_key, reverse=not ascending)
         self.listCtrl.DeleteAllItems()
         for index, item in enumerate(self.history):
-            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.InsertItem(index, self._format_history_keyword(item))
             self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
             self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
         if self.listCtrl.GetItemCount() > 0:
@@ -3633,16 +3806,28 @@ class SearchHistoryPanel(wx.Panel):
     # ── Actions ───────────────────────────────────────────────────────────────
 
     def on_search_again(self, event):
-        item, _ = self._get_selected_item()
+        # NOTE: the discarded second value from _get_selected_item() must
+        # NOT be named `_` -- that shadows the gettext `_` builtin for the
+        # rest of this function's scope (Python treats `_` as an ordinary
+        # local once assigned anywhere in the function), which is exactly
+        # what caused a real crash here once already
+        # (TypeError: 'int' object is not callable) the moment this method
+        # tried to call _(...) later on.
+        item, _selected_index = self._get_selected_item()
         if not item:
             return
         keyword = item.get('keyword', '')
         count   = item.get('result_count', config.conf["YoutubePlus"].get("searchResultCount", 20))
         if not keyword:
             return
+        channel_url = item.get('channel_url')
+        if channel_url:
+            self.core.start_channel_search(item.get('channel_name') or channel_url, channel_url, keyword, count)
+            return
         threading.Thread(
             target=self.core._Youtube_worker,
             args=(keyword, count, gui.mainFrame),
+            kwargs={'filters': item.get('filters') or {}},
             daemon=True
         ).start()
 
@@ -3652,7 +3837,7 @@ class SearchHistoryPanel(wx.Panel):
         query = search_text.strip().lower()
         filtered = [h for h in self.history if query in h.get('keyword', '').lower()] if query else self.history
         for index, item in enumerate(filtered):
-            self.listCtrl.InsertItem(index, item.get('keyword', ''))
+            self.listCtrl.InsertItem(index, self._format_history_keyword(item))
             self.listCtrl.SetItem(index, 1, str(item.get('result_count', '')))
             self.listCtrl.SetItem(index, 2, item.get('searched_at', ''))
         if self.listCtrl.GetItemCount() > 0:
@@ -3706,7 +3891,7 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
     A simplified and robust search dialog.
     """
 
-    def __init__(self, parent, core_instance):
+    def __init__(self, parent, core_instance, initial_channel=None):
         # Translators: Title of the dialog for searching YouTube.
         super().__init__(parent, title=_("Search YouTube"))
         self.core = core_instance
@@ -3729,15 +3914,70 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
 
         self.queryText = sHelper.addItem(wx.ComboBox(
             panel,
-            value="", # ให้ค่าเริ่มต้นเป็นช่องว่างเปล่า
-            choices=self.history_keywords, # ยัดประวัติการค้นหาเข้าไปให้เป็นตัวเลือก
+            value="",
+            choices=self.history_keywords,
             style=wx.CB_DROPDOWN | wx.TE_PROCESS_ENTER
         ))
 
         # Translators: Label for selecting the number of search results to retrieve.
-        sHelper.addItem(wx.StaticText(panel, label=_("Number of &results to fetch:")))
+        sHelper.addItem(wx.StaticText(panel, label=_("&Number of &results to fetch:")))
         last_count = config.conf["YoutubePlus"].get("searchResultCount", 20)
         self.countSpin = sHelper.addItem(wx.SpinCtrl(panel, min=5, max=50, initial=last_count))
+
+        # Translators: Label for the optional field restricting the search to a single channel's own videos.
+        sHelper.addItem(wx.StaticText(panel, label=_("&Within channel (optional):")))
+        self._channel_url_by_name = {}
+        channel_choices = self._load_channel_picker_choices()
+        self.channelCombo = sHelper.addItem(wx.ComboBox(panel, choices=channel_choices, style=wx.CB_DROPDOWN))
+        # Translators: Explanatory note under the "Within channel" field: setting it restricts the search to that channel only, and the type/duration/date/sort filters below don't apply and are hidden.
+        sHelper.addItem(wx.StaticText(
+            panel,
+            label=_("Searches only that channel's own videos. The filters below don't apply while a channel is set.")
+        ))
+        if initial_channel:
+            init_name, init_url = initial_channel
+            self._channel_url_by_name.setdefault(init_name, init_url)
+            self.channelCombo.SetValue(init_name)
+
+        # Translators: Label for filtering search results by content type.
+        self.typeLabel = sHelper.addItem(wx.StaticText(panel, label=_("Content &type:")))
+        self._type_values = ["video", "channel", "playlist"]
+        type_choices = [
+            # Translators: Options for the content type filter. Videos is YouTube's own default when unfiltered.
+            _("Videos"), _("Channels"), _("Playlists"),
+        ]
+        self.typeCombo = sHelper.addItem(wx.ComboBox(panel, choices=type_choices, style=wx.CB_READONLY))
+        self.typeCombo.SetSelection(0)
+
+        # Translators: Label for filtering search results by video duration.
+        self.durationLabel = sHelper.addItem(wx.StaticText(panel, label=_("&Duration:")))
+        self._duration_values = [None, "short", "medium", "long"]
+        duration_choices = [
+            # Translators: Options for the duration filter. "Any" means no filtering.
+            _("Any"), _("Short (under 4 minutes)"), _("Medium (4-20 minutes)"), _("Long (over 20 minutes)"),
+        ]
+        self.durationCombo = sHelper.addItem(wx.ComboBox(panel, choices=duration_choices, style=wx.CB_READONLY))
+        self.durationCombo.SetSelection(0)
+
+        # Translators: Label for filtering search results by upload date.
+        self.uploadDateLabel = sHelper.addItem(wx.StaticText(panel, label=_("&Upload date:")))
+        self._upload_date_values = [None, "hour", "today", "week", "month", "year"]
+        upload_date_choices = [
+            # Translators: Options for the upload date filter. "Any" means no filtering.
+            _("Any"), _("Past hour"), _("Today"), _("This week"), _("This month"), _("This year"),
+        ]
+        self.uploadDateCombo = sHelper.addItem(wx.ComboBox(panel, choices=upload_date_choices, style=wx.CB_READONLY))
+        self.uploadDateCombo.SetSelection(0)
+
+        # Translators: Label for the search result sort order.
+        self.sortLabel = sHelper.addItem(wx.StaticText(panel, label=_("S&ort by:")))
+        self._sort_values = ["relevance", "upload_date", "view_count"]
+        sort_choices = [
+            # Translators: Options for sort order.
+            _("Relevance"), _("Upload date"), _("View count"),
+        ]
+        self.sortCombo = sHelper.addItem(wx.ComboBox(panel, choices=sort_choices, style=wx.CB_READONLY))
+        self.sortCombo.SetSelection(0)
 
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Translators: Button to initiate the search.
@@ -3759,7 +3999,66 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
         self.cancelBtn.Bind(wx.EVT_BUTTON, self.on_close)
 
         self.queryText.Bind(wx.EVT_TEXT_ENTER, self.on_search)
+        self.channelCombo.Bind(wx.EVT_TEXT, self._on_channel_field_changed)
+        self._on_channel_field_changed(None)
         wx.CallAfter(self.queryText.SetFocus)
+
+    def _load_channel_picker_choices(self):
+        """
+        Builds the choice list (and name->url lookup) for the "Within
+        channel" field: channels previously used via "Search in channel"
+        (from search_history.json, most-recent-first -- see
+        core._add_search_history), then favorite channels (fav_channel.json)
+        and subscribed channels (subscription.db) for anything not already
+        covered. Mirrors the keyword-history pattern used for
+        self.history_keywords above.
+        """
+        choices = []
+
+        def _add(name, url):
+            if name and url and name not in self._channel_url_by_name:
+                self._channel_url_by_name[name] = url
+                choices.append(name)
+
+        for entry in self.core._load_json_list(self.core.get_profile_path("search_history.json")):
+            if entry.get('channel_url'):
+                _add(entry.get('channel_name'), entry.get('channel_url'))
+
+        for entry in self.core._load_json_list(self.core.get_profile_path("fav_channel.json")):
+            _add(entry.get('channel_name'), entry.get('channel_url'))
+
+        try:
+            con = sqlite3.connect(self.core.get_profile_path("subscription.db"))
+            cur = con.cursor()
+            cur.execute("SELECT channel_name, channel_url FROM subscribed_channels ORDER BY channel_name COLLATE NOCASE")
+            for name, url in cur.fetchall():
+                _add(name, url)
+            con.close()
+        except Exception as e:
+            log.error(f"Failed to load subscribed channels for search dialog: {e}")
+
+        return choices
+
+    def _on_channel_field_changed(self, event):
+        """
+        Shows/hides the type/duration/date/sort filters based on whether
+        "Within channel" is set -- those filters use YouTube's global
+        search-filter mechanism (sp=), which the /search?query= channel-tab
+        URL doesn't accept, so they'd silently do nothing if left visible.
+        """
+        has_channel = bool(self.channelCombo.GetValue().strip())
+        controls_to_toggle = (
+            self.typeLabel, self.typeCombo,
+            self.durationLabel, self.durationCombo,
+            self.uploadDateLabel, self.uploadDateCombo,
+            self.sortLabel, self.sortCombo,
+        )
+        for ctrl in controls_to_toggle:
+            ctrl.Show(not has_channel)
+        self.Layout()
+        self.Fit()
+        if event:
+            event.Skip()
 
     def on_close(self, event):
         self.Destroy()
@@ -3773,15 +4072,56 @@ class SearchDialog(BaseDialogMixin, wx.Dialog):
             ui.message(_("Please enter a search term."))
             return
         config.conf["YoutubePlus"]["searchResultCount"] = count
+
+        channel_input = self.channelCombo.GetValue().strip()
+        if channel_input:
+            channel_url = self._channel_url_by_name.get(channel_input)
+            channel_name = channel_input if channel_url else None
+            if not channel_url:
+                normalized = self.core._normalize_youtube_url(channel_input)
+                if normalized and self.core.is_youtube_url(normalized) and re.search(r'/channel/|/c/|/@', normalized, re.IGNORECASE):
+                    channel_url = normalized
+                    channel_name = channel_input
+            if channel_url:
+                self.core.start_channel_search(channel_name, channel_url, query, count)
+                return
+            # Not a known name and not a recognizable URL -- most users type
+            # a channel name here, possibly misspelled, rather than paste a
+            # URL. Resolve it via a real channel search instead of failing
+            # outright, and let the user confirm/pick the right one next.
+            # Translators: Status message shown while looking up a channel name typed into "Within channel". {name} is what was typed.
+            ui.message(_("Looking up channel '{name}'...").format(name=channel_input))
+            threading.Thread(
+                target=self.core.resolve_channel_by_name_worker,
+                args=(channel_input, query, count),
+                daemon=True
+            ).start()
+            return
+
+        filters = {
+            'content_type': self._type_values[self.typeCombo.GetSelection()],
+            'duration': self._duration_values[self.durationCombo.GetSelection()],
+            'upload_date': self._upload_date_values[self.uploadDateCombo.GetSelection()],
+            'sort_by': self._sort_values[self.sortCombo.GetSelection()],
+        }
+        # 'video' is the implicit default type -- YouTube's own unfiltered
+        # search already returns essentially all-video results in practice
+        # (confirmed by testing: even searching an exact playlist name with
+        # no type filter returns nothing playlist-shaped). Treat it like
+        # 'relevance': strip it so an all-default selection still takes the
+        # faster ytsearchN: path in core._Youtube_worker instead of always
+        # hitting the real search URL.
+        filters = {k: v for k, v in filters.items() if v not in (None, 'relevance', 'video')}
         threading.Thread(target=self.core._Youtube_worker,
                          args=(query, count, self),
+                         kwargs={'filters': filters},
                          daemon=True).start()
 
 class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
     """A dialog to display a list of videos, now with a full action menu."""
     _escape_protection = True
 
-    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_playlist_data_to_update=None, channel_url_to_update=None, new_channel_data_to_update=None, source_url=None, content_type_label="videos", is_collection=False):
+    def __init__(self, parent, title, video_list, core_instance, playlist_id_to_update=None, new_playlist_data_to_update=None, channel_url_to_update=None, new_channel_data_to_update=None, source_url=None, content_type_label="videos", is_collection=False, is_channel_list=False):
         super().__init__(parent, title=title)
         self.videos = video_list
         self.core = core_instance
@@ -3790,14 +4130,22 @@ class ChannelVideoDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
         self.channel_url_to_update = channel_url_to_update
         self.new_channel_data_to_update = new_channel_data_to_update
         self.is_collection = is_collection
+        self.is_channel_list = is_channel_list
         self.source_url = source_url
         self.content_type_label = content_type_label
         panel = wx.Panel(self)
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.listCtrl = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
         self.listCtrl.InsertColumn(0, _("Title"), width=450)
-        # Translators: Column header showing video count for playlists, or duration for videos.
-        col2_label = _("Videos") if is_collection else _("Duration")
+        # Translators: Column header: "Type" for channel-only search results
+        # (the row 2 value is just the literal word "Channel"), "Videos" for
+        # playlist collections, "Duration" for a plain video list.
+        if is_channel_list:
+            col2_label = _("Type")
+        elif is_collection:
+            col2_label = _("Videos")
+        else:
+            col2_label = _("Duration")
         self.listCtrl.InsertColumn(1, col2_label, width=120)
         mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, 10)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -3916,7 +4264,7 @@ class ChannelCollectionDialog(BaseDialogMixin, wx.Dialog):
     """
     _escape_protection = True
 
-    def __init__(self, parent, title, items, core_instance, source_url=None, content_type_label=""):
+    def __init__(self, parent, title, items, core_instance, source_url=None, content_type_label="", list_column_label=None):
         super().__init__(parent, title=title)
         self.items = items
         self.core = core_instance
@@ -3929,8 +4277,10 @@ class ChannelCollectionDialog(BaseDialogMixin, wx.Dialog):
         self.listCtrl = wx.ListCtrl(panel, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
         # Translators: Column header for the playlist title.
         self.listCtrl.InsertColumn(0, _("Playlist Title"), width=400)
-        # Translators: Column header for the number of videos in a playlist.
-        self.listCtrl.InsertColumn(1, _("Videos"), width=80)
+        # Translators: Column header for the number of videos in a playlist,
+        # overridable (e.g. to "Type" when a reliable count isn't available,
+        # such as for YouTube search results).
+        self.listCtrl.InsertColumn(1, list_column_label or _("Videos"), width=80)
 
         mainSizer.Add(self.listCtrl, 1, wx.EXPAND | wx.ALL, 10)
 

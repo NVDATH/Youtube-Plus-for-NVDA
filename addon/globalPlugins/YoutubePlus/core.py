@@ -31,7 +31,7 @@ import wx
 import concurrent.futures
 import subprocess
 import urllib.request
-from urllib.parse import urlparse, parse_qs, unquote
+from urllib.parse import urlparse, parse_qs, unquote, quote
 from collections import OrderedDict
 from logHandler import log
 import unicodedata
@@ -1337,18 +1337,32 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-    def _add_search_history(self, keyword, result_count):
+    def _add_search_history(self, keyword, result_count, filters=None, channel_name=None, channel_url=None):
         """
         Save a search keyword to history (MRU, max 50 entries).
-        If keyword already exists, move it to top and update timestamp.
+        Entries are deduped by (keyword, channel_url) together, not keyword
+        alone -- the same keyword searched globally and searched within a
+        channel are kept as two separate entries. `filters`, if given, is
+        stored so "Search Again" reproduces the same filtered results.
+        `channel_name`/`channel_url`, if given, mark this as a "Search in
+        channel" entry: SearchHistoryPanel shows the channel name alongside
+        the keyword, "Search Again" re-runs it scoped to that channel, and
+        SearchDialog's "Within channel" field is populated from these
+        entries too (see SearchDialog._load_channel_picker_choices).
         """
         try:
             path = self.get_profile_path("search_history.json")
             history = self._load_json_list(path)
-            history = [h for h in history if h.get('keyword', '').lower() != keyword.lower()]
+            history = [
+                h for h in history
+                if not (h.get('keyword', '').lower() == keyword.lower() and h.get('channel_url') == channel_url)
+            ]
             history.insert(0, {
                 'keyword': keyword,
                 'result_count': result_count,
+                'filters': filters or {},
+                'channel_name': channel_name,
+                'channel_url': channel_url,
                 'searched_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             })
             history = history[:50]
@@ -1676,10 +1690,104 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         finally:
             self._stop_indicator()
     
-    def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None, load_all=False, is_collection=False):
+    def start_channel_search(self, channel_name, channel_url, keyword, count):
+        """
+        Shared entry point for "search within a channel" -- used directly by
+        SearchDialog.on_search when the channel is already known/typed as a
+        URL, and by _show_channel_picker once a free-typed channel name has
+        been resolved. Records the search in history (as a channel-scoped
+        entry, see _add_search_history) and launches the same
+        _view_channel_worker path "Show channel videos" uses, just against
+        a /search?query= URL instead of /videos.
+        """
+        self._add_search_history(keyword=keyword, result_count=count, channel_name=channel_name, channel_url=channel_url)
+        search_url = f"{channel_url.rstrip('/')}/search?query={quote(keyword)}"
+        threading.Thread(
+            target=self._view_channel_worker,
+            kwargs={
+                'url': search_url,
+                # Translators: Status message spoken while searching within a specific channel. {query} is the search text, {channel} is the channel name.
+                'dialog_title_template': _("Searching '{query}' in {channel}...").format(query=keyword, channel=channel_name),
+                'base_channel_url': channel_url,
+                'base_channel_name': channel_name,
+                # Translators: Title of the results dialog when searching within one channel. {query} is the search text, {channel} is the channel name.
+                'dialog_title_override': _("Results for '{query}' in {channel}").format(query=keyword, channel=channel_name),
+                'fetch_count_override': count,
+            },
+            daemon=True
+        ).start()
+
+    def resolve_channel_by_name_worker(self, channel_query, keyword, count):
+        """
+        Looks up channels matching a free-typed name from SearchDialog's
+        "Within channel" field (used when it doesn't match a known
+        history/favorite/subscribed channel and isn't a recognizable
+        channel URL) via a real YouTube search restricted to channels
+        (content_type='channel' -- see utils.build_youtube_search_params),
+        then asks the user to confirm/pick the right one on the main thread
+        before actually searching within it. Never guesses silently.
+        """
+        try:
+            opts = {'quiet': True, 'no_warnings': True, 'extract_flat': 'in_playlist', 'playlistend': 5}
+            url = utils.build_youtube_search_url(channel_query, content_type='channel')
+            with self._get_ydl_instance(extra_opts=opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+            candidates = []
+            for entry in (info.get('entries') or []):
+                if not entry or not entry.get('id'):
+                    continue
+                name = entry.get('title') or entry.get('channel')
+                entry_id = entry.get('id')
+                c_url = (
+                    entry.get('url') or entry.get('webpage_url') or entry.get('channel_url')
+                    or (f"https://www.youtube.com/{entry_id}" if str(entry_id).startswith('@')
+                        else f"https://www.youtube.com/channel/{entry_id}")
+                )
+                if name and c_url:
+                    candidates.append((name, c_url))
+            if not candidates:
+                # Translators: Message shown when no channel matches the name typed into "Within channel". {name} is what was typed.
+                wx.CallAfter(ui.message, _("Could not find a channel named '{name}'.").format(name=channel_query))
+                return
+            wx.CallAfter(self._show_channel_picker, candidates, keyword, count)
+        except Exception as e:
+            log.warning("Channel lookup failed for '%s': %s", channel_query, e)
+            # Translators: Error message shown when looking up a channel name fails.
+            wx.CallAfter(ui.message, _("Failed to look up that channel."))
+
+    def _show_channel_picker(self, candidates, keyword, count):
+        """Runs on the main thread. Lets the user pick which resolved channel to search in."""
+        labels = [name for name, _url in candidates]
+        gui.mainFrame.prePopup()
+        try:
+            with wx.SingleChoiceDialog(
+                gui.mainFrame,
+                # Translators: Prompt asking the user to pick which channel they meant.
+                _("Select the channel to search in:"),
+                # Translators: Title of the channel-picker dialog.
+                _("Choose Channel"),
+                labels
+            ) as dlg:
+                if dlg.ShowModal() != wx.ID_OK:
+                    return
+                name, url = candidates[dlg.GetSelection()]
+        finally:
+            gui.mainFrame.postPopup()
+        self.start_channel_search(name, url, keyword, count)
+
+    def _view_channel_worker(self, url, dialog_title_template, content_type_label="videos", base_channel_url=None, base_channel_name=None, load_all=False, is_collection=False, dialog_title_override=None, fetch_count_override=None):
         """
         Generic worker to fetch a list of videos from any URL (channel or playlist)
         and display them in the ChannelVideoDialog.
+        `dialog_title_override`, if given, is used verbatim as the final
+        dialog title instead of the computed "Recent {count} {type} from
+        {channel}" -- needed for "Search in channel", where that phrasing
+        would misleadingly claim the results are just "recent videos".
+        `fetch_count_override`, if given, replaces the playlist_fetch_count
+        config setting below -- also needed for "Search in channel", which
+        has its own "Number of results to fetch" field in SearchDialog and
+        shouldn't be silently overridden by the global channel-browsing
+        default meant for "Show channel videos" (which has no such field).
         """
         message = dialog_title_template.format(type=content_type_label)
         ui.message(message)
@@ -1697,7 +1805,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 'extract_flat': 'in_playlist',
             }
             if not is_playlist and not load_all:
-                fetch_count = config.conf["YoutubePlus"].get("playlist_fetch_count", 20)
+                fetch_count = fetch_count_override or config.conf["YoutubePlus"].get("playlist_fetch_count", 20)
                 ydl_opts['playlistend'] = fetch_count
             with open(os.devnull, 'w') as devnull:
                 with redirect_stderr(devnull):
@@ -1758,7 +1866,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             else:
                 # Translators: Title of the video list dialog for a channel. 
                 # {count} is the number of videos, {type} is the content type (e.g., videos/shorts), {channel} is the channel name.
-                if load_all:
+                if dialog_title_override:
+                    dialog_title = dialog_title_override
+                elif load_all:
                     dialog_title = _("All {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
                 else:
                     dialog_title = _("Recent {count} {type} from {channel}").format(count=len(video_list), type=content_type_label, channel=info.get('uploader', _("Channel")))
@@ -2360,9 +2470,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         except Exception as e:
             log.warning(f"Could not clean up .part files in {directory}: {e}")
         
-    def _Youtube_worker(self, query, count, source_dialog):
+
+    def _Youtube_worker(self, query, count, source_dialog, filters=None):
         """
         A simplified worker that takes a raw query and the desired number of results.
+        `filters`, if given, is a dict with any of the keys 'sort_by',
+        'upload_date', 'content_type', 'duration' (see
+        utils.build_youtube_search_params for allowed values). When omitted
+        or empty, this keeps using the original ytsearchN: pseudo-URL, since
+        that extractor is faster and remains the common case -- filters
+        require hitting the real search results page instead (see
+        utils.build_youtube_search_url for why ytsearchN: can't do this).
+
+        Channel and playlist results get their own item shape (is_channel /
+        is_collection flags + a proper channel_url / playlist_url) instead
+        of being treated as videos -- VideoActionMixin.on_open_video and
+        .on_copy dispatch on these flags so opening/copying a channel or
+        playlist result doesn't build a broken youtu.be/watch?v= link.
         """
         # Translators: Status message shown when the add-on starts searching YouTube. {query} is the search text.
         ui.message(_("Searching for '{query}'...").format(query=query))
@@ -2370,37 +2494,85 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.is_long_task_running = True
         try:
             opts = {'quiet': True, 'no_warnings': True, 'extract_flat': 'in_playlist'}
-            search_prefix = f"ytsearch{count}:{query}"
+            if filters:
+                search_prefix = utils.build_youtube_search_url(query, **filters)
+                opts['playlistend'] = count
+            else:
+                search_prefix = f"ytsearch{count}:{query}"
             with self._get_ydl_instance(extra_opts=opts) as ydl:
                 info = ydl.extract_info(search_prefix, download=False)
             results_list = []
+            # If a content-type filter was explicitly requested, trust it
+            # instead of guessing from entry['_type'] -- YouTube already
+            # constrained the result set server-side via `sp=`, so every
+            # entry returned is that type by construction. `_type` is only
+            # needed as a fallback for the unfiltered ("Any") case, where
+            # results legitimately mix videos/channels/playlists and we have
+            # no other way to tell them apart per-entry.
+            forced_type = (filters or {}).get('content_type')
             if 'entries' in info:
                 for entry in info.get('entries', []):
                     if entry and entry.get('id'):
-                        item = {
-                            'id': entry.get('id'),
-                            # Translators: Abbreviation for "Not Available".
-                            'title': entry.get('title') or _("[Unavailable video]"),
-                            'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
-                            'channel_name': entry.get('channel'),
-                            'channel_url': entry.get('channel_url')
-                        }
-                        _type = entry.get('_type')
-                        if _type == 'channel':
-                            # Translators: Label shown in search results to indicate the item is a YouTube channel.
-                            item['duration_str'] = _("Channel")
-                        elif _type == 'playlist':
-                            # Translators: Label for search results indicating a playlist. {count} is the number of videos in it.
-                            item['duration_str'] = _("Playlist ({count})").format(count=entry.get('playlist_count', 0))
+                        entry_id = entry.get('id')
+                        entry_type = forced_type or entry.get('_type')
+                        if entry_type == 'channel':
+                            channel_url = (
+                                entry.get('url') or entry.get('webpage_url')
+                                or entry.get('channel_url')
+                                or (f"https://www.youtube.com/{entry_id}" if str(entry_id).startswith('@')
+                                    else f"https://www.youtube.com/channel/{entry_id}")
+                            )
+                            item = {
+                                'id': entry_id,
+                                # Translators: Abbreviation for "Not Available".
+                                'title': entry.get('title') or entry.get('channel') or _("[Unavailable video]"),
+                                # Translators: Label shown in search results to indicate the item is a YouTube channel.
+                                'duration_str': _("Channel"),
+                                'channel_name': entry.get('title') or entry.get('channel'),
+                                'channel_url': channel_url,
+                                'is_channel': True,
+                            }
+                        elif entry_type == 'playlist':
+                            playlist_url = (
+                                entry.get('url') or entry.get('webpage_url')
+                                or f"https://www.youtube.com/playlist?list={entry_id}"
+                            )
+                            # playlist_count isn't reliably populated on the
+                            # compact stub entries a search results page
+                            # returns (unlike fetching a real playlist), so
+                            # don't try to show a count at all here --
+                            # _show_search_results renders this column as
+                            # "Type" (not "Videos") for search results, and
+                            # this literal word is the value shown there.
+                            item = {
+                                'id': entry_id,
+                                'playlist_url': playlist_url,
+                                # Translators: Abbreviation for "Not Available".
+                                'title': entry.get('title') or _("[Unavailable video]"),
+                                # Translators: Value shown in the "Type" column for a playlist search result.
+                                'duration_str': _("Playlist"),
+                                'channel_name': entry.get('channel') or entry.get('uploader'),
+                                'channel_url': entry.get('channel_url') or entry.get('uploader_url'),
+                                'is_collection': True,
+                            }
+                        else:
+                            item = {
+                                'id': entry_id,
+                                # Translators: Abbreviation for "Not Available".
+                                'title': entry.get('title') or _("[Unavailable video]"),
+                                'duration_str': self._format_duration_verbose(entry.get('duration', 0)),
+                                'channel_name': entry.get('channel'),
+                                'channel_url': entry.get('channel_url')
+                            }
                         results_list.append(item)
             if not results_list:
                 # Translators: Message shown when a YouTube search returns no results. {query} is the search text.
                 wx.CallAfter(ui.message, _("No results found for '{query}'.").format(query=query))
             else:
-                self._add_search_history(keyword=query, result_count=count)
+                self._add_search_history(keyword=query, result_count=count, filters=filters)
                 # Translators: Title of the dialog that displays YouTube search results. {query} is the search text.
                 dialog_title = _("Search Results for '{query}'").format(query=query)
-                wx.CallAfter(self._show_search_results, results_list, dialog_title, source_dialog)
+                wx.CallAfter(self._show_search_results, results_list, dialog_title, source_dialog, forced_type)
         except Exception as e:
             log.warning("Failed to perform Youtube for '%s'", query, e)
             # Translators: Error message shown when an error occurs during the YouTube search process.
@@ -2408,7 +2580,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         finally:
             self.is_long_task_running = False
             self._stop_indicator()
-            
+
     def openMessagesDialog(self):
         gui.mainFrame.prePopup()
         # Translators: Title of the live chat window.
@@ -2501,16 +2673,40 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             # Translators: Error message shown when the add-on cannot read the subscription data from the local database.
             ui.message(_("Error loading subscription feed from database."))
 
-    def _show_search_results(self, results_list, title, parent_dialog):
-        """Creates and shows the search results dialog with the correct parent."""
+    def _show_search_results(self, results_list, title, parent_dialog, content_type=None):
+        """
+        Creates and shows the search results dialog with the correct parent.
+        When results were filtered to playlists only (content_type ==
+        'playlist'), uses ChannelCollectionDialog instead of
+        ChannelVideoDialog -- that dialog already has the right actions for
+        browsing a playlist (Show Videos, Open on Browser, Add to
+        Favorites, Describe Cover) instead of forcing playlist rows through
+        VideoActionMixin's video-only Action menu, where "expanding" a
+        playlist result never actually worked.
+        """
         gui.mainFrame.prePopup()
         # ถ้า parent เป็น mainFrame (เรียกจาก script หรือ SearchHistoryPanel) ใช้ Show
         # ถ้า parent เป็น SearchDialog ใช้ ShowModal แล้ว Destroy
         is_modal = parent_dialog is not None and parent_dialog is not gui.mainFrame
-        dialog = ChannelVideoDialog(
-            parent_dialog if is_modal else gui.mainFrame,
-            title, results_list, self
-        )
+        dialog_parent = parent_dialog if is_modal else gui.mainFrame
+        if content_type == 'playlist':
+            dialog = ChannelCollectionDialog(
+                dialog_parent, title, results_list, self,
+                content_type_label=_("Playlists"),
+                # Translators: Column header used instead of "Videos" for
+                # search results filtered to playlists, since a reliable
+                # video count usually isn't available here.
+                list_column_label=_("Type"),
+            )
+        elif content_type == 'channel':
+            dialog = ChannelVideoDialog(
+                dialog_parent, title, results_list, self,
+                is_channel_list=True,
+            )
+        else:
+            dialog = ChannelVideoDialog(
+                dialog_parent, title, results_list, self
+            )
         if is_modal:
             dialog.ShowModal()
             if dialog:

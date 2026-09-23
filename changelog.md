@@ -5,13 +5,11 @@
 * Fixed URLs copied without a scheme (e.g. `youtube.com/watch?v=...` or `youtu.be/...` instead of `https://youtube.com/...`) failing across every command and "Add from clipboard" button that reads from the clipboard, since yt-dlp couldn't match its YouTube extractor against a bare, scheme-less string and fell through to the generic extractor -- which this add-on deliberately excludes to keep its size down.
 
 ### Improvements
-### YouTube Search Filters
 
-- Added the ability to filter YouTube search results by content type (Videos/Channels/Playlists), duration, upload date, and sort order — any combination can be applied together, not just one at a time.
-- Search History now remembers which filters were used with each search, so "Search Again" reproduces the same filtered results instead of reverting to an unfiltered search.
-- Channel and playlist results now display correctly (proper column labels, working "Open in browser"/"Copy URL", and playlists can be expanded into their video list) instead of being incorrectly treated as videos.
-- The Action menu and Quick Action (Space bar) now show only actions that are valid for a channel result, preventing background errors when a video-only action was triggered against a channel.
-
+* Search results can now be filtered by content type (Videos, Channels, Playlists), duration, upload date, and sort order — any combination can be applied at once.
+* Search History now remembers the filters used with a search, so "Search Again" reproduces the same filtered results.
+* Selecting a channel or playlist from search results now opens, copies, and expands correctly instead of being treated as a video.
+* Added a "Within channel" option to the search dialog, to search a single channel's own videos. Channel names are suggested from Search History, Favorite Channels, and Subscribed Channels, and typing a name that doesn't match any of those looks it up on YouTube and asks you to confirm which channel you meant.
 * Added vietnamese (vi) interface translation and documentation — contributed by @ninhhoang205
 
 ## 2026.9.3

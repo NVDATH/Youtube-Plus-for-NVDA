@@ -75,7 +75,22 @@ Este comando abre uma janela de busca do YouTube. Digite sua consulta no campo d
 
 O campo de busca é uma caixa de combinação que lembra suas buscas anteriores: pressione a seta para baixo (ou Alt+Baixo) para abrir uma lista de palavras-chave anteriores e escolher uma em vez de digitá-la novamente.
 
-Os resultados são exibidos no mesmo formato de [lista de vídeos](#lista-de-vídeos) usado em todo o complemento, não como uma página web do YouTube. Você pode acessar todos os detalhes do vídeo da mesma forma que em qualquer outra lista de vídeos do complemento.
+Abaixo do campo de consulta, quatro filtros permitem refinar os resultados, e podem ser combinados livremente (por exemplo, playlists publicadas neste mês, ordenadas por número de visualizações):
+
+* **Content type:** Videos (padrão), Channels, ou Playlists
+* **Duration:** Any, Short (menos de 4 minutos), Medium (4-20 minutos), ou Long (mais de 20 minutos)
+* **Upload date:** Any, Past hour, Today, This week, This month, ou This year
+* **Sort by:** Relevance (padrão), Upload date, ou View count
+
+Os resultados são exibidos no mesmo formato de [lista de vídeos](#lista-de-vídeos) usado em todo o complemento, não como uma página web do YouTube. Um resultado do tipo Channels abre/copia a URL do canal e exibe um menu Action reduzido (sem download, comentários, ou outras ações exclusivas de vídeo); um resultado do tipo Playlists se expande na sua própria lista de vídeos, da mesma forma que uma playlist favorita.
+
+#### Buscando dentro de um canal
+
+O campo **Within channel** restringe a busca aos próprios vídeos de um único canal, em vez de todo o YouTube. Quando definido, os quatro filtros acima não se aplicam à página de busca própria do canal e ficam ocultos.
+
+Comece a digitar o nome de um canal e uma lista suspensa sugere canais do seu Histórico de Busca, Favorite Channels, e Subscribed Channels. Se o que você digitou não corresponder a nenhum desses (por exemplo, um canal que você nunca buscou nem favoritou antes), o complemento faz uma busca no YouTube e mostra um seletor para você confirmar qual canal você quis dizer — ele nunca adivinha silenciosamente. Você também pode colar a URL de um canal diretamente, em vez de digitar um nome.
+
+Você também pode abrir esta caixa de diálogo já com um canal pré-preenchido: na aba Channel da janela de Favoritos, selecione um canal e pressione o botão **Search in this channel...**.
 
 #### q: (quick search)
 
@@ -83,9 +98,9 @@ Uma alternativa mais rápida à caixa de diálogo de busca acima. Selecione algu
 
 #### Histórico de Busca
 
-Toda busca que você faz — seja pela caixa de diálogo de busca ou pela busca rápida — é salva automaticamente. Pressione **Control+H** na camada do YoutubePlus para ir direto à aba de Histórico de Busca na janela de Favoritos, onde você pode:
+Toda busca que você faz — seja pela caixa de diálogo de busca ou pela busca rápida — é salva automaticamente, junto com os filtros usados (incluindo um canal definido via "Within channel"). Pressione **Control+H** na camada do YoutubePlus para ir direto à aba de Histórico de Busca na janela de Favoritos, onde você pode:
 
-* Pressionar Enter, ou o botão **Search Again**, para executar novamente uma busca anterior
+* Pressionar Enter, ou o botão **Search Again**, para executar novamente uma busca anterior com exatamente os mesmos filtros (ou o mesmo canal, no caso de uma busca restrita a um canal) — uma entrada restrita a um canal é exibida na lista como "palavra-chave (in Channel Name)", para ficar claro à primeira vista
 * Pressionar **New Search (Alt+N)** para abrir a caixa de diálogo de busca
 * Pressionar Delete, ou o botão **Remove**, para remover uma única entrada
 * Pressionar o botão **Clear All** para limpar todo o histórico
@@ -132,7 +147,7 @@ Você também pode descrever o avatar de um canal ou a capa de uma playlist dire
 Uma janela exibindo seus favoritos salvos, divididos em 5 abas por tipo:
 
 * **Video:** Lista seus vídeos salvos, organizados em categorias criadas por você. Uma árvore de categorias fica à esquerda e a lista de vídeos da categoria selecionada fica à direita (veja [Categorias](#categorias-abas-vídeo-e-lista-de-reprodução-posterior) abaixo). Inclui botões de Action e Copy para cada item (descritos abaixo).
-* **Channel:** Lista seus canais salvos com um painel de descrição do canal. Inclui botões para abrir o canal, navegar pelo seu conteúdo por tipo, e descrever seu avatar via Be My Eyes (Alt+D).
+* **Channel:** Lista seus canais salvos com um painel de descrição do canal. Inclui botões para abrir o canal, navegar pelo seu conteúdo por tipo, buscar dentro do canal, e descrever seu avatar via Be My Eyes (Alt+D).
 * **Playlist:** Lista suas playlists salvas. Pressione Espaço, Enter ou Alt+V para expandir todos os vídeos de uma playlist. Inclui um botão Open on Web (Alt+W) e um botão Describe Cover (Alt+D) para obter uma descrição de Be My Eyes da imagem de capa da playlist.
 * **Watch List:** Lista seus vídeos salvos usando o mesmo layout de árvore de categorias + lista da aba Video, com seu próprio conjunto independente de categorias.
 * **Search History:** Lista cada busca que você já fez, com opções para executar novamente, remover ou limpar entradas (veja [Histórico de Busca](#histórico-de-busca) acima).
