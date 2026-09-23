@@ -36,7 +36,7 @@ Features:
     # Do not edit by hand; edit changelog.md instead and re-run the sync script.
     "addon_changelog": _(
         # CHANGELOG-START
-        """- (ยังไม่ได้ sync — รัน scripts/sync_changelog.py)"""
+        """- (do not sync — รัน scripts/sync_changelog.py)"""
         # CHANGELOG-END
     ),
 }

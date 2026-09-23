@@ -1,0 +1,103 @@
+name: Notify Translators of New Strings
+
+# วิธีสั่งรัน (ไม่ต้อง push tag / ไม่ต้องออก release เลย):
+#   1. เปิด repo บน GitHub
+#   2. ไปแท็บ "Actions" (แถบเมนูบนสุดของ repo)
+#   3. คลิกชื่อ workflow นี้ทางซ้าย: "Notify Translators of New Strings"
+#   4. จะมีปุ่ม "Run workflow" (สีเขียว) โผล่มุมขวา -> กด
+#   5. เลือก branch ที่ต้องการรัน (ปกติคือ main) -> กด "Run workflow" อีกที
+#   6. รอสักครู่ ระบบจะรันจบแล้วไปดูผลลัพธ์ที่ tab Issues ของ repo
+on:
+  workflow_dispatch: {}   # ทำให้กดรันเองได้จาก tab Actions ตามขั้นตอนด้านบน
+
+jobs:
+  sync_and_notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # ต้องมีสิทธิ์นี้เพื่อ commit .pot/.buildVars.py กลับ repo
+      issues: write     # ต้องมีสิทธิ์นี้เพื่อเปิด/แก้ Issue
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y gettext
+          pip install scons markdown
+
+      # ไม่มี tag ตอนนี้ -> สคริปต์จะดึง "หัวข้อบนสุด" ของ changelog.md ให้เอง
+      - name: Sync latest changelog into buildVars.py
+        run: python scripts/sync_changelog.py
+
+      - name: Build .pot only (ไม่ build ตัว add-on เต็ม)
+        run: scons pot
+
+      - name: Check if .pot actually changed
+        id: potdiff
+        run: |
+          git add YoutubePlus.pot buildVars.py
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit updated .pot and buildVars.py
+        if: steps.potdiff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: sync changelog + update .pot for translators"
+          git push
+
+      # ---- แก้รายชื่อผู้ถูกแท็กตรงนี้ (ใส่/ลบคนได้ตามต้องการภายหลัง) ----
+      - name: Open issue notifying translators
+        if: steps.potdiff.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const assignees = [
+              "NVDATH",
+              "ninhhoang2005",
+              "ana-giselle-ar86",
+              "George-br",
+              "EdilbertoFonseca",
+            ];
+            const mentions = assignees.map(u => `@${u}`).join(" ");
+            const repo = context.repo;
+            const runUrl = `https://github.com/${repo.owner}/${repo.repo}/actions/runs/${context.runId}`;
+            const potRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/YoutubePlus.pot`;
+            const changelogRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/changelog.md`;
+
+            const body = [
+              mentions,
+              "",
+              "มีข้อความ (string) ใหม่หรือมีการแก้ไข changelog ที่ต้องอัปเดตคำแปลก่อนออกเวอร์ชันถัดไปครับ/ค่ะ",
+              "",
+              `- ไฟล์ .pot ล่าสุด: ${potRawUrl}`,
+              `- changelog.md ล่าสุด: ${changelogRawUrl}`,
+              `- ผลรัน workflow: ${runUrl}`,
+              "",
+              "วิธีอัปเดตคำแปล: เปิดไฟล์ .po ของภาษาคุณด้วย Poedit แล้วกด \"Update from POT\" โดยชี้ไปที่ไฟล์ .pot ด้านบน จากนั้นแปล string ใหม่แล้วส่ง PO กลับมาเป็น Pull Request ได้เลยครับ",
+            ].join("\n");
+
+            await github.rest.issues.create({
+              owner: repo.owner,
+              repo: repo.repo,
+              title: `แจ้งอัปเดตคำแปล: มี string ใหม่ (${new Date().toISOString().slice(0,10)})`,
+              body: body,
+            });
+            // หมายเหตุ: ไม่ใส่ assignees เพราะ GitHub API กำหนดว่าต้องเป็น
+            // collaborator ของ repo เท่านั้นถึงจะ assign ได้ ผู้ที่ส่ง PR
+            // แปลมาแต่ไม่ใช่ collaborator จะทำให้ call พัง — @mention ใน
+            // เนื้อ issue (ด้านบน) แจ้งเตือนได้เหมือนกันโดยไม่ติดข้อจำกัดนี้
+
+      - name: No changes detected
+        if: steps.potdiff.outputs.changed == 'false'
+        run: echo "changelog.md ไม่มีการเปลี่ยนแปลงที่ทำให้ .pot ต่างไปจากเดิม ไม่เปิด issue"

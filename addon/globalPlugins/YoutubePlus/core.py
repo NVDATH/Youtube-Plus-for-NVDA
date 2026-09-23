@@ -411,6 +411,23 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         ]
         return any(re.search(pattern, url, re.IGNORECASE) for pattern in patterns)
         
+    def _normalize_youtube_url(self, url):
+        """
+        Prepends https:// to a scheme-less URL that's clearly meant to be
+        YouTube's (starts with "you..."), e.g. text copied as
+        "youtube.com/watch?v=..." or "youtu.be/..." without a scheme. Without
+        this, yt-dlp can't match its youtube extractor against the bare
+        string and falls through to the generic extractor -- which this
+        add-on's build deliberately strips out to keep the bundle small (see
+        SConstruct), so it fails outright instead of just working.
+        """
+        if not url:
+            return url
+        stripped = url.strip()
+        if not re.match(r'^https?://', stripped, re.IGNORECASE) and re.match(r'^you', stripped, re.IGNORECASE):
+            return "https://" + stripped
+        return stripped
+
     def _find_youtube_url(self):
         """
         Finds a YouTube URL, prioritizing a specific URL from the current window,
@@ -423,6 +440,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             except Exception:
                 return None
         url_from_window = _search_source(api.getCurrentURL)
+        url_from_window = self._normalize_youtube_url(url_from_window)
         if url_from_window and self.is_youtube_url(url_from_window):
             if self._is_specific_youtube_url(url_from_window):
                 log.debug("Found specific YouTube URL in current window. Using it.")
@@ -430,6 +448,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             else:
                 log.debug("Window URL is a generic YouTube page. Checking clipboard as a fallback.")
         url_from_clipboard = _search_source(api.getClipData)
+        url_from_clipboard = self._normalize_youtube_url(url_from_clipboard)
         if url_from_clipboard and self._is_specific_youtube_url(url_from_clipboard):
             log.debug("Found specific YouTube URL in clipboard.")
             return url_from_clipboard

@@ -275,10 +275,8 @@ def generateManifest(source, dest):
 def generateTranslatedManifest(source, language, out):
     _ = gettext.translation("nvda", localedir=os.path.join("addon", "locale"), languages=[language]).gettext
     vars = {}
-    for var in ("addon_summary", "addon_description", "addon_changelog"):
+    for var in ("addon_summary", "addon_description"):
         vars[var] = _(buildVars.addon_info[var])
-    # updateChannel is not translatable; pass it through as-is.
-    vars["addon_updateChannel"] = buildVars.addon_info["addon_updateChannel"]
     with codecs.open(source, "r", "utf-8") as f:
         manifest_template = f.read()
     result = manifest_template.format(**vars)

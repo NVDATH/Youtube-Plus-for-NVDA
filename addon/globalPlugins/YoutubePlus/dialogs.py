@@ -1848,7 +1848,7 @@ class BaseVideoListPanel(wx.Panel, VideoActionMixin):
 
     def on_add(self, event):
         try:
-            url = api.getClipData()
+            url = self.core._normalize_youtube_url(api.getClipData())
             if not url or not self.core.is_youtube_url(url):
                 ui.message(_("No valid YouTube URL found in clipboard."))
                 return
@@ -2401,7 +2401,7 @@ class FavChannelPanel(wx.Panel):
 
     def on_add(self, event):
         try:
-            url = api.getClipData()
+            url = self.core._normalize_youtube_url(api.getClipData())
             if not url or not self.core.is_youtube_url(url):
                 # Translators: Message shown when no valid YouTube URL is in the clipboard.
                 ui.message(_("No valid YouTube URL found in clipboard."))
@@ -2985,7 +2985,7 @@ class FavPlaylistPanel(wx.Panel):
 
     def on_add(self, event):
         try:
-            url = api.getClipData()
+            url = self.core._normalize_youtube_url(api.getClipData())
             list_match = re.search(r'[?&]list=([^&]+)', url or "")
             if not url or not self.core.is_youtube_url(url) or not list_match:
                 # Translators: Message shown when the clipboard does not contain a valid YouTube playlist URL.
@@ -4411,7 +4411,7 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
 
     def on_add_subscription(self, event):
         try:
-            url = api.getClipData()
+            url = self.core._normalize_youtube_url(api.getClipData())
             if not url or not self.core.is_youtube_url(url):
                 ui.message(_("No valid YouTube URL found in clipboard."))
                 return
@@ -4838,7 +4838,7 @@ class SubDialog(BaseDialogMixin, VideoActionMixin, wx.Dialog):
 
     def on_add_subscription(self, event):
         try:
-            url = api.getClipData()
+            url = self.core._normalize_youtube_url(api.getClipData())
             if not url or not self.core.is_youtube_url(url):
                 # Translators: Warning message when the clipboard doesn't contain a valid link.
                 ui.message(_("No valid YouTube URL found in clipboard."))
