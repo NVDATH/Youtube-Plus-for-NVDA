@@ -1,0 +1,2999 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the YoutubePlus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: YoutubePlus 2026.9.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-27 12:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: buildVars.py:12
+msgid "YouTubePlus"
+msgstr ""
+
+#: buildVars.py:14
+msgid ""
+"YoutubePlus is an add-on for those who enjoy YouTube but find many web "
+"features difficult to access, such as reading comments or live chat.\n"
+"We bring these features to you through the NVDA user interface in an "
+"accessible, shortcut-driven, and customizable format.\n"
+"Users do not need to deal with API keys or link any personal data to the add-"
+"on.\n"
+"\n"
+"Features:\n"
+"• Follow your favorite channels and be certain you'll see every video they "
+"post, without being filtered out by YouTube's algorithm.\n"
+"• A full Favorites system for videos, channels, and playlists, plus a Watch "
+"List for videos you want to watch later — with categories, sorting, and "
+"background updates to keep channel and playlist info current.\n"
+"• Built-in search with saved search history, plus a Quick Search shortcut "
+"that searches instantly using selected text or clipboard content.\n"
+"• Browse a channel's videos, shorts, streams, playlists, and podcasts "
+"directly, without leaving the accessible interface.\n"
+"• Read comments and live chat replays, and follow a live chat as it happens: "
+"read it aloud in a separate voice of your choice, with alert sounds for "
+"Super Chats, Super Stickers and new channel members.\n"
+"• Send a video's thumbnail straight to the Be My Eyes app for a live "
+"description (Be My Eyes must be installed)\n"
+"• Download videos, audio, or subtitles (with multiple format options) for "
+"offline use.\n"
+"• Supports multiple user profiles, with backup and restore built in."
+msgstr ""
+
+#: buildVars.py:39
+msgid ""
+"### New Features and Improvements\n"
+"\n"
+"* Added a **Voice profile** setting that lets you select an NVDA "
+"configuration profile for incoming live chat messages. Chat uses the "
+"selected profile's synthesizer, voice, rate, pitch, and volume, while NVDA's "
+"regular speech remains unchanged. A separate synthesizer runs alongside "
+"NVDA, allowing chat to use a different synthesizer (such as SAPI 5) without "
+"being interrupted by key presses or NVDA speech. Available when "
+"**Automatically speak incoming live chat** is enabled. Suggested by "
+"@MichalSuchy (#13).\n"
+"* Added configurable sound alerts for Super Chats, Super Stickers, and new "
+"member events. Each event type can have its own alert sound, selected from "
+"the `.wav` files in the add-on's `sounds` folder. Alerts work independently "
+"of automatic chat speech.\n"
+"* New member events now appear in the live chat window and exported chat. "
+"Super Chats, Super Stickers, and new member events are prioritized over "
+"regular messages and are no longer skipped during periods of heavy chat "
+"activity.\n"
+"* Added a connection announcement when starting to monitor a live stream, "
+"replacing the progress sound as the only indication that the add-on is "
+"connecting to live chat.\n"
+"* Search results can now be filtered by content type (videos, channels, or "
+"playlists), duration, upload date, and sort order. Filters can be combined.\n"
+"* Search History now saves the filters used for each search, allowing "
+"**Search Again** to reproduce the same filtered results.\n"
+"* Selecting a channel or playlist in search results now correctly opens, "
+"copies, and expands it instead of treating it as a video.\n"
+"* Added a **Within channel** option to the search dialog for searching "
+"videos from a specific channel. Channel names are suggested from Search "
+"History, Favorite Channels, and Subscribed Channels. If the entered name "
+"doesn't match any suggestions, the add-on looks up the channel on YouTube "
+"and asks you to confirm the intended channel.\n"
+"* Checkbox lists in the settings dialog and Manage Subscriptions now "
+"automatically select their first item.\n"
+"* Added Vietnamese (`vi`) interface translation and documentation, "
+"contributed by @ninhhoang205.\n"
+"\n"
+"### Bug Fixes\n"
+"\n"
+"* Pressing **L** on a stream that is already being monitored now opens its "
+"live chat window without restarting the monitoring session.\n"
+"* When switching to a different live stream while monitoring another, the "
+"add-on now asks for confirmation, offers to save the chat being replaced, "
+"and fully replaces the existing session. Previously, the old session could "
+"continue running alongside the new one, resulting in duplicate or mixed "
+"messages.\n"
+"* Fixed URLs without a scheme (e.g. `youtube.com/watch?v=...` or `youtu."
+"be/...`) failing across commands and **Add from clipboard** actions that "
+"read URLs from the clipboard. These URLs are now handled correctly even "
+"without an `https://` prefix.\n"
+"\n"
+"### Dependencies\n"
+"\n"
+"* Updated yt-dlp to 2026.10.26."
+msgstr ""
+
+#: addon/installTasks.py:46
+#, python-brace-format
+msgid "Successfully migrated {count} data files to the user directory."
+msgstr ""
+
+#: addon/installTasks.py:48
+msgid "YouTube Plus Migration"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:534
+msgid "Failed to get video data. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:538
+msgid "An unexpected error occurred."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:551
+msgid "This command is for videos, but the current page is a playlist."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:558
+msgid ""
+"This command is for videos, but the current page appears to be a channel or "
+"playlist."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:815
+msgid "activate YoutubePlus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:914
+#, python-brace-format
+msgid "Super Chat ({amount}): {paid_message}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:928
+#, python-brace-format
+msgid "Super Sticker ({amount})"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:959
+#, python-brace-format
+msgid "YouTube System ({icon_type})"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:981
+#, python-brace-format
+msgid "{h} Hour"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:983
+#, python-brace-format
+msgid "{h} Hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:988
+#, python-brace-format
+msgid "{m} Minute"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:988
+#, python-brace-format
+msgid "{m} Minutes"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:991
+#, python-brace-format
+msgid "{s} Second"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:991
+#, python-brace-format
+msgid "{s} Seconds"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1026
+#, python-brace-format
+msgid "Info of {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1043
+msgid "This video has a live chat replay. What would you like to view?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1043
+msgid "Choice"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1047
+#, python-brace-format
+msgid "Show {comment_count} &Comments"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1047
+msgid "Show &Live Chat Replay"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1047
+#: addon/globalPlugins/YoutubePlus/core.py:2294
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3990
+msgid "Ca&ncel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1086
+msgid "This video has no comments."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1090
+#, python-brace-format
+msgid "Loading {count} comments..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1093
+msgid "Loading live chat replay..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1107
+msgid ""
+"Live stream detected. Please use the 'Monitor live chat' command instead."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1123
+#, python-brace-format
+msgid "Title: {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1124
+#, python-brace-format
+msgid "Channel: {uploader}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1125
+#, python-brace-format
+msgid "Duration: {duration}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1126
+#, python-brace-format
+msgid "Uploaded: {upload_date}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1127
+#, python-brace-format
+msgid "Views: {view_count}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1128
+#, python-brace-format
+msgid "Likes: {like_count}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1129
+#, python-brace-format
+msgid "Comments: {comment_count}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1131
+#, python-brace-format
+msgid ""
+"Description:\n"
+"{description}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1143
+#, python-brace-format
+msgid "Could not get video info: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1147
+#: addon/globalPlugins/YoutubePlus/core.py:1175
+#: addon/globalPlugins/YoutubePlus/core.py:1223
+#: addon/globalPlugins/YoutubePlus/core.py:1780
+msgid "An unexpected error occurred. Please check the log for details."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1164
+#, python-brace-format
+msgid "Chapters for {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1168
+msgid "No chapters found in this video."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1171
+msgid "Failed to get chapters. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1193
+#, python-brace-format
+msgid "{count} comments of {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1210
+#, python-brace-format
+msgid "{count} live chat replay of {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1218
+#, python-brace-format
+msgid "Could not load data: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1242
+msgid "Connection to live chat lost. The stream may have ended."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1258
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "New member"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1274
+msgid "To conserve memory, older chat messages have been discarded."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1282
+#, python-brace-format
+msgid "Receiving live chat of {video_title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1298
+msgid "An error occurred while receiving live chat. Monitoring stopped."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1334
+msgid ""
+"The live chat voice profile could not be used. Chat will be read in the "
+"current voice."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1368
+#, python-brace-format
+msgid "Already receiving the live chat of {title}."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1399
+#, python-brace-format
+msgid "Live chat saved to {filename}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1405
+msgid "Failed to save chat history."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1425
+#, python-brace-format
+msgid ""
+"You are switching to another live chat. You have {count} chat messages from "
+"the previous one.\n"
+"\n"
+"Would you like to save them first?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1429
+#, python-brace-format
+msgid ""
+"The stream has ended. You have {count} chat messages.\n"
+"\n"
+"Would you like to save the chat history?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1434
+msgid "Save Chat History?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1455
+#: addon/globalPlugins/YoutubePlus/core.py:2778
+#, python-brace-format
+msgid "Could not receive live chat: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1507
+msgid "Adding to favorites..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1514
+msgid "The provided link is not for a single video."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1522
+msgid "This video is already in your favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1538
+#, python-brace-format
+msgid "Added '{title}' to favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1541
+msgid "Failed to add favorite. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1552
+msgid "Adding to favorite channels..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1573
+msgid "This channel is already in your favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1587
+#, python-brace-format
+msgid "Added '{channel}' to favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1590
+msgid "Failed to add favorite."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1598
+msgid "Adding playlist to favorites..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1616
+msgid "This playlist is already in your favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1620
+msgid "Unknown Playlist"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1634
+#, python-brace-format
+msgid "Added '{playlist}' to favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1637
+msgid "Failed to add favorite playlist."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1704
+msgid ""
+"Could not open Be My Eyes. It may not be installed.\n"
+"\n"
+"Open the Microsoft Store to install it?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1706
+msgid "Be My Eyes Not Found"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1711
+msgid "Could not open the Microsoft Store page."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1725
+msgid "No URL to describe."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1732
+msgid "Downloading thumbnail..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1733
+msgid "Downloading channel avatar..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1734
+msgid "Downloading playlist cover..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1757
+msgid "No thumbnail available for this video."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1758
+msgid "No avatar available for this channel."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1759
+msgid "No cover available for this playlist."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1766
+msgid "Thumbnail sending to Be My Eyes..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1771
+msgid "Could not get information. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1775
+msgid "Could not download the image."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1797
+#, python-brace-format
+msgid "'{title}' is already in Watch List."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1811
+#, python-brace-format
+msgid "Added '{title}' to Watch List."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1819
+msgid "Error: Could not add video to Watch List. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1840
+#, python-brace-format
+msgid "Searching '{query}' in {channel}..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1844
+#, python-brace-format
+msgid "Results for '{query}' in {channel}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1880
+#, python-brace-format
+msgid "Could not find a channel named '{name}'."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1886
+msgid "Failed to look up that channel."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1896
+msgid "Select the channel to search in:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1898
+msgid "Choose Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1962
+#: addon/globalPlugins/YoutubePlus/core.py:1972
+#: addon/globalPlugins/YoutubePlus/core.py:2658
+#: addon/globalPlugins/YoutubePlus/core.py:2681
+#: addon/globalPlugins/YoutubePlus/core.py:2692
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1857
+msgid "[Unavailable video]"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1983
+msgid "No videos found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1995
+#, python-brace-format
+msgid "{count} videos in {playlist}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:1995
+#: addon/globalPlugins/YoutubePlus/core.py:2683
+msgid "Playlist"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2002
+#, python-brace-format
+msgid "All {count} {type} from {channel}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2002
+#: addon/globalPlugins/YoutubePlus/core.py:2004
+#: addon/globalPlugins/YoutubePlus/core.py:2660
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1440
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1510
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2437
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2799
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2958
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3250
+msgid "Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2004
+#, python-brace-format
+msgid "Recent {count} {type} from {channel}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2035
+msgid "Failed to fetch video list."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2043
+msgid "Subscribing to channel..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2072
+#, python-brace-format
+msgid ""
+"You are already subscribed to '{channel}'.\n"
+"Would you like to unsubscribe instead?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2074
+msgid "Already Subscribed"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2095
+msgid "Unknown Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2110
+#, python-brace-format
+msgid "Subscribed to {channel}."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2113
+msgid "Failed to subscribe."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2133
+#, python-brace-format
+msgid "Successfully unsubscribed from {channel}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2136
+msgid "Failed to unsubscribe - channel not found in database"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2140
+msgid "Critical error during unsubscribe."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2162
+#: addon/globalPlugins/YoutubePlus/core.py:2165
+msgid "No channels to update."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2182
+#, python-brace-format
+msgid "Checking {channel} ({type})..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2211
+#: addon/globalPlugins/YoutubePlus/core.py:2214
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5311
+msgid "Update cancelled."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2217
+#, python-brace-format
+msgid "Update complete. Found {count} new videos."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2224
+#, python-brace-format
+msgid "Found and added {count} new videos."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2227
+msgid "No new videos found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2233
+msgid "Error updating feed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2251
+#: addon/globalPlugins/YoutubePlus/core.py:2270
+#: addon/globalPlugins/YoutubePlus/core.py:3218
+msgid "Unknown Video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2257
+msgid "Failed to get video info for download. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2264
+#: addon/globalPlugins/YoutubePlus/core.py:2983
+msgid "Getting video info for download..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2280
+#, python-brace-format
+msgid "Failed to start download: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2288
+msgid "What would you like to download?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2290
+#, python-brace-format
+msgid "Download: {title} ({duration})"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2294
+msgid "Download &Video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2294
+#: addon/globalPlugins/YoutubePlus/dialogs.py:976
+msgid "Download &Audio"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2429
+msgid ""
+"FFmpeg was not found on this system, which is required to download videos. "
+"Would you like YoutubePlus to install it automatically via winget?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2431
+msgid "FFmpeg Required"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2454
+msgid ""
+"Could not find FFmpeg or winget on this system. Video downloads require "
+"FFmpeg. Please install FFmpeg manually or update the Windows App Installer."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2463
+#: addon/globalPlugins/YoutubePlus/core.py:2563
+msgid "Download cancelled."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2466
+msgid "Installing FFmpeg via winget..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2469
+msgid "FFmpeg (via winget)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2492
+msgid "Failed to install FFmpeg."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2498
+msgid "FFmpeg installed successfully."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2503
+msgid "FFmpeg installation did not complete successfully."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2519
+#, python-brace-format
+msgid "Starting download of {title}..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2558
+#, python-brace-format
+msgid "Download complete: {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2568
+msgid ""
+"Audio-only format not found. Attempting to download a video file with audio "
+"instead..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2576
+#, python-brace-format
+msgid "Download complete (as MP4 video file): {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2582
+#: addon/globalPlugins/YoutubePlus/core.py:2586
+msgid "Download failed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2622
+#, python-brace-format
+msgid "Searching for '{query}'..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2700
+#, python-brace-format
+msgid "No results found for '{query}'."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2704
+#, python-brace-format
+msgid "Search Results for '{query}'"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2709
+msgid "Failed to perform search."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2719
+#, python-brace-format
+msgid "Live chat of {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2719
+msgid "Live chat (stopped)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2738
+#, python-brace-format
+msgid ""
+"You are already receiving the live chat of '{current}'.\n"
+"\n"
+"Stop it and receive the live chat of '{new}' instead? You will be asked "
+"whether to save the messages collected so far."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2740
+msgid "Switch Live Chat?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2755
+#, python-brace-format
+msgid "Connecting to live chat of {title}..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2785
+msgid "Chat monitoring is not active."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2795
+msgid "Chat monitoring stopped."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2809
+#, python-brace-format
+msgid "Live chat of {title} (stopped)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2829
+msgid "You haven't subscribed to any channels yet."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2839
+msgid "Error loading subscription feed from database."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2860
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1271
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2714
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3413
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4747
+msgid "Playlists"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2864
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4148
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5047
+msgid "Type"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2891
+msgid ""
+"This will permanently delete ALL videos from your subscription feed, leaving "
+"only the list of subscribed channels. This action cannot be undone.\n"
+"\n"
+"Are you sure you want to continue?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2895
+msgid "Confirm Clearing All Videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2899
+msgid "Clearing all feed videos..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2915
+#, python-brace-format
+msgid "Clearing complete. All {count} videos were deleted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2920
+msgid "An error occurred while clearing all videos."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2922
+msgid "an YoutubePlus layer commands."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2937
+#: addon/globalPlugins/YoutubePlus/core.py:2946
+#: addon/globalPlugins/YoutubePlus/core.py:2957
+#: addon/globalPlugins/YoutubePlus/core.py:2971
+#: addon/globalPlugins/YoutubePlus/core.py:2980
+#: addon/globalPlugins/YoutubePlus/core.py:2991
+msgid "YouTube URL not found in current window or clipboard."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2949
+msgid "Getting video info..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2960
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1079
+msgid "Getting chapters..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:2965
+msgid "Download subtitles from current page or clipboard URL."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3010
+msgid "No stream is currently being monitored."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3021
+msgid "Automatic message speaking enabled."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3021
+msgid "Automatic message speaking disabled."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3023
+msgid "Show favorite videos dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3030
+msgid "Show favorite channels dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3037
+msgid "Show favorite playlists dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3044
+msgid "Show watch list dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3051
+msgid "Show a menu to add the current page URL to favorites or subscriptions."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3056
+msgid "No specific YouTube URL found in the current window or clipboard."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3065
+msgid "Add to Favorite &Videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3067
+msgid "Add to Favorite &Channels"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3069
+msgid "Add to Favorite &Playlists"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3071
+msgid "&Subscribe to Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3073
+#: addon/globalPlugins/YoutubePlus/dialogs.py:981
+msgid "Add to &Watch List"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3111
+msgid "Show subscription feed dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3115
+msgid "Search YouTube for videos, channels, or playlists."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3122
+msgid "Open favorites dialog on Search History tab."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3140
+msgid ""
+"Search YouTube using selected text or clipboard content and show results "
+"directly."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3159
+msgid "No text selected and clipboard is empty."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3166
+msgid "Show manage subscriptions dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3197
+msgid "Show user profile manager dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3204
+msgid "Opens YoutubePlus settings dialog."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3254
+msgid "No subtitles available for this video."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3261
+msgid "Failed to get subtitle info. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3274
+msgid "Select subtitle language:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3276
+#, python-brace-format
+msgid "Download subtitles: {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3296
+#, python-brace-format
+msgid "Downloading subtitles for {title}..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3326
+#, python-brace-format
+msgid "Subtitles downloaded: {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/core.py:3329
+msgid "Subtitle download failed. Details: {}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:91
+#: addon/globalPlugins/YoutubePlus/dialogs.py:852
+msgid "Press Escape again to close."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:109
+#: addon/globalPlugins/YoutubePlus/dialogs.py:264
+#: addon/globalPlugins/YoutubePlus/dialogs.py:445
+#: addon/globalPlugins/YoutubePlus/dialogs.py:691
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3455
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4160
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4303
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4521
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4836
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5535
+msgid "C&lose"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:129
+msgid "YouTubePlus Help & Shortcuts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:137
+msgid ""
+"YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
+"\n"
+"--- Core Actions (from a YouTube window/URL) ---\n"
+"- L: Get comments from the current URL (Live Chat, Replay, or Comments)\n"
+"- I: Get video info\n"
+"- T: Show video chapters/timestamps\n"
+"- G: Describe the video's thumbnail using Be My Eyes (requires the Be My "
+"Eyes app to be installed separately)\n"
+"- D: Download video/audio from the current URL\n"
+"- B: download sub title from the current URL\n"
+"- E: Search YouTube\n"
+"- Q: Quick search — searches immediately using selected text or clipboard "
+"content, no dialog\n"
+"- Control+H: Open Favorites window on the Search History tab\n"
+"\n"
+"--- Favorites & Subscriptions ---\n"
+"- A: Show the \"Add to...\" menu (for favorites/subscriptions)\n"
+"- F: Show favorite videos dialog\n"
+"- C: Show favorite channels dialog\n"
+"- P: Show favorite playlists dialog\n"
+"- W: Show watch list dialog\n"
+"- S: Show subscription feed dialog\n"
+"- M: Show Manage Subscriptions dialog\n"
+"- U: Show User Profile Manager Dialog\n"
+"\n"
+"--- Live Chat Monitoring (while active) ---\n"
+"- Shift+L: Stop live chat monitoring\n"
+"- V: Show live chat messages dialog\n"
+"- R: Toggle automatic speaking of incoming messages\n"
+"- Y: open YoutubePlus settings dialog\n"
+"\n"
+"--- Additional Keyboard Shortcuts (within addon dialogs) ---\n"
+"**In Favorites and Subscription Feed Dialogs:**\n"
+"- Ctrl+1 through 9: Jump to a specific tab\n"
+"- Ctrl+Up/Down or Left/Right: Reorder tabs\n"
+"\n"
+"**In the Subscription Feed Dialog:**\n"
+"- F2: Rename the current category\n"
+"- Ctrl+Equals: Add a new category\n"
+"- Ctrl+Minus: Remove the current category\n"
+"- Delete: Mark the selected video as seen\n"
+"- Ctrl+Delete: Mark all videos in the current tab as seen\n"
+"\n"
+"**In any Favorites Dialog (Videos, Channels, Playlists, Watch list):**\n"
+"- Delete: Remove the selected item from favorites\n"
+"- F2: rename item\n"
+"- Control+c / control+x > control+v : copy or cut then paste item to move "
+"position, supports multiple selection and moving items between the Video and "
+"Watch List tabs\n"
+"- Alt+O: Open the Sort dialog for the current tab (sort by field, optionally "
+"limited to the current category, optionally saved permanently)\n"
+"\n"
+"**In the Video and Watch List tabs (category tree, left side):**\n"
+"- Control+=: Add a new category\n"
+"- F2: Rename the selected category\n"
+"- Delete: Remove the selected category (asks whether to move or delete its "
+"items)\n"
+"- Control+Shift+Up / Control+Shift+Down: Reorder the selected category\n"
+"- Application/Menu key or right-click: Category context menu on the tree, "
+"video Action menu on the item list\n"
+"\n"
+"--- Help ---\n"
+"- H: Show this help dialog\n"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:207
+#: addon/globalPlugins/YoutubePlus/dialogs.py:218
+msgid "Author"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:209
+#: addon/globalPlugins/YoutubePlus/dialogs.py:220
+msgid "Message"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:222
+#: addon/globalPlugins/YoutubePlus/dialogs.py:248
+msgid "Time"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:238
+#: addon/globalPlugins/YoutubePlus/dialogs.py:427
+#: addon/globalPlugins/YoutubePlus/dialogs.py:656
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3435
+msgid "&Search:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:246
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1439
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1508
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3248
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4143
+msgid "Title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:256
+msgid "&Open Chapter"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:258
+msgid "&Copy Title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:260
+msgid "Copy &URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:262
+#: addon/globalPlugins/YoutubePlus/dialogs.py:443
+#: addon/globalPlugins/YoutubePlus/dialogs.py:683
+msgid "&Export"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:345
+#: addon/globalPlugins/YoutubePlus/dialogs.py:909
+#: addon/globalPlugins/YoutubePlus/dialogs.py:933
+msgid "Opening in browser..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:350
+#: addon/globalPlugins/YoutubePlus/dialogs.py:914
+#: addon/globalPlugins/YoutubePlus/dialogs.py:939
+#, python-brace-format
+msgid "Error opening browser: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:360
+#, python-brace-format
+msgid "Copied timestamp: {text}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:369
+#, python-brace-format
+msgid "Copied URL: {url}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:387
+#: addon/globalPlugins/YoutubePlus/dialogs.py:829
+msgid "Export complete"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:391
+#: addon/globalPlugins/YoutubePlus/dialogs.py:590
+#: addon/globalPlugins/YoutubePlus/dialogs.py:833
+#, python-brace-format
+msgid "Error exporting file: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:395
+#: addon/globalPlugins/YoutubePlus/dialogs.py:594
+#: addon/globalPlugins/YoutubePlus/dialogs.py:837
+msgid "An unexpected error occurred during export."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:441
+#: addon/globalPlugins/YoutubePlus/dialogs.py:681
+msgid "&Copy"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:566
+msgid "message copied"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:569
+msgid "No message selected"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:586
+msgid "Export message complete"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:663
+#: addon/globalPlugins/YoutubePlus/dialogs.py:670
+#: addon/globalPlugins/YoutubePlus/dialogs.py:744
+msgid "No Filter"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:664
+#: addon/globalPlugins/YoutubePlus/dialogs.py:737
+msgid "Filter by Selected Author"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:665
+#: addon/globalPlugins/YoutubePlus/dialogs.py:746
+msgid "Show Super Chats Only"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:666
+#: addon/globalPlugins/YoutubePlus/dialogs.py:748
+msgid "Show Super Stickers Only"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:667
+#: addon/globalPlugins/YoutubePlus/dialogs.py:750
+msgid "Show Super Thanks Only"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:727
+msgid "Total Paid Amount:\n"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:807
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1249
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4409
+msgid "Copied"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:810
+msgid "Nothing selected"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:900
+#: addon/globalPlugins/YoutubePlus/dialogs.py:929
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1060
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1063
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1074
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1076
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1087
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1090
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1158
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1168
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1180
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1192
+msgid "Video ID not found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:906
+msgid "Channel URL not found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:920
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4365
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4434
+msgid "Playlist URL not found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:923
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4368
+#, python-brace-format
+msgid "Fetching videos from '{title}'..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:970
+msgid "View Video &Info..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:971
+msgid "View &Comments / Replay..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:972
+msgid "View Chap&ters/Timestamps..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:973
+msgid "&Get Thumbnail Description (Be My Eyes)..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:975
+msgid "&Download Video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:977
+msgid "Download Su&btitles"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:979
+msgid "Add to &Favorite Videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:980
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1031
+msgid "Add to &Favorite Channels"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:983
+msgid "&Open video in browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:984
+msgid "Open c&hannel in browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:986
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1033
+msgid "Show channel &videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:987
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1034
+msgid "Show channel &shorts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:988
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1035
+msgid "Show channel &live"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:989
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1036
+msgid "Show channel &playlist"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:990
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1037
+msgid "Show channel &podcast"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1027
+msgid "&Open channel in browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1029
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2455
+msgid "&Describe Avatar (Be My Eyes)..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1053
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2624
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2698
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2708
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4740
+msgid "Error: Channel URL not found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1066
+msgid "Getting subtitle info..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1099
+msgid "Could not get video ID to add to favorites."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1108
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1114
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1121
+msgid "Could not get video ID to find the channel."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1229
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1242
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4404
+#, python-brace-format
+msgid "Title: {title}\n"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1230
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1236
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1243
+#, python-brace-format
+msgid "Channel: {channel}\n"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1231
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1237
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1244
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4405
+msgid "URL: "
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1258
+msgid "Error: Channel information not found for this item."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1268
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1429
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2390
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2711
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2960
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3252
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3411
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4150
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4287
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4744
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4932
+#: addon/globalPlugins/YoutubePlus/settings.py:134
+msgid "Videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1269
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2712
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4745
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4933
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5101
+#: addon/globalPlugins/YoutubePlus/settings.py:134
+msgid "Shorts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1270
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2713
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4746
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4934
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5102
+#: addon/globalPlugins/YoutubePlus/settings.py:134
+msgid "Live"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1272
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2715
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4748
+msgid "Podcasts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1276
+msgid "Content"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1280
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4755
+#, python-brace-format
+msgid "Fetching {type} from {channel}..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1332
+msgid "This action isn't available for a channel result."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1441
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1509
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4152
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5051
+msgid "Duration"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1442
+msgid "Uploaded Date"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1443
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1511
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2803
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3254
+msgid "Date Added"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1477
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4156
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5055
+msgid "&Action..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1478
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4157
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4299
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5057
+msgid "&Copy..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1480
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2459
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2973
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3628
+msgid "&Remove"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1548
+msgid "Error: Could not save data."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1676
+#, python-brace-format
+msgid "The default {label} category cannot be deleted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1701
+msgid "&Add Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1703
+msgid "&Rename Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1704
+msgid "&Delete Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1706
+msgid "Move &Up"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1707
+msgid "Move &Down"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1722
+msgid "Category name:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5418
+msgid "Add Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1736
+#, python-brace-format
+msgid "Category '{name}' added."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1739
+msgid "New name:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1739
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5454
+msgid "Rename Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1751
+#, python-brace-format
+msgid "Renamed to '{name}'."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1760
+#, python-brace-format
+msgid "Delete category '{name}'?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1761
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3883
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5353
+msgid "Confirm"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1768
+#, python-brace-format
+msgid "Category '{name}' deleted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1773
+#, python-brace-format
+msgid ""
+"Category '{name}' contains {count} item(s).\n"
+"\n"
+"Move them to '{default}', or delete them along with the category?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1776
+msgid "Delete Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1779
+#, python-brace-format
+msgid "&Move to {default}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1780
+msgid "&Delete items too"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1780
+msgid "Cancel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1790
+#, python-brace-format
+msgid "Category '{name}' deleted. {count} item(s) moved to {default}."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1794
+#, python-brace-format
+msgid "Category '{name}' and its {count} item(s) deleted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1829
+msgid "Category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1976
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4202
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4389
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5176
+msgid "Copy &Title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1977
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4204
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5178
+msgid "Copy Video &URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1978
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4206
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5180
+msgid "Copy &Channel Name"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1979
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4208
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5182
+msgid "Copy C&hannel URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1981
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4393
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5185
+msgid "Copy &Summary"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1996
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2554
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4773
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5201
+msgid "No valid YouTube URL found in clipboard."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1999
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2558
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3159
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4777
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5205
+msgid "Could not read from clipboard."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2011
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3103
+#, python-brace-format
+msgid "Are you sure you want to remove '{title}'?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2013
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected items?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2014
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2661
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3108
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5487
+msgid "Confirm Removal"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2026
+msgid "Item removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2027
+#, python-brace-format
+msgid "{count} items removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2035
+msgid "Enter new title:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2035
+msgid "Rename"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2064
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2809
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3260
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3700
+msgid "Sort List"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2066
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2812
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3263
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3703
+msgid "Sort by:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2075
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2824
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3275
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3715
+msgid "&Ascending"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2076
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2826
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3277
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3717
+msgid "&Descending"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2084
+msgid "Sort only the current &category"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2087
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2834
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3285
+msgid "&Apply permanently (saves to file)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2094
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2840
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3291
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3728
+msgid "C&lear Sort"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2120
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2865
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3316
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3749
+msgid "Sort cleared."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2172
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2890
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3341
+msgid "List sorted and saved."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2182
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2895
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3346
+msgid "List sorted temporarily."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2197
+#, python-brace-format
+msgid "{count} item(s) copied."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2206
+#, python-brace-format
+msgid "{count} item(s) cut."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2210
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2773
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3060
+msgid "Clipboard is empty."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2265
+msgid "Cut"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2265
+msgid "Copy"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2270
+#, python-brace-format
+msgid ""
+"{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2274
+#, python-brace-format
+msgid "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2277
+msgid "Confirm Replace"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2342
+#, python-brace-format
+msgid "{count} item(s) pasted to {cat}."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2344
+#, python-brace-format
+msgid "{done} item(s) pasted to {cat}, {skipped} skipped."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2347
+msgid "All items already exist in this list."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2375
+msgid "Favorite Videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2387
+msgid "Add &new favorite video from clipboard"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2397
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2412
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3414
+msgid "Watch List"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2409
+msgid "Add &new watch list from clipboard"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2439
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2801
+msgid "Subscribers"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2442
+msgid "Channel Description"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2449
+msgid "Open channel on &browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2451
+msgid "View &channel Content..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2453
+msgid "S&earch in this channel..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2457
+msgid "Add &new favorite channel from clipboard"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2524
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2583
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3197
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4241
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4342
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5106
+msgid "N/A"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2528
+#, python-brace-format
+msgid ""
+"Last synced: {time}\n"
+"\n"
+"{description}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2654
+msgid "this channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2656
+#, python-brace-format
+msgid "Are you sure you want to remove '{name}'?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2659
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected channels?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2681
+msgid "Channel removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2682
+#, python-brace-format
+msgid "{count} channels removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2768
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3055
+msgid "Cut."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2794
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3081
+msgid "Moved."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2917
+msgid "Enter new channel name:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2918
+msgid "Rename Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2956
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4283
+msgid "Playlist Title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2965
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4295
+msgid "Show &Videos..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2967
+msgid "Open on &browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2969
+msgid "&Describe Cover (Be My Eyes)..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2971
+msgid "Add &new favorite playlist from clipboard"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3101
+msgid "this playlist"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3106
+#, python-brace-format
+msgid "Are you sure you want to remove {count} selected playlists?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3128
+msgid "Playlist removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3129
+#, python-brace-format
+msgid "{count} playlists removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3147
+msgid "Error: Could not save playlist list."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3155
+msgid "No valid YouTube playlist URL found in clipboard."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3212
+#, python-brace-format
+msgid "Fetching videos from '{playlist}'..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3229
+msgid "Error: Playlist URL not found."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3368
+msgid "Enter new playlist title:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3369
+msgid "Rename Playlist"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3405
+msgid "Favorites - YoutubePlus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3412
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
+msgid "Channels"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3415
+msgid "Search History"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3438
+msgid "S&ort..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3540
+#, python-brace-format
+msgid "{tab_name} - Favorites - YoutubePlus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3615
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3692
+msgid "Keyword"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3617
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3693
+msgid "Results"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3619
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3694
+msgid "Searched At"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3624
+msgid "Search &Again"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3626
+msgid "&New Search"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3630
+msgid "&Clear All"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3664
+#, python-brace-format
+msgid "{keyword} (in {channel})"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3782
+msgid "List sorted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3876
+msgid "Search history entry removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3881
+msgid "Clear all search history?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3900
+msgid "Search YouTube"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3917
+msgid "&Search for:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3927
+msgid "&Number of &results to fetch:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3932
+msgid "&Within channel (optional):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3939
+msgid ""
+"Searches only that channel's own videos. The filters below don't apply while "
+"a channel is set."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3947
+msgid "Content &type:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3957
+msgid "&Duration:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Any"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Short (under 4 minutes)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Medium (4-20 minutes)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Long (over 20 minutes)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3967
+msgid "&Upload date:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Past hour"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Today"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This week"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This month"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This year"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3977
+msgid "S&ort by:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Relevance"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Upload date"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "View count"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3988
+msgid "&Search"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4076
+msgid "Please enter a search term."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4097
+#, python-brace-format
+msgid "Looking up channel '{name}'..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4159
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4301
+msgid "Load All"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4293
+msgid "Add to &Favorites"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4297
+msgid "Open on &Browser"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4391
+msgid "Copy Playlist &URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4459
+msgid "Manage Subscriptions"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4476
+msgid "Subscribed &Channels:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4479
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5049
+msgid "Channel Name"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4484
+msgid "Filter by Category:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4493
+msgid "Assign to Categories"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4498
+msgid "Content Types to Fetch"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4504
+msgid "Actions"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4507
+msgid "View &Content..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4509
+msgid "Add &new subscribe channel from Clipboard..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4511
+msgid "&Unsubscribe from this Channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4583
+msgid "Changes saved."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4615
+msgid "All Channels"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4788
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{name}'?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4790
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5408
+msgid "Confirm Unsubscribe"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4812
+msgid "Subscription Feed"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4830
+msgid "Add &new Subscription from clipboard URL."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4832
+msgid "&Update Feed"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4834
+msgid "&More..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4931
+msgid "All"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5012
+msgid "Error reordering tabs."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5037
+#, python-brace-format
+msgid "Subscription Feed - {tab_name} - YoutubePlus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5045
+msgid "Video Title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5059
+msgid "Mark as &Seen"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5100
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5109
+msgid "Video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5165
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5320
+msgid "&Unsubscribe from this channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5216
+msgid "Mark &all in current tab as seen (control+delete)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5218
+msgid "Show all &videos (including seen)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5218
+msgid "Show only &unseen videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5221
+msgid "&Manage subscriptions..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5224
+msgid "Add New &Category...\tCtrl+="
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5226
+msgid "&Rename Current Category...\tF2"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5228
+msgid "Remove Current Category...\tCtrl+-"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5231
+msgid "Clear All Feed Videos..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5269
+msgid "An update is already in progress."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5287
+#, python-brace-format
+msgid "Updating Feed ({count} channels)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5289
+msgid "Starting..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5340
+msgid "Marked as seen."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5348
+msgid "There are no videos in this tab to mark as seen."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5351
+#, python-brace-format
+msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5359
+msgid "All videos in the current tab have been marked as seen."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5406
+#, python-brace-format
+msgid "Are you sure you want to unsubscribe from '{channel}'?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5416
+msgid "Enter new category name:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5435
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5468
+msgid "A category with this name already exists."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5439
+msgid "Error adding category."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5447
+msgid "This is a fixed tab and cannot be renamed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5452
+#, python-brace-format
+msgid "Enter new name for '{name}':"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5472
+msgid "Error renaming category."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5480
+msgid "This is a fixed tab and cannot be removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5485
+#, python-brace-format
+msgid "Are you sure you want to remove the '{name}' category?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5498
+#, python-brace-format
+msgid "Category '{name}' removed."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5502
+msgid "Error removing category."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5509
+msgid "Manage User Profiles"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5521
+msgid "&Add"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5523
+msgid "&Rename"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5525
+msgid "&Delete"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5568
+msgid "Enter new profile name:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5570
+msgid "Add Profile"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5586
+msgid "Profile already exists."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5586
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5604
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5618
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5625
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5630
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5645
+msgid "Error"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5592
+#, python-brace-format
+msgid "Rename profile '{name}' to:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5594
+msgid "Rename Profile"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5604
+msgid "A profile with this name already exists."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5618
+#, python-brace-format
+msgid "Failed to rename profile: {e}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5625
+msgid "The default profile cannot be deleted."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5630
+msgid "Cannot delete the profile currently in use."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5633
+#, python-brace-format
+msgid "Delete profile '{name}' and all its data?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5635
+msgid "Confirm Delete"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5645
+#, python-brace-format
+msgid "Failed to delete profile: {e}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5654
+msgid ""
+"The active profile has been modified. NVDA must be restarted to apply "
+"changes. Restart now?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5656
+#: addon/globalPlugins/YoutubePlus/settings.py:424
+msgid "Restart NVDA"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5671
+msgid "Downloading..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5685
+msgid "Field"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5686
+msgid "Value"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5689
+msgid "File"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5690
+msgid "Progress"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5691
+msgid "Size"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5692
+msgid "Speed"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5693
+msgid "ETA"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5694
+msgid "Status"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5700
+msgid "Preparing..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5711
+msgid "&Cancel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5770
+#, python-brace-format
+msgid "Downloading: {title}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5791
+#, python-brace-format
+msgid "{pct}%"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5798
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5809
+msgid "Downloading"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5823
+msgid "Installing FFmpeg..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5831
+msgid "Finishing..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5848
+msgid "Cancelling..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:25
+msgid "Youtube Plus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:31
+msgid "Active &Profile (Requires Restart):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:37
+#: addon/globalPlugins/YoutubePlus/settings.py:398
+#: addon/globalPlugins/YoutubePlus/settings.py:403
+msgid "default"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:42
+msgid "&Manage Profiles..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:46
+msgid "&Quick Action (Space bar):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:49
+msgid "Open video URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:51
+msgid "View video info"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:53
+msgid "View comments"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:55
+msgid "View chapters"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:57
+msgid "Download video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:59
+msgid "Download audio"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:61
+msgid "Download subtitles"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:63
+msgid "Add to Favorites video"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:65
+msgid "Add to Favorites channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:67
+msgid "Add to Watch List"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:69
+msgid "Copy video URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:71
+msgid "Copy video title"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:73
+msgid "Copy channel name"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:75
+msgid "Copy channel URL"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:77
+msgid "Copy video summary"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:79
+msgid "Open video channel"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:81
+msgid "Show channel videos"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:83
+msgid "Show channel shorts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:85
+msgid "Show channel lives"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:87
+msgid "Show channel playlists"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:89
+msgid "Show channel podcasts"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:91
+msgid "Describe thumbnail (Be My Eyes)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:109
+msgid "&Notification mode:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:112
+msgid "Beep"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:112
+msgid "Sound"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:112
+msgid "Silent"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:119
+msgid "Default &sort order:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:121
+msgid "Newest First"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:121
+msgid "Oldest First"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:128
+msgid "&Items to fetch for each content type:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:132
+msgid "Default content &types for new subscriptions:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:148
+msgid "Disabled"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:148
+msgid "15 minutes"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:148
+msgid "30 minutes"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:148
+msgid "1 hour"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:148
+msgid "2 hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:149
+msgid "4 hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:149
+msgid "6 hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:149
+msgid "12 hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:149
+msgid "24 hours"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:153
+msgid "Background &update interval:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:164
+msgid "&Automatically speak incoming live chat"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:168
+msgid "&Voice profile:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:173
+msgid "(None, keep the current voice)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:185
+msgid "Alert s&ounds for live chat:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Chat"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Sticker"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:199
+msgid "&Live chat refresh interval (seconds):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:203
+msgid "Message &history limit (live chat):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:231
+msgid "&Cookie method (Experimental - may not work):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:233
+msgid "Do not use cookies (Default)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:234
+msgid "Chrome"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:235
+msgid "Firefox"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:236
+msgid "Edge"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:237
+msgid "Opera"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:238
+msgid "Brave"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:239
+msgid "Vivaldi"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:264
+msgid "Preferred &video quality:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "Best available"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "2160p (4K)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "1440p (2K)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "1080p"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "720p"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "480p"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+msgid "360p"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:278
+msgid "Preferred video co&ntainer:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:282
+msgid "MP4 (most compatible)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:282
+msgid "MKV (best quality, no re-encoding)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:282
+msgid "WebM"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:292
+msgid "Preferred audio q&uality (when converting):"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "320 kbps"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "256 kbps"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "192 kbps"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "128 kbps"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:296
+msgid "96 kbps"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:306
+msgid "Preferred audio for&mat:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "Best available (no conversion)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "MP3"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "WAV"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "M4A/AAC"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "FLAC"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "Opus"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:311
+msgid "Vorbis (OGG)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:328
+msgid "Default subtitle &format:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:338
+msgid "Default download and &export folder path:"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:343
+msgid "&Browse..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:349
+msgid "Bac&kup data now"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:353
+msgid "&Restore data from backup..."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:383
+msgid "&Download Quality and Format Options"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:386
+msgid " (expanded)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:389
+msgid " (collapsed)"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:422
+#, python-brace-format
+msgid ""
+"The active profile has been changed to '{profile_name}'. NVDA must be "
+"restarted to apply this change. Restart now?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:498
+msgid "Select cookies.txt file"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:509
+msgid "Select default folder to export files"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:520
+#, python-brace-format
+msgid ""
+"Backup completed successfully.\n"
+"{filename}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:522
+msgid "Backup"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:528
+#, python-brace-format
+msgid "Backup failed: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:530
+msgid "Backup Error"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:540
+#, python-brace-format
+msgid "No backup files found for profile '{profile}'."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:542
+msgid "Restore"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:560
+#, python-brace-format
+msgid ""
+"Restore data from {date} for profile '{profile}'?\n"
+"This will overwrite all current data and requires a restart."
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:563
+msgid "Confirm Restore"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:570
+msgid ""
+"YoutubePlus Data restored successfully. NVDA must be restarted to apply the "
+"changes. Restart now?"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:575
+#, python-brace-format
+msgid "Restore failed: {error}"
+msgstr ""
+
+#: addon/globalPlugins/YoutubePlus/settings.py:577
+msgid "Restore Error"
+msgstr ""
