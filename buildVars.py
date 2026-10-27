@@ -20,7 +20,7 @@ Features:
 • A full Favorites system for videos, channels, and playlists, plus a Watch List for videos you want to watch later — with categories, sorting, and background updates to keep channel and playlist info current.
 • Built-in search with saved search history, plus a Quick Search shortcut that searches instantly using selected text or clipboard content.
 • Browse a channel's videos, shorts, streams, playlists, and podcasts directly, without leaving the accessible interface.
-• Read comments and follow live chat replays.
+• Read comments and live chat replays, and follow a live chat as it happens: read it aloud in a separate voice of your choice, with alert sounds for Super Chats, Super Stickers and new channel members.
 • Send a video's thumbnail straight to the Be My Eyes app for a live description (Be My Eyes must be installed)
 • Download videos, audio, or subtitles (with multiple format options) for offline use.
 • Supports multiple user profiles, with backup and restore built in."""),
@@ -47,6 +47,7 @@ pythonSources = [
 
 i18nSources = [
     "buildVars.py",
+    "addon/installTasks.py",
     "addon/globalPlugins/YoutubePlus/*.py",
 ]
 

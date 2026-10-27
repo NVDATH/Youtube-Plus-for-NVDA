@@ -1,21 +1,21 @@
 name: Notify Translators of New Strings
 
-# วิธีสั่งรัน (ไม่ต้อง push tag / ไม่ต้องออก release เลย):
-#   1. เปิด repo บน GitHub
-#   2. ไปแท็บ "Actions" (แถบเมนูบนสุดของ repo)
-#   3. คลิกชื่อ workflow นี้ทางซ้าย: "Notify Translators of New Strings"
-#   4. จะมีปุ่ม "Run workflow" (สีเขียว) โผล่มุมขวา -> กด
-#   5. เลือก branch ที่ต้องการรัน (ปกติคือ main) -> กด "Run workflow" อีกที
-#   6. รอสักครู่ ระบบจะรันจบแล้วไปดูผลลัพธ์ที่ tab Issues ของ repo
+# How to run this (no need to push a tag / no need to make a release):
+#   1. Open the repo on GitHub
+#   2. Go to the "Actions" tab (top menu bar of the repo)
+#   3. Click this workflow's name on the left: "Notify Translators of New Strings"
+#   4. A green "Run workflow" button appears on the right -> click it
+#   5. Pick the branch to run on (usually main) -> click "Run workflow" again
+#   6. Wait a moment; check the result under the repo's Issues tab
 on:
-  workflow_dispatch: {}   # ทำให้กดรันเองได้จาก tab Actions ตามขั้นตอนด้านบน
+  workflow_dispatch: {}   # lets this be triggered manually from the Actions tab, as above
 
 jobs:
   sync_and_notify:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # ต้องมีสิทธิ์นี้เพื่อ commit .pot/.buildVars.py กลับ repo
-      issues: write     # ต้องมีสิทธิ์นี้เพื่อเปิด/แก้ Issue
+      contents: write   # needed to commit the .pot/buildVars.py changes back to the repo
+      issues: write     # needed to open/edit an Issue
 
     steps:
       - name: Checkout repository
@@ -31,17 +31,17 @@ jobs:
           sudo apt-get update && sudo apt-get install -y gettext
           pip install scons markdown
 
-      # ไม่มี tag ตอนนี้ -> สคริปต์จะดึง "หัวข้อบนสุด" ของ changelog.md ให้เอง
+      # No tag right now -> the script falls back to the topmost heading in changelog.md
       - name: Sync latest changelog into buildVars.py
         run: python scripts/sync_changelog.py
 
-      - name: Build .pot only (ไม่ build ตัว add-on เต็ม)
+      - name: Build .pot only (skip building the full add-on)
         run: scons pot
 
       - name: Check if .pot actually changed
         id: potdiff
         run: |
-          git add YoutubePlus.pot buildVars.py
+          git add NVSky.pot buildVars.py
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -56,15 +56,17 @@ jobs:
           git commit -m "chore: sync changelog + update .pot for translators"
           git push
 
-      # ---- แก้รายชื่อผู้ถูกแท็กตรงนี้ (ใส่/ลบคนได้ตามต้องการภายหลัง) ----
+      # ---- Edit the list of mentioned people here (add/remove anyone later) ----
       - name: Open issue notifying translators
         if: steps.potdiff.outputs.changed == 'true'
         uses: actions/github-script@v7
         with:
           script: |
+            // TODO: fill in real translator usernames once NVSky has translators.
+            // Testing for now with just the maintainer's own account.
             const assignees = [
               "NVDATH",
-              "ninhhoang2005",
+              "ninhhoang205",
               "ana-giselle-ar86",
               "George-br",
               "EdilbertoFonseca",
@@ -72,32 +74,35 @@ jobs:
             const mentions = assignees.map(u => `@${u}`).join(" ");
             const repo = context.repo;
             const runUrl = `https://github.com/${repo.owner}/${repo.repo}/actions/runs/${context.runId}`;
-            const potRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/YoutubePlus.pot`;
+            const potRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/NVSky.pot`;
             const changelogRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/changelog.md`;
+            const readmeRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/readme.md`;
 
             const body = [
               mentions,
               "",
-              "มีข้อความ (string) ใหม่หรือมีการแก้ไข changelog ที่ต้องอัปเดตคำแปลก่อนออกเวอร์ชันถัดไปครับ/ค่ะ",
+              "There are new or updated strings (or an updated changelog) that need translation before the next release.",
               "",
-              `- ไฟล์ .pot ล่าสุด: ${potRawUrl}`,
-              `- changelog.md ล่าสุด: ${changelogRawUrl}`,
-              `- ผลรัน workflow: ${runUrl}`,
+              `- Latest .pot file: ${potRawUrl}`,
+              `- Latest changelog.md: ${changelogRawUrl}`,
+              `- Latest readme.md (also needs translating): ${readmeRawUrl}`,
+              `- Workflow run: ${runUrl}`,
               "",
-              "วิธีอัปเดตคำแปล: เปิดไฟล์ .po ของภาษาคุณด้วย Poedit แล้วกด \"Update from POT\" โดยชี้ไปที่ไฟล์ .pot ด้านบน จากนั้นแปล string ใหม่แล้วส่ง PO กลับมาเป็น Pull Request ได้เลยครับ",
+              "How to update a translation: open your language's .po file in Poedit, press \"Update from POT\" and point it at the .pot file above, translate the new strings, then send the .po file back as a Pull Request.",
+              "The readme is translated as a file, not through the .po file: copy readme.md to addon/doc/<language code>/readme.md, translate it, and send it in the same Pull Request.",
             ].join("\n");
 
             await github.rest.issues.create({
               owner: repo.owner,
               repo: repo.repo,
-              title: `แจ้งอัปเดตคำแปล: มี string ใหม่ (${new Date().toISOString().slice(0,10)})`,
+              title: `Translation update needed: new strings (${new Date().toISOString().slice(0,10)})`,
               body: body,
             });
-            // หมายเหตุ: ไม่ใส่ assignees เพราะ GitHub API กำหนดว่าต้องเป็น
-            // collaborator ของ repo เท่านั้นถึงจะ assign ได้ ผู้ที่ส่ง PR
-            // แปลมาแต่ไม่ใช่ collaborator จะทำให้ call พัง — @mention ใน
-            // เนื้อ issue (ด้านบน) แจ้งเตือนได้เหมือนกันโดยไม่ติดข้อจำกัดนี้
+            // Note: not using GitHub's real "assignees" field -- that API requires
+            // the person to be a repo collaborator, which a translator sending a PR
+            // usually isn't. @mentioning them in the issue body (above) notifies them
+            // the same way without that restriction.
 
       - name: No changes detected
         if: steps.potdiff.outputs.changed == 'false'
-        run: echo "changelog.md ไม่มีการเปลี่ยนแปลงที่ทำให้ .pot ต่างไปจากเดิม ไม่เปิด issue"
+        run: echo "changelog.md has no changes that affect the .pot file -- no issue opened"

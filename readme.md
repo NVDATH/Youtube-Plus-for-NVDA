@@ -34,7 +34,7 @@ Press **NVDA+Y** to enter YoutubePlus command mode, then press one of the follow
 * u: (open User Profile Manager) — Opens the User Profile management window
 * l: (show comment) — Displays comments (details explained below)
 * shift+l: (stop monitor live chat) — Stops live chat monitoring
-* r: (toggle automatic reading live chat) — Toggles automatic speech for incoming live chat messages
+* r: (toggle automatic reading live chat) — Toggles automatic speech for incoming live chat messages (when a Voice profile is used, it also stops the chat voice at once)
 * v: (show live chat) — Reopens the live chat window if you closed it while the stream is still active
 * y: (open YoutubePlus settings dialog) quick open NVDA settings then focus at YoutubePlus category.
 * h: (help) — Opens a window listing all available shortcuts
@@ -304,17 +304,41 @@ For currently live videos, press L and the add-on will open a new window display
 
 You can close this window and reopen it later with the V command in the YoutubePlus layer, as long as the stream is still active and NVDA has not been restarted.
 
+Pressing L again on the stream that is already being monitored does not start anything over: it simply opens the live chat window again (or brings it forward if it is already open). If you press L on a different live stream while one is being monitored, the add-on asks you to confirm the switch, then asks whether to save the chat collected so far before it is replaced.
+
 Use the R command to toggle whether NVDA reads new messages aloud as they arrive. This works well for streams with infrequent messages. For high-volume streams, it may be easier to turn auto-read off and scroll through the window manually.
 
 Press Shift+L to stop monitoring chat for the current video.
 
-Three settings directly affect this feature:
+Five settings directly affect this feature:
 
 - **Automatically speak incoming live chat:** When checked, NVDA reads new messages aloud immediately — the same function as the R command, but saved as a default preference.
+- **Voice profile:** Reads incoming live chat messages in the voice settings of one of your NVDA configuration profiles, for example with a different synthesizer. Only available when automatic speaking is enabled. Details below.
+- **Alert sounds for live chat:** Plays a sound when a Super Chat, a Super Sticker or a new member arrives. Works whether or not automatic speaking is enabled. Details below.
 - **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default is 5 seconds.
 - **Message history limit:** The maximum number of messages stored in memory during a session. The live chat window shows only the most recent messages up to this limit (default: 5,000). The add-on keeps all messages in the background for export, up to a maximum of 200,000 to prevent excessive memory use.
 
 When a stream ends — or the add-on detects that it has ended — a dialog will automatically appear asking whether you want to export all collected messages. Press Yes to save the chat history as a file.
+
+##### Voice profile
+
+The Voice profile setting lets live chat be read in a different voice from the one NVDA uses for everything else, for example with a different synthesizer such as SAPI 5. To use it, create a profile in NVDA (NVDA menu -> Configuration profiles...) with the synthesizer and voice settings you want for chat, then choose that profile in the YoutubePlus settings. The profile is only used as a source of voice settings: it is never activated, and everything else NVDA says keeps your normal voice. Choose "(None, keep the current voice)" to turn this off.
+
+Chat is read by a separate synthesizer that runs next to NVDA, like media playing in the background. Pressing keys, moving around, or anything NVDA says does not pause, interrupt or cancel it, and the two voices can be heard at the same time, so choose a clearly different voice for chat. Press R in the YoutubePlus layer to stop it at once.
+
+Messages are read one after another. On streams where chat arrives faster than it can be read, only the newest waiting messages are spoken (the 20 most recent ordinary messages); every message remains in the live chat window and in exported chat. Super Chats, Super Stickers and new members are read before ordinary messages and are kept when others are skipped. If NVDA's speech mode is set to off, beeps or on-demand, chat is not read aloud (it is still shown in the live chat window and on a braille display).
+
+##### Alert sounds
+
+Super Chat, Super Sticker and New member (a new member joining the channel) events can each play their own sound when they arrive. Choose which ones in the settings. The sounds are the files `superchat.wav`, `supersticker.wav` and `membership.wav` in the add-on's `sounds` folder; if a file is missing, a beep is played instead. Alerts play whether or not automatic speaking is enabled, so you can hear the alerts without listening to every message. When several events of the same kind arrive together, the sound plays once.
+
+These events appear in the live chat window like other messages, labeled *Super Chat*, *Super Sticker* or *New member*, and they are included in exported chat.
+
+##### Known issues
+
+- The voice profile starts a second synthesizer next to NVDA's own. If it cannot be started, you will hear a message and chat is read in the current voice instead. Some synthesizers may not support running a second instance.
+- Using the same synthesizer driver for NVDA and for the chat voice (for example Vocalizer for both) is not recommended. Some drivers share their engine between instances, and on streams with very fast chat the two voices can interfere with each other: the chat voice may go silent, or NVDA's own speech may be affected. The add-on tries to restart the chat voice by itself. If it stays silent, press R twice (off, then on again); if NVDA's own voice is affected, restart NVDA. Choosing a different synthesizer for the chat profile avoids this.
+- Streams with very fast chat have not been tested thoroughly. If NVDA becomes unresponsive on such a stream, turn off the voice profile, or turn off automatic reading and read the messages in the live chat window instead.
 
 #### Comments / Live chat replay
 
@@ -355,6 +379,8 @@ Access settings via `NVDA -> Preferences -> Settings...` and select the **"Youtu
 - **Default content types:** Choose which content types to fetch for newly subscribed channels: Videos, Shorts, and/or Live.
 - **Background update interval:** How often the add-on checks for new content from subscribed channels. Can be disabled or set from 15 minutes to 24 hours. The add-on also auto-updates on every NVDA startup by default.
 - **Automatically speak incoming live chat:** When checked, NVDA reads new chat messages aloud as they arrive.
+- **Voice profile:** Choose one of your NVDA configuration profiles to read incoming live chat messages. Only live chat messages use that profile's voice settings (synthesizer, voice, rate, pitch, volume); everything else NVDA says keeps your normal voice, and the profile is never activated globally. Chat is read by a separate synthesizer, so the profile can use a different synthesizer from NVDA's own, and pressing keys or anything NVDA says does not interrupt it. Choose "(None, keep the current voice)" to turn this off. Only available when automatic speaking is enabled.
+- **Alert sounds for live chat:** Choose which live chat events play a sound when they arrive: Super Chat, Super Sticker, and New member. Works whether or not automatic speaking is enabled.
 - **Live chat refresh interval:** How often (in seconds) the add-on checks for new messages. Default: 5 seconds.
 - **Message history limit:** Maximum number of chat messages stored in memory during a session.
 - **Default subtitle format:** Subtitle file format for downloads: SRT, VTT, TTML, or TXT (plain text without timecodes)

@@ -1,16 +1,27 @@
-## 2026.9.22
+## 2026.10.26
+
+### New Features and Improvements
+
+* Added a **Voice profile** setting that lets you select an NVDA configuration profile for incoming live chat messages. Chat uses the selected profile's synthesizer, voice, rate, pitch, and volume, while NVDA's regular speech remains unchanged. A separate synthesizer runs alongside NVDA, allowing chat to use a different synthesizer (such as SAPI 5) without being interrupted by key presses or NVDA speech. Available when **Automatically speak incoming live chat** is enabled. Suggested by @MichalSuchy (#13).
+* Added configurable sound alerts for Super Chats, Super Stickers, and new member events. Each event type can have its own alert sound, selected from the `.wav` files in the add-on's `sounds` folder. Alerts work independently of automatic chat speech.
+* New member events now appear in the live chat window and exported chat. Super Chats, Super Stickers, and new member events are prioritized over regular messages and are no longer skipped during periods of heavy chat activity.
+* Added a connection announcement when starting to monitor a live stream, replacing the progress sound as the only indication that the add-on is connecting to live chat.
+* Search results can now be filtered by content type (videos, channels, or playlists), duration, upload date, and sort order. Filters can be combined.
+* Search History now saves the filters used for each search, allowing **Search Again** to reproduce the same filtered results.
+* Selecting a channel or playlist in search results now correctly opens, copies, and expands it instead of treating it as a video.
+* Added a **Within channel** option to the search dialog for searching videos from a specific channel. Channel names are suggested from Search History, Favorite Channels, and Subscribed Channels. If the entered name doesn't match any suggestions, the add-on looks up the channel on YouTube and asks you to confirm the intended channel.
+* Checkbox lists in the settings dialog and Manage Subscriptions now automatically select their first item.
+* Added Vietnamese (`vi`) interface translation and documentation, contributed by @ninhhoang205.
 
 ### Bug Fixes
 
-* Fixed URLs copied without a scheme (e.g. `youtube.com/watch?v=...` or `youtu.be/...` instead of `https://youtube.com/...`) failing across every command and "Add from clipboard" button that reads from the clipboard, since yt-dlp couldn't match its YouTube extractor against a bare, scheme-less string and fell through to the generic extractor -- which this add-on deliberately excludes to keep its size down.
+* Pressing **L** on a stream that is already being monitored now opens its live chat window without restarting the monitoring session.
+* When switching to a different live stream while monitoring another, the add-on now asks for confirmation, offers to save the chat being replaced, and fully replaces the existing session. Previously, the old session could continue running alongside the new one, resulting in duplicate or mixed messages.
+* Fixed URLs without a scheme (e.g. `youtube.com/watch?v=...` or `youtu.be/...`) failing across commands and **Add from clipboard** actions that read URLs from the clipboard. These URLs are now handled correctly even without an `https://` prefix.
 
-### Improvements
+### Dependencies
 
-* Search results can now be filtered by content type (Videos, Channels, Playlists), duration, upload date, and sort order — any combination can be applied at once.
-* Search History now remembers the filters used with a search, so "Search Again" reproduces the same filtered results.
-* Selecting a channel or playlist from search results now opens, copies, and expands correctly instead of being treated as a video.
-* Added a "Within channel" option to the search dialog, to search a single channel's own videos. Channel names are suggested from Search History, Favorite Channels, and Subscribed Channels, and typing a name that doesn't match any of those looks it up on YouTube and asks you to confirm which channel you meant.
-* Added vietnamese (vi) interface translation and documentation — contributed by @ninhhoang205
+* Updated yt-dlp to 2026.10.26.
 
 ## 2026.9.3
 

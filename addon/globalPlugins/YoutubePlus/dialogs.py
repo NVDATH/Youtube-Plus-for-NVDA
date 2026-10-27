@@ -43,6 +43,10 @@ confspec = {
     "contentTypesToFetch": "string_list(default=list('videos', 'shorts', 'streams'))",
     "autoUpdateIntervalMinutes": "integer(default=0)",
     "autoSpeak": "boolean(default=True)",
+    "voiceProfile": "string(default='')",
+    "alertSuperChat": "boolean(default=True)",
+    "alertSuperSticker": "boolean(default=True)",
+    "alertMembership": "boolean(default=True)",
     "refreshInteval": "integer(default=5, min=1, max=60)",
     "messageLimit": "integer(default=5000, min=100, max=20000)",
     #"cookieFilePath": "string(default='')",
@@ -4697,6 +4701,9 @@ class ManageSubscriptionsDialog(BaseDialogMixin, wx.Dialog):
             internal_types = ["videos", "shorts", "streams"]
             saved_types = content_types_str.split(',') if content_types_str else []
             self.contentTypesList.CheckedItems = [i for i, t in enumerate(internal_types) if t in saved_types]
+            if self.categoryCheckList.GetCount():
+                self.categoryCheckList.SetSelection(0)
+            self.contentTypesList.SetSelection(0)
         except Exception as e:
             log.error("Failed to update channel details panel: %s", e)
 

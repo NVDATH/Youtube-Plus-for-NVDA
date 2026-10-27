@@ -20,6 +20,8 @@ from contextlib import contextmanager, redirect_stderr
 from http.cookiejar import MozillaCookieJar
 from functools import wraps
 import ui
+import speech
+import braille
 import zipfile
 import config
 import api
@@ -86,6 +88,7 @@ from .dialogs import (
 )
 from . import utils 
 from . import attachments
+from . import voiceprofile
 from .errors import NetworkRetryError, HandledError
 import globalVars
 import addonHandler
@@ -186,6 +189,14 @@ def bnVirtualBufferHandleUpdate(self):
     watchURL()
     return result
 
+# Live chat events with an alert: pytchat type -> (config key, wav file in the
+# sounds folder, fallback beep pitch in Hz used when the wav file is missing).
+CHAT_ALERTS = {
+    "superChat": ("alertSuperChat", "superchat.wav", 1175),
+    "superSticker": ("alertSuperSticker", "supersticker.wav", 1319),
+    "newSponsor": ("alertMembership", "membership.wav", 988),
+}
+
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     instance = None
     scriptCategory = "YoutubePlus"
@@ -203,6 +214,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.messages = []
         self.dialog = None
         self.video_title = ""
+        self.live_chat_video_id = None
+        self.live_chat_title = ""
         self.first_chat_message_spoken = False
         self.toggling = False
         self.last_message_index = -1
@@ -223,6 +236,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.update_timer = wx.Timer(gui.mainFrame)
         gui.mainFrame.Bind(wx.EVT_TIMER, self.on_auto_update_tick, self.update_timer)
         self.register_callback("settings_saved", self.manage_auto_update_timer)
+        voiceprofile.scrub_stale_mapping()
+        self._voice_profile = voiceprofile.VoiceProfile()
+        self.register_callback("settings_saved", self._sync_voice_profile)
         self._init_sub_database()
         def _delayed_startup_update():
             time.sleep(15)
@@ -355,6 +371,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         api.setFocusObject = originalSetFocusObject
         virtualBuffers.VirtualBuffer._handleUpdate = originalVirtualBufferHandleUpdate
         self.stopChatMonitoring(silent=True)
+        self._voice_profile.release()
         self._stop_indicator()
         if MessagesDialog._instance:
             wx.CallAfter(MessagesDialog._instance.Close)
@@ -465,6 +482,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return f"https://www.youtube.com/watch?v={video_id}"
         return url
 
+    def _extract_video_id(self, url):
+        """Returns the 11-character video id from any common YouTube video URL form, or None."""
+        if not url:
+            return None
+        match = re.search(r'(?:[?&]v=|youtu\.be/|/(?:shorts|live|embed)/)([0-9A-Za-z_-]{11})', url)
+        return match.group(1) if match else None
+
     def _detect_url_type(self, url):
         """
         Classifies a YouTube URL as 'playlist', 'channel', or 'video'.
@@ -487,6 +511,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """
         clean_url = self._validate_video_url_and_notify(url)
         if not clean_url:
+            return
+        if (
+            self.active
+            and self.live_chat_video_id
+            and self._extract_video_id(clean_url) == self.live_chat_video_id
+        ):
+            # Already monitoring this exact stream: nothing to fetch or restart.
+            wx.CallAfter(self._show_current_live_chat)
             return
         self._start_indicator()
         try:
@@ -1190,18 +1222,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             # Translators: General error message encouraging the user to check the log file for more technical information.
             wx.CallAfter(ui.message, _("An unexpected error occurred. Please check the log for details."))
             
-    def _chat_monitor_worker(self, chat_instance):
-        """The main worker loop for fetching live chat messages."""
+    def _chat_monitor_worker(self, chat_instance, stop_event):
+        """
+        The main worker loop for fetching live chat messages.
+        `stop_event` belongs to this monitoring session only, so a replaced
+        worker can never be revived by (or stop) a newer session.
+        """
         # Define the hard limit as a constant inside the worker
         HARD_MESSAGE_LIMIT = 200000
         first_message_received = False
         limit_warning_sent = False
-        while not self._stop_event.is_set():
+        while not stop_event.is_set():
             try:
                 if not chat_instance.is_alive():
+                    if stop_event.is_set():
+                        # We terminated this chat ourselves (stop or switch): not a lost connection.
+                        break
                     # Translators: Message shown when the connection to a YouTube live chat is lost, often because the stream has ended.
                     wx.CallAfter(ui.message, _("Connection to live chat lost. The stream may have ended."))
-                    wx.CallAfter(self.stopChatMonitoring, silent=True)
+                    wx.CallAfter(self._stop_chat_if_current, stop_event)
                     break
                 new_messages_batch = []
                 for c in chat_instance.get().sync_items():
@@ -1213,9 +1252,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         prefix = "Super Chat" if c.type == "superChat" else "Super Sticker"
                         full_message = f"{prefix} ({c.amountString}): {message_content}".strip()
                         message_obj = {'datetime': c.datetime, 'author': c.author.name, 'message': full_message, 'type': c.type, 'amount': c.amountString}
+                    elif c.type == "newSponsor":
+                        message_content = c.message if hasattr(c, 'message') else ''
+                        # Translators: Label put before the text of a "new member" live chat event.
+                        prefix = _("New member")
+                        full_message = f"{prefix}: {message_content}".strip()
+                        message_obj = {'datetime': c.datetime, 'author': c.author.name, 'message': full_message, 'type': c.type, 'amount': ''}
                     if message_obj:
                         new_messages_batch.append(message_obj)
-                if new_messages_batch:
+                if new_messages_batch and not stop_event.is_set():
                     if not self.is_long_task_running:
                         self._stop_indicator()
                     with self._messages_lock:
@@ -1237,43 +1282,119 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                             wx.CallAfter(ui.message, _("Receiving live chat of {video_title}").format(video_title=self.video_title))
                         else:
                             wx.CallAfter(self.openMessagesDialog)
+                    # One sound per kind of alert per batch, so a burst doesn't turn into a wall of sound.
+                    for alert_type in {m['type'] for m in new_messages_batch if m['type'] in CHAT_ALERTS}:
+                        wx.CallAfter(self._play_chat_alert, alert_type)
                     if config.conf["YoutubePlus"]["autoSpeak"]:
                         for msg_obj in new_messages_batch:
                             speak_text = f"{msg_obj['author']}: {msg_obj['message']}"
-                            wx.CallAfter(ui.message, speak_text)
+                            wx.CallAfter(self._speak_chat_message, speak_text, msg_obj['type'] in CHAT_ALERTS)
             except Exception as e:
+                if stop_event.is_set():
+                    # Errors raised while this session is being torn down are expected.
+                    break
                 log.exception("Error in chat monitor worker loop. The monitor will stop.")
                 # Translators: Error message shown when the live chat monitoring process encounters an issue and has to stop.
                 wx.CallAfter(ui.message, _("An error occurred while receiving live chat. Monitoring stopped."))
-                wx.CallAfter(self.stopChatMonitoring, silent=True)
+                wx.CallAfter(self._stop_chat_if_current, stop_event)
                 break
             refresh_interval = config.conf["YoutubePlus"].get("refreshInteval", 5)
-            self._stop_event.wait(timeout=refresh_interval)
+            stop_event.wait(timeout=refresh_interval)
         if chat_instance:
             chat_instance.terminate()
 
-    def _perform_export(self):
+    def _play_chat_alert(self, message_type):
+        """Main thread. Plays the alert sound for a Super Chat, Super Sticker or new member, if enabled."""
+        config_key, wav_name, beep_hz = CHAT_ALERTS[message_type]
+        if not config.conf["YoutubePlus"].get(config_key, True):
+            return
+        sound_path = os.path.join(os.path.dirname(__file__), "sounds", wav_name)
+        try:
+            if os.path.exists(sound_path):
+                nvwave.playWaveFile(sound_path)
+                return
+        except Exception:
+            log.exception("YoutubePlus: could not play the alert sound %s", sound_path)
+        tones.beep(beep_hz, 150)
+
+    def _sync_voice_profile(self):
+        """
+        Main thread. Arms the live chat voice profile only while a chat is being
+        monitored with auto-speak on and a profile chosen, and releases it
+        otherwise, so NVDA's private trigger mapping exists no longer than needed.
+        """
+        wanted = ""
+        if self.active and config.conf["YoutubePlus"].get("autoSpeak", True):
+            wanted = config.conf["YoutubePlus"].get("voiceProfile", "")
+        if not wanted:
+            self._voice_profile.release()
+        elif self._voice_profile.name != wanted:
+            if not self._voice_profile.arm(wanted):
+                # Translators: Spoken when the NVDA configuration profile chosen as the live chat voice cannot be used (for example it was deleted or its synthesizer failed to start).
+                ui.message(_("The live chat voice profile could not be used. Chat will be read in the current voice."))
+
+    def _speak_chat_message(self, text, priority=False):
+        """
+        Main thread. Speaks one live chat message (and shows it in braille, like
+        ui.message does), in the chosen voice profile when one is armed.
+        """
+        if not self.active:
+            return
+        if not self._voice_profile.speak(text, priority=priority):
+            # No voice profile in use: normal NVDA speech and braille.
+            ui.message(text, speechPriority=speech.Spri.NEXT if priority else None)
+            return
+        braille.handler.message(text)
+
+    def _stop_chat_if_current(self, stop_event):
+        """
+        Main thread. Used by a worker that hit a fatal condition: stops
+        monitoring only if that worker still belongs to the current session,
+        so a late failure of a replaced session can't tear down the new one.
+        """
+        if self._stop_event is stop_event:
+            self.stopChatMonitoring(silent=True)
+
+    def _show_current_live_chat(self):
+        """
+        Main thread. Used when the user asks to monitor the stream that is
+        already being monitored: nothing is restarted, the message list is
+        simply brought up (or raised if it is already open).
+        """
+        dialog = MessagesDialog._instance
+        if dialog:
+            dialog.Raise()
+            # Translators: Spoken when the user asks to receive a live chat that is already being received and its message list is already open. {title} is the video title.
+            ui.message(_("Already receiving the live chat of {title}.").format(title=self.live_chat_title))
+            return
+        self.openMessagesDialog()
+
+    def _perform_export(self, messages=None, title=None):
         """
         Worker function to perform the actual file export.
         This should be run in a separate thread.
+        `messages` and `title` are a snapshot of the chat to save; by default
+        the current chat is used.
         """
         try:
             export_path = config.conf["YoutubePlus"].get("exportPath", "") or os.path.join(os.path.expanduser("~"), "Desktop")
             if not os.path.exists(export_path):
                 os.makedirs(export_path)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            safe_title = unicodedata.normalize('NFC', self.live_chat_title)
+            safe_title = unicodedata.normalize('NFC', title if title is not None else self.live_chat_title)
             safe_title = "".join(c for c in safe_title if c not in '\\/*?:"<>|').strip()
             if not safe_title:
                 safe_title = "LiveChat"
             filename = f"LiveChat_{safe_title}_{timestamp}.txt"
             filepath = os.path.join(export_path, filename)
-            with self._messages_lock:
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    for msg_obj in self.messages:
-                        author = msg_obj.get('author', '')
-                        message = msg_obj.get('message', '')
-                        f.write(f"@{author}: {message}\n\n")
+            if messages is None:
+                with self._messages_lock:
+                    messages = list(self.messages)
+            with open(filepath, 'w', encoding='utf-8') as f:
+                for msg_obj in messages:
+                    author = msg_obj.get('author', '')
+                    message = msg_obj.get('message', '')
+                    f.write(f"@{author}: {message}\n\n")
             # Translators: Notification shown when the live chat history has been successfully saved to a file.
             wx.CallAfter(ui.message, _("Live chat saved to {filename}").format(filename=filename))
             return True
@@ -1284,30 +1405,39 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             wx.CallAfter(ui.message, _("Failed to save chat history."))
             return False
 
-    def _export_chat(self):
+    def _export_chat(self, switching=False):
         """
         Ask user to confirm export in the main thread.
         If confirmed, it spawns a new worker thread to handle the export.
+        `switching` is True when the chat is being replaced by another stream
+        rather than having ended.
         """
         if not self.messages:
             log.warning("No messages to export")
             return
-        # This part now runs directly in the main thread via wx.CallAfter
-        # from the original caller.
-        message_count = len(self.messages)
-        dlg = wx.MessageDialog(
-            gui.mainFrame,
+        # Snapshot now: a new session may reset self.messages before the export thread runs.
+        with self._messages_lock:
+            messages = list(self.messages)
+        title = self.live_chat_title
+        message_count = len(messages)
+        if switching:
+            # Translators: A prompt asking the user if they want to save the chat history of the previous live chat before switching to another one. {count} is the number of messages collected.
+            prompt = _("You are switching to another live chat. You have {count} chat messages from the previous one.\n\nWould you like to save them first?").format(count=message_count)
+        else:
             # Translators: A prompt asking the user if they want to save the chat history after a live stream ends.
             # {count} is the number of messages collected.
-            # The second string is the title of the confirmation dialog.
-            _("The stream has ended. You have {count} chat messages.\n\nWould you like to save the chat history?").format(count=message_count),
+            prompt = _("The stream has ended. You have {count} chat messages.\n\nWould you like to save the chat history?").format(count=message_count)
+        dlg = wx.MessageDialog(
+            gui.mainFrame,
+            prompt,
+            # Translators: The title of the confirmation dialog for saving the chat history.
             _("Save Chat History?"),
             wx.YES_NO | wx.ICON_QUESTION
         )
         result = dlg.ShowModal()
         dlg.Destroy()
         if result == wx.ID_YES:
-            threading.Thread(target=self._perform_export, daemon=True).start()
+            threading.Thread(target=self._perform_export, args=(messages, title), daemon=True).start()
         else:
             return
                         
@@ -2594,6 +2724,35 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
     def _finish_chat_setup(self, video_id, title):
         """Finalizes chat setup on the main thread and starts the worker."""
+        if self.active:
+            if video_id == self.live_chat_video_id:
+                # Same stream as the one already being monitored: nothing to restart.
+                self._stop_indicator()
+                self._show_current_live_chat()
+                return
+            # A different stream: only switch after the user confirms.
+            self._pause_indicator()
+            dlg = wx.MessageDialog(
+                gui.mainFrame,
+                # Translators: Confirmation shown when the user asks to receive a live chat while another one is already being received. {current} is the title of the chat being received, {new} is the title of the new one.
+                _("You are already receiving the live chat of '{current}'.\n\nStop it and receive the live chat of '{new}' instead? You will be asked whether to save the messages collected so far.").format(current=self.live_chat_title, new=title),
+                # Translators: Title of the dialog asking whether to switch to another live chat.
+                _("Switch Live Chat?"),
+                wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION
+            )
+            result = dlg.ShowModal()
+            dlg.Destroy()
+            if result != wx.ID_YES:
+                self._stop_indicator()
+                return
+            if MessagesDialog._instance:
+                MessagesDialog._instance.Close()
+            self.stopChatMonitoring(silent=True, offer_export=False)
+            # Offer to save the chat being replaced before it is discarded.
+            self._export_chat(switching=True)
+            self._resume_indicator()
+        # Translators: Status message shown when the add-on starts connecting to the live chat of a stream. {title} is the video title.
+        ui.message(_("Connecting to live chat of {title}...").format(title=title))
         try:
             self.chat = pytchat.create(video_id=video_id)
             if not self.chat.is_alive():
@@ -2601,12 +2760,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.video_title = title
             self.live_chat_title = title  
             self.active = True
+            self.live_chat_video_id = video_id
             with self._messages_lock:
                 self.messages = []
             self.first_chat_message_spoken = False
-            self._stop_event.clear()
-            self._worker_thread = threading.Thread(target=self._chat_monitor_worker, args=(self.chat,), daemon=True)
+            # A fresh event per session: a replaced worker that is slow to exit keeps
+            # seeing its own (set) event and can never be revived by a new session.
+            self._stop_event = threading.Event()
+            self._worker_thread = threading.Thread(target=self._chat_monitor_worker, args=(self.chat, self._stop_event), daemon=True)
             self._worker_thread.start()
+            self._sync_voice_profile()
         except Exception as e:
             self._stop_indicator()
             log.exception("Failed to finalize chat setup.")
@@ -2615,7 +2778,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             wx.CallAfter(ui.message, _("Could not receive live chat: {error}").format(error=e))
             self.stopChatMonitoring(silent=True)
 
-    def stopChatMonitoring(self, silent=False):
+    def stopChatMonitoring(self, silent=False, offer_export=True):
         if not self.active and self._worker_thread is None:
             if not silent:
                 # Translators: Message shown when the user tries to stop live chat monitoring, but it's not currently running.
@@ -2630,10 +2793,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not silent:
             # Translators: Status message shown when the live chat monitoring has been successfully stopped.
             ui.message(_("Chat monitoring stopped."))
-        if self.messages:
+        if self.messages and offer_export:
             wx.CallAfter(self._export_chat)
         # Reset state
         self.active = False
+        self._voice_profile.release()
+        self.live_chat_video_id = None
         self._worker_thread = None
         self.chat = None
         self.last_message_index = -1
@@ -2850,6 +3015,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_toggleAutoSpeak(self, gesture):
         is_enabled = not config.conf["YoutubePlus"].get("autoSpeak", True)
         config.conf["YoutubePlus"]["autoSpeak"] = is_enabled
+        self._sync_voice_profile()
         # Translators: Status messages shown when toggling the automatic reading of live chat messages.
         # The first string is for when it's turned on, the second for when it's turned off.
         ui.message(_("Automatic message speaking enabled.") if is_enabled else _("Automatic message speaking disabled."))

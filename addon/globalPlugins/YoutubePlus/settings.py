@@ -14,6 +14,7 @@ import globalVars
 import logging
 import addonHandler
 from .core import GlobalPlugin
+from .voiceprofile import available_profile_names
 import globalCommands
 # Initialize translations for this file
 addonHandler.initTranslation()
@@ -140,6 +141,7 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
             if value in internalValues:
                 checkedItems.append(internalValues.index(value))
         self.contentTypesList.CheckedItems = checkedItems
+        self.contentTypesList.SetSelection(0)
 
         # Translators: Options for the background update interval.
         self.interval_choices = [
@@ -161,6 +163,37 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         # Translators: Label for a checkbox to toggle automatic reading of new live chat messages.
         self.autoSpeak = sHelper.addItem(wx.CheckBox(self, label=_("&Automatically speak incoming live chat")))
         self.autoSpeak.SetValue(config.conf["YoutubePlus"].get("autoSpeak", True))
+
+        # Translators: Label for a setting to choose the NVDA configuration profile whose voice is used only while reading live chat aloud.
+        sHelper.addItem(wx.StaticText(self, label=_("&Voice profile:")))
+        # The stored value is the profile name; "" means no profile.
+        self._voiceProfileNames = [""] + available_profile_names()
+        voice_profile_choices = [
+            # Translators: First entry of the voice profile list: no profile is used and live chat is read in the voice currently in use.
+            _("(None, keep the current voice)")
+        ] + self._voiceProfileNames[1:]
+        self.voiceProfileCombo = sHelper.addItem(wx.ComboBox(self, choices=voice_profile_choices, style=wx.CB_READONLY))
+        current_voice_profile = config.conf["YoutubePlus"].get("voiceProfile", "")
+        try:
+            self.voiceProfileCombo.SetSelection(self._voiceProfileNames.index(current_voice_profile))
+        except ValueError:
+            self.voiceProfileCombo.SetSelection(0)
+        self.voiceProfileCombo.Enable(self.autoSpeak.GetValue())
+        self.autoSpeak.Bind(wx.EVT_CHECKBOX, self.on_auto_speak_toggled)
+
+        # Translators: Label for a list of checkboxes choosing which live chat events play an alert sound.
+        alertsLabel = _("Alert s&ounds for live chat:")
+        alertChoices = [
+            # Translators: Live chat events that can play an alert sound.
+            _("Super Chat"), _("Super Sticker"), _("New member"),
+        ]
+        self.alertList = sHelper.addLabeledControl(
+            alertsLabel, gui.nvdaControls.CustomCheckListBox, choices=alertChoices)
+        self._alertKeys = ["alertSuperChat", "alertSuperSticker", "alertMembership"]
+        self.alertList.CheckedItems = [
+            i for i, key in enumerate(self._alertKeys) if config.conf["YoutubePlus"].get(key, True)
+        ]
+        self.alertList.SetSelection(0)
 
         # Translators: Label for a setting to set the live chat refresh rate in seconds.
         sHelper.addItem(wx.StaticText(self, label=_("&Live chat refresh interval (seconds):")))
@@ -334,6 +367,10 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
             (wx.ACCEL_ALT, ord('D'), toggle_format_pane_id),
         ]))
 
+    def on_auto_speak_toggled(self, event):
+        self.voiceProfileCombo.Enable(self.autoSpeak.GetValue())
+        event.Skip()
+
     def on_toggle_format_pane(self, event):
         is_expanded = self.formatPane.IsExpanded()
         self.formatPane.Collapse(is_expanded)
@@ -417,6 +454,12 @@ class YoutubePlusSettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["YoutubePlus"]["contentTypesToFetch"] = content_types
 
         config.conf["YoutubePlus"]["autoSpeak"] = self.autoSpeak.GetValue()
+        voice_profile_index = self.voiceProfileCombo.GetSelection()
+        if 0 <= voice_profile_index < len(self._voiceProfileNames):
+            config.conf["YoutubePlus"]["voiceProfile"] = self._voiceProfileNames[voice_profile_index]
+        checked_alerts = set(self.alertList.CheckedItems)
+        for index, key in enumerate(self._alertKeys):
+            config.conf["YoutubePlus"][key] = index in checked_alerts
         config.conf["YoutubePlus"]["refreshInteval"] = self.refreshIntevalSpin.GetValue()
         config.conf["YoutubePlus"]["messageLimit"] = self.messageLimitSpin.GetValue()
         
