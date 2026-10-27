@@ -62,7 +62,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // TODO: fill in real translator usernames once NVSky has translators.
+            // TODO: fill in real translator usernames once YoutubePlus has translators.
             // Testing for now with just the maintainer's own account.
             const assignees = [
               "NVDATH",
@@ -74,7 +74,7 @@ jobs:
             const mentions = assignees.map(u => `@${u}`).join(" ");
             const repo = context.repo;
             const runUrl = `https://github.com/${repo.owner}/${repo.repo}/actions/runs/${context.runId}`;
-            const potRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/NVSky.pot`;
+            const potRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/YoutubePlus.pot`;
             const changelogRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/changelog.md`;
             const readmeRawUrl = `https://raw.githubusercontent.com/${repo.owner}/${repo.repo}/${context.ref.replace('refs/heads/','')}/readme.md`;
 
