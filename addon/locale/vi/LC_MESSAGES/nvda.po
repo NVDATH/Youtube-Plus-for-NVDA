@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: YoutubePlus 2026.9.3\n"
+"Project-Id-Version: YoutubePlus 2026.10.26\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 19:57+0000\n"
-"PO-Revision-Date: 2026-09-20 12:32+0700\n"
+"POT-Creation-Date: 2026-10-27 12:26+0000\n"
+"PO-Revision-Date: 2026-10-27 19:36+0700\n"
 "Last-Translator: nguyenninhhoang <nguyenninhhoang2005@gmail.com>\n"
 "Language-Team: \n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.9\n"
+"X-Generator: Poedit 3.10\n"
 
 #: buildVars.py:12
 msgid "YouTubePlus"
@@ -32,7 +32,7 @@ msgid ""
 "• A full Favorites system for videos, channels, and playlists, plus a Watch List for videos you want to watch later — with categories, sorting, and background updates to keep channel and playlist info current.\n"
 "• Built-in search with saved search history, plus a Quick Search shortcut that searches instantly using selected text or clipboard content.\n"
 "• Browse a channel's videos, shorts, streams, playlists, and podcasts directly, without leaving the accessible interface.\n"
-"• Read comments and follow live chat replays.\n"
+"• Read comments and live chat replays, and follow a live chat as it happens: read it aloud in a separate voice of your choice, with alert sounds for Super Chats, Super Stickers and new channel members.\n"
 "• Send a video's thumbnail straight to the Be My Eyes app for a live description (Be My Eyes must be installed)\n"
 "• Download videos, audio, or subtitles (with multiple format options) for offline use.\n"
 "• Supports multiple user profiles, with backup and restore built in."
@@ -46,24 +46,81 @@ msgstr ""
 "• Hệ thống Yêu thích đầy đủ cho video, kênh và danh sách phát, cùng Danh sách xem sau cho những video bạn muốn xem lúc khác — có danh mục, sắp xếp, và tự động cập nhật ngầm để giữ thông tin kênh, danh sách phát luôn mới.\n"
 "• Tìm kiếm tích hợp sẵn với lịch sử tìm kiếm được lưu lại, cùng phím tắt Tìm kiếm nhanh để tìm ngay lập tức bằng văn bản đang chọn hoặc nội dung trong bộ nhớ tạm.\n"
 "• Duyệt trực tiếp video, video ngắn, luồng phát trực tiếp, danh sách phát và podcast của một kênh, mà không cần rời khỏi giao diện dễ tiếp cận.\n"
-"• Đọc bình luận và theo dõi bản phát lại trò chuyện trực tiếp.\n"
+"• Đọc bình luận và bản phát lại trò chuyện trực tiếp, đồng thời theo dõi trò chuyện trực tiếp ngay khi diễn ra: đọc to bằng một giọng riêng do bạn chọn, kèm âm thanh cảnh báo cho Super Chat, Super Sticker và thành viên kênh mới.\n"
 "• Gửi ảnh thu nhỏ của video thẳng đến ứng dụng Be My Eyes để nghe mô tả trực tiếp (yêu cầu đã cài đặt Be My Eyes)\n"
 "• Tải xuống video, âm thanh hoặc phụ đề (với nhiều tùy chọn định dạng) để dùng ngoại tuyến.\n"
 "• Hỗ trợ nhiều hồ sơ người dùng, có sẵn chức năng sao lưu và khôi phục."
 
-#: addon/globalPlugins/YoutubePlus/core.py:483
+#: buildVars.py:39
+msgid ""
+"### New Features and Improvements\n"
+"\n"
+"* Added a **Voice profile** setting that lets you select an NVDA configuration profile for incoming live chat messages. Chat uses the selected profile's synthesizer, voice, rate, pitch, and volume, while NVDA's regular speech remains unchanged. A separate synthesizer runs alongside NVDA, allowing chat to use a different synthesizer (such as SAPI 5) without being interrupted by key presses or NVDA speech. Available when **Automatically speak incoming live chat** is enabled. Suggested by @MichalSuchy (#13).\n"
+"* Added configurable sound alerts for Super Chats, Super Stickers, and new member events. Each event type can have its own alert sound, selected from the `.wav` files in the add-on's `sounds` folder. Alerts work independently of automatic chat speech.\n"
+"* New member events now appear in the live chat window and exported chat. Super Chats, Super Stickers, and new member events are prioritized over regular messages and are no longer skipped during periods of heavy chat activity.\n"
+"* Added a connection announcement when starting to monitor a live stream, replacing the progress sound as the only indication that the add-on is connecting to live chat.\n"
+"* Search results can now be filtered by content type (videos, channels, or playlists), duration, upload date, and sort order. Filters can be combined.\n"
+"* Search History now saves the filters used for each search, allowing **Search Again** to reproduce the same filtered results.\n"
+"* Selecting a channel or playlist in search results now correctly opens, copies, and expands it instead of treating it as a video.\n"
+"* Added a **Within channel** option to the search dialog for searching videos from a specific channel. Channel names are suggested from Search History, Favorite Channels, and Subscribed Channels. If the entered name doesn't match any suggestions, the add-on looks up the channel on YouTube and asks you to confirm the intended channel.\n"
+"* Checkbox lists in the settings dialog and Manage Subscriptions now automatically select their first item.\n"
+"* Added Vietnamese (`vi`) interface translation and documentation, contributed by @ninhhoang205.\n"
+"\n"
+"### Bug Fixes\n"
+"\n"
+"* Pressing **L** on a stream that is already being monitored now opens its live chat window without restarting the monitoring session.\n"
+"* When switching to a different live stream while monitoring another, the add-on now asks for confirmation, offers to save the chat being replaced, and fully replaces the existing session. Previously, the old session could continue running alongside the new one, resulting in duplicate or mixed messages.\n"
+"* Fixed URLs without a scheme (e.g. `youtube.com/watch?v=...` or `youtu.be/...`) failing across commands and **Add from clipboard** actions that read URLs from the clipboard. These URLs are now handled correctly even without an `https://` prefix.\n"
+"\n"
+"### Dependencies\n"
+"\n"
+"* Updated yt-dlp to 2026.10.26."
+msgstr ""
+"### Các tính năng và cải tiến mới\n"
+"\n"
+"* Đã thêm cài đặt **Hồ sơ giọng nói** cho phép bạn chọn hồ sơ cấu hình NVDA cho các tin nhắn trò chuyện trực tiếp đến. Trò chuyện sẽ sử dụng bộ tổng hợp, giọng nói, tốc độ, cao độ và âm lượng của hồ sơ đã chọn, trong khi giọng nói thông thường của NVDA vẫn không thay đổi. Một bộ tổng hợp riêng biệt chạy song song với NVDA, cho phép trò chuyện sử dụng một bộ tổng hợp khác (chẳng hạn như SAPI 5) mà không bị gián đoạn bởi các lần nhấn phím hoặc giọng nói của NVDA. Có sẵn khi **Tự động đọc tin nhắn trò chuyện trực tiếp đến** được bật. Đề xuất bởi @MichalSuchy (#13).\n"
+"* Đã thêm âm thanh cảnh báo có thể cấu hình cho Super Chat, Super Sticker và sự kiện thành viên mới. Mỗi loại sự kiện có thể có âm thanh cảnh báo riêng, được chọn từ các tệp `.wav` trong thư mục `sounds` của add-on. Âm thanh cảnh báo hoạt động độc lập với việc tự động đọc trò chuyện.\n"
+"* Các sự kiện thành viên mới giờ đây sẽ hiển thị trong cửa sổ trò chuyện trực tiếp và cả trong trò chuyện đã xuất. Super Chat, Super Sticker và các sự kiện thành viên mới được ưu tiên hơn tin nhắn thông thường và không còn bị bỏ qua khi trò chuyện diễn ra dồn dập.\n"
+"* Đã thêm thông báo kết nối khi bắt đầu theo dõi luồng phát trực tiếp, thay thế âm thanh tiến trình làm dấu hiệu duy nhất cho biết add-on đang kết nối với cuộc trò chuyện trực tiếp.\n"
+"* Giờ đây, kết quả tìm kiếm có thể được lọc theo loại nội dung (video, kênh hoặc danh sách phát), thời lượng, ngày tải lên và thứ tự sắp xếp. Các bộ lọc có thể được kết hợp.\n"
+"* Lịch sử tìm kiếm hiện lưu các bộ lọc đã sử dụng cho mỗi lần tìm kiếm, cho phép **Tìm kiếm lại** tạo lại đúng kết quả đã lọc.\n"
+"* Việc chọn một kênh hoặc danh sách phát trong kết quả tìm kiếm giờ đây sẽ mở, sao chép và mở rộng nội dung đó một cách chính xác thay vì xử lý nó như một video.\n"
+"* Đã thêm tùy chọn **Trong kênh** vào hộp thoại tìm kiếm để tìm kiếm video từ một kênh cụ thể. Tên kênh được đề xuất từ Lịch sử tìm kiếm, Kênh yêu thích và Kênh đã đăng ký. Nếu tên bạn nhập không khớp với bất kỳ đề xuất nào, add-on sẽ tìm kiếm kênh đó trên YouTube và yêu cầu bạn xác nhận kênh mong muốn.\n"
+"* Danh sách hộp kiểm trong hộp thoại cài đặt và Quản lý đăng ký giờ đây sẽ tự động chọn mục đầu tiên.\n"
+"* Đã thêm bản dịch giao diện tiếng Việt (`vi`) và tài liệu, do @ninhhoang205 đóng góp.\n"
+"\n"
+"### Sửa lỗi\n"
+"\n"
+"* Nhấn phím **L** trên một luồng đang được theo dõi sẽ mở cửa sổ trò chuyện trực tiếp của luồng đó mà không cần khởi động lại phiên theo dõi.\n"
+"* Khi chuyển sang luồng phát trực tiếp khác trong khi đang theo dõi một luồng khác, add-on giờ đây sẽ yêu cầu xác nhận, đề nghị lưu lại cuộc trò chuyện đang được thay thế và thay thế hoàn toàn phiên hiện có. Trước đây, phiên cũ có thể tiếp tục chạy song song với phiên mới, dẫn đến tin nhắn trùng lặp hoặc lẫn lộn.\n"
+"* Đã khắc phục lỗi URL không có giao thức (ví dụ: `youtube.com/watch?v=...` hoặc `youtu.be/...`) xảy ra trên các lệnh và thao tác **Thêm từ bộ nhớ tạm** đọc URL từ bộ nhớ tạm. Giờ đây, các URL này được xử lý chính xác ngay cả khi không có tiền tố `https://`.\n"
+"\n"
+"### Thư viện phụ thuộc\n"
+"\n"
+"* Đã cập nhật yt-dlp lên phiên bản 2026.10.26."
+
+#: addon/installTasks.py:46
+#, python-brace-format
+msgid "Successfully migrated {count} data files to the user directory."
+msgstr "Đã di chuyển thành công {count} tệp dữ liệu sang thư mục người dùng."
+
+#: addon/installTasks.py:48
+msgid "YouTube Plus Migration"
+msgstr "Di chuyển dữ liệu YouTube Plus"
+
+#: addon/globalPlugins/YoutubePlus/core.py:534
 msgid "Failed to get video data. Details: {}"
 msgstr "Không thể lấy dữ liệu video. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:487
+#: addon/globalPlugins/YoutubePlus/core.py:538
 msgid "An unexpected error occurred."
 msgstr "Đã xảy ra lỗi không mong muốn."
 
-#: addon/globalPlugins/YoutubePlus/core.py:500
+#: addon/globalPlugins/YoutubePlus/core.py:551
 msgid "This command is for videos, but the current page is a playlist."
 msgstr "Lệnh này dùng cho video, nhưng trang hiện tại là một danh sách phát."
 
-#: addon/globalPlugins/YoutubePlus/core.py:507
+#: addon/globalPlugins/YoutubePlus/core.py:558
 msgid ""
 "This command is for videos, but the current page appears to be a channel or "
 "playlist."
@@ -71,139 +128,139 @@ msgstr ""
 "Lệnh này dùng cho video, nhưng trang hiện tại có vẻ là một kênh hoặc danh "
 "sách phát."
 
-#: addon/globalPlugins/YoutubePlus/core.py:764
+#: addon/globalPlugins/YoutubePlus/core.py:815
 msgid "activate YoutubePlus"
 msgstr "kích hoạt YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/core.py:863
+#: addon/globalPlugins/YoutubePlus/core.py:914
 #, python-brace-format
 msgid "Super Chat ({amount}): {paid_message}"
 msgstr "Super Chat ({amount}): {paid_message}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:877
+#: addon/globalPlugins/YoutubePlus/core.py:928
 #, python-brace-format
 msgid "Super Sticker ({amount})"
 msgstr "Super Sticker ({amount})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:908
+#: addon/globalPlugins/YoutubePlus/core.py:959
 #, python-brace-format
 msgid "YouTube System ({icon_type})"
 msgstr "Hệ thống YouTube ({icon_type})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:930
+#: addon/globalPlugins/YoutubePlus/core.py:981
 #, python-brace-format
 msgid "{h} Hour"
 msgstr "{h} giờ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:932
+#: addon/globalPlugins/YoutubePlus/core.py:983
 #, python-brace-format
 msgid "{h} Hours"
 msgstr "{h} giờ"
 
-#: addon/globalPlugins/YoutubePlus/core.py:937
+#: addon/globalPlugins/YoutubePlus/core.py:988
 #, python-brace-format
 msgid "{m} Minute"
 msgstr "{m} phút"
 
-#: addon/globalPlugins/YoutubePlus/core.py:937
+#: addon/globalPlugins/YoutubePlus/core.py:988
 #, python-brace-format
 msgid "{m} Minutes"
 msgstr "{m} phút"
 
-#: addon/globalPlugins/YoutubePlus/core.py:940
+#: addon/globalPlugins/YoutubePlus/core.py:991
 #, python-brace-format
 msgid "{s} Second"
 msgstr "{s} giây"
 
-#: addon/globalPlugins/YoutubePlus/core.py:940
+#: addon/globalPlugins/YoutubePlus/core.py:991
 #, python-brace-format
 msgid "{s} Seconds"
 msgstr "{s} giây"
 
-#: addon/globalPlugins/YoutubePlus/core.py:975
+#: addon/globalPlugins/YoutubePlus/core.py:1026
 #, python-brace-format
 msgid "Info of {title}"
 msgstr "Thông tin của {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:992
+#: addon/globalPlugins/YoutubePlus/core.py:1043
 msgid "This video has a live chat replay. What would you like to view?"
 msgstr "Video này có bản phát lại trò chuyện trực tiếp. Bạn muốn xem gì?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:992
+#: addon/globalPlugins/YoutubePlus/core.py:1043
 msgid "Choice"
 msgstr "Lựa chọn"
 
-#: addon/globalPlugins/YoutubePlus/core.py:996
+#: addon/globalPlugins/YoutubePlus/core.py:1047
 #, python-brace-format
 msgid "Show {comment_count} &Comments"
 msgstr "Hiện {comment_count} &bình luận"
 
-#: addon/globalPlugins/YoutubePlus/core.py:996
+#: addon/globalPlugins/YoutubePlus/core.py:1047
 msgid "Show &Live Chat Replay"
 msgstr "Hiện bản phát &lại trò chuyện trực tiếp"
 
-#: addon/globalPlugins/YoutubePlus/core.py:996
-#: addon/globalPlugins/YoutubePlus/core.py:2035
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3746
+#: addon/globalPlugins/YoutubePlus/core.py:1047
+#: addon/globalPlugins/YoutubePlus/core.py:2294
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3990
 msgid "Ca&ncel"
 msgstr "&Hủy"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1035
+#: addon/globalPlugins/YoutubePlus/core.py:1086
 msgid "This video has no comments."
 msgstr "Video này không có bình luận nào."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1039
+#: addon/globalPlugins/YoutubePlus/core.py:1090
 #, python-brace-format
 msgid "Loading {count} comments..."
 msgstr "Đang tải {count} bình luận..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1042
+#: addon/globalPlugins/YoutubePlus/core.py:1093
 msgid "Loading live chat replay..."
 msgstr "Đang tải bản phát lại trò chuyện trực tiếp..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1056
+#: addon/globalPlugins/YoutubePlus/core.py:1107
 msgid ""
 "Live stream detected. Please use the 'Monitor live chat' command instead."
 msgstr ""
 "Đã phát hiện luồng phát trực tiếp. Vui lòng dùng lệnh 'Theo dõi trò chuyện "
 "trực tiếp' thay thế."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1072
+#: addon/globalPlugins/YoutubePlus/core.py:1123
 #, python-brace-format
 msgid "Title: {title}"
 msgstr "Tiêu đề: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1073
+#: addon/globalPlugins/YoutubePlus/core.py:1124
 #, python-brace-format
 msgid "Channel: {uploader}"
 msgstr "Kênh: {uploader}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1074
+#: addon/globalPlugins/YoutubePlus/core.py:1125
 #, python-brace-format
 msgid "Duration: {duration}"
 msgstr "Thời lượng: {duration}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1075
+#: addon/globalPlugins/YoutubePlus/core.py:1126
 #, python-brace-format
 msgid "Uploaded: {upload_date}"
 msgstr "Đã tải lên: {upload_date}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1076
+#: addon/globalPlugins/YoutubePlus/core.py:1127
 #, python-brace-format
 msgid "Views: {view_count}"
 msgstr "Lượt xem: {view_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1077
+#: addon/globalPlugins/YoutubePlus/core.py:1128
 #, python-brace-format
 msgid "Likes: {like_count}"
 msgstr "Lượt thích: {like_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1078
+#: addon/globalPlugins/YoutubePlus/core.py:1129
 #, python-brace-format
 msgid "Comments: {comment_count}"
 msgstr "Bình luận: {comment_count}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1080
+#: addon/globalPlugins/YoutubePlus/core.py:1131
 #, python-brace-format
 msgid ""
 "Description:\n"
@@ -212,73 +269,102 @@ msgstr ""
 "Mô tả:\n"
 "{description}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1092
+#: addon/globalPlugins/YoutubePlus/core.py:1143
 #, python-brace-format
 msgid "Could not get video info: {error}"
 msgstr "Không thể lấy thông tin video: {error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1096
-#: addon/globalPlugins/YoutubePlus/core.py:1124
-#: addon/globalPlugins/YoutubePlus/core.py:1172
-#: addon/globalPlugins/YoutubePlus/core.py:1617
+#: addon/globalPlugins/YoutubePlus/core.py:1147
+#: addon/globalPlugins/YoutubePlus/core.py:1175
+#: addon/globalPlugins/YoutubePlus/core.py:1223
+#: addon/globalPlugins/YoutubePlus/core.py:1780
 msgid "An unexpected error occurred. Please check the log for details."
 msgstr "Đã xảy ra lỗi không mong muốn. Vui lòng xem nhật ký để biết chi tiết."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1113
+#: addon/globalPlugins/YoutubePlus/core.py:1164
 #, python-brace-format
 msgid "Chapters for {title}"
 msgstr "Các chương của {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1117
+#: addon/globalPlugins/YoutubePlus/core.py:1168
 msgid "No chapters found in this video."
 msgstr "Không tìm thấy chương nào trong video này."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1120
+#: addon/globalPlugins/YoutubePlus/core.py:1171
 msgid "Failed to get chapters. Details: {}"
 msgstr "Không thể lấy danh sách chương. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1142
+#: addon/globalPlugins/YoutubePlus/core.py:1193
 #, python-brace-format
 msgid "{count} comments of {title}"
 msgstr "{count} bình luận của {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1159
+#: addon/globalPlugins/YoutubePlus/core.py:1210
 #, python-brace-format
 msgid "{count} live chat replay of {title}"
 msgstr "{count} tin nhắn phát lại trò chuyện trực tiếp của {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1167
+#: addon/globalPlugins/YoutubePlus/core.py:1218
 #, python-brace-format
 msgid "Could not load data: {error}"
 msgstr "Không thể tải dữ liệu: {error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1184
+#: addon/globalPlugins/YoutubePlus/core.py:1242
 msgid "Connection to live chat lost. The stream may have ended."
 msgstr "Mất kết nối đến trò chuyện trực tiếp. Có thể luồng phát đã kết thúc."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1210
+#: addon/globalPlugins/YoutubePlus/core.py:1258
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "New member"
+msgstr "Thành viên mới"
+
+#: addon/globalPlugins/YoutubePlus/core.py:1274
 msgid "To conserve memory, older chat messages have been discarded."
 msgstr "Để tiết kiệm bộ nhớ, các tin nhắn trò chuyện cũ hơn đã bị loại bỏ."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1218
+#: addon/globalPlugins/YoutubePlus/core.py:1282
 #, python-brace-format
 msgid "Receiving live chat of {video_title}"
 msgstr "Đang nhận trò chuyện trực tiếp của {video_title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1228
+#: addon/globalPlugins/YoutubePlus/core.py:1298
 msgid "An error occurred while receiving live chat. Monitoring stopped."
 msgstr "Đã xảy ra lỗi khi nhận trò chuyện trực tiếp. Đã dừng theo dõi."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1259
+#: addon/globalPlugins/YoutubePlus/core.py:1334
+msgid ""
+"The live chat voice profile could not be used. Chat will be read in the "
+"current voice."
+msgstr ""
+"Không thể sử dụng hồ sơ giọng nói của trò chuyện trực tiếp. Tin nhắn trò "
+"chuyện sẽ được đọc bằng giọng hiện tại."
+
+#: addon/globalPlugins/YoutubePlus/core.py:1368
+#, python-brace-format
+msgid "Already receiving the live chat of {title}."
+msgstr "Đang nhận trò chuyện trực tiếp của {title} rồi."
+
+#: addon/globalPlugins/YoutubePlus/core.py:1399
 #, python-brace-format
 msgid "Live chat saved to {filename}"
 msgstr "Đã lưu trò chuyện trực tiếp vào {filename}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1265
+#: addon/globalPlugins/YoutubePlus/core.py:1405
 msgid "Failed to save chat history."
 msgstr "Không thể lưu lịch sử trò chuyện."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1284
+#: addon/globalPlugins/YoutubePlus/core.py:1425
+#, python-brace-format
+msgid ""
+"You are switching to another live chat. You have {count} chat messages from the previous one.\n"
+"\n"
+"Would you like to save them first?"
+msgstr ""
+"Bạn đang chuyển sang một trò chuyện trực tiếp khác. Bạn có {count} tin nhắn trò chuyện từ phiên trước.\n"
+"\n"
+"Bạn có muốn lưu chúng trước không?"
+
+#: addon/globalPlugins/YoutubePlus/core.py:1429
 #, python-brace-format
 msgid ""
 "The stream has ended. You have {count} chat messages.\n"
@@ -289,76 +375,76 @@ msgstr ""
 "\n"
 "Bạn có muốn lưu lịch sử trò chuyện không?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1285
+#: addon/globalPlugins/YoutubePlus/core.py:1434
 msgid "Save Chat History?"
 msgstr "Lưu lịch sử trò chuyện?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1306
-#: addon/globalPlugins/YoutubePlus/core.py:2424
+#: addon/globalPlugins/YoutubePlus/core.py:1455
+#: addon/globalPlugins/YoutubePlus/core.py:2778
 #, python-brace-format
 msgid "Could not receive live chat: {error}"
 msgstr "Không thể nhận trò chuyện trực tiếp: {error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1344
+#: addon/globalPlugins/YoutubePlus/core.py:1507
 msgid "Adding to favorites..."
 msgstr "Đang thêm vào mục yêu thích..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1351
+#: addon/globalPlugins/YoutubePlus/core.py:1514
 msgid "The provided link is not for a single video."
 msgstr "Liên kết được cung cấp không phải cho một video đơn lẻ."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1359
+#: addon/globalPlugins/YoutubePlus/core.py:1522
 msgid "This video is already in your favorites."
 msgstr "Video này đã có trong mục yêu thích của bạn."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1375
+#: addon/globalPlugins/YoutubePlus/core.py:1538
 #, python-brace-format
 msgid "Added '{title}' to favorites."
 msgstr "Đã thêm '{title}' vào mục yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1378
+#: addon/globalPlugins/YoutubePlus/core.py:1541
 msgid "Failed to add favorite. Details: {}"
 msgstr "Không thể thêm vào yêu thích. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1389
+#: addon/globalPlugins/YoutubePlus/core.py:1552
 msgid "Adding to favorite channels..."
 msgstr "Đang thêm vào kênh yêu thích..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1410
+#: addon/globalPlugins/YoutubePlus/core.py:1573
 msgid "This channel is already in your favorites."
 msgstr "Kênh này đã có trong mục yêu thích của bạn."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1424
+#: addon/globalPlugins/YoutubePlus/core.py:1587
 #, python-brace-format
 msgid "Added '{channel}' to favorites."
 msgstr "Đã thêm '{channel}' vào mục yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1427
+#: addon/globalPlugins/YoutubePlus/core.py:1590
 msgid "Failed to add favorite."
 msgstr "Không thể thêm vào yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1435
+#: addon/globalPlugins/YoutubePlus/core.py:1598
 msgid "Adding playlist to favorites..."
 msgstr "Đang thêm danh sách phát vào mục yêu thích..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1453
+#: addon/globalPlugins/YoutubePlus/core.py:1616
 msgid "This playlist is already in your favorites."
 msgstr "Danh sách phát này đã có trong mục yêu thích của bạn."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1457
+#: addon/globalPlugins/YoutubePlus/core.py:1620
 msgid "Unknown Playlist"
 msgstr "Danh sách phát không xác định"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1471
+#: addon/globalPlugins/YoutubePlus/core.py:1634
 #, python-brace-format
 msgid "Added '{playlist}' to favorites."
 msgstr "Đã thêm '{playlist}' vào mục yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1474
+#: addon/globalPlugins/YoutubePlus/core.py:1637
 msgid "Failed to add favorite playlist."
 msgstr "Không thể thêm danh sách phát vào yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1541
+#: addon/globalPlugins/YoutubePlus/core.py:1704
 msgid ""
 "Could not open Be My Eyes. It may not be installed.\n"
 "\n"
@@ -368,119 +454,149 @@ msgstr ""
 "\n"
 "Mở Microsoft Store để cài đặt?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1543
+#: addon/globalPlugins/YoutubePlus/core.py:1706
 msgid "Be My Eyes Not Found"
 msgstr "Không tìm thấy Be My Eyes"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1548
+#: addon/globalPlugins/YoutubePlus/core.py:1711
 msgid "Could not open the Microsoft Store page."
 msgstr "Không thể mở trang Microsoft Store."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1562
+#: addon/globalPlugins/YoutubePlus/core.py:1725
 msgid "No URL to describe."
 msgstr "Không có URL nào để mô tả."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1569
+#: addon/globalPlugins/YoutubePlus/core.py:1732
 msgid "Downloading thumbnail..."
 msgstr "Đang tải ảnh thu nhỏ..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1570
+#: addon/globalPlugins/YoutubePlus/core.py:1733
 msgid "Downloading channel avatar..."
 msgstr "Đang tải ảnh đại diện kênh..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1571
+#: addon/globalPlugins/YoutubePlus/core.py:1734
 msgid "Downloading playlist cover..."
 msgstr "Đang tải ảnh bìa danh sách phát..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1594
+#: addon/globalPlugins/YoutubePlus/core.py:1757
 msgid "No thumbnail available for this video."
 msgstr "Video này không có ảnh thu nhỏ."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1595
+#: addon/globalPlugins/YoutubePlus/core.py:1758
 msgid "No avatar available for this channel."
 msgstr "Kênh này không có ảnh đại diện."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1596
+#: addon/globalPlugins/YoutubePlus/core.py:1759
 msgid "No cover available for this playlist."
 msgstr "Danh sách phát này không có ảnh bìa."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1603
+#: addon/globalPlugins/YoutubePlus/core.py:1766
 msgid "Thumbnail sending to Be My Eyes..."
 msgstr "Đang gửi ảnh thu nhỏ đến Be My Eyes..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1608
+#: addon/globalPlugins/YoutubePlus/core.py:1771
 msgid "Could not get information. Details: {}"
 msgstr "Không thể lấy thông tin. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1612
+#: addon/globalPlugins/YoutubePlus/core.py:1775
 msgid "Could not download the image."
 msgstr "Không thể tải hình ảnh."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1634
+#: addon/globalPlugins/YoutubePlus/core.py:1797
 #, python-brace-format
 msgid "'{title}' is already in Watch List."
 msgstr "'{title}' đã có trong Danh sách xem sau."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1648
+#: addon/globalPlugins/YoutubePlus/core.py:1811
 #, python-brace-format
 msgid "Added '{title}' to Watch List."
 msgstr "Đã thêm '{title}' vào Danh sách xem sau."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1656
+#: addon/globalPlugins/YoutubePlus/core.py:1819
 msgid "Error: Could not add video to Watch List. Details: {}"
 msgstr "Lỗi: Không thể thêm video vào Danh sách xem sau. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1705
-#: addon/globalPlugins/YoutubePlus/core.py:1715
-#: addon/globalPlugins/YoutubePlus/core.py:2364
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1714
+#: addon/globalPlugins/YoutubePlus/core.py:1840
+#, python-brace-format
+msgid "Searching '{query}' in {channel}..."
+msgstr "Đang tìm kiếm '{query}' trong {channel}..."
+
+#: addon/globalPlugins/YoutubePlus/core.py:1844
+#, python-brace-format
+msgid "Results for '{query}' in {channel}"
+msgstr "Kết quả cho '{query}' trong {channel}"
+
+#: addon/globalPlugins/YoutubePlus/core.py:1880
+#, python-brace-format
+msgid "Could not find a channel named '{name}'."
+msgstr "Không tìm thấy kênh nào có tên '{name}'."
+
+#: addon/globalPlugins/YoutubePlus/core.py:1886
+msgid "Failed to look up that channel."
+msgstr "Không thể tra cứu kênh đó."
+
+#: addon/globalPlugins/YoutubePlus/core.py:1896
+msgid "Select the channel to search in:"
+msgstr "Chọn kênh để tìm kiếm:"
+
+#: addon/globalPlugins/YoutubePlus/core.py:1898
+msgid "Choose Channel"
+msgstr "Chọn kênh"
+
+#: addon/globalPlugins/YoutubePlus/core.py:1962
+#: addon/globalPlugins/YoutubePlus/core.py:1972
+#: addon/globalPlugins/YoutubePlus/core.py:2658
+#: addon/globalPlugins/YoutubePlus/core.py:2681
+#: addon/globalPlugins/YoutubePlus/core.py:2692
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1857
 msgid "[Unavailable video]"
 msgstr "[Video không khả dụng]"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1726
+#: addon/globalPlugins/YoutubePlus/core.py:1983
 msgid "No videos found."
 msgstr "Không tìm thấy video nào."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1738
+#: addon/globalPlugins/YoutubePlus/core.py:1995
 #, python-brace-format
 msgid "{count} videos in {playlist}"
 msgstr "{count} video trong {playlist}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1738
+#: addon/globalPlugins/YoutubePlus/core.py:1995
+#: addon/globalPlugins/YoutubePlus/core.py:2683
 msgid "Playlist"
 msgstr "Danh sách phát"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1743
+#: addon/globalPlugins/YoutubePlus/core.py:2002
 #, python-brace-format
 msgid "All {count} {type} from {channel}"
 msgstr "Toàn bộ {count} {type} từ {channel}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1743
-#: addon/globalPlugins/YoutubePlus/core.py:1745
-#: addon/globalPlugins/YoutubePlus/core.py:2372
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1297
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1367
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2294
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2636
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2795
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3087
+#: addon/globalPlugins/YoutubePlus/core.py:2002
+#: addon/globalPlugins/YoutubePlus/core.py:2004
+#: addon/globalPlugins/YoutubePlus/core.py:2660
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1440
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1510
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2437
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2799
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2958
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3250
 msgid "Channel"
 msgstr "Kênh"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1745
+#: addon/globalPlugins/YoutubePlus/core.py:2004
 #, python-brace-format
 msgid "Recent {count} {type} from {channel}"
 msgstr "{count} {type} gần đây từ {channel}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1776
+#: addon/globalPlugins/YoutubePlus/core.py:2035
 msgid "Failed to fetch video list."
 msgstr "Không thể tải danh sách video."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1784
+#: addon/globalPlugins/YoutubePlus/core.py:2043
 msgid "Subscribing to channel..."
 msgstr "Đang đăng ký kênh..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1813
+#: addon/globalPlugins/YoutubePlus/core.py:2072
 #, python-brace-format
 msgid ""
 "You are already subscribed to '{channel}'.\n"
@@ -489,166 +605,164 @@ msgstr ""
 "Bạn đã đăng ký '{channel}' rồi.\n"
 "Bạn có muốn hủy đăng ký thay vào đó không?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1815
+#: addon/globalPlugins/YoutubePlus/core.py:2074
 msgid "Already Subscribed"
 msgstr "Đã đăng ký"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1836
+#: addon/globalPlugins/YoutubePlus/core.py:2095
 msgid "Unknown Channel"
 msgstr "Kênh không xác định"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1851
+#: addon/globalPlugins/YoutubePlus/core.py:2110
 #, python-brace-format
 msgid "Subscribed to {channel}."
 msgstr "Đã đăng ký {channel}."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1854
+#: addon/globalPlugins/YoutubePlus/core.py:2113
 msgid "Failed to subscribe."
 msgstr "Không thể đăng ký."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1874
+#: addon/globalPlugins/YoutubePlus/core.py:2133
 #, python-brace-format
 msgid "Successfully unsubscribed from {channel}"
 msgstr "Đã hủy đăng ký {channel} thành công"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1877
+#: addon/globalPlugins/YoutubePlus/core.py:2136
 msgid "Failed to unsubscribe - channel not found in database"
 msgstr "Không thể hủy đăng ký - không tìm thấy kênh trong cơ sở dữ liệu"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1881
+#: addon/globalPlugins/YoutubePlus/core.py:2140
 msgid "Critical error during unsubscribe."
 msgstr "Lỗi nghiêm trọng khi hủy đăng ký."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1903
-#: addon/globalPlugins/YoutubePlus/core.py:1906
+#: addon/globalPlugins/YoutubePlus/core.py:2162
+#: addon/globalPlugins/YoutubePlus/core.py:2165
 msgid "No channels to update."
 msgstr "Không có kênh nào để cập nhật."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1923
+#: addon/globalPlugins/YoutubePlus/core.py:2182
 #, python-brace-format
 msgid "Checking {channel} ({type})..."
 msgstr "Đang kiểm tra {channel} ({type})..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1952
-#: addon/globalPlugins/YoutubePlus/core.py:1955
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4954
+#: addon/globalPlugins/YoutubePlus/core.py:2211
+#: addon/globalPlugins/YoutubePlus/core.py:2214
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5311
 msgid "Update cancelled."
 msgstr "Đã hủy cập nhật."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1958
+#: addon/globalPlugins/YoutubePlus/core.py:2217
 #, python-brace-format
 msgid "Update complete. Found {count} new videos."
 msgstr "Cập nhật hoàn tất. Đã tìm thấy {count} video mới."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1965
+#: addon/globalPlugins/YoutubePlus/core.py:2224
 #, python-brace-format
 msgid "Found and added {count} new videos."
 msgstr "Đã tìm thấy và thêm {count} video mới."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1968
+#: addon/globalPlugins/YoutubePlus/core.py:2227
 msgid "No new videos found."
 msgstr "Không tìm thấy video mới nào."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1974
+#: addon/globalPlugins/YoutubePlus/core.py:2233
 msgid "Error updating feed."
 msgstr "Lỗi khi cập nhật nguồn cấp dữ liệu."
 
-#: addon/globalPlugins/YoutubePlus/core.py:1992
-#: addon/globalPlugins/YoutubePlus/core.py:2011
-#: addon/globalPlugins/YoutubePlus/core.py:2837
+#: addon/globalPlugins/YoutubePlus/core.py:2251
+#: addon/globalPlugins/YoutubePlus/core.py:2270
+#: addon/globalPlugins/YoutubePlus/core.py:3218
 msgid "Unknown Video"
 msgstr "Video không xác định"
 
-#: addon/globalPlugins/YoutubePlus/core.py:1998
+#: addon/globalPlugins/YoutubePlus/core.py:2257
 msgid "Failed to get video info for download. Details: {}"
 msgstr "Không thể lấy thông tin video để tải xuống. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2005
-#: addon/globalPlugins/YoutubePlus/core.py:2603
+#: addon/globalPlugins/YoutubePlus/core.py:2264
+#: addon/globalPlugins/YoutubePlus/core.py:2983
 msgid "Getting video info for download..."
 msgstr "Đang lấy thông tin video để tải xuống..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2021
+#: addon/globalPlugins/YoutubePlus/core.py:2280
 #, python-brace-format
 msgid "Failed to start download: {error}"
 msgstr "Không thể bắt đầu tải xuống: {error}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2029
+#: addon/globalPlugins/YoutubePlus/core.py:2288
 msgid "What would you like to download?"
 msgstr "Bạn muốn tải xuống gì?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2031
+#: addon/globalPlugins/YoutubePlus/core.py:2290
 #, python-brace-format
 msgid "Download: {title} ({duration})"
 msgstr "Tải xuống: {title} ({duration})"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2035
+#: addon/globalPlugins/YoutubePlus/core.py:2294
 msgid "Download &Video"
 msgstr "Tải xuống &video"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2035
-#: addon/globalPlugins/YoutubePlus/dialogs.py:928
+#: addon/globalPlugins/YoutubePlus/core.py:2294
+#: addon/globalPlugins/YoutubePlus/dialogs.py:976
 msgid "Download &Audio"
 msgstr "Tải xuống â&m thanh"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2170
+#: addon/globalPlugins/YoutubePlus/core.py:2429
 msgid ""
 "FFmpeg was not found on this system, which is required to download videos. "
 "Would you like YoutubePlus to install it automatically via winget?"
 msgstr ""
-"Không tìm thấy FFmpeg trên hệ thống này, trong khi FFmpeg là bắt buộc để tải"
-" video. Bạn có muốn YoutubePlus tự động cài đặt FFmpeg thông qua winget "
-"không?"
+"Không tìm thấy FFmpeg trên hệ thống này, trong khi FFmpeg là bắt buộc để tải "
+"video. Bạn có muốn YoutubePlus tự động cài đặt FFmpeg thông qua winget không?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2172
+#: addon/globalPlugins/YoutubePlus/core.py:2431
 msgid "FFmpeg Required"
 msgstr "Yêu cầu FFmpeg"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2195
+#: addon/globalPlugins/YoutubePlus/core.py:2454
 msgid ""
 "Could not find FFmpeg or winget on this system. Video downloads require "
 "FFmpeg. Please install FFmpeg manually or update the Windows App Installer."
 msgstr ""
 "Không tìm thấy FFmpeg hoặc winget trên hệ thống này. Việc tải video yêu cầu "
-"FFmpeg. Vui lòng cài đặt FFmpeg thủ công hoặc cập nhật Windows App "
-"Installer."
+"FFmpeg. Vui lòng cài đặt FFmpeg thủ công hoặc cập nhật Windows App Installer."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2204
-#: addon/globalPlugins/YoutubePlus/core.py:2304
+#: addon/globalPlugins/YoutubePlus/core.py:2463
+#: addon/globalPlugins/YoutubePlus/core.py:2563
 msgid "Download cancelled."
 msgstr "Đã hủy tải xuống."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2207
+#: addon/globalPlugins/YoutubePlus/core.py:2466
 msgid "Installing FFmpeg via winget..."
 msgstr "Đang cài đặt FFmpeg thông qua winget..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2210
+#: addon/globalPlugins/YoutubePlus/core.py:2469
 msgid "FFmpeg (via winget)"
 msgstr "FFmpeg (thông qua winget)"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2233
+#: addon/globalPlugins/YoutubePlus/core.py:2492
 msgid "Failed to install FFmpeg."
 msgstr "Không thể cài đặt FFmpeg."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2239
+#: addon/globalPlugins/YoutubePlus/core.py:2498
 msgid "FFmpeg installed successfully."
 msgstr "Đã cài đặt FFmpeg thành công."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2244
+#: addon/globalPlugins/YoutubePlus/core.py:2503
 msgid "FFmpeg installation did not complete successfully."
 msgstr "Quá trình cài đặt FFmpeg không hoàn tất thành công."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2260
+#: addon/globalPlugins/YoutubePlus/core.py:2519
 #, python-brace-format
 msgid "Starting download of {title}..."
 msgstr "Đang bắt đầu tải xuống {title}..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2299
+#: addon/globalPlugins/YoutubePlus/core.py:2558
 #, python-brace-format
 msgid "Download complete: {title}"
 msgstr "Tải xuống hoàn tất: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2309
+#: addon/globalPlugins/YoutubePlus/core.py:2568
 msgid ""
 "Audio-only format not found. Attempting to download a video file with audio "
 "instead..."
@@ -656,71 +770,101 @@ msgstr ""
 "Không tìm thấy định dạng chỉ âm thanh. Đang thử tải xuống một tệp video có "
 "kèm âm thanh thay thế..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2317
+#: addon/globalPlugins/YoutubePlus/core.py:2576
 #, python-brace-format
 msgid "Download complete (as MP4 video file): {title}"
 msgstr "Tải xuống hoàn tất (dưới dạng tệp video MP4): {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2323
-#: addon/globalPlugins/YoutubePlus/core.py:2327
+#: addon/globalPlugins/YoutubePlus/core.py:2582
+#: addon/globalPlugins/YoutubePlus/core.py:2586
 msgid "Download failed."
 msgstr "Tải xuống không thành công."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2349
+#: addon/globalPlugins/YoutubePlus/core.py:2622
 #, python-brace-format
 msgid "Searching for '{query}'..."
 msgstr "Đang tìm kiếm '{query}'..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2375
-#, python-brace-format
-msgid "Playlist ({count})"
-msgstr "Danh sách phát ({count})"
-
-#: addon/globalPlugins/YoutubePlus/core.py:2379
+#: addon/globalPlugins/YoutubePlus/core.py:2700
 #, python-brace-format
 msgid "No results found for '{query}'."
 msgstr "Không tìm thấy kết quả nào cho '{query}'."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2383
+#: addon/globalPlugins/YoutubePlus/core.py:2704
 #, python-brace-format
 msgid "Search Results for '{query}'"
 msgstr "Kết quả tìm kiếm cho '{query}'"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2388
+#: addon/globalPlugins/YoutubePlus/core.py:2709
 msgid "Failed to perform search."
 msgstr "Không thể thực hiện tìm kiếm."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2398
+#: addon/globalPlugins/YoutubePlus/core.py:2719
 #, python-brace-format
 msgid "Live chat of {title}"
 msgstr "Trò chuyện trực tiếp của {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2398
+#: addon/globalPlugins/YoutubePlus/core.py:2719
 msgid "Live chat (stopped)"
 msgstr "Trò chuyện trực tiếp (đã dừng)"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2431
+#: addon/globalPlugins/YoutubePlus/core.py:2738
+#, python-brace-format
+msgid ""
+"You are already receiving the live chat of '{current}'.\n"
+"\n"
+"Stop it and receive the live chat of '{new}' instead? You will be asked whether to save the messages collected so far."
+msgstr ""
+"Bạn đang nhận trò chuyện trực tiếp của '{current}'.\n"
+"\n"
+"Dừng và chuyển sang nhận trò chuyện trực tiếp của '{new}'? Bạn sẽ được hỏi có lưu các tin nhắn đã thu thập cho đến nay hay không."
+
+#: addon/globalPlugins/YoutubePlus/core.py:2740
+msgid "Switch Live Chat?"
+msgstr "Chuyển trò chuyện trực tiếp?"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2755
+#, python-brace-format
+msgid "Connecting to live chat of {title}..."
+msgstr "Đang kết nối đến trò chuyện trực tiếp của {title}..."
+
+#: addon/globalPlugins/YoutubePlus/core.py:2785
 msgid "Chat monitoring is not active."
 msgstr "Chức năng theo dõi trò chuyện chưa được kích hoạt."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2441
+#: addon/globalPlugins/YoutubePlus/core.py:2795
 msgid "Chat monitoring stopped."
 msgstr "Đã dừng theo dõi trò chuyện."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2453
+#: addon/globalPlugins/YoutubePlus/core.py:2809
 #, python-brace-format
 msgid "Live chat of {title} (stopped)"
 msgstr "Trò chuyện trực tiếp của {title} (đã dừng)"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2473
+#: addon/globalPlugins/YoutubePlus/core.py:2829
 msgid "You haven't subscribed to any channels yet."
 msgstr "Bạn chưa đăng ký kênh nào."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2483
+#: addon/globalPlugins/YoutubePlus/core.py:2839
 msgid "Error loading subscription feed from database."
 msgstr "Lỗi khi tải nguồn cấp dữ liệu đăng ký từ cơ sở dữ liệu."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2511
+#: addon/globalPlugins/YoutubePlus/core.py:2860
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1271
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2714
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3413
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4747
+msgid "Playlists"
+msgstr "Danh sách phát"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2864
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4148
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5047
+msgid "Type"
+msgstr "Loại"
+
+#: addon/globalPlugins/YoutubePlus/core.py:2891
 msgid ""
 "This will permanently delete ALL videos from your subscription feed, leaving only the list of subscribed channels. This action cannot be undone.\n"
 "\n"
@@ -730,121 +874,121 @@ msgstr ""
 "\n"
 "Bạn có chắc chắn muốn tiếp tục không?"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2515
+#: addon/globalPlugins/YoutubePlus/core.py:2895
 msgid "Confirm Clearing All Videos"
 msgstr "Xác nhận xóa toàn bộ video"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2519
+#: addon/globalPlugins/YoutubePlus/core.py:2899
 msgid "Clearing all feed videos..."
 msgstr "Đang xóa toàn bộ video trong nguồn cấp dữ liệu..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2535
+#: addon/globalPlugins/YoutubePlus/core.py:2915
 #, python-brace-format
 msgid "Clearing complete. All {count} videos were deleted."
 msgstr "Xóa hoàn tất. Toàn bộ {count} video đã được xóa."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2540
+#: addon/globalPlugins/YoutubePlus/core.py:2920
 msgid "An error occurred while clearing all videos."
 msgstr "Đã xảy ra lỗi khi xóa toàn bộ video."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2542
+#: addon/globalPlugins/YoutubePlus/core.py:2922
 msgid "an YoutubePlus layer commands."
 msgstr "các lệnh lớp phím của YoutubePlus."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2557
-#: addon/globalPlugins/YoutubePlus/core.py:2566
-#: addon/globalPlugins/YoutubePlus/core.py:2577
-#: addon/globalPlugins/YoutubePlus/core.py:2591
-#: addon/globalPlugins/YoutubePlus/core.py:2600
-#: addon/globalPlugins/YoutubePlus/core.py:2611
+#: addon/globalPlugins/YoutubePlus/core.py:2937
+#: addon/globalPlugins/YoutubePlus/core.py:2946
+#: addon/globalPlugins/YoutubePlus/core.py:2957
+#: addon/globalPlugins/YoutubePlus/core.py:2971
+#: addon/globalPlugins/YoutubePlus/core.py:2980
+#: addon/globalPlugins/YoutubePlus/core.py:2991
 msgid "YouTube URL not found in current window or clipboard."
 msgstr "Không tìm thấy URL YouTube trong cửa sổ hiện tại hoặc bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2569
+#: addon/globalPlugins/YoutubePlus/core.py:2949
 msgid "Getting video info..."
 msgstr "Đang lấy thông tin video..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2580
-#: addon/globalPlugins/YoutubePlus/dialogs.py:985
+#: addon/globalPlugins/YoutubePlus/core.py:2960
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1079
 msgid "Getting chapters..."
 msgstr "Đang lấy danh sách chương..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2585
+#: addon/globalPlugins/YoutubePlus/core.py:2965
 msgid "Download subtitles from current page or clipboard URL."
 msgstr "Tải phụ đề từ trang hiện tại hoặc URL trong bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2630
+#: addon/globalPlugins/YoutubePlus/core.py:3010
 msgid "No stream is currently being monitored."
 msgstr "Hiện không có luồng phát nào đang được theo dõi."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2640
+#: addon/globalPlugins/YoutubePlus/core.py:3021
 msgid "Automatic message speaking enabled."
 msgstr "Đã bật đọc tin nhắn tự động."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2640
+#: addon/globalPlugins/YoutubePlus/core.py:3021
 msgid "Automatic message speaking disabled."
 msgstr "Đã tắt đọc tin nhắn tự động."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2642
+#: addon/globalPlugins/YoutubePlus/core.py:3023
 msgid "Show favorite videos dialog."
 msgstr "Hiện hộp thoại video yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2649
+#: addon/globalPlugins/YoutubePlus/core.py:3030
 msgid "Show favorite channels dialog."
 msgstr "Hiện hộp thoại kênh yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2656
+#: addon/globalPlugins/YoutubePlus/core.py:3037
 msgid "Show favorite playlists dialog."
 msgstr "Hiện hộp thoại danh sách phát yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2663
+#: addon/globalPlugins/YoutubePlus/core.py:3044
 msgid "Show watch list dialog."
 msgstr "Hiện hộp thoại Danh sách xem sau."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2670
+#: addon/globalPlugins/YoutubePlus/core.py:3051
 msgid "Show a menu to add the current page URL to favorites or subscriptions."
 msgstr ""
 "Hiện trình đơn để thêm URL trang hiện tại vào mục yêu thích hoặc đăng ký."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2675
+#: addon/globalPlugins/YoutubePlus/core.py:3056
 msgid "No specific YouTube URL found in the current window or clipboard."
 msgstr ""
 "Không tìm thấy URL YouTube cụ thể trong cửa sổ hiện tại hoặc bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2684
+#: addon/globalPlugins/YoutubePlus/core.py:3065
 msgid "Add to Favorite &Videos"
 msgstr "Thêm vào &video yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2686
+#: addon/globalPlugins/YoutubePlus/core.py:3067
 msgid "Add to Favorite &Channels"
 msgstr "Thêm vào &kênh yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2688
+#: addon/globalPlugins/YoutubePlus/core.py:3069
 msgid "Add to Favorite &Playlists"
 msgstr "Thêm vào &danh sách phát yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2690
+#: addon/globalPlugins/YoutubePlus/core.py:3071
 msgid "&Subscribe to Channel"
 msgstr "Đăng &ký kênh"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2692
-#: addon/globalPlugins/YoutubePlus/dialogs.py:933
+#: addon/globalPlugins/YoutubePlus/core.py:3073
+#: addon/globalPlugins/YoutubePlus/dialogs.py:981
 msgid "Add to &Watch List"
 msgstr "Thêm vào &Danh sách xem sau"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2730
+#: addon/globalPlugins/YoutubePlus/core.py:3111
 msgid "Show subscription feed dialog."
 msgstr "Hiện hộp thoại nguồn cấp dữ liệu đăng ký."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2734
+#: addon/globalPlugins/YoutubePlus/core.py:3115
 msgid "Search YouTube for videos, channels, or playlists."
 msgstr "Tìm kiếm video, kênh hoặc danh sách phát trên YouTube."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2741
+#: addon/globalPlugins/YoutubePlus/core.py:3122
 msgid "Open favorites dialog on Search History tab."
 msgstr "Mở hộp thoại yêu thích ở thẻ Lịch sử tìm kiếm."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2759
+#: addon/globalPlugins/YoutubePlus/core.py:3140
 msgid ""
 "Search YouTube using selected text or clipboard content and show results "
 "directly."
@@ -852,76 +996,76 @@ msgstr ""
 "Tìm kiếm trên YouTube bằng văn bản đang chọn hoặc nội dung trong bộ nhớ tạm "
 "và hiện kết quả ngay lập tức."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2778
+#: addon/globalPlugins/YoutubePlus/core.py:3159
 msgid "No text selected and clipboard is empty."
 msgstr "Không có văn bản nào được chọn và bộ nhớ tạm đang trống."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2785
+#: addon/globalPlugins/YoutubePlus/core.py:3166
 msgid "Show manage subscriptions dialog."
 msgstr "Hiện hộp thoại quản lý đăng ký."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2816
+#: addon/globalPlugins/YoutubePlus/core.py:3197
 msgid "Show user profile manager dialog."
 msgstr "Hiện hộp thoại quản lý hồ sơ người dùng."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2823
+#: addon/globalPlugins/YoutubePlus/core.py:3204
 msgid "Opens YoutubePlus settings dialog."
 msgstr "Mở hộp thoại cài đặt YoutubePlus."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2873
+#: addon/globalPlugins/YoutubePlus/core.py:3254
 msgid "No subtitles available for this video."
 msgstr "Video này không có phụ đề nào."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2880
+#: addon/globalPlugins/YoutubePlus/core.py:3261
 msgid "Failed to get subtitle info. Details: {}"
 msgstr "Không thể lấy thông tin phụ đề. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2893
+#: addon/globalPlugins/YoutubePlus/core.py:3274
 msgid "Select subtitle language:"
 msgstr "Chọn ngôn ngữ phụ đề:"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2895
+#: addon/globalPlugins/YoutubePlus/core.py:3276
 #, python-brace-format
 msgid "Download subtitles: {title}"
 msgstr "Tải phụ đề: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2915
+#: addon/globalPlugins/YoutubePlus/core.py:3296
 #, python-brace-format
 msgid "Downloading subtitles for {title}..."
 msgstr "Đang tải phụ đề cho {title}..."
 
-#: addon/globalPlugins/YoutubePlus/core.py:2945
+#: addon/globalPlugins/YoutubePlus/core.py:3326
 #, python-brace-format
 msgid "Subtitles downloaded: {title}"
 msgstr "Đã tải phụ đề: {title}"
 
-#: addon/globalPlugins/YoutubePlus/core.py:2948
+#: addon/globalPlugins/YoutubePlus/core.py:3329
 msgid "Subtitle download failed. Details: {}"
 msgstr "Tải phụ đề không thành công. Chi tiết: {}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:86
-#: addon/globalPlugins/YoutubePlus/dialogs.py:847
+#: addon/globalPlugins/YoutubePlus/dialogs.py:91
+#: addon/globalPlugins/YoutubePlus/dialogs.py:852
 msgid "Press Escape again to close."
 msgstr "Bấm Escape lần nữa để đóng."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:104
-#: addon/globalPlugins/YoutubePlus/dialogs.py:259
-#: addon/globalPlugins/YoutubePlus/dialogs.py:440
-#: addon/globalPlugins/YoutubePlus/dialogs.py:686
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3292
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3808
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3949
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4167
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4479
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5178
+#: addon/globalPlugins/YoutubePlus/dialogs.py:109
+#: addon/globalPlugins/YoutubePlus/dialogs.py:264
+#: addon/globalPlugins/YoutubePlus/dialogs.py:445
+#: addon/globalPlugins/YoutubePlus/dialogs.py:691
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3455
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4160
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4303
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4521
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4836
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5535
 msgid "C&lose"
 msgstr "Đó&ng"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:124
+#: addon/globalPlugins/YoutubePlus/dialogs.py:129
 msgid "YouTubePlus Help & Shortcuts"
 msgstr "Trợ giúp & Phím tắt YouTubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:132
+#: addon/globalPlugins/YoutubePlus/dialogs.py:137
 msgid ""
 "YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
 "\n"
@@ -1037,432 +1181,476 @@ msgstr ""
 "--- Trợ giúp ---\n"
 "- H: Hiện hộp thoại trợ giúp này\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:202
-#: addon/globalPlugins/YoutubePlus/dialogs.py:213
+#: addon/globalPlugins/YoutubePlus/dialogs.py:207
+#: addon/globalPlugins/YoutubePlus/dialogs.py:218
 msgid "Author"
 msgstr "Tác giả"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:204
-#: addon/globalPlugins/YoutubePlus/dialogs.py:215
+#: addon/globalPlugins/YoutubePlus/dialogs.py:209
+#: addon/globalPlugins/YoutubePlus/dialogs.py:220
 msgid "Message"
 msgstr "Tin nhắn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:206
-#: addon/globalPlugins/YoutubePlus/dialogs.py:217
-#: addon/globalPlugins/YoutubePlus/dialogs.py:243
+#: addon/globalPlugins/YoutubePlus/dialogs.py:211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:222
+#: addon/globalPlugins/YoutubePlus/dialogs.py:248
 msgid "Time"
 msgstr "Thời gian"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:233
-#: addon/globalPlugins/YoutubePlus/dialogs.py:422
-#: addon/globalPlugins/YoutubePlus/dialogs.py:651
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3272
+#: addon/globalPlugins/YoutubePlus/dialogs.py:238
+#: addon/globalPlugins/YoutubePlus/dialogs.py:427
+#: addon/globalPlugins/YoutubePlus/dialogs.py:656
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3435
 msgid "&Search:"
 msgstr "&Tìm kiếm:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:241
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1296
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1365
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3085
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3798
+#: addon/globalPlugins/YoutubePlus/dialogs.py:246
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1439
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1508
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3248
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4143
 msgid "Title"
 msgstr "Tiêu đề"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:251
+#: addon/globalPlugins/YoutubePlus/dialogs.py:256
 msgid "&Open Chapter"
 msgstr "&Mở chương"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:253
+#: addon/globalPlugins/YoutubePlus/dialogs.py:258
 msgid "&Copy Title"
 msgstr "&Sao chép tiêu đề"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:255
+#: addon/globalPlugins/YoutubePlus/dialogs.py:260
 msgid "Copy &URL"
 msgstr "Sao chép &URL"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:257
-#: addon/globalPlugins/YoutubePlus/dialogs.py:438
-#: addon/globalPlugins/YoutubePlus/dialogs.py:678
+#: addon/globalPlugins/YoutubePlus/dialogs.py:262
+#: addon/globalPlugins/YoutubePlus/dialogs.py:443
+#: addon/globalPlugins/YoutubePlus/dialogs.py:683
 msgid "&Export"
 msgstr "&Xuất"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:340
-#: addon/globalPlugins/YoutubePlus/dialogs.py:893
+#: addon/globalPlugins/YoutubePlus/dialogs.py:345
+#: addon/globalPlugins/YoutubePlus/dialogs.py:909
+#: addon/globalPlugins/YoutubePlus/dialogs.py:933
 msgid "Opening in browser..."
 msgstr "Đang mở trong trình duyệt..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:345
-#: addon/globalPlugins/YoutubePlus/dialogs.py:899
+#: addon/globalPlugins/YoutubePlus/dialogs.py:350
+#: addon/globalPlugins/YoutubePlus/dialogs.py:914
+#: addon/globalPlugins/YoutubePlus/dialogs.py:939
 #, python-brace-format
 msgid "Error opening browser: {error}"
 msgstr "Lỗi khi mở trình duyệt: {error}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:355
+#: addon/globalPlugins/YoutubePlus/dialogs.py:360
 #, python-brace-format
 msgid "Copied timestamp: {text}"
 msgstr "Đã sao chép mốc thời gian: {text}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:364
+#: addon/globalPlugins/YoutubePlus/dialogs.py:369
 #, python-brace-format
 msgid "Copied URL: {url}"
 msgstr "Đã sao chép URL: {url}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:382
-#: addon/globalPlugins/YoutubePlus/dialogs.py:824
+#: addon/globalPlugins/YoutubePlus/dialogs.py:387
+#: addon/globalPlugins/YoutubePlus/dialogs.py:829
 msgid "Export complete"
 msgstr "Xuất hoàn tất"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:386
-#: addon/globalPlugins/YoutubePlus/dialogs.py:585
-#: addon/globalPlugins/YoutubePlus/dialogs.py:828
+#: addon/globalPlugins/YoutubePlus/dialogs.py:391
+#: addon/globalPlugins/YoutubePlus/dialogs.py:590
+#: addon/globalPlugins/YoutubePlus/dialogs.py:833
 #, python-brace-format
 msgid "Error exporting file: {error}"
 msgstr "Lỗi khi xuất tệp: {error}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:390
-#: addon/globalPlugins/YoutubePlus/dialogs.py:589
-#: addon/globalPlugins/YoutubePlus/dialogs.py:832
+#: addon/globalPlugins/YoutubePlus/dialogs.py:395
+#: addon/globalPlugins/YoutubePlus/dialogs.py:594
+#: addon/globalPlugins/YoutubePlus/dialogs.py:837
 msgid "An unexpected error occurred during export."
 msgstr "Đã xảy ra lỗi không mong muốn trong khi xuất."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:436
-#: addon/globalPlugins/YoutubePlus/dialogs.py:676
+#: addon/globalPlugins/YoutubePlus/dialogs.py:441
+#: addon/globalPlugins/YoutubePlus/dialogs.py:681
 msgid "&Copy"
 msgstr "&Sao chép"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:561
+#: addon/globalPlugins/YoutubePlus/dialogs.py:566
 msgid "message copied"
 msgstr "đã sao chép tin nhắn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:564
+#: addon/globalPlugins/YoutubePlus/dialogs.py:569
 msgid "No message selected"
 msgstr "Không có tin nhắn nào được chọn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:581
+#: addon/globalPlugins/YoutubePlus/dialogs.py:586
 msgid "Export message complete"
 msgstr "Xuất tin nhắn hoàn tất"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:658
-#: addon/globalPlugins/YoutubePlus/dialogs.py:665
-#: addon/globalPlugins/YoutubePlus/dialogs.py:739
+#: addon/globalPlugins/YoutubePlus/dialogs.py:663
+#: addon/globalPlugins/YoutubePlus/dialogs.py:670
+#: addon/globalPlugins/YoutubePlus/dialogs.py:744
 msgid "No Filter"
 msgstr "Không lọc"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:659
-#: addon/globalPlugins/YoutubePlus/dialogs.py:732
+#: addon/globalPlugins/YoutubePlus/dialogs.py:664
+#: addon/globalPlugins/YoutubePlus/dialogs.py:737
 msgid "Filter by Selected Author"
 msgstr "Lọc theo tác giả đang chọn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:660
-#: addon/globalPlugins/YoutubePlus/dialogs.py:741
+#: addon/globalPlugins/YoutubePlus/dialogs.py:665
+#: addon/globalPlugins/YoutubePlus/dialogs.py:746
 msgid "Show Super Chats Only"
 msgstr "Chỉ hiện Super Chat"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:661
-#: addon/globalPlugins/YoutubePlus/dialogs.py:743
+#: addon/globalPlugins/YoutubePlus/dialogs.py:666
+#: addon/globalPlugins/YoutubePlus/dialogs.py:748
 msgid "Show Super Stickers Only"
 msgstr "Chỉ hiện Super Sticker"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:662
-#: addon/globalPlugins/YoutubePlus/dialogs.py:745
+#: addon/globalPlugins/YoutubePlus/dialogs.py:667
+#: addon/globalPlugins/YoutubePlus/dialogs.py:750
 msgid "Show Super Thanks Only"
 msgstr "Chỉ hiện Super Thanks"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:727
 msgid "Total Paid Amount:\n"
 msgstr "Tổng số tiền đã trả:\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:802
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1134
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4055
+#: addon/globalPlugins/YoutubePlus/dialogs.py:807
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1249
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4409
 msgid "Copied"
 msgstr "Đã sao chép"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:805
+#: addon/globalPlugins/YoutubePlus/dialogs.py:810
 msgid "Nothing selected"
 msgstr "Không có gì được chọn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:889
-#: addon/globalPlugins/YoutubePlus/dialogs.py:966
-#: addon/globalPlugins/YoutubePlus/dialogs.py:969
-#: addon/globalPlugins/YoutubePlus/dialogs.py:980
-#: addon/globalPlugins/YoutubePlus/dialogs.py:982
-#: addon/globalPlugins/YoutubePlus/dialogs.py:993
-#: addon/globalPlugins/YoutubePlus/dialogs.py:996
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1052
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1062
+#: addon/globalPlugins/YoutubePlus/dialogs.py:900
+#: addon/globalPlugins/YoutubePlus/dialogs.py:929
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1060
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1063
 #: addon/globalPlugins/YoutubePlus/dialogs.py:1074
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1086
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1076
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1087
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1090
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1158
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1168
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1180
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1192
 msgid "Video ID not found."
 msgstr "Không tìm thấy ID video."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:922
+#: addon/globalPlugins/YoutubePlus/dialogs.py:906
+msgid "Channel URL not found."
+msgstr "Không tìm thấy URL kênh."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:920
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4365
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4434
+msgid "Playlist URL not found."
+msgstr "Không tìm thấy URL danh sách phát."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:923
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4368
+#, python-brace-format
+msgid "Fetching videos from '{title}'..."
+msgstr "Đang tải video từ '{title}'..."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:970
 msgid "View Video &Info..."
 msgstr "Xem &thông tin video..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:923
+#: addon/globalPlugins/YoutubePlus/dialogs.py:971
 msgid "View &Comments / Replay..."
 msgstr "Xem &bình luận / phát lại..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:924
+#: addon/globalPlugins/YoutubePlus/dialogs.py:972
 msgid "View Chap&ters/Timestamps..."
 msgstr "Xem &chương/mốc thời gian..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:925
+#: addon/globalPlugins/YoutubePlus/dialogs.py:973
 msgid "&Get Thumbnail Description (Be My Eyes)..."
 msgstr "&Lấy mô tả ảnh thu nhỏ (Be My Eyes)..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:927
+#: addon/globalPlugins/YoutubePlus/dialogs.py:975
 msgid "&Download Video"
 msgstr "&Tải xuống video"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:929
+#: addon/globalPlugins/YoutubePlus/dialogs.py:977
 msgid "Download Su&btitles"
 msgstr "Tải &phụ đề"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:931
+#: addon/globalPlugins/YoutubePlus/dialogs.py:979
 msgid "Add to &Favorite Videos"
 msgstr "Thêm vào &video yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:932
+#: addon/globalPlugins/YoutubePlus/dialogs.py:980
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1031
 msgid "Add to &Favorite Channels"
 msgstr "Thêm vào &kênh yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:935
+#: addon/globalPlugins/YoutubePlus/dialogs.py:983
 msgid "&Open video in browser"
 msgstr "&Mở video trong trình duyệt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:936
+#: addon/globalPlugins/YoutubePlus/dialogs.py:984
 msgid "Open c&hannel in browser"
 msgstr "Mở &kênh trong trình duyệt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:938
+#: addon/globalPlugins/YoutubePlus/dialogs.py:986
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1033
 msgid "Show channel &videos"
 msgstr "Hiện &video của kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:939
+#: addon/globalPlugins/YoutubePlus/dialogs.py:987
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1034
 msgid "Show channel &shorts"
 msgstr "Hiện &video ngắn của kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:940
+#: addon/globalPlugins/YoutubePlus/dialogs.py:988
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1035
 msgid "Show channel &live"
 msgstr "Hiện luồng &trực tiếp của kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:941
+#: addon/globalPlugins/YoutubePlus/dialogs.py:989
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1036
 msgid "Show channel &playlist"
 msgstr "Hiện &danh sách phát của kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:942
+#: addon/globalPlugins/YoutubePlus/dialogs.py:990
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1037
 msgid "Show channel &podcast"
 msgstr "Hiện &podcast của kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:972
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1027
+msgid "&Open channel in browser"
+msgstr "Mở &kênh trong trình duyệt"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1029
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2455
+msgid "&Describe Avatar (Be My Eyes)..."
+msgstr "&Mô tả ảnh đại diện (Be My Eyes)..."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1053
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2624
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2698
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2708
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4740
+msgid "Error: Channel URL not found."
+msgstr "Lỗi: Không tìm thấy URL kênh."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1066
 msgid "Getting subtitle info..."
 msgstr "Đang lấy thông tin phụ đề..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1005
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1099
 msgid "Could not get video ID to add to favorites."
 msgstr "Không thể lấy ID video để thêm vào yêu thích."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1015
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1108
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1114
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1121
 msgid "Could not get video ID to find the channel."
 msgstr "Không thể lấy ID video để tìm kênh."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1120
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1127
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4050
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1229
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1242
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4404
 #, python-brace-format
 msgid "Title: {title}\n"
 msgstr "Tiêu đề: {title}\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1121
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1128
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1230
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1236
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1243
 #, python-brace-format
 msgid "Channel: {channel}\n"
 msgstr "Kênh: {channel}\n"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1122
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1129
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4051
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1231
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1237
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1244
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4405
 msgid "URL: "
 msgstr "URL: "
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1143
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1258
 msgid "Error: Channel information not found for this item."
 msgstr "Lỗi: Không tìm thấy thông tin kênh cho mục này."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1153
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1286
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2247
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2548
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2797
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3089
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3248
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3800
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3933
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4147
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4387
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4575
-#: addon/globalPlugins/YoutubePlus/settings.py:133
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1268
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1429
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2390
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2711
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2960
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3252
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3411
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4150
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4287
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4744
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4932
+#: addon/globalPlugins/YoutubePlus/settings.py:134
 msgid "Videos"
 msgstr "Video"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1154
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2549
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4147
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4388
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4576
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4744
-#: addon/globalPlugins/YoutubePlus/settings.py:133
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1269
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2712
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4745
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4933
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5101
+#: addon/globalPlugins/YoutubePlus/settings.py:134
 msgid "Shorts"
 msgstr "Video ngắn"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1155
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2550
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4147
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4389
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4577
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4745
-#: addon/globalPlugins/YoutubePlus/settings.py:133
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1270
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2713
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4501
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4746
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4934
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5102
+#: addon/globalPlugins/YoutubePlus/settings.py:134
 msgid "Live"
 msgstr "Trực tiếp"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1156
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2551
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3250
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4390
-msgid "Playlists"
-msgstr "Danh sách phát"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1157
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2552
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4391
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1272
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2715
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4748
 msgid "Podcasts"
 msgstr "Podcast"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1161
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1276
 msgid "Content"
 msgstr "Nội dung"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1165
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2559
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4398
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1280
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4755
 #, python-brace-format
 msgid "Fetching {type} from {channel}..."
 msgstr "Đang tải {type} từ {channel}..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1298
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1366
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3800
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4694
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1332
+msgid "This action isn't available for a channel result."
+msgstr "Thao tác này không khả dụng cho kết quả là kênh."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1441
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1509
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4152
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5051
 msgid "Duration"
 msgstr "Thời lượng"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1299
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1442
 msgid "Uploaded Date"
 msgstr "Ngày tải lên"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1300
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1368
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2640
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3091
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1443
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1511
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2803
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3254
 msgid "Date Added"
 msgstr "Ngày thêm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1334
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3804
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4698
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1477
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4156
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5055
 msgid "&Action..."
 msgstr "&Hành động..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1335
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3805
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3945
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4700
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1478
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4157
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4299
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5057
 msgid "&Copy..."
 msgstr "&Sao chép..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1337
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2314
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2810
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3465
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1480
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2459
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2973
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3628
 msgid "&Remove"
 msgstr "&Xóa"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1405
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1548
 msgid "Error: Could not save data."
 msgstr "Lỗi: Không thể lưu dữ liệu."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1533
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1676
 #, python-brace-format
 msgid "The default {label} category cannot be deleted."
 msgstr "Không thể xóa danh mục {label} mặc định."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1558
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1701
 msgid "&Add Category"
 msgstr "&Thêm danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1560
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1703
 msgid "&Rename Category"
 msgstr "Đổi &tên danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1561
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1704
 msgid "&Delete Category"
 msgstr "&Xóa danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1563
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1706
 msgid "Move &Up"
 msgstr "Chuyển &lên"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1564
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1707
 msgid "Move &Down"
 msgstr "Chuyển &xuống"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1579
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1722
 msgid "Category name:"
 msgstr "Tên danh mục:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1579
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5061
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1722
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5418
 msgid "Add Category"
 msgstr "Thêm danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1593
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1736
 #, python-brace-format
 msgid "Category '{name}' added."
 msgstr "Đã thêm danh mục '{name}'."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1596
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1739
 msgid "New name:"
 msgstr "Tên mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1596
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5097
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1739
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5454
 msgid "Rename Category"
 msgstr "Đổi tên danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1608
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1751
 #, python-brace-format
 msgid "Renamed to '{name}'."
 msgstr "Đã đổi tên thành '{name}'."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1617
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1760
 #, python-brace-format
 msgid "Delete category '{name}'?"
 msgstr "Xóa danh mục '{name}'?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1618
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3694
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4996
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1761
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3883
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5353
 msgid "Confirm"
 msgstr "Xác nhận"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1625
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1768
 #, python-brace-format
 msgid "Category '{name}' deleted."
 msgstr "Đã xóa danh mục '{name}'."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1630
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1773
 #, python-brace-format
 msgid ""
 "Category '{name}' contains {count} item(s).\n"
@@ -1473,290 +1661,290 @@ msgstr ""
 "\n"
 "Di chuyển chúng sang '{default}', hay xóa luôn cùng với danh mục?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1633
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1776
 msgid "Delete Category"
 msgstr "Xóa danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1636
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1779
 #, python-brace-format
 msgid "&Move to {default}"
 msgstr "&Di chuyển sang {default}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1637
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1780
 msgid "&Delete items too"
 msgstr "&Xóa luôn các mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1637
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1780
 msgid "Cancel"
 msgstr "Hủy"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1647
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1790
 #, python-brace-format
 msgid "Category '{name}' deleted. {count} item(s) moved to {default}."
 msgstr "Đã xóa danh mục '{name}'. {count} mục đã được chuyển sang {default}."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1651
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1794
 #, python-brace-format
 msgid "Category '{name}' and its {count} item(s) deleted."
 msgstr "Đã xóa danh mục '{name}' cùng với {count} mục bên trong."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1686
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1829
 msgid "Category"
 msgstr "Danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1833
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3850
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4035
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4819
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1976
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4202
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4389
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5176
 msgid "Copy &Title"
 msgstr "Sao chép &tiêu đề"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1834
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3852
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4821
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1977
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4204
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5178
 msgid "Copy Video &URL"
 msgstr "Sao chép &URL video"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1835
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3854
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4823
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1978
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4206
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5180
 msgid "Copy &Channel Name"
 msgstr "Sao chép &tên kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1836
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3856
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4825
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1979
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4208
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5182
 msgid "Copy C&hannel URL"
 msgstr "Sao chép U&RL kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1838
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3859
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4039
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4828
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1981
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4393
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5185
 msgid "Copy &Summary"
 msgstr "Sao chép &tóm tắt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1853
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2407
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4416
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4844
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1996
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2554
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4773
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5201
 msgid "No valid YouTube URL found in clipboard."
 msgstr "Không tìm thấy URL YouTube hợp lệ trong bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1856
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2411
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2996
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4420
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4848
+#: addon/globalPlugins/YoutubePlus/dialogs.py:1999
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2558
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3159
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4777
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5205
 msgid "Could not read from clipboard."
 msgstr "Không thể đọc từ bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1868
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2940
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2011
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3103
 #, python-brace-format
 msgid "Are you sure you want to remove '{title}'?"
 msgstr "Bạn có chắc chắn muốn xóa '{title}' không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1870
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2013
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected items?"
 msgstr "Bạn có chắc chắn muốn xóa {count} mục đang chọn không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1871
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2498
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2945
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5130
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2014
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2661
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3108
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5487
 msgid "Confirm Removal"
 msgstr "Xác nhận xóa"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1883
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2026
 msgid "Item removed."
 msgstr "Đã xóa mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1884
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2027
 #, python-brace-format
 msgid "{count} items removed."
 msgstr "Đã xóa {count} mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1892
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2035
 msgid "Enter new title:"
 msgstr "Nhập tiêu đề mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1892
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2035
 msgid "Rename"
 msgstr "Đổi tên"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1921
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2646
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3097
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3523
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2064
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2809
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3260
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3700
 msgid "Sort List"
 msgstr "Sắp xếp danh sách"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1923
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2649
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3100
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3526
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2066
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2812
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3263
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3703
 msgid "Sort by:"
 msgstr "Sắp xếp theo:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1932
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2661
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3112
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3538
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2075
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2824
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3275
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3715
 msgid "&Ascending"
 msgstr "&Tăng dần"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1933
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2663
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3114
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3540
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2076
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2826
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3277
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3717
 msgid "&Descending"
 msgstr "&Giảm dần"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1941
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2084
 msgid "Sort only the current &category"
 msgstr "Chỉ sắp xếp &danh mục hiện tại"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1944
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2671
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3122
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2087
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2834
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3285
 msgid "&Apply permanently (saves to file)"
 msgstr "&Áp dụng vĩnh viễn (lưu vào tệp)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1951
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2677
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3128
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3551
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2094
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2840
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3291
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3728
 msgid "C&lear Sort"
 msgstr "&Xóa sắp xếp"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:1977
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2702
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3153
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3572
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2120
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2865
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3316
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3749
 msgid "Sort cleared."
 msgstr "Đã xóa sắp xếp."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2029
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2727
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3178
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2172
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2890
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3341
 msgid "List sorted and saved."
 msgstr "Danh sách đã được sắp xếp và lưu lại."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2039
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2732
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3183
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2182
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2895
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3346
 msgid "List sorted temporarily."
 msgstr "Danh sách đã được sắp xếp tạm thời."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2054
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2197
 #, python-brace-format
 msgid "{count} item(s) copied."
 msgstr "Đã sao chép {count} mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2063
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2206
 #, python-brace-format
 msgid "{count} item(s) cut."
 msgstr "Đã cắt {count} mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2067
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2610
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2897
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2210
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2773
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3060
 msgid "Clipboard is empty."
 msgstr "Bộ nhớ tạm đang trống."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2122
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2265
 msgid "Cut"
 msgstr "Cắt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2122
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2265
 msgid "Copy"
 msgstr "Sao chép"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2127
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2270
 #, python-brace-format
 msgid ""
 "{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
 msgstr ""
 "{op} '{title}' từ {src} sang {dst} — mục này đã tồn tại. Thay thế mục cũ?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2131
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2274
 #, python-brace-format
 msgid "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
 msgstr "{op} từ {src} sang {dst} — {count} mục đã tồn tại. Thay thế tất cả?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2134
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2277
 msgid "Confirm Replace"
 msgstr "Xác nhận thay thế"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2199
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2342
 #, python-brace-format
 msgid "{count} item(s) pasted to {cat}."
 msgstr "Đã dán {count} mục vào {cat}."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2201
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2344
 #, python-brace-format
 msgid "{done} item(s) pasted to {cat}, {skipped} skipped."
 msgstr "Đã dán {done} mục vào {cat}, bỏ qua {skipped} mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2204
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2347
 msgid "All items already exist in this list."
 msgstr "Tất cả các mục đã tồn tại trong danh sách này."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2232
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2375
 msgid "Favorite Videos"
 msgstr "Video yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2244
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2387
 msgid "Add &new favorite video from clipboard"
 msgstr "Thêm video yêu thích &mới từ bộ nhớ tạm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2254
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2269
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3251
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2397
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2412
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3414
 msgid "Watch List"
 msgstr "Danh sách xem sau"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2266
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2409
 msgid "Add &new watch list from clipboard"
 msgstr "Thêm mục &mới vào Danh sách xem sau từ bộ nhớ tạm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2296
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2638
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2439
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2801
 msgid "Subscribers"
 msgstr "Người đăng ký"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2299
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2442
 msgid "Channel Description"
 msgstr "Mô tả kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2306
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2449
 msgid "Open channel on &browser"
 msgstr "Mở kênh trong &trình duyệt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2308
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2451
 msgid "View &channel Content..."
 msgstr "Xem &nội dung kênh..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2310
-msgid "&Describe Avatar (Be My Eyes)..."
-msgstr "&Mô tả ảnh đại diện (Be My Eyes)..."
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2453
+msgid "S&earch in this channel..."
+msgstr "Tìm kiếm trong kênh &này..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2312
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2457
 msgid "Add &new favorite channel from clipboard"
 msgstr "Thêm kênh yêu thích &mới từ bộ nhớ tạm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2377
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2436
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3034
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3889
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3988
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4749
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2524
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2583
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3197
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4241
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4342
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5106
 msgid "N/A"
 msgstr "Không có"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2381
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2528
 #, python-brace-format
 msgid ""
 "Last synced: {time}\n"
@@ -1767,526 +1955,594 @@ msgstr ""
 "\n"
 "{description}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2491
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2654
 msgid "this channel"
 msgstr "kênh này"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2493
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2656
 #, python-brace-format
 msgid "Are you sure you want to remove '{name}'?"
 msgstr "Bạn có chắc chắn muốn xóa '{name}' không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2496
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2659
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected channels?"
 msgstr "Bạn có chắc chắn muốn xóa {count} kênh đang chọn không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2518
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2681
 msgid "Channel removed."
 msgstr "Đã xóa kênh."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2519
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2682
 #, python-brace-format
 msgid "{count} channels removed."
 msgstr "Đã xóa {count} kênh."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2535
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2545
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4383
-msgid "Error: Channel URL not found."
-msgstr "Lỗi: Không tìm thấy URL kênh."
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2605
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2892
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2768
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3055
 msgid "Cut."
 msgstr "Đã cắt."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2631
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2918
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2794
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3081
 msgid "Moved."
 msgstr "Đã di chuyển."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2754
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2917
 msgid "Enter new channel name:"
 msgstr "Nhập tên kênh mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2755
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2918
 msgid "Rename Channel"
 msgstr "Đổi tên kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2793
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3931
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2956
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4283
 msgid "Playlist Title"
 msgstr "Tiêu đề danh sách phát"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2802
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3941
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2965
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4295
 msgid "Show &Videos..."
 msgstr "Hiện &video..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2804
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2967
 msgid "Open on &browser"
 msgstr "Mở trong &trình duyệt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2806
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2969
 msgid "&Describe Cover (Be My Eyes)..."
 msgstr "&Mô tả ảnh bìa (Be My Eyes)..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2808
+#: addon/globalPlugins/YoutubePlus/dialogs.py:2971
 msgid "Add &new favorite playlist from clipboard"
 msgstr "Thêm danh sách phát yêu thích &mới từ bộ nhớ tạm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2938
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3101
 msgid "this playlist"
 msgstr "danh sách phát này"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2943
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3106
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected playlists?"
 msgstr "Bạn có chắc chắn muốn xóa {count} danh sách phát đang chọn không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2965
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3128
 msgid "Playlist removed."
 msgstr "Đã xóa danh sách phát."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2966
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3129
 #, python-brace-format
 msgid "{count} playlists removed."
 msgstr "Đã xóa {count} danh sách phát."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2984
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3147
 msgid "Error: Could not save playlist list."
 msgstr "Lỗi: Không thể lưu danh sách các danh sách phát."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:2992
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3155
 msgid "No valid YouTube playlist URL found in clipboard."
 msgstr "Không tìm thấy URL danh sách phát YouTube hợp lệ trong bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3049
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3212
 #, python-brace-format
 msgid "Fetching videos from '{playlist}'..."
 msgstr "Đang tải video từ '{playlist}'..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3066
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3229
 msgid "Error: Playlist URL not found."
 msgstr "Lỗi: Không tìm thấy URL danh sách phát."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3205
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3368
 msgid "Enter new playlist title:"
 msgstr "Nhập tiêu đề danh sách phát mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3206
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3369
 msgid "Rename Playlist"
 msgstr "Đổi tên danh sách phát"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3242
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3405
 msgid "Favorites - YoutubePlus"
 msgstr "Yêu thích - YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3249
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3412
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3951
 msgid "Channels"
 msgstr "Kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3252
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3415
 msgid "Search History"
 msgstr "Lịch sử tìm kiếm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3275
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3438
 msgid "S&ort..."
 msgstr "Sắ&p xếp..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3377
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3540
 #, python-brace-format
 msgid "{tab_name} - Favorites - YoutubePlus"
 msgstr "{tab_name} - Yêu thích - YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3452
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3515
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3615
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3692
 msgid "Keyword"
 msgstr "Từ khóa"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3454
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3516
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3617
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3693
 msgid "Results"
 msgstr "Kết quả"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3456
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3517
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3619
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3694
 msgid "Searched At"
 msgstr "Đã tìm kiếm lúc"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3461
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3624
 msgid "Search &Again"
 msgstr "Tìm kiếm &lại"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3463
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3626
 msgid "&New Search"
 msgstr "Tìm kiếm &mới"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3467
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3630
 msgid "&Clear All"
 msgstr "&Xóa tất cả"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3605
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3664
+#, python-brace-format
+msgid "{keyword} (in {channel})"
+msgstr "{keyword} (trong {channel})"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3782
 msgid "List sorted."
 msgstr "Danh sách đã được sắp xếp."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3687
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3876
 msgid "Search history entry removed."
 msgstr "Đã xóa mục lịch sử tìm kiếm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3692
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3881
 msgid "Clear all search history?"
 msgstr "Xóa toàn bộ lịch sử tìm kiếm?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3711
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3900
 msgid "Search YouTube"
 msgstr "Tìm kiếm trên YouTube"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3728
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3917
 msgid "&Search for:"
 msgstr "&Tìm kiếm:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3738
-msgid "Number of &results to fetch:"
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3927
+msgid "&Number of &results to fetch:"
 msgstr "Số &kết quả cần tải:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3744
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3932
+msgid "&Within channel (optional):"
+msgstr "&Trong kênh (tùy chọn):"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3939
+msgid ""
+"Searches only that channel's own videos. The filters below don't apply while "
+"a channel is set."
+msgstr ""
+"Chỉ tìm trong các video của kênh đó. Các bộ lọc bên dưới không áp dụng khi đã"
+" chọn kênh."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3947
+msgid "Content &type:"
+msgstr "&Loại nội dung:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3957
+msgid "&Duration:"
+msgstr "&Thời lượng:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Any"
+msgstr "Bất kỳ"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Short (under 4 minutes)"
+msgstr "Ngắn (dưới 4 phút)"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Medium (4-20 minutes)"
+msgstr "Trung bình (4-20 phút)"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Long (over 20 minutes)"
+msgstr "Dài (trên 20 phút)"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3967
+msgid "&Upload date:"
+msgstr "Ngày &tải lên:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Past hour"
+msgstr "1 giờ qua"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Today"
+msgstr "Hôm nay"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This week"
+msgstr "Tuần này"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This month"
+msgstr "Tháng này"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This year"
+msgstr "Năm nay"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3977
+msgid "S&ort by:"
+msgstr "Sắ&p xếp theo:"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Relevance"
+msgstr "Mức độ liên quan"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Upload date"
+msgstr "Ngày tải lên"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "View count"
+msgstr "Lượt xem"
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:3988
 msgid "&Search"
 msgstr "&Tìm kiếm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3773
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4076
 msgid "Please enter a search term."
 msgstr "Vui lòng nhập từ khóa tìm kiếm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3807
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3947
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4097
+#, python-brace-format
+msgid "Looking up channel '{name}'..."
+msgstr "Đang tra cứu kênh '{name}'..."
+
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4159
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4301
 msgid "Load All"
 msgstr "Tải tất cả"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3939
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4293
 msgid "Add to &Favorites"
 msgstr "Thêm vào &yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:3943
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4297
 msgid "Open on &Browser"
 msgstr "Mở trong &trình duyệt"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4011
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4080
-msgid "Playlist URL not found."
-msgstr "Không tìm thấy URL danh sách phát."
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4014
-#, python-brace-format
-msgid "Fetching videos from '{title}'..."
-msgstr "Đang tải video từ '{title}'..."
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4037
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4391
 msgid "Copy Playlist &URL"
 msgstr "Sao chép &URL danh sách phát"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4105
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4459
 msgid "Manage Subscriptions"
 msgstr "Quản lý đăng ký"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4122
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4476
 msgid "Subscribed &Channels:"
 msgstr "&Kênh đã đăng ký:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4125
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4692
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4479
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5049
 msgid "Channel Name"
 msgstr "Tên kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4130
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4484
 msgid "Filter by Category:"
 msgstr "Lọc theo danh mục:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4139
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4493
 msgid "Assign to Categories"
 msgstr "Gán vào danh mục"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4144
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4498
 msgid "Content Types to Fetch"
 msgstr "Loại nội dung cần tải"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4150
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4504
 msgid "Actions"
 msgstr "Hành động"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4153
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4507
 msgid "View &Content..."
 msgstr "Xem &nội dung..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4155
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4509
 msgid "Add &new subscribe channel from Clipboard..."
 msgstr "Thêm kênh đăng ký &mới từ bộ nhớ tạm..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4157
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4511
 msgid "&Unsubscribe from this Channel"
 msgstr "&Hủy đăng ký kênh này"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4229
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4583
 msgid "Changes saved."
 msgstr "Đã lưu thay đổi."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4261
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4615
 msgid "All Channels"
 msgstr "Tất cả kênh"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4431
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4788
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{name}'?"
 msgstr "Bạn có chắc chắn muốn hủy đăng ký '{name}' không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4433
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5051
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4790
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5408
 msgid "Confirm Unsubscribe"
 msgstr "Xác nhận hủy đăng ký"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4455
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4812
 msgid "Subscription Feed"
 msgstr "Nguồn cấp dữ liệu đăng ký"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4473
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4830
 msgid "Add &new Subscription from clipboard URL."
 msgstr "Thêm đăng ký &mới từ URL trong bộ nhớ tạm."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4475
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4832
 msgid "&Update Feed"
 msgstr "&Cập nhật nguồn cấp dữ liệu"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4477
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4834
 msgid "&More..."
 msgstr "&Thêm..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4574
+#: addon/globalPlugins/YoutubePlus/dialogs.py:4931
 msgid "All"
 msgstr "Tất cả"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4655
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5012
 msgid "Error reordering tabs."
 msgstr "Lỗi khi sắp xếp lại thứ tự thẻ."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4680
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5037
 #, python-brace-format
 msgid "Subscription Feed - {tab_name} - YoutubePlus"
 msgstr "Nguồn cấp dữ liệu đăng ký - {tab_name} - YoutubePlus"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4688
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5045
 msgid "Video Title"
 msgstr "Tiêu đề video"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4690
-msgid "Type"
-msgstr "Loại"
-
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4702
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5059
 msgid "Mark as &Seen"
 msgstr "Đánh dấu là đã &xem"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4743
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4752
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5100
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5109
 msgid "Video"
 msgstr "Video"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4808
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4963
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5165
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5320
 msgid "&Unsubscribe from this channel"
 msgstr "&Hủy đăng ký kênh này"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4859
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5216
 msgid "Mark &all in current tab as seen (control+delete)"
 msgstr "Đánh dấu &tất cả trong thẻ hiện tại là đã xem (control+delete)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4861
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5218
 msgid "Show all &videos (including seen)"
 msgstr "Hiện tất cả &video (kể cả đã xem)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4861
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5218
 msgid "Show only &unseen videos"
 msgstr "Chỉ hiện video &chưa xem"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4864
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5221
 msgid "&Manage subscriptions..."
 msgstr "&Quản lý đăng ký..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4867
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5224
 msgid "Add New &Category...\tCtrl+="
 msgstr "Thêm &danh mục mới...\tCtrl+="
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4869
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5226
 msgid "&Rename Current Category...\tF2"
 msgstr "Đổi &tên danh mục hiện tại...\tF2"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4871
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5228
 msgid "Remove Current Category...\tCtrl+-"
 msgstr "Xóa danh mục hiện tại...\tCtrl+-"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4874
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5231
 msgid "Clear All Feed Videos..."
 msgstr "Xóa tất cả video trong nguồn cấp dữ liệu..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4912
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5269
 msgid "An update is already in progress."
 msgstr "Đang có một lượt cập nhật khác diễn ra."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4930
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5287
 #, python-brace-format
 msgid "Updating Feed ({count} channels)"
 msgstr "Đang cập nhật nguồn cấp dữ liệu ({count} kênh)"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4932
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5289
 msgid "Starting..."
 msgstr "Đang bắt đầu..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4983
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5340
 msgid "Marked as seen."
 msgstr "Đã đánh dấu là đã xem."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4991
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5348
 msgid "There are no videos in this tab to mark as seen."
 msgstr "Không có video nào trong thẻ này để đánh dấu là đã xem."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:4994
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5351
 #, python-brace-format
 msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
 msgstr ""
 "Bạn có chắc chắn muốn đánh dấu tất cả {count} video trong thẻ này là đã xem "
 "không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5002
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5359
 msgid "All videos in the current tab have been marked as seen."
 msgstr "Tất cả video trong thẻ hiện tại đã được đánh dấu là đã xem."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5049
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5406
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{channel}'?"
 msgstr "Bạn có chắc chắn muốn hủy đăng ký '{channel}' không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5059
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5416
 msgid "Enter new category name:"
 msgstr "Nhập tên danh mục mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5078
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5111
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5435
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5468
 msgid "A category with this name already exists."
 msgstr "Đã tồn tại một danh mục có tên này."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5082
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5439
 msgid "Error adding category."
 msgstr "Lỗi khi thêm danh mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5090
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5447
 msgid "This is a fixed tab and cannot be renamed."
 msgstr "Đây là thẻ cố định và không thể đổi tên."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5095
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5452
 #, python-brace-format
 msgid "Enter new name for '{name}':"
 msgstr "Nhập tên mới cho '{name}':"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5115
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5472
 msgid "Error renaming category."
 msgstr "Lỗi khi đổi tên danh mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5123
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5480
 msgid "This is a fixed tab and cannot be removed."
 msgstr "Đây là thẻ cố định và không thể xóa."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5128
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5485
 #, python-brace-format
 msgid "Are you sure you want to remove the '{name}' category?"
 msgstr "Bạn có chắc chắn muốn xóa danh mục '{name}' không?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5141
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5498
 #, python-brace-format
 msgid "Category '{name}' removed."
 msgstr "Đã xóa danh mục '{name}'."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5145
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5502
 msgid "Error removing category."
 msgstr "Lỗi khi xóa danh mục."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5152
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5509
 msgid "Manage User Profiles"
 msgstr "Quản lý hồ sơ người dùng"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5164
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5521
 msgid "&Add"
 msgstr "&Thêm"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5166
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5523
 msgid "&Rename"
 msgstr "Đổ&i tên"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5168
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5525
 msgid "&Delete"
 msgstr "&Xóa"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5211
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5568
 msgid "Enter new profile name:"
 msgstr "Nhập tên hồ sơ mới:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5213
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5570
 msgid "Add Profile"
 msgstr "Thêm hồ sơ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5229
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5586
 msgid "Profile already exists."
 msgstr "Hồ sơ đã tồn tại."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5229
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5247
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5261
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5268
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5273
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5288
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5586
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5604
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5618
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5625
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5630
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5645
 msgid "Error"
 msgstr "Lỗi"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5235
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5592
 #, python-brace-format
 msgid "Rename profile '{name}' to:"
 msgstr "Đổi tên hồ sơ '{name}' thành:"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5237
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5594
 msgid "Rename Profile"
 msgstr "Đổi tên hồ sơ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5247
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5604
 msgid "A profile with this name already exists."
 msgstr "Đã tồn tại một hồ sơ có tên này."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5261
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5618
 #, python-brace-format
 msgid "Failed to rename profile: {e}"
 msgstr "Không thể đổi tên hồ sơ: {e}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5268
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5625
 msgid "The default profile cannot be deleted."
 msgstr "Không thể xóa hồ sơ mặc định."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5273
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5630
 msgid "Cannot delete the profile currently in use."
 msgstr "Không thể xóa hồ sơ đang được sử dụng."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5276
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5633
 #, python-brace-format
 msgid "Delete profile '{name}' and all its data?"
 msgstr "Xóa hồ sơ '{name}' cùng toàn bộ dữ liệu của nó?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5278
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5635
 msgid "Confirm Delete"
 msgstr "Xác nhận xóa"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5288
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5645
 #, python-brace-format
 msgid "Failed to delete profile: {e}"
 msgstr "Không thể xóa hồ sơ: {e}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5297
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5654
 msgid ""
 "The active profile has been modified. NVDA must be restarted to apply "
 "changes. Restart now?"
@@ -2294,467 +2550,487 @@ msgstr ""
 "Hồ sơ đang hoạt động đã bị thay đổi. NVDA phải khởi động lại để áp dụng các "
 "thay đổi. Khởi động lại ngay bây giờ?"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5299
-#: addon/globalPlugins/YoutubePlus/settings.py:387
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5656
+#: addon/globalPlugins/YoutubePlus/settings.py:424
 msgid "Restart NVDA"
 msgstr "Khởi động lại NVDA"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5314
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5671
 msgid "Downloading..."
 msgstr "Đang tải xuống..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5328
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5685
 msgid "Field"
 msgstr "Trường"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5329
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5686
 msgid "Value"
 msgstr "Giá trị"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5332
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5689
 msgid "File"
 msgstr "Tệp"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5333
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5690
 msgid "Progress"
 msgstr "Tiến độ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5334
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5691
 msgid "Size"
 msgstr "Kích thước"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5335
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5692
 msgid "Speed"
 msgstr "Tốc độ"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5336
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5693
 msgid "ETA"
 msgstr "Thời gian còn lại"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5337
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5694
 msgid "Status"
 msgstr "Trạng thái"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5343
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5700
 msgid "Preparing..."
 msgstr "Đang chuẩn bị..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5354
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5711
 msgid "&Cancel"
 msgstr "&Hủy"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5413
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5770
 #, python-brace-format
 msgid "Downloading: {title}"
 msgstr "Đang tải xuống: {title}"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5434
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5791
 #, python-brace-format
 msgid "{pct}%"
 msgstr "{pct}%"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5441
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5452
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5798
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5809
 msgid "Downloading"
 msgstr "Đang tải xuống"
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5466
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5823
 msgid "Installing FFmpeg..."
 msgstr "Đang cài đặt FFmpeg..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5474
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5831
 msgid "Finishing..."
 msgstr "Đang hoàn tất..."
 
-#: addon/globalPlugins/YoutubePlus/dialogs.py:5491
+#: addon/globalPlugins/YoutubePlus/dialogs.py:5848
 msgid "Cancelling..."
 msgstr "Đang hủy..."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:24
+#: addon/globalPlugins/YoutubePlus/settings.py:25
 msgid "Youtube Plus"
 msgstr "Youtube Plus"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:30
+#: addon/globalPlugins/YoutubePlus/settings.py:31
 msgid "Active &Profile (Requires Restart):"
 msgstr "&Hồ sơ đang hoạt động (Yêu cầu khởi động lại):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:36
-#: addon/globalPlugins/YoutubePlus/settings.py:361
-#: addon/globalPlugins/YoutubePlus/settings.py:366
+#: addon/globalPlugins/YoutubePlus/settings.py:37
+#: addon/globalPlugins/YoutubePlus/settings.py:398
+#: addon/globalPlugins/YoutubePlus/settings.py:403
 msgid "default"
 msgstr "mặc định"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:41
+#: addon/globalPlugins/YoutubePlus/settings.py:42
 msgid "&Manage Profiles..."
 msgstr "&Quản lý hồ sơ..."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:45
+#: addon/globalPlugins/YoutubePlus/settings.py:46
 msgid "&Quick Action (Space bar):"
 msgstr "Hành động &nhanh (phím cách):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:48
+#: addon/globalPlugins/YoutubePlus/settings.py:49
 msgid "Open video URL"
 msgstr "Mở URL video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:50
+#: addon/globalPlugins/YoutubePlus/settings.py:51
 msgid "View video info"
 msgstr "Xem thông tin video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:52
+#: addon/globalPlugins/YoutubePlus/settings.py:53
 msgid "View comments"
 msgstr "Xem bình luận"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:54
+#: addon/globalPlugins/YoutubePlus/settings.py:55
 msgid "View chapters"
 msgstr "Xem các chương"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:56
+#: addon/globalPlugins/YoutubePlus/settings.py:57
 msgid "Download video"
 msgstr "Tải xuống video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:58
+#: addon/globalPlugins/YoutubePlus/settings.py:59
 msgid "Download audio"
 msgstr "Tải xuống âm thanh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:60
+#: addon/globalPlugins/YoutubePlus/settings.py:61
 msgid "Download subtitles"
 msgstr "Tải xuống phụ đề"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:62
+#: addon/globalPlugins/YoutubePlus/settings.py:63
 msgid "Add to Favorites video"
 msgstr "Thêm video vào yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:64
+#: addon/globalPlugins/YoutubePlus/settings.py:65
 msgid "Add to Favorites channel"
 msgstr "Thêm kênh vào yêu thích"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:66
+#: addon/globalPlugins/YoutubePlus/settings.py:67
 msgid "Add to Watch List"
 msgstr "Thêm vào Danh sách xem sau"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:68
+#: addon/globalPlugins/YoutubePlus/settings.py:69
 msgid "Copy video URL"
 msgstr "Sao chép URL video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:70
+#: addon/globalPlugins/YoutubePlus/settings.py:71
 msgid "Copy video title"
 msgstr "Sao chép tiêu đề video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:72
+#: addon/globalPlugins/YoutubePlus/settings.py:73
 msgid "Copy channel name"
 msgstr "Sao chép tên kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:74
+#: addon/globalPlugins/YoutubePlus/settings.py:75
 msgid "Copy channel URL"
 msgstr "Sao chép URL kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:76
+#: addon/globalPlugins/YoutubePlus/settings.py:77
 msgid "Copy video summary"
 msgstr "Sao chép tóm tắt video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:78
+#: addon/globalPlugins/YoutubePlus/settings.py:79
 msgid "Open video channel"
 msgstr "Mở kênh của video"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:80
+#: addon/globalPlugins/YoutubePlus/settings.py:81
 msgid "Show channel videos"
 msgstr "Hiện video của kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:82
+#: addon/globalPlugins/YoutubePlus/settings.py:83
 msgid "Show channel shorts"
 msgstr "Hiện video ngắn của kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:84
+#: addon/globalPlugins/YoutubePlus/settings.py:85
 msgid "Show channel lives"
 msgstr "Hiện luồng trực tiếp của kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:86
+#: addon/globalPlugins/YoutubePlus/settings.py:87
 msgid "Show channel playlists"
 msgstr "Hiện danh sách phát của kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:88
+#: addon/globalPlugins/YoutubePlus/settings.py:89
 msgid "Show channel podcasts"
 msgstr "Hiện podcast của kênh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:90
+#: addon/globalPlugins/YoutubePlus/settings.py:91
 msgid "Describe thumbnail (Be My Eyes)"
 msgstr "Mô tả ảnh thu nhỏ (Be My Eyes)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:108
+#: addon/globalPlugins/YoutubePlus/settings.py:109
 msgid "&Notification mode:"
 msgstr "Chế độ &thông báo:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:111
+#: addon/globalPlugins/YoutubePlus/settings.py:112
 msgid "Beep"
 msgstr "Tiếng bíp"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:111
+#: addon/globalPlugins/YoutubePlus/settings.py:112
 msgid "Sound"
 msgstr "Âm thanh"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:111
+#: addon/globalPlugins/YoutubePlus/settings.py:112
 msgid "Silent"
 msgstr "Im lặng"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:118
+#: addon/globalPlugins/YoutubePlus/settings.py:119
 msgid "Default &sort order:"
 msgstr "Thứ tự &sắp xếp mặc định:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:120
+#: addon/globalPlugins/YoutubePlus/settings.py:121
 msgid "Newest First"
 msgstr "Mới nhất trước"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:120
+#: addon/globalPlugins/YoutubePlus/settings.py:121
 msgid "Oldest First"
 msgstr "Cũ nhất trước"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:127
+#: addon/globalPlugins/YoutubePlus/settings.py:128
 msgid "&Items to fetch for each content type:"
 msgstr "Số &mục cần tải cho mỗi loại nội dung:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:131
+#: addon/globalPlugins/YoutubePlus/settings.py:132
 msgid "Default content &types for new subscriptions:"
 msgstr "&Loại nội dung mặc định cho các đăng ký mới:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:146
+#: addon/globalPlugins/YoutubePlus/settings.py:148
 msgid "Disabled"
 msgstr "Đã tắt"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:146
+#: addon/globalPlugins/YoutubePlus/settings.py:148
 msgid "15 minutes"
 msgstr "15 phút"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:146
+#: addon/globalPlugins/YoutubePlus/settings.py:148
 msgid "30 minutes"
 msgstr "30 phút"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:146
+#: addon/globalPlugins/YoutubePlus/settings.py:148
 msgid "1 hour"
 msgstr "1 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:146
+#: addon/globalPlugins/YoutubePlus/settings.py:148
 msgid "2 hours"
 msgstr "2 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:147
+#: addon/globalPlugins/YoutubePlus/settings.py:149
 msgid "4 hours"
 msgstr "4 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:147
+#: addon/globalPlugins/YoutubePlus/settings.py:149
 msgid "6 hours"
 msgstr "6 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:147
+#: addon/globalPlugins/YoutubePlus/settings.py:149
 msgid "12 hours"
 msgstr "12 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:147
+#: addon/globalPlugins/YoutubePlus/settings.py:149
 msgid "24 hours"
 msgstr "24 giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:151
+#: addon/globalPlugins/YoutubePlus/settings.py:153
 msgid "Background &update interval:"
 msgstr "Khoảng thời gian &cập nhật ngầm:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:162
+#: addon/globalPlugins/YoutubePlus/settings.py:164
 msgid "&Automatically speak incoming live chat"
 msgstr "Tự động đọc tin nhắn trò chuyện trực tiếp &mới đến"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:166
+#: addon/globalPlugins/YoutubePlus/settings.py:168
+msgid "&Voice profile:"
+msgstr "Hồ sơ &giọng nói:"
+
+#: addon/globalPlugins/YoutubePlus/settings.py:173
+msgid "(None, keep the current voice)"
+msgstr "(Không, giữ giọng hiện tại)"
+
+#: addon/globalPlugins/YoutubePlus/settings.py:185
+msgid "Alert s&ounds for live chat:"
+msgstr "Âm thanh cảnh &báo cho trò chuyện trực tiếp:"
+
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Chat"
+msgstr "Super Chat"
+
+#: addon/globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Sticker"
+msgstr "Super Sticker"
+
+#: addon/globalPlugins/YoutubePlus/settings.py:199
 msgid "&Live chat refresh interval (seconds):"
 msgstr "Khoảng thời gian &làm mới trò chuyện trực tiếp (giây):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:170
+#: addon/globalPlugins/YoutubePlus/settings.py:203
 msgid "Message &history limit (live chat):"
 msgstr "Giới hạn &lịch sử tin nhắn (trò chuyện trực tiếp):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:198
+#: addon/globalPlugins/YoutubePlus/settings.py:231
 msgid "&Cookie method (Experimental - may not work):"
 msgstr "Phương thức lấy &cookie (Thử nghiệm - có thể không hoạt động):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:200
+#: addon/globalPlugins/YoutubePlus/settings.py:233
 msgid "Do not use cookies (Default)"
 msgstr "Không dùng cookie (Mặc định)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:201
+#: addon/globalPlugins/YoutubePlus/settings.py:234
 msgid "Chrome"
 msgstr "Chrome"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:202
+#: addon/globalPlugins/YoutubePlus/settings.py:235
 msgid "Firefox"
 msgstr "Firefox"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:203
+#: addon/globalPlugins/YoutubePlus/settings.py:236
 msgid "Edge"
 msgstr "Edge"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:204
+#: addon/globalPlugins/YoutubePlus/settings.py:237
 msgid "Opera"
 msgstr "Opera"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:205
+#: addon/globalPlugins/YoutubePlus/settings.py:238
 msgid "Brave"
 msgstr "Brave"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:206
+#: addon/globalPlugins/YoutubePlus/settings.py:239
 msgid "Vivaldi"
 msgstr "Vivaldi"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:231
+#: addon/globalPlugins/YoutubePlus/settings.py:264
 msgid "Preferred &video quality:"
 msgstr "Chất lượng &video ưu tiên:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:268
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "Best available"
 msgstr "Tốt nhất có thể"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "2160p (4K)"
 msgstr "2160p (4K)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "1440p (2K)"
 msgstr "1440p (2K)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "1080p"
 msgstr "1080p"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "720p"
 msgstr "720p"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "480p"
 msgstr "480p"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:235
+#: addon/globalPlugins/YoutubePlus/settings.py:268
 msgid "360p"
 msgstr "360p"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:245
+#: addon/globalPlugins/YoutubePlus/settings.py:278
 msgid "Preferred video co&ntainer:"
 msgstr "Định dạng &chứa video ưu tiên:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:249
+#: addon/globalPlugins/YoutubePlus/settings.py:282
 msgid "MP4 (most compatible)"
 msgstr "MP4 (tương thích tốt nhất)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:249
+#: addon/globalPlugins/YoutubePlus/settings.py:282
 msgid "MKV (best quality, no re-encoding)"
 msgstr "MKV (chất lượng tốt nhất, không mã hóa lại)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:249
+#: addon/globalPlugins/YoutubePlus/settings.py:282
 msgid "WebM"
 msgstr "WebM"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:259
+#: addon/globalPlugins/YoutubePlus/settings.py:292
 msgid "Preferred audio q&uality (when converting):"
 msgstr "Chất lượng â&m thanh ưu tiên (khi chuyển đổi):"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "320 kbps"
 msgstr "320 kbps"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "256 kbps"
 msgstr "256 kbps"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "192 kbps"
 msgstr "192 kbps"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "128 kbps"
 msgstr "128 kbps"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:263
+#: addon/globalPlugins/YoutubePlus/settings.py:296
 msgid "96 kbps"
 msgstr "96 kbps"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:273
+#: addon/globalPlugins/YoutubePlus/settings.py:306
 msgid "Preferred audio for&mat:"
 msgstr "Định &dạng âm thanh ưu tiên:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "Best available (no conversion)"
 msgstr "Tốt nhất có thể (không chuyển đổi)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "MP3"
 msgstr "MP3"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "WAV"
 msgstr "WAV"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "M4A/AAC"
 msgstr "M4A/AAC"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "FLAC"
 msgstr "FLAC"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "Opus"
 msgstr "Opus"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:278
+#: addon/globalPlugins/YoutubePlus/settings.py:311
 msgid "Vorbis (OGG)"
 msgstr "Vorbis (OGG)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:295
+#: addon/globalPlugins/YoutubePlus/settings.py:328
 msgid "Default subtitle &format:"
 msgstr "Định &dạng phụ đề mặc định:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:305
+#: addon/globalPlugins/YoutubePlus/settings.py:338
 msgid "Default download and &export folder path:"
 msgstr "Đường dẫn thư mục tải xuống và &xuất mặc định:"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:310
+#: addon/globalPlugins/YoutubePlus/settings.py:343
 msgid "&Browse..."
 msgstr "&Duyệt..."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:316
+#: addon/globalPlugins/YoutubePlus/settings.py:349
 msgid "Bac&kup data now"
 msgstr "Sao lưu dữ liệu ngay bâ&y giờ"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:320
+#: addon/globalPlugins/YoutubePlus/settings.py:353
 msgid "&Restore data from backup..."
 msgstr "&Khôi phục dữ liệu từ bản sao lưu..."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:346
+#: addon/globalPlugins/YoutubePlus/settings.py:383
 msgid "&Download Quality and Format Options"
 msgstr "Tùy chọn &chất lượng và định dạng tải xuống"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:349
+#: addon/globalPlugins/YoutubePlus/settings.py:386
 msgid " (expanded)"
 msgstr " (đã mở rộng)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:352
+#: addon/globalPlugins/YoutubePlus/settings.py:389
 msgid " (collapsed)"
 msgstr " (đã thu gọn)"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:385
+#: addon/globalPlugins/YoutubePlus/settings.py:422
 #, python-brace-format
 msgid ""
 "The active profile has been changed to '{profile_name}'. NVDA must be "
 "restarted to apply this change. Restart now?"
 msgstr ""
-"Hồ sơ đang hoạt động đã được đổi thành '{profile_name}'. NVDA phải khởi động"
-" lại để áp dụng thay đổi này. Khởi động lại ngay bây giờ?"
+"Hồ sơ đang hoạt động đã được đổi thành '{profile_name}'. NVDA phải khởi động "
+"lại để áp dụng thay đổi này. Khởi động lại ngay bây giờ?"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:455
+#: addon/globalPlugins/YoutubePlus/settings.py:498
 msgid "Select cookies.txt file"
 msgstr "Chọn tệp cookies.txt"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:466
+#: addon/globalPlugins/YoutubePlus/settings.py:509
 msgid "Select default folder to export files"
 msgstr "Chọn thư mục mặc định để xuất tệp"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:477
+#: addon/globalPlugins/YoutubePlus/settings.py:520
 #, python-brace-format
 msgid ""
 "Backup completed successfully.\n"
@@ -2763,29 +3039,29 @@ msgstr ""
 "Sao lưu hoàn tất thành công.\n"
 "{filename}"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:479
+#: addon/globalPlugins/YoutubePlus/settings.py:522
 msgid "Backup"
 msgstr "Sao lưu"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:485
+#: addon/globalPlugins/YoutubePlus/settings.py:528
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "Sao lưu không thành công: {error}"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:487
+#: addon/globalPlugins/YoutubePlus/settings.py:530
 msgid "Backup Error"
 msgstr "Lỗi sao lưu"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:497
+#: addon/globalPlugins/YoutubePlus/settings.py:540
 #, python-brace-format
 msgid "No backup files found for profile '{profile}'."
 msgstr "Không tìm thấy tệp sao lưu nào cho hồ sơ '{profile}'."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:499
+#: addon/globalPlugins/YoutubePlus/settings.py:542
 msgid "Restore"
 msgstr "Khôi phục"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:517
+#: addon/globalPlugins/YoutubePlus/settings.py:560
 #, python-brace-format
 msgid ""
 "Restore data from {date} for profile '{profile}'?\n"
@@ -2794,11 +3070,11 @@ msgstr ""
 "Khôi phục dữ liệu từ {date} cho hồ sơ '{profile}'?\n"
 "Thao tác này sẽ ghi đè toàn bộ dữ liệu hiện tại và yêu cầu khởi động lại."
 
-#: addon/globalPlugins/YoutubePlus/settings.py:520
+#: addon/globalPlugins/YoutubePlus/settings.py:563
 msgid "Confirm Restore"
 msgstr "Xác nhận khôi phục"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:527
+#: addon/globalPlugins/YoutubePlus/settings.py:570
 msgid ""
 "YoutubePlus Data restored successfully. NVDA must be restarted to apply the "
 "changes. Restart now?"
@@ -2806,11 +3082,15 @@ msgstr ""
 "Đã khôi phục dữ liệu YoutubePlus thành công. NVDA phải khởi động lại để áp "
 "dụng các thay đổi. Khởi động lại ngay bây giờ?"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:532
+#: addon/globalPlugins/YoutubePlus/settings.py:575
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "Khôi phục không thành công: {error}"
 
-#: addon/globalPlugins/YoutubePlus/settings.py:534
+#: addon/globalPlugins/YoutubePlus/settings.py:577
 msgid "Restore Error"
 msgstr "Lỗi khôi phục"
+
+#, python-brace-format
+#~ msgid "Playlist ({count})"
+#~ msgstr "Danh sách phát ({count})"

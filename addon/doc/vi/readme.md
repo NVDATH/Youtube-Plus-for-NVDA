@@ -34,7 +34,7 @@ Nhấn **NVDA+Y** để vào chế độ lệnh của YoutubePlus, sau đó nh�
 * u: (mở Trình quản lý hồ sơ người dùng): mở cửa sổ quản lý hồ sơ người dùng
 * l: (xem bình luận): hiển thị bình luận (chi tiết ở phần sau)
 * shift+l: (dừng theo dõi live chat): dừng theo dõi live chat (trò chuyện trực tiếp)
-* r: (bật/tắt tự động đọc live chat): bật hoặc tắt việc tự động đọc to các tin nhắn live chat mới
+* r: (bật/tắt tự động đọc live chat): bật hoặc tắt việc tự động đọc to các tin nhắn live chat mới (khi đang dùng Hồ sơ giọng nói, lệnh này còn dừng ngay giọng đọc live chat)
 * v: (hiện live chat): mở lại cửa sổ live chat nếu bạn lỡ đóng nó trong khi buổi phát trực tiếp vẫn đang diễn ra
 * y: (mở hộp thoại cài đặt YoutubePlus): mở nhanh phần cài đặt của NVDA và chuyển tiêu điểm đến nhóm YoutubePlus
 * h: (trợ giúp): mở cửa sổ liệt kê tất cả các phím tắt hiện có
@@ -304,17 +304,41 @@ Với video đang phát trực tiếp, nhấn L và add-on sẽ mở một cửa
 
 Bạn có thể đóng cửa sổ này và mở lại sau bằng lệnh V trong lớp YoutubePlus, miễn là buổi phát vẫn đang diễn ra và NVDA chưa được khởi động lại.
 
+Nhấn L lần nữa trên buổi phát đang được theo dõi sẽ không khởi động lại gì cả: lệnh chỉ mở lại cửa sổ live chat (hoặc đưa nó lên phía trước nếu đang mở). Nếu bạn nhấn L trên một buổi phát trực tiếp khác trong khi đang theo dõi một buổi phát, add-on sẽ yêu cầu bạn xác nhận việc chuyển đổi, rồi hỏi có lưu đoạn chat đã thu thập trước khi nó bị thay thế hay không.
+
 Dùng lệnh R để bật hoặc tắt việc NVDA đọc to các tin nhắn mới khi chúng đến. Cách này phù hợp với các buổi phát có ít tin nhắn. Với các buổi phát có nhiều tin nhắn, tắt tự động đọc và tự cuộn xem trong cửa sổ sẽ dễ hơn.
 
 Nhấn Shift+L để dừng theo dõi chat của video hiện tại.
 
-Ba thiết lập ảnh hưởng trực tiếp đến tính năng này:
+Năm thiết lập ảnh hưởng trực tiếp đến tính năng này:
 
 - **Automatically speak incoming live chat (Tự động đọc live chat đến):** Khi được chọn, NVDA đọc to các tin nhắn mới ngay lập tức. Chức năng giống lệnh R, nhưng được lưu làm tùy chọn mặc định.
+- **Voice profile (Hồ sơ giọng nói):** Đọc các tin nhắn live chat đến bằng thiết lập giọng nói của một trong các hồ sơ cấu hình NVDA của bạn, ví dụ để dùng một bộ tổng hợp giọng nói khác. Chỉ dùng được khi bật tự động đọc. Chi tiết ở bên dưới.
+- **Alert sounds for live chat (Âm thanh cảnh báo live chat):** Phát âm thanh khi có Super Chat, Super Sticker hoặc thành viên mới. Hoạt động dù tự động đọc có bật hay không. Chi tiết ở bên dưới.
 - **Live chat refresh interval (Khoảng thời gian làm mới live chat):** Tần suất (tính bằng giây) add-on kiểm tra tin nhắn mới. Mặc định là 5 giây.
 - **Message history limit (Giới hạn lịch sử tin nhắn):** Số tin nhắn tối đa được lưu trong bộ nhớ trong một phiên. Cửa sổ live chat chỉ hiển thị các tin nhắn gần nhất, tối đa bằng giới hạn này (mặc định: 5.000). Add-on vẫn giữ toàn bộ tin nhắn ở chế độ nền để xuất ra file, với mức tối đa 200.000 tin để tránh dùng quá nhiều bộ nhớ.
 
 Khi buổi phát kết thúc, hoặc khi add-on phát hiện nó đã kết thúc, một hộp thoại sẽ tự động hiện ra hỏi bạn có muốn xuất toàn bộ tin nhắn đã thu thập không. Nhấn Yes (Có) để lưu lịch sử chat thành một file.
+
+##### Voice profile (Hồ sơ giọng nói)
+
+Thiết lập Voice profile cho phép đọc live chat bằng một giọng khác với giọng NVDA dùng cho mọi thứ còn lại, ví dụ dùng một bộ tổng hợp giọng nói khác như SAPI 5. Để dùng, hãy tạo một hồ sơ trong NVDA (menu NVDA -> Hồ sơ cấu hình (Configuration profiles)...) với bộ tổng hợp và thiết lập giọng nói bạn muốn dùng cho chat, rồi chọn hồ sơ đó trong phần cài đặt YoutubePlus. Hồ sơ này chỉ được dùng làm nguồn thiết lập giọng nói: nó không bao giờ được kích hoạt, và mọi thứ khác NVDA đọc vẫn giữ giọng bình thường của bạn. Chọn "(None, keep the current voice)" (Không, giữ giọng hiện tại) để tắt tính năng này.
+
+Chat được đọc bởi một bộ tổng hợp giọng nói riêng chạy song song với NVDA, giống như nội dung đa phương tiện phát ở nền. Việc nhấn phím, di chuyển trong màn hình, hay bất cứ điều gì NVDA đọc đều không làm tạm dừng, ngắt hay hủy giọng đọc chat, và hai giọng có thể được nghe cùng lúc, vì vậy hãy chọn một giọng khác biệt rõ ràng cho chat. Nhấn R trong lớp YoutubePlus để dừng giọng đọc chat ngay lập tức.
+
+Các tin nhắn được đọc lần lượt. Với những buổi phát mà chat đến nhanh hơn tốc độ đọc, chỉ những tin nhắn mới nhất đang chờ được đọc (20 tin nhắn thường gần nhất); mọi tin nhắn vẫn nằm trong cửa sổ live chat và trong file chat đã xuất. Super Chat, Super Sticker và thành viên mới được đọc trước các tin nhắn thường và được giữ lại khi các tin khác bị bỏ qua. Nếu chế độ giọng nói của NVDA được đặt là tắt (off), tiếng bíp (beeps) hoặc theo yêu cầu (on-demand), chat sẽ không được đọc to (nó vẫn hiển thị trong cửa sổ live chat và trên màn hình chữ nổi).
+
+##### Alert sounds (Âm thanh cảnh báo)
+
+Các sự kiện Super Chat, Super Sticker và New member (thành viên mới tham gia kênh) đều có thể phát âm thanh riêng khi xuất hiện. Hãy chọn loại nào muốn dùng trong phần cài đặt. Các âm thanh là những file `superchat.wav`, `supersticker.wav` và `membership.wav` trong thư mục `sounds` của add-on; nếu thiếu file nào, add-on sẽ phát tiếng bíp thay thế. Cảnh báo được phát dù tự động đọc có bật hay không, nên bạn có thể nghe cảnh báo mà không cần nghe từng tin nhắn. Khi nhiều sự kiện cùng loại đến cùng lúc, âm thanh chỉ phát một lần.
+
+Các sự kiện này hiển thị trong cửa sổ live chat như những tin nhắn khác, được gắn nhãn *Super Chat*, *Super Sticker* hoặc *New member*, và được đưa vào file chat đã xuất.
+
+##### Known issues (Các vấn đề đã biết)
+
+- Voice profile khởi động một bộ tổng hợp thứ hai song song với bộ tổng hợp của NVDA. Nếu không khởi động được, bạn sẽ nghe một thông báo và chat sẽ được đọc bằng giọng hiện tại. Một số bộ tổng hợp có thể không hỗ trợ chạy bản thứ hai.
+- Không nên dùng cùng một trình điều khiển bộ tổng hợp cho cả NVDA và giọng đọc chat (ví dụ dùng Vocalizer cho cả hai). Một số trình điều khiển dùng chung engine giữa các phiên bản, và với những buổi phát có chat rất nhanh, hai giọng có thể gây nhiễu lẫn nhau: giọng đọc chat có thể im lặng, hoặc giọng đọc của chính NVDA có thể bị ảnh hưởng. Add-on sẽ tự thử khởi động lại giọng đọc chat. Nếu nó vẫn im lặng, hãy nhấn R hai lần (tắt rồi bật lại); nếu giọng của chính NVDA bị ảnh hưởng, hãy khởi động lại NVDA. Chọn một bộ tổng hợp khác cho hồ sơ chat sẽ tránh được vấn đề này.
+- Những buổi phát có chat rất nhanh chưa được kiểm thử kỹ. Nếu NVDA ngừng phản hồi trên một buổi phát như vậy, hãy tắt Voice profile, hoặc tắt tự động đọc và đọc tin nhắn trong cửa sổ live chat.
 
 #### Bình luận / Phát lại live chat
 
@@ -355,6 +379,8 @@ Mở cài đặt qua `NVDA -> Tùy chọn (Preferences) -> Cài đặt (Settings
 - **Default content types (Loại nội dung mặc định):** Chọn các loại nội dung sẽ được tải cho kênh mới đăng ký: Videos, Shorts và/hoặc Live.
 - **Background update interval (Khoảng thời gian cập nhật nền):** Tần suất add-on kiểm tra nội dung mới từ các kênh đã đăng ký. Có thể tắt, hoặc đặt từ 15 phút đến 24 giờ. Theo mặc định, add-on cũng tự cập nhật mỗi khi NVDA khởi động.
 - **Automatically speak incoming live chat (Tự động đọc live chat đến):** Khi được chọn, NVDA đọc to các tin nhắn chat mới ngay khi chúng đến.
+- **Voice profile (Hồ sơ giọng nói):** Chọn một trong các hồ sơ cấu hình NVDA của bạn để đọc các tin nhắn live chat đến. Chỉ các tin nhắn live chat dùng thiết lập giọng nói của hồ sơ đó (bộ tổng hợp, giọng, tốc độ, cao độ, âm lượng); mọi thứ khác NVDA đọc vẫn giữ giọng bình thường của bạn, và hồ sơ không bao giờ được kích hoạt toàn cục. Chat được đọc bởi một bộ tổng hợp riêng, nên hồ sơ có thể dùng bộ tổng hợp khác với bộ của NVDA, và việc nhấn phím hay bất cứ điều gì NVDA đọc cũng không làm gián đoạn nó. Chọn "(None, keep the current voice)" (Không, giữ giọng hiện tại) để tắt. Chỉ dùng được khi bật tự động đọc.
+- **Alert sounds for live chat (Âm thanh cảnh báo live chat):** Chọn những sự kiện live chat nào sẽ phát âm thanh khi xuất hiện: Super Chat, Super Sticker và New member. Hoạt động dù tự động đọc có bật hay không.
 - **Live chat refresh interval (Khoảng thời gian làm mới live chat):** Tần suất (tính bằng giây) add-on kiểm tra tin nhắn mới. Mặc định: 5 giây.
 - **Message history limit (Giới hạn lịch sử tin nhắn):** Số tin nhắn chat tối đa được lưu trong bộ nhớ trong một phiên.
 - **Default subtitle format (Định dạng phụ đề mặc định):** Định dạng file phụ đề khi tải xuống: SRT, VTT, TTML hoặc TXT (văn bản thuần, không có mốc thời gian)
