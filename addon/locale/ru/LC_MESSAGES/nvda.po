@@ -1,38 +1,36 @@
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: YoutubePlus\n"
-"POT-Creation-Date: 2026-09-03 17:07+0300\n"
-"PO-Revision-Date: 2026-09-03 17:31+0300\n"
+"Project-Id-Version: YouTubePlus\n"
+"POT-Creation-Date: 2026-10-29 18:33+0300\n"
+"PO-Revision-Date: 2026-10-29 18:33+0300\n"
 "Last-Translator: nvda.ru\n"
 "Language-Team: nvda.ru\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.8.6\n"
 "X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-SearchPath-0: globalPlugins\n"
-"X-Poedit-SearchPath-1: installTasks.py\n"
+"X-Poedit-SearchPath-0: .\n"
 
-#: globalPlugins/YoutubePlus/core.py:483
+#: globalPlugins/YoutubePlus/core.py:534
 msgid "Failed to get video data. Details: {}"
 msgstr "Не удалось получить данные о видео. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:487
+#: globalPlugins/YoutubePlus/core.py:538
 msgid "An unexpected error occurred."
-msgstr "Произошла непредвиденная ошибка."
+msgstr "Произошла неожиданная ошибка."
 
-#: globalPlugins/YoutubePlus/core.py:500
+#: globalPlugins/YoutubePlus/core.py:551
 msgid "This command is for videos, but the current page is a playlist."
 msgstr ""
 "Эта команда предназначена для видео, но на текущей странице находится "
 "плейлист."
 
-#: globalPlugins/YoutubePlus/core.py:507
+#: globalPlugins/YoutubePlus/core.py:558
 msgid ""
 "This command is for videos, but the current page appears to be a channel or "
 "playlist."
@@ -40,137 +38,139 @@ msgstr ""
 "Эта команда предназначена для видео, но текущая страница, по-видимому, "
 "является каналом или плейлистом."
 
-#: globalPlugins/YoutubePlus/core.py:764
+#: globalPlugins/YoutubePlus/core.py:815
 msgid "activate YoutubePlus"
 msgstr "активировать YoutubePlus"
 
-#: globalPlugins/YoutubePlus/core.py:863
+#: globalPlugins/YoutubePlus/core.py:914
 #, python-brace-format
 msgid "Super Chat ({amount}): {paid_message}"
 msgstr "Супер-чат ({amount}): {paid_message}"
 
-#: globalPlugins/YoutubePlus/core.py:877
+#: globalPlugins/YoutubePlus/core.py:928
 #, python-brace-format
 msgid "Super Sticker ({amount})"
 msgstr "Супер-стикер ({amount})"
 
-#: globalPlugins/YoutubePlus/core.py:908
+#: globalPlugins/YoutubePlus/core.py:959
 #, python-brace-format
 msgid "YouTube System ({icon_type})"
 msgstr "Системное сообщение YouTube ({icon_type})"
 
-#: globalPlugins/YoutubePlus/core.py:930
+#: globalPlugins/YoutubePlus/core.py:981
 #, python-brace-format
 msgid "{h} Hour"
 msgstr "{h} час"
 
-#: globalPlugins/YoutubePlus/core.py:932
+#: globalPlugins/YoutubePlus/core.py:983
 #, python-brace-format
 msgid "{h} Hours"
 msgstr "{h} часа"
 
-#: globalPlugins/YoutubePlus/core.py:937
+#: globalPlugins/YoutubePlus/core.py:988
 #, python-brace-format
 msgid "{m} Minute"
 msgstr "{m} минута"
 
-#: globalPlugins/YoutubePlus/core.py:937
+#: globalPlugins/YoutubePlus/core.py:988
 #, python-brace-format
 msgid "{m} Minutes"
 msgstr "{m} минуты"
 
-#: globalPlugins/YoutubePlus/core.py:940
+#: globalPlugins/YoutubePlus/core.py:991
 #, python-brace-format
 msgid "{s} Second"
 msgstr "{s} секунда"
 
-#: globalPlugins/YoutubePlus/core.py:940
+#: globalPlugins/YoutubePlus/core.py:991
 #, python-brace-format
 msgid "{s} Seconds"
 msgstr "{s} секунды"
 
-#: globalPlugins/YoutubePlus/core.py:975
+#: globalPlugins/YoutubePlus/core.py:1026
 #, python-brace-format
 msgid "Info of {title}"
 msgstr "Информация о видео «{title}»"
 
-#: globalPlugins/YoutubePlus/core.py:992
+#: globalPlugins/YoutubePlus/core.py:1043
 msgid "This video has a live chat replay. What would you like to view?"
 msgstr "У этого видео есть повтор живого чата. Что вы хотите просмотреть?"
 
-#: globalPlugins/YoutubePlus/core.py:992
+#: globalPlugins/YoutubePlus/core.py:1043
 msgid "Choice"
 msgstr "Выбор"
 
-#: globalPlugins/YoutubePlus/core.py:996
+#: globalPlugins/YoutubePlus/core.py:1047
 #, python-brace-format
 msgid "Show {comment_count} &Comments"
 msgstr "Показать {comment_count} &комментариев"
 
-#: globalPlugins/YoutubePlus/core.py:996
+#: globalPlugins/YoutubePlus/core.py:1047
 msgid "Show &Live Chat Replay"
 msgstr "Показать &повтор живого чата"
 
-#: globalPlugins/YoutubePlus/core.py:996 globalPlugins/YoutubePlus/core.py:2035
-#: globalPlugins/YoutubePlus/dialogs.py:3746
+#: globalPlugins/YoutubePlus/core.py:1047
+#: globalPlugins/YoutubePlus/core.py:2294
+#: globalPlugins/YoutubePlus/dialogs.py:3990
 msgid "Ca&ncel"
 msgstr "О&тмена"
 
-#: globalPlugins/YoutubePlus/core.py:1035
+#: globalPlugins/YoutubePlus/core.py:1086
 msgid "This video has no comments."
 msgstr "У этого видео нет комментариев."
 
-#: globalPlugins/YoutubePlus/core.py:1039
+#: globalPlugins/YoutubePlus/core.py:1090
 #, python-brace-format
 msgid "Loading {count} comments..."
 msgstr "Загрузка {count} комментариев..."
 
-#: globalPlugins/YoutubePlus/core.py:1042
+#: globalPlugins/YoutubePlus/core.py:1093
 msgid "Loading live chat replay..."
 msgstr "Загрузка повтора живого чата..."
 
-#: globalPlugins/YoutubePlus/core.py:1056
+#: globalPlugins/YoutubePlus/core.py:1107
 msgid ""
 "Live stream detected. Please use the 'Monitor live chat' command instead."
 msgstr ""
-"Обнаружена прямая трансляция. Используйте команду «Отслеживать живой чат»."
+"Обнаружена прямая трансляция. Вместо этого используйте команду «Отслеживать "
+"живой чат»."
 
-#: globalPlugins/YoutubePlus/core.py:1072
+#: globalPlugins/YoutubePlus/core.py:1123
 #, python-brace-format
 msgid "Title: {title}"
 msgstr "Название: {title}"
 
-#: globalPlugins/YoutubePlus/core.py:1073
+#: globalPlugins/YoutubePlus/core.py:1124
 #, python-brace-format
 msgid "Channel: {uploader}"
 msgstr "Канал: {uploader}"
 
-#: globalPlugins/YoutubePlus/core.py:1074
+#: globalPlugins/YoutubePlus/core.py:1125
 #, python-brace-format
 msgid "Duration: {duration}"
 msgstr "Длительность: {duration}"
 
-#: globalPlugins/YoutubePlus/core.py:1075
+#: globalPlugins/YoutubePlus/core.py:1126
 #, python-brace-format
 msgid "Uploaded: {upload_date}"
 msgstr "Опубликовано: {upload_date}"
 
-#: globalPlugins/YoutubePlus/core.py:1076
+#: globalPlugins/YoutubePlus/core.py:1127
 #, python-brace-format
 msgid "Views: {view_count}"
 msgstr "Просмотров: {view_count}"
 
-#: globalPlugins/YoutubePlus/core.py:1077
+#: globalPlugins/YoutubePlus/core.py:1128
 #, python-brace-format
 msgid "Likes: {like_count}"
 msgstr "Понравилось: {like_count}"
 
-#: globalPlugins/YoutubePlus/core.py:1078
+#: globalPlugins/YoutubePlus/core.py:1129
 #, python-brace-format
 msgid "Comments: {comment_count}"
 msgstr "Комментариев: {comment_count}"
 
-#: globalPlugins/YoutubePlus/core.py:1080
+#: globalPlugins/YoutubePlus/core.py:1131
 #, python-brace-format
 msgid ""
 "Description:\n"
@@ -179,73 +179,104 @@ msgstr ""
 "Описание:\n"
 "{description}"
 
-#: globalPlugins/YoutubePlus/core.py:1092
+#: globalPlugins/YoutubePlus/core.py:1143
 #, python-brace-format
 msgid "Could not get video info: {error}"
 msgstr "Не удалось получить информацию о видео: {error}"
 
-#: globalPlugins/YoutubePlus/core.py:1096
-#: globalPlugins/YoutubePlus/core.py:1124
-#: globalPlugins/YoutubePlus/core.py:1172
-#: globalPlugins/YoutubePlus/core.py:1617
+#: globalPlugins/YoutubePlus/core.py:1147
+#: globalPlugins/YoutubePlus/core.py:1175
+#: globalPlugins/YoutubePlus/core.py:1223
+#: globalPlugins/YoutubePlus/core.py:1780
 msgid "An unexpected error occurred. Please check the log for details."
 msgstr "Произошла непредвиденная ошибка. Подробности смотрите в журнале."
 
-#: globalPlugins/YoutubePlus/core.py:1113
+#: globalPlugins/YoutubePlus/core.py:1164
 #, python-brace-format
 msgid "Chapters for {title}"
 msgstr "Разделы видео «{title}»"
 
-#: globalPlugins/YoutubePlus/core.py:1117
+#: globalPlugins/YoutubePlus/core.py:1168
 msgid "No chapters found in this video."
 msgstr "В этом видео разделы не найдены."
 
-#: globalPlugins/YoutubePlus/core.py:1120
+#: globalPlugins/YoutubePlus/core.py:1171
 msgid "Failed to get chapters. Details: {}"
 msgstr "Не удалось получить разделы. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:1142
+#: globalPlugins/YoutubePlus/core.py:1193
 #, python-brace-format
 msgid "{count} comments of {title}"
 msgstr "{count} комментариев к видео «{title}»"
 
-#: globalPlugins/YoutubePlus/core.py:1159
+#: globalPlugins/YoutubePlus/core.py:1210
 #, python-brace-format
 msgid "{count} live chat replay of {title}"
 msgstr "{count} сообщений повтора живого чата видео «{title}»"
 
-#: globalPlugins/YoutubePlus/core.py:1167
+#: globalPlugins/YoutubePlus/core.py:1218
 #, python-brace-format
 msgid "Could not load data: {error}"
 msgstr "Не удалось загрузить данные: {error}"
 
-#: globalPlugins/YoutubePlus/core.py:1184
+#: globalPlugins/YoutubePlus/core.py:1242
 msgid "Connection to live chat lost. The stream may have ended."
 msgstr "Соединение с живым чатом потеряно. Возможно, трансляция завершилась."
 
-#: globalPlugins/YoutubePlus/core.py:1210
+#: globalPlugins/YoutubePlus/core.py:1258
+#: globalPlugins/YoutubePlus/settings.py:188
+msgid "New member"
+msgstr "Новый участник"
+
+#: globalPlugins/YoutubePlus/core.py:1274
 msgid "To conserve memory, older chat messages have been discarded."
 msgstr "Для экономии памяти старые сообщения чата были удалены."
 
-#: globalPlugins/YoutubePlus/core.py:1218
+#: globalPlugins/YoutubePlus/core.py:1282
 #, python-brace-format
 msgid "Receiving live chat of {video_title}"
 msgstr "Получение сообщений живого чата видео «{video_title}»"
 
-#: globalPlugins/YoutubePlus/core.py:1228
+#: globalPlugins/YoutubePlus/core.py:1298
 msgid "An error occurred while receiving live chat. Monitoring stopped."
 msgstr "Произошла ошибка при получении живого чата. Мониторинг остановлен."
 
-#: globalPlugins/YoutubePlus/core.py:1259
+#: globalPlugins/YoutubePlus/core.py:1334
+msgid ""
+"The live chat voice profile could not be used. Chat will be read in the "
+"current voice."
+msgstr ""
+"Не удалось использовать голосовой профиль живого чата. Чат будет читаться "
+"текущим голосом."
+
+#: globalPlugins/YoutubePlus/core.py:1368
+#, python-brace-format
+msgid "Already receiving the live chat of {title}."
+msgstr "Живой чат видео «{title}» уже принимается."
+
+#: globalPlugins/YoutubePlus/core.py:1399
 #, python-brace-format
 msgid "Live chat saved to {filename}"
 msgstr "Живой чат сохранён в файл {filename}"
 
-#: globalPlugins/YoutubePlus/core.py:1265
+#: globalPlugins/YoutubePlus/core.py:1405
 msgid "Failed to save chat history."
 msgstr "Не удалось сохранить историю чата."
 
-#: globalPlugins/YoutubePlus/core.py:1284
+#: globalPlugins/YoutubePlus/core.py:1425
+#, python-brace-format
+msgid ""
+"You are switching to another live chat. You have {count} chat messages from "
+"the previous one.\n"
+"\n"
+"Would you like to save them first?"
+msgstr ""
+"Вы переключаетесь на другой живой чат. У вас есть {count} сообщений из "
+"предыдущего чата.\n"
+"\n"
+"Хотите сначала сохранить их?"
+
+#: globalPlugins/YoutubePlus/core.py:1429
 #, python-brace-format
 msgid ""
 "The stream has ended. You have {count} chat messages.\n"
@@ -256,76 +287,76 @@ msgstr ""
 "\n"
 "Хотите сохранить историю чата?"
 
-#: globalPlugins/YoutubePlus/core.py:1285
+#: globalPlugins/YoutubePlus/core.py:1434
 msgid "Save Chat History?"
 msgstr "Сохранить историю чата?"
 
-#: globalPlugins/YoutubePlus/core.py:1306
-#: globalPlugins/YoutubePlus/core.py:2424
+#: globalPlugins/YoutubePlus/core.py:1455
+#: globalPlugins/YoutubePlus/core.py:2778
 #, python-brace-format
 msgid "Could not receive live chat: {error}"
 msgstr "Не удалось получить сообщения живого чата: {error}"
 
-#: globalPlugins/YoutubePlus/core.py:1344
+#: globalPlugins/YoutubePlus/core.py:1507
 msgid "Adding to favorites..."
 msgstr "Добавление в избранное..."
 
-#: globalPlugins/YoutubePlus/core.py:1351
+#: globalPlugins/YoutubePlus/core.py:1514
 msgid "The provided link is not for a single video."
-msgstr "Предоставленная ссылка не указывает на одно видео."
+msgstr "Предоставленная ссылка не указывает на отдельное видео."
 
-#: globalPlugins/YoutubePlus/core.py:1359
+#: globalPlugins/YoutubePlus/core.py:1522
 msgid "This video is already in your favorites."
 msgstr "Это видео уже находится в избранном."
 
-#: globalPlugins/YoutubePlus/core.py:1375
+#: globalPlugins/YoutubePlus/core.py:1538
 #, python-brace-format
 msgid "Added '{title}' to favorites."
 msgstr "Видео «{title}» добавлено в избранное."
 
-#: globalPlugins/YoutubePlus/core.py:1378
+#: globalPlugins/YoutubePlus/core.py:1541
 msgid "Failed to add favorite. Details: {}"
 msgstr "Не удалось добавить в избранное. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:1389
+#: globalPlugins/YoutubePlus/core.py:1552
 msgid "Adding to favorite channels..."
 msgstr "Добавление в избранные каналы..."
 
-#: globalPlugins/YoutubePlus/core.py:1410
+#: globalPlugins/YoutubePlus/core.py:1573
 msgid "This channel is already in your favorites."
 msgstr "Этот канал уже находится в избранном."
 
-#: globalPlugins/YoutubePlus/core.py:1424
+#: globalPlugins/YoutubePlus/core.py:1587
 #, python-brace-format
 msgid "Added '{channel}' to favorites."
 msgstr "Канал «{channel}» добавлен в избранное."
 
-#: globalPlugins/YoutubePlus/core.py:1427
+#: globalPlugins/YoutubePlus/core.py:1590
 msgid "Failed to add favorite."
 msgstr "Не удалось добавить в избранное."
 
-#: globalPlugins/YoutubePlus/core.py:1435
+#: globalPlugins/YoutubePlus/core.py:1598
 msgid "Adding playlist to favorites..."
 msgstr "Добавление плейлиста в избранное..."
 
-#: globalPlugins/YoutubePlus/core.py:1453
+#: globalPlugins/YoutubePlus/core.py:1616
 msgid "This playlist is already in your favorites."
 msgstr "Этот плейлист уже находится в избранном."
 
-#: globalPlugins/YoutubePlus/core.py:1457
+#: globalPlugins/YoutubePlus/core.py:1620
 msgid "Unknown Playlist"
 msgstr "Неизвестный плейлист"
 
-#: globalPlugins/YoutubePlus/core.py:1471
+#: globalPlugins/YoutubePlus/core.py:1634
 #, python-brace-format
 msgid "Added '{playlist}' to favorites."
 msgstr "Плейлист «{playlist}» добавлен в избранное."
 
-#: globalPlugins/YoutubePlus/core.py:1474
+#: globalPlugins/YoutubePlus/core.py:1637
 msgid "Failed to add favorite playlist."
 msgstr "Не удалось добавить плейлист в избранное."
 
-#: globalPlugins/YoutubePlus/core.py:1541
+#: globalPlugins/YoutubePlus/core.py:1704
 msgid ""
 "Could not open Be My Eyes. It may not be installed.\n"
 "\n"
@@ -335,119 +366,149 @@ msgstr ""
 "\n"
 "Открыть Microsoft Store для его установки?"
 
-#: globalPlugins/YoutubePlus/core.py:1543
+#: globalPlugins/YoutubePlus/core.py:1706
 msgid "Be My Eyes Not Found"
 msgstr "Be My Eyes не найдено"
 
-#: globalPlugins/YoutubePlus/core.py:1548
+#: globalPlugins/YoutubePlus/core.py:1711
 msgid "Could not open the Microsoft Store page."
 msgstr "Не удалось открыть страницу Microsoft Store."
 
-#: globalPlugins/YoutubePlus/core.py:1562
+#: globalPlugins/YoutubePlus/core.py:1725
 msgid "No URL to describe."
 msgstr "Нет URL-адреса для описания."
 
-#: globalPlugins/YoutubePlus/core.py:1569
+#: globalPlugins/YoutubePlus/core.py:1732
 msgid "Downloading thumbnail..."
 msgstr "Загрузка миниатюры..."
 
-#: globalPlugins/YoutubePlus/core.py:1570
+#: globalPlugins/YoutubePlus/core.py:1733
 msgid "Downloading channel avatar..."
 msgstr "Загрузка аватара канала..."
 
-#: globalPlugins/YoutubePlus/core.py:1571
+#: globalPlugins/YoutubePlus/core.py:1734
 msgid "Downloading playlist cover..."
 msgstr "Загрузка обложки плейлиста..."
 
-#: globalPlugins/YoutubePlus/core.py:1594
+#: globalPlugins/YoutubePlus/core.py:1757
 msgid "No thumbnail available for this video."
 msgstr "Для этого видео нет миниатюры."
 
-#: globalPlugins/YoutubePlus/core.py:1595
+#: globalPlugins/YoutubePlus/core.py:1758
 msgid "No avatar available for this channel."
 msgstr "Для этого канала нет аватара."
 
-#: globalPlugins/YoutubePlus/core.py:1596
+#: globalPlugins/YoutubePlus/core.py:1759
 msgid "No cover available for this playlist."
 msgstr "Для этого плейлиста нет обложки."
 
-#: globalPlugins/YoutubePlus/core.py:1603
+#: globalPlugins/YoutubePlus/core.py:1766
 msgid "Thumbnail sending to Be My Eyes..."
 msgstr "Отправка миниатюры в Be My Eyes..."
 
-#: globalPlugins/YoutubePlus/core.py:1608
+#: globalPlugins/YoutubePlus/core.py:1771
 msgid "Could not get information. Details: {}"
 msgstr "Не удалось получить информацию. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:1612
+#: globalPlugins/YoutubePlus/core.py:1775
 msgid "Could not download the image."
 msgstr "Не удалось загрузить изображение."
 
-#: globalPlugins/YoutubePlus/core.py:1634
+#: globalPlugins/YoutubePlus/core.py:1797
 #, python-brace-format
 msgid "'{title}' is already in Watch List."
 msgstr "Видео «{title}» уже находится в списке просмотра."
 
-#: globalPlugins/YoutubePlus/core.py:1648
+#: globalPlugins/YoutubePlus/core.py:1811
 #, python-brace-format
 msgid "Added '{title}' to Watch List."
 msgstr "Видео «{title}» добавлено в список просмотра."
 
-#: globalPlugins/YoutubePlus/core.py:1656
+#: globalPlugins/YoutubePlus/core.py:1819
 msgid "Error: Could not add video to Watch List. Details: {}"
-msgstr "Ошибка: Не удалось добавить видео в список просмотра. Подробности: {}"
+msgstr "Ошибка: не удалось добавить видео в список просмотра. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:1705
-#: globalPlugins/YoutubePlus/core.py:1715
-#: globalPlugins/YoutubePlus/core.py:2364
-#: globalPlugins/YoutubePlus/dialogs.py:1714
+#: globalPlugins/YoutubePlus/core.py:1840
+#, python-brace-format
+msgid "Searching '{query}' in {channel}..."
+msgstr "Поиск «{query}» в канале {channel}..."
+
+#: globalPlugins/YoutubePlus/core.py:1844
+#, python-brace-format
+msgid "Results for '{query}' in {channel}"
+msgstr "Результаты по запросу «{query}» в канале {channel}"
+
+#: globalPlugins/YoutubePlus/core.py:1880
+#, python-brace-format
+msgid "Could not find a channel named '{name}'."
+msgstr "Не удалось найти канал с названием «{name}»."
+
+#: globalPlugins/YoutubePlus/core.py:1886
+msgid "Failed to look up that channel."
+msgstr "Не удалось найти этот канал."
+
+#: globalPlugins/YoutubePlus/core.py:1896
+msgid "Select the channel to search in:"
+msgstr "Выберите канал для поиска:"
+
+#: globalPlugins/YoutubePlus/core.py:1898
+msgid "Choose Channel"
+msgstr "Выбор канала"
+
+#: globalPlugins/YoutubePlus/core.py:1962
+#: globalPlugins/YoutubePlus/core.py:1972
+#: globalPlugins/YoutubePlus/core.py:2658
+#: globalPlugins/YoutubePlus/core.py:2681
+#: globalPlugins/YoutubePlus/core.py:2692
+#: globalPlugins/YoutubePlus/dialogs.py:1857
 msgid "[Unavailable video]"
 msgstr "[Видео недоступно]"
 
-#: globalPlugins/YoutubePlus/core.py:1726
+#: globalPlugins/YoutubePlus/core.py:1983
 msgid "No videos found."
 msgstr "Видео не найдены."
 
-#: globalPlugins/YoutubePlus/core.py:1738
+#: globalPlugins/YoutubePlus/core.py:1995
 #, python-brace-format
 msgid "{count} videos in {playlist}"
 msgstr "{count} видео в плейлисте {playlist}"
 
-#: globalPlugins/YoutubePlus/core.py:1738
+#: globalPlugins/YoutubePlus/core.py:1995
+#: globalPlugins/YoutubePlus/core.py:2683
 msgid "Playlist"
 msgstr "Плейлист"
 
-#: globalPlugins/YoutubePlus/core.py:1743
+#: globalPlugins/YoutubePlus/core.py:2002
 #, python-brace-format
 msgid "All {count} {type} from {channel}"
 msgstr "Все {count} {type} с канала {channel}"
 
-#: globalPlugins/YoutubePlus/core.py:1743
-#: globalPlugins/YoutubePlus/core.py:1745
-#: globalPlugins/YoutubePlus/core.py:2372
-#: globalPlugins/YoutubePlus/dialogs.py:1297
-#: globalPlugins/YoutubePlus/dialogs.py:1367
-#: globalPlugins/YoutubePlus/dialogs.py:2294
-#: globalPlugins/YoutubePlus/dialogs.py:2636
-#: globalPlugins/YoutubePlus/dialogs.py:2795
-#: globalPlugins/YoutubePlus/dialogs.py:3087
+#: globalPlugins/YoutubePlus/core.py:2002
+#: globalPlugins/YoutubePlus/core.py:2004
+#: globalPlugins/YoutubePlus/core.py:2660
+#: globalPlugins/YoutubePlus/dialogs.py:1440
+#: globalPlugins/YoutubePlus/dialogs.py:1510
+#: globalPlugins/YoutubePlus/dialogs.py:2437
+#: globalPlugins/YoutubePlus/dialogs.py:2799
+#: globalPlugins/YoutubePlus/dialogs.py:2958
+#: globalPlugins/YoutubePlus/dialogs.py:3250
 msgid "Channel"
 msgstr "Канал"
 
-#: globalPlugins/YoutubePlus/core.py:1745
+#: globalPlugins/YoutubePlus/core.py:2004
 #, python-brace-format
 msgid "Recent {count} {type} from {channel}"
 msgstr "Последние {count} {type} с канала {channel}"
 
-#: globalPlugins/YoutubePlus/core.py:1776
+#: globalPlugins/YoutubePlus/core.py:2035
 msgid "Failed to fetch video list."
 msgstr "Не удалось получить список видео."
 
-#: globalPlugins/YoutubePlus/core.py:1784
+#: globalPlugins/YoutubePlus/core.py:2043
 msgid "Subscribing to channel..."
 msgstr "Подписка на канал..."
 
-#: globalPlugins/YoutubePlus/core.py:1813
+#: globalPlugins/YoutubePlus/core.py:2072
 #, python-brace-format
 msgid ""
 "You are already subscribed to '{channel}'.\n"
@@ -456,109 +517,109 @@ msgstr ""
 "Вы уже подписаны на канал «{channel}».\n"
 "Хотите вместо этого отписаться?"
 
-#: globalPlugins/YoutubePlus/core.py:1815
+#: globalPlugins/YoutubePlus/core.py:2074
 msgid "Already Subscribed"
 msgstr "Уже подписаны"
 
-#: globalPlugins/YoutubePlus/core.py:1836
+#: globalPlugins/YoutubePlus/core.py:2095
 msgid "Unknown Channel"
 msgstr "Неизвестный канал"
 
-#: globalPlugins/YoutubePlus/core.py:1851
+#: globalPlugins/YoutubePlus/core.py:2110
 #, python-brace-format
 msgid "Subscribed to {channel}."
 msgstr "Подписка на канал {channel} оформлена."
 
-#: globalPlugins/YoutubePlus/core.py:1854
+#: globalPlugins/YoutubePlus/core.py:2113
 msgid "Failed to subscribe."
 msgstr "Не удалось подписаться."
 
-#: globalPlugins/YoutubePlus/core.py:1874
+#: globalPlugins/YoutubePlus/core.py:2133
 #, python-brace-format
 msgid "Successfully unsubscribed from {channel}"
 msgstr "Вы успешно отписались от канала {channel}"
 
-#: globalPlugins/YoutubePlus/core.py:1877
+#: globalPlugins/YoutubePlus/core.py:2136
 msgid "Failed to unsubscribe - channel not found in database"
 msgstr "Не удалось отписаться — канал не найден в базе данных"
 
-#: globalPlugins/YoutubePlus/core.py:1881
+#: globalPlugins/YoutubePlus/core.py:2140
 msgid "Critical error during unsubscribe."
 msgstr "Критическая ошибка при отписке."
 
-#: globalPlugins/YoutubePlus/core.py:1903
-#: globalPlugins/YoutubePlus/core.py:1906
+#: globalPlugins/YoutubePlus/core.py:2162
+#: globalPlugins/YoutubePlus/core.py:2165
 msgid "No channels to update."
 msgstr "Нет каналов для обновления."
 
-#: globalPlugins/YoutubePlus/core.py:1923
+#: globalPlugins/YoutubePlus/core.py:2182
 #, python-brace-format
 msgid "Checking {channel} ({type})..."
 msgstr "Проверка канала {channel} ({type})..."
 
-#: globalPlugins/YoutubePlus/core.py:1952
-#: globalPlugins/YoutubePlus/core.py:1955
-#: globalPlugins/YoutubePlus/dialogs.py:4954
+#: globalPlugins/YoutubePlus/core.py:2211
+#: globalPlugins/YoutubePlus/core.py:2214
+#: globalPlugins/YoutubePlus/dialogs.py:5311
 msgid "Update cancelled."
 msgstr "Обновление отменено."
 
-#: globalPlugins/YoutubePlus/core.py:1958
+#: globalPlugins/YoutubePlus/core.py:2217
 #, python-brace-format
 msgid "Update complete. Found {count} new videos."
 msgstr "Обновление завершено. Найдено {count} новых видео."
 
-#: globalPlugins/YoutubePlus/core.py:1965
+#: globalPlugins/YoutubePlus/core.py:2224
 #, python-brace-format
 msgid "Found and added {count} new videos."
 msgstr "Найдено и добавлено {count} новых видео."
 
-#: globalPlugins/YoutubePlus/core.py:1968
+#: globalPlugins/YoutubePlus/core.py:2227
 msgid "No new videos found."
 msgstr "Новых видео не найдено."
 
-#: globalPlugins/YoutubePlus/core.py:1974
+#: globalPlugins/YoutubePlus/core.py:2233
 msgid "Error updating feed."
 msgstr "Ошибка при обновлении ленты."
 
-#: globalPlugins/YoutubePlus/core.py:1992
-#: globalPlugins/YoutubePlus/core.py:2011
-#: globalPlugins/YoutubePlus/core.py:2837
+#: globalPlugins/YoutubePlus/core.py:2251
+#: globalPlugins/YoutubePlus/core.py:2270
+#: globalPlugins/YoutubePlus/core.py:3218
 msgid "Unknown Video"
 msgstr "Неизвестное видео"
 
-#: globalPlugins/YoutubePlus/core.py:1998
+#: globalPlugins/YoutubePlus/core.py:2257
 msgid "Failed to get video info for download. Details: {}"
 msgstr "Не удалось получить информацию о видео для загрузки. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:2005
-#: globalPlugins/YoutubePlus/core.py:2603
+#: globalPlugins/YoutubePlus/core.py:2264
+#: globalPlugins/YoutubePlus/core.py:2983
 msgid "Getting video info for download..."
 msgstr "Получение информации о видео для загрузки..."
 
-#: globalPlugins/YoutubePlus/core.py:2021
+#: globalPlugins/YoutubePlus/core.py:2280
 #, python-brace-format
 msgid "Failed to start download: {error}"
 msgstr "Не удалось начать загрузку: {error}"
 
-#: globalPlugins/YoutubePlus/core.py:2029
+#: globalPlugins/YoutubePlus/core.py:2288
 msgid "What would you like to download?"
 msgstr "Что вы хотите загрузить?"
 
-#: globalPlugins/YoutubePlus/core.py:2031
+#: globalPlugins/YoutubePlus/core.py:2290
 #, python-brace-format
 msgid "Download: {title} ({duration})"
 msgstr "Загрузка: {title} ({duration})"
 
-#: globalPlugins/YoutubePlus/core.py:2035
+#: globalPlugins/YoutubePlus/core.py:2294
 msgid "Download &Video"
 msgstr "Загрузить &видео"
 
-#: globalPlugins/YoutubePlus/core.py:2035
-#: globalPlugins/YoutubePlus/dialogs.py:928
+#: globalPlugins/YoutubePlus/core.py:2294
+#: globalPlugins/YoutubePlus/dialogs.py:976
 msgid "Download &Audio"
 msgstr "Загрузить &аудио"
 
-#: globalPlugins/YoutubePlus/core.py:2170
+#: globalPlugins/YoutubePlus/core.py:2429
 msgid ""
 "FFmpeg was not found on this system, which is required to download videos. "
 "Would you like YoutubePlus to install it automatically via winget?"
@@ -566,11 +627,11 @@ msgstr ""
 "FFmpeg не найден в этой системе, а он необходим для загрузки видео. Хотите, "
 "чтобы YoutubePlus установил его автоматически через winget?"
 
-#: globalPlugins/YoutubePlus/core.py:2172
+#: globalPlugins/YoutubePlus/core.py:2431
 msgid "FFmpeg Required"
 msgstr "Требуется FFmpeg"
 
-#: globalPlugins/YoutubePlus/core.py:2195
+#: globalPlugins/YoutubePlus/core.py:2454
 msgid ""
 "Could not find FFmpeg or winget on this system. Video downloads require "
 "FFmpeg. Please install FFmpeg manually or update the Windows App Installer."
@@ -579,42 +640,42 @@ msgstr ""
 "требуется FFmpeg. Установите FFmpeg вручную или обновите средство установки "
 "приложений Windows."
 
-#: globalPlugins/YoutubePlus/core.py:2204
-#: globalPlugins/YoutubePlus/core.py:2304
+#: globalPlugins/YoutubePlus/core.py:2463
+#: globalPlugins/YoutubePlus/core.py:2563
 msgid "Download cancelled."
 msgstr "Загрузка отменена."
 
-#: globalPlugins/YoutubePlus/core.py:2207
+#: globalPlugins/YoutubePlus/core.py:2466
 msgid "Installing FFmpeg via winget..."
 msgstr "Установка FFmpeg через winget..."
 
-#: globalPlugins/YoutubePlus/core.py:2210
+#: globalPlugins/YoutubePlus/core.py:2469
 msgid "FFmpeg (via winget)"
 msgstr "FFmpeg (через winget)"
 
-#: globalPlugins/YoutubePlus/core.py:2233
+#: globalPlugins/YoutubePlus/core.py:2492
 msgid "Failed to install FFmpeg."
 msgstr "Не удалось установить FFmpeg."
 
-#: globalPlugins/YoutubePlus/core.py:2239
+#: globalPlugins/YoutubePlus/core.py:2498
 msgid "FFmpeg installed successfully."
 msgstr "FFmpeg успешно установлен."
 
-#: globalPlugins/YoutubePlus/core.py:2244
+#: globalPlugins/YoutubePlus/core.py:2503
 msgid "FFmpeg installation did not complete successfully."
 msgstr "Установка FFmpeg не была завершена успешно."
 
-#: globalPlugins/YoutubePlus/core.py:2260
+#: globalPlugins/YoutubePlus/core.py:2519
 #, python-brace-format
 msgid "Starting download of {title}..."
 msgstr "Начало загрузки видео «{title}»..."
 
-#: globalPlugins/YoutubePlus/core.py:2299
+#: globalPlugins/YoutubePlus/core.py:2558
 #, python-brace-format
 msgid "Download complete: {title}"
 msgstr "Загрузка видео «{title}» завершена"
 
-#: globalPlugins/YoutubePlus/core.py:2309
+#: globalPlugins/YoutubePlus/core.py:2568
 msgid ""
 "Audio-only format not found. Attempting to download a video file with audio "
 "instead..."
@@ -622,71 +683,103 @@ msgstr ""
 "Формат только с аудио не найден. Выполняется попытка загрузить видеофайл со "
 "звуком..."
 
-#: globalPlugins/YoutubePlus/core.py:2317
+#: globalPlugins/YoutubePlus/core.py:2576
 #, python-brace-format
 msgid "Download complete (as MP4 video file): {title}"
 msgstr "Загрузка завершена (как видеофайл MP4): {title}"
 
-#: globalPlugins/YoutubePlus/core.py:2323
-#: globalPlugins/YoutubePlus/core.py:2327
+#: globalPlugins/YoutubePlus/core.py:2582
+#: globalPlugins/YoutubePlus/core.py:2586
 msgid "Download failed."
-msgstr "Загрузка не удалась."
+msgstr "Ошибка скачивания."
 
-#: globalPlugins/YoutubePlus/core.py:2349
+#: globalPlugins/YoutubePlus/core.py:2622
 #, python-brace-format
 msgid "Searching for '{query}'..."
 msgstr "Поиск по запросу «{query}»..."
 
-#: globalPlugins/YoutubePlus/core.py:2375
-#, python-brace-format
-msgid "Playlist ({count})"
-msgstr "Плейлист ({count})"
-
-#: globalPlugins/YoutubePlus/core.py:2379
+#: globalPlugins/YoutubePlus/core.py:2700
 #, python-brace-format
 msgid "No results found for '{query}'."
 msgstr "По запросу «{query}» ничего не найдено."
 
-#: globalPlugins/YoutubePlus/core.py:2383
+#: globalPlugins/YoutubePlus/core.py:2704
 #, python-brace-format
 msgid "Search Results for '{query}'"
 msgstr "Результаты поиска по запросу «{query}»"
 
-#: globalPlugins/YoutubePlus/core.py:2388
+#: globalPlugins/YoutubePlus/core.py:2709
 msgid "Failed to perform search."
 msgstr "Не удалось выполнить поиск."
 
-#: globalPlugins/YoutubePlus/core.py:2398
+#: globalPlugins/YoutubePlus/core.py:2719
 #, python-brace-format
 msgid "Live chat of {title}"
 msgstr "Живой чат видео «{title}»"
 
-#: globalPlugins/YoutubePlus/core.py:2398
+#: globalPlugins/YoutubePlus/core.py:2719
 msgid "Live chat (stopped)"
 msgstr "Живой чат (остановлен)"
 
-#: globalPlugins/YoutubePlus/core.py:2431
+#: globalPlugins/YoutubePlus/core.py:2738
+#, python-brace-format
+msgid ""
+"You are already receiving the live chat of '{current}'.\n"
+"\n"
+"Stop it and receive the live chat of '{new}' instead? You will be asked "
+"whether to save the messages collected so far."
+msgstr ""
+"Вы уже принимаете живой чат видео «{current}».\n"
+"\n"
+"Остановить его и вместо этого принимать живой чат видео «{new}»? Вас "
+"спросят, сохранять ли собранные на данный момент сообщения."
+
+#: globalPlugins/YoutubePlus/core.py:2740
+msgid "Switch Live Chat?"
+msgstr "Переключить живой чат?"
+
+#: globalPlugins/YoutubePlus/core.py:2755
+#, python-brace-format
+msgid "Connecting to live chat of {title}..."
+msgstr "Подключение к живому чату видео «{title}»..."
+
+#: globalPlugins/YoutubePlus/core.py:2785
 msgid "Chat monitoring is not active."
 msgstr "Мониторинг чата не активен."
 
-#: globalPlugins/YoutubePlus/core.py:2441
+#: globalPlugins/YoutubePlus/core.py:2795
 msgid "Chat monitoring stopped."
 msgstr "Мониторинг чата остановлен."
 
-#: globalPlugins/YoutubePlus/core.py:2453
+#: globalPlugins/YoutubePlus/core.py:2809
 #, python-brace-format
 msgid "Live chat of {title} (stopped)"
 msgstr "Живой чат видео «{title}» (остановлен)"
 
-#: globalPlugins/YoutubePlus/core.py:2473
+#: globalPlugins/YoutubePlus/core.py:2829
 msgid "You haven't subscribed to any channels yet."
 msgstr "Вы ещё не подписались ни на один канал."
 
-#: globalPlugins/YoutubePlus/core.py:2483
+#: globalPlugins/YoutubePlus/core.py:2839
 msgid "Error loading subscription feed from database."
 msgstr "Ошибка загрузки ленты подписок из базы данных."
 
-#: globalPlugins/YoutubePlus/core.py:2511
+#: globalPlugins/YoutubePlus/core.py:2860
+#: globalPlugins/YoutubePlus/dialogs.py:1271
+#: globalPlugins/YoutubePlus/dialogs.py:2714
+#: globalPlugins/YoutubePlus/dialogs.py:3413
+#: globalPlugins/YoutubePlus/dialogs.py:3951
+#: globalPlugins/YoutubePlus/dialogs.py:4747
+msgid "Playlists"
+msgstr "Плейлисты"
+
+#: globalPlugins/YoutubePlus/core.py:2864
+#: globalPlugins/YoutubePlus/dialogs.py:4148
+#: globalPlugins/YoutubePlus/dialogs.py:5047
+msgid "Type"
+msgstr "Тип"
+
+#: globalPlugins/YoutubePlus/core.py:2891
 msgid ""
 "This will permanently delete ALL videos from your subscription feed, leaving "
 "only the list of subscribed channels. This action cannot be undone.\n"
@@ -698,121 +791,122 @@ msgstr ""
 "\n"
 "Вы уверены, что хотите продолжить?"
 
-#: globalPlugins/YoutubePlus/core.py:2515
+#: globalPlugins/YoutubePlus/core.py:2895
 msgid "Confirm Clearing All Videos"
 msgstr "Подтверждение удаления всех видео"
 
-#: globalPlugins/YoutubePlus/core.py:2519
+#: globalPlugins/YoutubePlus/core.py:2899
 msgid "Clearing all feed videos..."
 msgstr "Очистка всех видео ленты..."
 
-#: globalPlugins/YoutubePlus/core.py:2535
+#: globalPlugins/YoutubePlus/core.py:2915
 #, python-brace-format
 msgid "Clearing complete. All {count} videos were deleted."
 msgstr "Очистка завершена. Все {count} видео были удалены."
 
-#: globalPlugins/YoutubePlus/core.py:2540
+#: globalPlugins/YoutubePlus/core.py:2920
 msgid "An error occurred while clearing all videos."
 msgstr "При очистке всех видео произошла ошибка."
 
-#: globalPlugins/YoutubePlus/core.py:2542
+#: globalPlugins/YoutubePlus/core.py:2922
 msgid "an YoutubePlus layer commands."
 msgstr "команды слоя YoutubePlus."
 
-#: globalPlugins/YoutubePlus/core.py:2557
-#: globalPlugins/YoutubePlus/core.py:2566
-#: globalPlugins/YoutubePlus/core.py:2577
-#: globalPlugins/YoutubePlus/core.py:2591
-#: globalPlugins/YoutubePlus/core.py:2600
-#: globalPlugins/YoutubePlus/core.py:2611
+#: globalPlugins/YoutubePlus/core.py:2937
+#: globalPlugins/YoutubePlus/core.py:2946
+#: globalPlugins/YoutubePlus/core.py:2957
+#: globalPlugins/YoutubePlus/core.py:2971
+#: globalPlugins/YoutubePlus/core.py:2980
+#: globalPlugins/YoutubePlus/core.py:2991
 msgid "YouTube URL not found in current window or clipboard."
 msgstr "В текущем окне или буфере обмена не найден URL-адрес YouTube."
 
-#: globalPlugins/YoutubePlus/core.py:2569
+#: globalPlugins/YoutubePlus/core.py:2949
 msgid "Getting video info..."
 msgstr "Получение информации о видео..."
 
-#: globalPlugins/YoutubePlus/core.py:2580
-#: globalPlugins/YoutubePlus/dialogs.py:985
+#: globalPlugins/YoutubePlus/core.py:2960
+#: globalPlugins/YoutubePlus/dialogs.py:1079
 msgid "Getting chapters..."
 msgstr "Получение разделов видео..."
 
-#: globalPlugins/YoutubePlus/core.py:2585
+#: globalPlugins/YoutubePlus/core.py:2965
 msgid "Download subtitles from current page or clipboard URL."
-msgstr "Загрузить субтитры с текущей страницы или URL-адреса из буфера обмена."
+msgstr ""
+"Загрузить субтитры с текущей страницы или по URL-адресу из буфера обмена."
 
-#: globalPlugins/YoutubePlus/core.py:2630
+#: globalPlugins/YoutubePlus/core.py:3010
 msgid "No stream is currently being monitored."
 msgstr "В данный момент ни одна трансляция не отслеживается."
 
-#: globalPlugins/YoutubePlus/core.py:2640
+#: globalPlugins/YoutubePlus/core.py:3021
 msgid "Automatic message speaking enabled."
 msgstr "Автоматическое озвучивание сообщений включено."
 
-#: globalPlugins/YoutubePlus/core.py:2640
+#: globalPlugins/YoutubePlus/core.py:3021
 msgid "Automatic message speaking disabled."
 msgstr "Автоматическое озвучивание сообщений отключено."
 
-#: globalPlugins/YoutubePlus/core.py:2642
+#: globalPlugins/YoutubePlus/core.py:3023
 msgid "Show favorite videos dialog."
 msgstr "Показать диалог избранных видео."
 
-#: globalPlugins/YoutubePlus/core.py:2649
+#: globalPlugins/YoutubePlus/core.py:3030
 msgid "Show favorite channels dialog."
 msgstr "Показать диалог избранных каналов."
 
-#: globalPlugins/YoutubePlus/core.py:2656
+#: globalPlugins/YoutubePlus/core.py:3037
 msgid "Show favorite playlists dialog."
 msgstr "Показать диалог избранных плейлистов."
 
-#: globalPlugins/YoutubePlus/core.py:2663
+#: globalPlugins/YoutubePlus/core.py:3044
 msgid "Show watch list dialog."
 msgstr "Показать диалог списка просмотра."
 
-#: globalPlugins/YoutubePlus/core.py:2670
+#: globalPlugins/YoutubePlus/core.py:3051
 msgid "Show a menu to add the current page URL to favorites or subscriptions."
 msgstr ""
 "Показать меню для добавления URL-адреса текущей страницы в избранное или "
 "подписки."
 
-#: globalPlugins/YoutubePlus/core.py:2675
+#: globalPlugins/YoutubePlus/core.py:3056
 msgid "No specific YouTube URL found in the current window or clipboard."
 msgstr "В текущем окне или буфере обмена не найден URL-адрес YouTube."
 
-#: globalPlugins/YoutubePlus/core.py:2684
+#: globalPlugins/YoutubePlus/core.py:3065
 msgid "Add to Favorite &Videos"
 msgstr "Добавить в избранные &видео"
 
-#: globalPlugins/YoutubePlus/core.py:2686
+#: globalPlugins/YoutubePlus/core.py:3067
 msgid "Add to Favorite &Channels"
 msgstr "Добавить в избранные &каналы"
 
-#: globalPlugins/YoutubePlus/core.py:2688
+#: globalPlugins/YoutubePlus/core.py:3069
 msgid "Add to Favorite &Playlists"
 msgstr "Добавить в избранные &плейлисты"
 
-#: globalPlugins/YoutubePlus/core.py:2690
+#: globalPlugins/YoutubePlus/core.py:3071
 msgid "&Subscribe to Channel"
 msgstr "&Подписаться на канал"
 
-#: globalPlugins/YoutubePlus/core.py:2692
-#: globalPlugins/YoutubePlus/dialogs.py:933
+#: globalPlugins/YoutubePlus/core.py:3073
+#: globalPlugins/YoutubePlus/dialogs.py:981
 msgid "Add to &Watch List"
 msgstr "Добавить в &список просмотра"
 
-#: globalPlugins/YoutubePlus/core.py:2730
+#: globalPlugins/YoutubePlus/core.py:3111
 msgid "Show subscription feed dialog."
 msgstr "Показать диалог ленты подписок."
 
-#: globalPlugins/YoutubePlus/core.py:2734
+#: globalPlugins/YoutubePlus/core.py:3115
 msgid "Search YouTube for videos, channels, or playlists."
 msgstr "Поиск видео, каналов или плейлистов на YouTube."
 
-#: globalPlugins/YoutubePlus/core.py:2741
+#: globalPlugins/YoutubePlus/core.py:3122
 msgid "Open favorites dialog on Search History tab."
 msgstr "Открыть диалог избранного на вкладке «История поиска»."
 
-#: globalPlugins/YoutubePlus/core.py:2759
+#: globalPlugins/YoutubePlus/core.py:3140
 msgid ""
 "Search YouTube using selected text or clipboard content and show results "
 "directly."
@@ -820,76 +914,76 @@ msgstr ""
 "Выполнить поиск на YouTube, используя выделенный текст или содержимое буфера "
 "обмена, и сразу показать результаты."
 
-#: globalPlugins/YoutubePlus/core.py:2778
+#: globalPlugins/YoutubePlus/core.py:3159
 msgid "No text selected and clipboard is empty."
 msgstr "Текст не выделен, и буфер обмена пуст."
 
-#: globalPlugins/YoutubePlus/core.py:2785
+#: globalPlugins/YoutubePlus/core.py:3166
 msgid "Show manage subscriptions dialog."
 msgstr "Показать диалог управления подписками."
 
-#: globalPlugins/YoutubePlus/core.py:2816
+#: globalPlugins/YoutubePlus/core.py:3197
 msgid "Show user profile manager dialog."
 msgstr "Показать диалог управления профилями пользователя."
 
-#: globalPlugins/YoutubePlus/core.py:2823
+#: globalPlugins/YoutubePlus/core.py:3204
 msgid "Opens YoutubePlus settings dialog."
 msgstr "Открывает диалог настроек YoutubePlus."
 
-#: globalPlugins/YoutubePlus/core.py:2873
+#: globalPlugins/YoutubePlus/core.py:3254
 msgid "No subtitles available for this video."
 msgstr "Для этого видео нет субтитров."
 
-#: globalPlugins/YoutubePlus/core.py:2880
+#: globalPlugins/YoutubePlus/core.py:3261
 msgid "Failed to get subtitle info. Details: {}"
 msgstr "Не удалось получить информацию о субтитрах. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/core.py:2893
+#: globalPlugins/YoutubePlus/core.py:3274
 msgid "Select subtitle language:"
 msgstr "Выберите язык субтитров:"
 
-#: globalPlugins/YoutubePlus/core.py:2895
+#: globalPlugins/YoutubePlus/core.py:3276
 #, python-brace-format
 msgid "Download subtitles: {title}"
 msgstr "Загрузка субтитров: {title}"
 
-#: globalPlugins/YoutubePlus/core.py:2915
+#: globalPlugins/YoutubePlus/core.py:3296
 #, python-brace-format
 msgid "Downloading subtitles for {title}..."
 msgstr "Загрузка субтитров для видео {title}..."
 
-#: globalPlugins/YoutubePlus/core.py:2945
+#: globalPlugins/YoutubePlus/core.py:3326
 #, python-brace-format
 msgid "Subtitles downloaded: {title}"
 msgstr "Субтитры загружены: {title}"
 
-#: globalPlugins/YoutubePlus/core.py:2948
+#: globalPlugins/YoutubePlus/core.py:3329
 msgid "Subtitle download failed. Details: {}"
 msgstr "Не удалось загрузить субтитры. Подробности: {}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:86
-#: globalPlugins/YoutubePlus/dialogs.py:847
+#: globalPlugins/YoutubePlus/dialogs.py:91
+#: globalPlugins/YoutubePlus/dialogs.py:852
 msgid "Press Escape again to close."
 msgstr "Нажмите Escape ещё раз, чтобы закрыть."
 
-#: globalPlugins/YoutubePlus/dialogs.py:104
-#: globalPlugins/YoutubePlus/dialogs.py:259
-#: globalPlugins/YoutubePlus/dialogs.py:440
-#: globalPlugins/YoutubePlus/dialogs.py:686
-#: globalPlugins/YoutubePlus/dialogs.py:3292
-#: globalPlugins/YoutubePlus/dialogs.py:3808
-#: globalPlugins/YoutubePlus/dialogs.py:3949
-#: globalPlugins/YoutubePlus/dialogs.py:4167
-#: globalPlugins/YoutubePlus/dialogs.py:4479
-#: globalPlugins/YoutubePlus/dialogs.py:5178
+#: globalPlugins/YoutubePlus/dialogs.py:109
+#: globalPlugins/YoutubePlus/dialogs.py:264
+#: globalPlugins/YoutubePlus/dialogs.py:445
+#: globalPlugins/YoutubePlus/dialogs.py:691
+#: globalPlugins/YoutubePlus/dialogs.py:3455
+#: globalPlugins/YoutubePlus/dialogs.py:4160
+#: globalPlugins/YoutubePlus/dialogs.py:4303
+#: globalPlugins/YoutubePlus/dialogs.py:4521
+#: globalPlugins/YoutubePlus/dialogs.py:4836
+#: globalPlugins/YoutubePlus/dialogs.py:5535
 msgid "C&lose"
 msgstr "&Закрыть"
 
-#: globalPlugins/YoutubePlus/dialogs.py:124
+#: globalPlugins/YoutubePlus/dialogs.py:129
 msgid "YouTubePlus Help & Shortcuts"
 msgstr "Справка и сочетания клавиш YouTubePlus"
 
-#: globalPlugins/YoutubePlus/dialogs.py:132
+#: globalPlugins/YoutubePlus/dialogs.py:137
 msgid ""
 "YouTubePlus Layer Commands (Press NVDA+Y to activate)\n"
 "\n"
@@ -1023,432 +1117,476 @@ msgstr ""
 "--- Справка ---\n"
 "- H: Показать это окно справки\n"
 
-#: globalPlugins/YoutubePlus/dialogs.py:202
-#: globalPlugins/YoutubePlus/dialogs.py:213
+#: globalPlugins/YoutubePlus/dialogs.py:207
+#: globalPlugins/YoutubePlus/dialogs.py:218
 msgid "Author"
 msgstr "Автор"
 
-#: globalPlugins/YoutubePlus/dialogs.py:204
-#: globalPlugins/YoutubePlus/dialogs.py:215
+#: globalPlugins/YoutubePlus/dialogs.py:209
+#: globalPlugins/YoutubePlus/dialogs.py:220
 msgid "Message"
 msgstr "Сообщение"
 
-#: globalPlugins/YoutubePlus/dialogs.py:206
-#: globalPlugins/YoutubePlus/dialogs.py:217
-#: globalPlugins/YoutubePlus/dialogs.py:243
+#: globalPlugins/YoutubePlus/dialogs.py:211
+#: globalPlugins/YoutubePlus/dialogs.py:222
+#: globalPlugins/YoutubePlus/dialogs.py:248
 msgid "Time"
 msgstr "Время"
 
-#: globalPlugins/YoutubePlus/dialogs.py:233
-#: globalPlugins/YoutubePlus/dialogs.py:422
-#: globalPlugins/YoutubePlus/dialogs.py:651
-#: globalPlugins/YoutubePlus/dialogs.py:3272
+#: globalPlugins/YoutubePlus/dialogs.py:238
+#: globalPlugins/YoutubePlus/dialogs.py:427
+#: globalPlugins/YoutubePlus/dialogs.py:656
+#: globalPlugins/YoutubePlus/dialogs.py:3435
 msgid "&Search:"
 msgstr "&Поиск:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:241
-#: globalPlugins/YoutubePlus/dialogs.py:1296
-#: globalPlugins/YoutubePlus/dialogs.py:1365
-#: globalPlugins/YoutubePlus/dialogs.py:3085
-#: globalPlugins/YoutubePlus/dialogs.py:3798
+#: globalPlugins/YoutubePlus/dialogs.py:246
+#: globalPlugins/YoutubePlus/dialogs.py:1439
+#: globalPlugins/YoutubePlus/dialogs.py:1508
+#: globalPlugins/YoutubePlus/dialogs.py:3248
+#: globalPlugins/YoutubePlus/dialogs.py:4143
 msgid "Title"
-msgstr "Название"
+msgstr "Заголовок"
 
-#: globalPlugins/YoutubePlus/dialogs.py:251
+#: globalPlugins/YoutubePlus/dialogs.py:256
 msgid "&Open Chapter"
 msgstr "&Открыть раздел"
 
-#: globalPlugins/YoutubePlus/dialogs.py:253
+#: globalPlugins/YoutubePlus/dialogs.py:258
 msgid "&Copy Title"
 msgstr "&Копировать название"
 
-#: globalPlugins/YoutubePlus/dialogs.py:255
+#: globalPlugins/YoutubePlus/dialogs.py:260
 msgid "Copy &URL"
-msgstr "Копировать &URL-адрес"
+msgstr "Копировать &URL"
 
-#: globalPlugins/YoutubePlus/dialogs.py:257
-#: globalPlugins/YoutubePlus/dialogs.py:438
-#: globalPlugins/YoutubePlus/dialogs.py:678
+#: globalPlugins/YoutubePlus/dialogs.py:262
+#: globalPlugins/YoutubePlus/dialogs.py:443
+#: globalPlugins/YoutubePlus/dialogs.py:683
 msgid "&Export"
 msgstr "&Экспорт"
 
-#: globalPlugins/YoutubePlus/dialogs.py:340
-#: globalPlugins/YoutubePlus/dialogs.py:893
+#: globalPlugins/YoutubePlus/dialogs.py:345
+#: globalPlugins/YoutubePlus/dialogs.py:909
+#: globalPlugins/YoutubePlus/dialogs.py:933
 msgid "Opening in browser..."
 msgstr "Открытие в браузере..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:345
-#: globalPlugins/YoutubePlus/dialogs.py:899
+#: globalPlugins/YoutubePlus/dialogs.py:350
+#: globalPlugins/YoutubePlus/dialogs.py:914
+#: globalPlugins/YoutubePlus/dialogs.py:939
 #, python-brace-format
 msgid "Error opening browser: {error}"
 msgstr "Ошибка при открытии браузера: {error}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:355
+#: globalPlugins/YoutubePlus/dialogs.py:360
 #, python-brace-format
 msgid "Copied timestamp: {text}"
 msgstr "Скопирована временная метка: {text}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:364
+#: globalPlugins/YoutubePlus/dialogs.py:369
 #, python-brace-format
 msgid "Copied URL: {url}"
 msgstr "Скопирован URL-адрес: {url}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:382
-#: globalPlugins/YoutubePlus/dialogs.py:824
+#: globalPlugins/YoutubePlus/dialogs.py:387
+#: globalPlugins/YoutubePlus/dialogs.py:829
 msgid "Export complete"
 msgstr "Экспорт завершён"
 
-#: globalPlugins/YoutubePlus/dialogs.py:386
-#: globalPlugins/YoutubePlus/dialogs.py:585
-#: globalPlugins/YoutubePlus/dialogs.py:828
+#: globalPlugins/YoutubePlus/dialogs.py:391
+#: globalPlugins/YoutubePlus/dialogs.py:590
+#: globalPlugins/YoutubePlus/dialogs.py:833
 #, python-brace-format
 msgid "Error exporting file: {error}"
 msgstr "Ошибка при экспорте файла: {error}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:390
-#: globalPlugins/YoutubePlus/dialogs.py:589
-#: globalPlugins/YoutubePlus/dialogs.py:832
+#: globalPlugins/YoutubePlus/dialogs.py:395
+#: globalPlugins/YoutubePlus/dialogs.py:594
+#: globalPlugins/YoutubePlus/dialogs.py:837
 msgid "An unexpected error occurred during export."
 msgstr "Во время экспорта произошла непредвиденная ошибка."
 
-#: globalPlugins/YoutubePlus/dialogs.py:436
-#: globalPlugins/YoutubePlus/dialogs.py:676
+#: globalPlugins/YoutubePlus/dialogs.py:441
+#: globalPlugins/YoutubePlus/dialogs.py:681
 msgid "&Copy"
 msgstr "&Копировать"
 
-#: globalPlugins/YoutubePlus/dialogs.py:561
+#: globalPlugins/YoutubePlus/dialogs.py:566
 msgid "message copied"
 msgstr "сообщение скопировано"
 
-#: globalPlugins/YoutubePlus/dialogs.py:564
+#: globalPlugins/YoutubePlus/dialogs.py:569
 msgid "No message selected"
 msgstr "Не выбрано ни одного сообщения"
 
-#: globalPlugins/YoutubePlus/dialogs.py:581
+#: globalPlugins/YoutubePlus/dialogs.py:586
 msgid "Export message complete"
 msgstr "Экспорт сообщения завершён"
 
-#: globalPlugins/YoutubePlus/dialogs.py:658
-#: globalPlugins/YoutubePlus/dialogs.py:665
-#: globalPlugins/YoutubePlus/dialogs.py:739
+#: globalPlugins/YoutubePlus/dialogs.py:663
+#: globalPlugins/YoutubePlus/dialogs.py:670
+#: globalPlugins/YoutubePlus/dialogs.py:744
 msgid "No Filter"
 msgstr "Без фильтра"
 
-#: globalPlugins/YoutubePlus/dialogs.py:659
-#: globalPlugins/YoutubePlus/dialogs.py:732
+#: globalPlugins/YoutubePlus/dialogs.py:664
+#: globalPlugins/YoutubePlus/dialogs.py:737
 msgid "Filter by Selected Author"
 msgstr "Фильтр по выбранному автору"
 
-#: globalPlugins/YoutubePlus/dialogs.py:660
-#: globalPlugins/YoutubePlus/dialogs.py:741
+#: globalPlugins/YoutubePlus/dialogs.py:665
+#: globalPlugins/YoutubePlus/dialogs.py:746
 msgid "Show Super Chats Only"
 msgstr "Показывать только супер-чаты"
 
-#: globalPlugins/YoutubePlus/dialogs.py:661
-#: globalPlugins/YoutubePlus/dialogs.py:743
+#: globalPlugins/YoutubePlus/dialogs.py:666
+#: globalPlugins/YoutubePlus/dialogs.py:748
 msgid "Show Super Stickers Only"
 msgstr "Показывать только супер-стикеры"
 
-#: globalPlugins/YoutubePlus/dialogs.py:662
-#: globalPlugins/YoutubePlus/dialogs.py:745
+#: globalPlugins/YoutubePlus/dialogs.py:667
+#: globalPlugins/YoutubePlus/dialogs.py:750
 msgid "Show Super Thanks Only"
 msgstr "Показывать только супер-благодарности"
 
-#: globalPlugins/YoutubePlus/dialogs.py:722
+#: globalPlugins/YoutubePlus/dialogs.py:727
 msgid "Total Paid Amount:\n"
 msgstr "Общая сумма пожертвований:\n"
 
-#: globalPlugins/YoutubePlus/dialogs.py:802
-#: globalPlugins/YoutubePlus/dialogs.py:1134
-#: globalPlugins/YoutubePlus/dialogs.py:4055
+#: globalPlugins/YoutubePlus/dialogs.py:807
+#: globalPlugins/YoutubePlus/dialogs.py:1249
+#: globalPlugins/YoutubePlus/dialogs.py:4409
 msgid "Copied"
 msgstr "Скопировано"
 
-#: globalPlugins/YoutubePlus/dialogs.py:805
+#: globalPlugins/YoutubePlus/dialogs.py:810
 msgid "Nothing selected"
 msgstr "Ничего не выбрано"
 
-#: globalPlugins/YoutubePlus/dialogs.py:889
-#: globalPlugins/YoutubePlus/dialogs.py:966
-#: globalPlugins/YoutubePlus/dialogs.py:969
-#: globalPlugins/YoutubePlus/dialogs.py:980
-#: globalPlugins/YoutubePlus/dialogs.py:982
-#: globalPlugins/YoutubePlus/dialogs.py:993
-#: globalPlugins/YoutubePlus/dialogs.py:996
-#: globalPlugins/YoutubePlus/dialogs.py:1052
-#: globalPlugins/YoutubePlus/dialogs.py:1062
+#: globalPlugins/YoutubePlus/dialogs.py:900
+#: globalPlugins/YoutubePlus/dialogs.py:929
+#: globalPlugins/YoutubePlus/dialogs.py:1060
+#: globalPlugins/YoutubePlus/dialogs.py:1063
 #: globalPlugins/YoutubePlus/dialogs.py:1074
-#: globalPlugins/YoutubePlus/dialogs.py:1086
+#: globalPlugins/YoutubePlus/dialogs.py:1076
+#: globalPlugins/YoutubePlus/dialogs.py:1087
+#: globalPlugins/YoutubePlus/dialogs.py:1090
+#: globalPlugins/YoutubePlus/dialogs.py:1158
+#: globalPlugins/YoutubePlus/dialogs.py:1168
+#: globalPlugins/YoutubePlus/dialogs.py:1180
+#: globalPlugins/YoutubePlus/dialogs.py:1192
 msgid "Video ID not found."
 msgstr "Идентификатор видео не найден."
 
-#: globalPlugins/YoutubePlus/dialogs.py:922
+#: globalPlugins/YoutubePlus/dialogs.py:906
+msgid "Channel URL not found."
+msgstr "URL-адрес канала не найден."
+
+#: globalPlugins/YoutubePlus/dialogs.py:920
+#: globalPlugins/YoutubePlus/dialogs.py:4365
+#: globalPlugins/YoutubePlus/dialogs.py:4434
+msgid "Playlist URL not found."
+msgstr "URL-адрес плейлиста не найден."
+
+#: globalPlugins/YoutubePlus/dialogs.py:923
+#: globalPlugins/YoutubePlus/dialogs.py:4368
+#, python-brace-format
+msgid "Fetching videos from '{title}'..."
+msgstr "Получение видео из «{title}»..."
+
+#: globalPlugins/YoutubePlus/dialogs.py:970
 msgid "View Video &Info..."
 msgstr "Просмотреть &информацию о видео..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:923
+#: globalPlugins/YoutubePlus/dialogs.py:971
 msgid "View &Comments / Replay..."
 msgstr "Просмотреть &комментарии / повтор..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:924
+#: globalPlugins/YoutubePlus/dialogs.py:972
 msgid "View Chap&ters/Timestamps..."
 msgstr "Просмотреть &разделы/таймкоды..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:925
+#: globalPlugins/YoutubePlus/dialogs.py:973
 msgid "&Get Thumbnail Description (Be My Eyes)..."
 msgstr "&Получить описание миниатюры (Be My Eyes)..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:927
+#: globalPlugins/YoutubePlus/dialogs.py:975
 msgid "&Download Video"
 msgstr "&Загрузить видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:929
+#: globalPlugins/YoutubePlus/dialogs.py:977
 msgid "Download Su&btitles"
 msgstr "Загрузить су&бтитры"
 
-#: globalPlugins/YoutubePlus/dialogs.py:931
+#: globalPlugins/YoutubePlus/dialogs.py:979
 msgid "Add to &Favorite Videos"
-msgstr "Добавить в избранные &видео"
+msgstr "Добавить в &избранные видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:932
+#: globalPlugins/YoutubePlus/dialogs.py:980
+#: globalPlugins/YoutubePlus/dialogs.py:1031
 msgid "Add to &Favorite Channels"
-msgstr "Добавить в избранные &каналы"
+msgstr "Добавить в &избранные каналы"
 
-#: globalPlugins/YoutubePlus/dialogs.py:935
+#: globalPlugins/YoutubePlus/dialogs.py:983
 msgid "&Open video in browser"
 msgstr "&Открыть видео в браузере"
 
-#: globalPlugins/YoutubePlus/dialogs.py:936
+#: globalPlugins/YoutubePlus/dialogs.py:984
 msgid "Open c&hannel in browser"
 msgstr "Открыть &канал в браузере"
 
-#: globalPlugins/YoutubePlus/dialogs.py:938
+#: globalPlugins/YoutubePlus/dialogs.py:986
+#: globalPlugins/YoutubePlus/dialogs.py:1033
 msgid "Show channel &videos"
 msgstr "Показать &видео канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:939
+#: globalPlugins/YoutubePlus/dialogs.py:987
+#: globalPlugins/YoutubePlus/dialogs.py:1034
 msgid "Show channel &shorts"
 msgstr "Показать &shorts канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:940
+#: globalPlugins/YoutubePlus/dialogs.py:988
+#: globalPlugins/YoutubePlus/dialogs.py:1035
 msgid "Show channel &live"
 msgstr "Показать &трансляции канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:941
+#: globalPlugins/YoutubePlus/dialogs.py:989
+#: globalPlugins/YoutubePlus/dialogs.py:1036
 msgid "Show channel &playlist"
 msgstr "Показать &плейлисты канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:942
+#: globalPlugins/YoutubePlus/dialogs.py:990
+#: globalPlugins/YoutubePlus/dialogs.py:1037
 msgid "Show channel &podcast"
 msgstr "Показать &подкасты канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:972
+#: globalPlugins/YoutubePlus/dialogs.py:1027
+msgid "&Open channel in browser"
+msgstr "&Открыть канал в браузере"
+
+#: globalPlugins/YoutubePlus/dialogs.py:1029
+#: globalPlugins/YoutubePlus/dialogs.py:2455
+msgid "&Describe Avatar (Be My Eyes)..."
+msgstr "&Описать аватар (Be My Eyes)..."
+
+#: globalPlugins/YoutubePlus/dialogs.py:1053
+#: globalPlugins/YoutubePlus/dialogs.py:2624
+#: globalPlugins/YoutubePlus/dialogs.py:2698
+#: globalPlugins/YoutubePlus/dialogs.py:2708
+#: globalPlugins/YoutubePlus/dialogs.py:4740
+msgid "Error: Channel URL not found."
+msgstr "Ошибка: URL-адрес канала не найден."
+
+#: globalPlugins/YoutubePlus/dialogs.py:1066
 msgid "Getting subtitle info..."
 msgstr "Получение информации о субтитрах..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1005
+#: globalPlugins/YoutubePlus/dialogs.py:1099
 msgid "Could not get video ID to add to favorites."
 msgstr "Не удалось получить идентификатор видео для добавления в избранное."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1015
+#: globalPlugins/YoutubePlus/dialogs.py:1108
+#: globalPlugins/YoutubePlus/dialogs.py:1114
+#: globalPlugins/YoutubePlus/dialogs.py:1121
 msgid "Could not get video ID to find the channel."
 msgstr "Не удалось получить идентификатор видео для поиска канала."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1120
-#: globalPlugins/YoutubePlus/dialogs.py:1127
-#: globalPlugins/YoutubePlus/dialogs.py:4050
+#: globalPlugins/YoutubePlus/dialogs.py:1229
+#: globalPlugins/YoutubePlus/dialogs.py:1242
+#: globalPlugins/YoutubePlus/dialogs.py:4404
 #, python-brace-format
 msgid "Title: {title}\n"
 msgstr "Название: {title}\n"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1121
-#: globalPlugins/YoutubePlus/dialogs.py:1128
+#: globalPlugins/YoutubePlus/dialogs.py:1230
+#: globalPlugins/YoutubePlus/dialogs.py:1236
+#: globalPlugins/YoutubePlus/dialogs.py:1243
 #, python-brace-format
 msgid "Channel: {channel}\n"
 msgstr "Канал: {channel}\n"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1122
-#: globalPlugins/YoutubePlus/dialogs.py:1129
-#: globalPlugins/YoutubePlus/dialogs.py:4051
+#: globalPlugins/YoutubePlus/dialogs.py:1231
+#: globalPlugins/YoutubePlus/dialogs.py:1237
+#: globalPlugins/YoutubePlus/dialogs.py:1244
+#: globalPlugins/YoutubePlus/dialogs.py:4405
 msgid "URL: "
-msgstr "URL-адрес: "
+msgstr "URL: "
 
-#: globalPlugins/YoutubePlus/dialogs.py:1143
+#: globalPlugins/YoutubePlus/dialogs.py:1258
 msgid "Error: Channel information not found for this item."
-msgstr "Ошибка: Информация о канале для этого элемента не найдена."
+msgstr "Ошибка: информация о канале для этого элемента не найдена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1153
-#: globalPlugins/YoutubePlus/dialogs.py:1286
-#: globalPlugins/YoutubePlus/dialogs.py:2247
-#: globalPlugins/YoutubePlus/dialogs.py:2548
-#: globalPlugins/YoutubePlus/dialogs.py:2797
-#: globalPlugins/YoutubePlus/dialogs.py:3089
-#: globalPlugins/YoutubePlus/dialogs.py:3248
-#: globalPlugins/YoutubePlus/dialogs.py:3800
-#: globalPlugins/YoutubePlus/dialogs.py:3933
-#: globalPlugins/YoutubePlus/dialogs.py:4147
-#: globalPlugins/YoutubePlus/dialogs.py:4387
-#: globalPlugins/YoutubePlus/dialogs.py:4575
-#: globalPlugins/YoutubePlus/settings.py:133
+#: globalPlugins/YoutubePlus/dialogs.py:1268
+#: globalPlugins/YoutubePlus/dialogs.py:1429
+#: globalPlugins/YoutubePlus/dialogs.py:2390
+#: globalPlugins/YoutubePlus/dialogs.py:2711
+#: globalPlugins/YoutubePlus/dialogs.py:2960
+#: globalPlugins/YoutubePlus/dialogs.py:3252
+#: globalPlugins/YoutubePlus/dialogs.py:3411
+#: globalPlugins/YoutubePlus/dialogs.py:3951
+#: globalPlugins/YoutubePlus/dialogs.py:4150
+#: globalPlugins/YoutubePlus/dialogs.py:4287
+#: globalPlugins/YoutubePlus/dialogs.py:4501
+#: globalPlugins/YoutubePlus/dialogs.py:4744
+#: globalPlugins/YoutubePlus/dialogs.py:4932
+#: globalPlugins/YoutubePlus/settings.py:134
 msgid "Videos"
 msgstr "Видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1154
-#: globalPlugins/YoutubePlus/dialogs.py:2549
-#: globalPlugins/YoutubePlus/dialogs.py:4147
-#: globalPlugins/YoutubePlus/dialogs.py:4388
-#: globalPlugins/YoutubePlus/dialogs.py:4576
-#: globalPlugins/YoutubePlus/dialogs.py:4744
-#: globalPlugins/YoutubePlus/settings.py:133
+#: globalPlugins/YoutubePlus/dialogs.py:1269
+#: globalPlugins/YoutubePlus/dialogs.py:2712
+#: globalPlugins/YoutubePlus/dialogs.py:4501
+#: globalPlugins/YoutubePlus/dialogs.py:4745
+#: globalPlugins/YoutubePlus/dialogs.py:4933
+#: globalPlugins/YoutubePlus/dialogs.py:5101
+#: globalPlugins/YoutubePlus/settings.py:134
 msgid "Shorts"
 msgstr "Shorts"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1155
-#: globalPlugins/YoutubePlus/dialogs.py:2550
-#: globalPlugins/YoutubePlus/dialogs.py:4147
-#: globalPlugins/YoutubePlus/dialogs.py:4389
-#: globalPlugins/YoutubePlus/dialogs.py:4577
-#: globalPlugins/YoutubePlus/dialogs.py:4745
-#: globalPlugins/YoutubePlus/settings.py:133
+#: globalPlugins/YoutubePlus/dialogs.py:1270
+#: globalPlugins/YoutubePlus/dialogs.py:2713
+#: globalPlugins/YoutubePlus/dialogs.py:4501
+#: globalPlugins/YoutubePlus/dialogs.py:4746
+#: globalPlugins/YoutubePlus/dialogs.py:4934
+#: globalPlugins/YoutubePlus/dialogs.py:5102
+#: globalPlugins/YoutubePlus/settings.py:134
 msgid "Live"
 msgstr "Трансляции"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1156
-#: globalPlugins/YoutubePlus/dialogs.py:2551
-#: globalPlugins/YoutubePlus/dialogs.py:3250
-#: globalPlugins/YoutubePlus/dialogs.py:4390
-msgid "Playlists"
-msgstr "Плейлисты"
-
-#: globalPlugins/YoutubePlus/dialogs.py:1157
-#: globalPlugins/YoutubePlus/dialogs.py:2552
-#: globalPlugins/YoutubePlus/dialogs.py:4391
+#: globalPlugins/YoutubePlus/dialogs.py:1272
+#: globalPlugins/YoutubePlus/dialogs.py:2715
+#: globalPlugins/YoutubePlus/dialogs.py:4748
 msgid "Podcasts"
 msgstr "Подкасты"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1161
+#: globalPlugins/YoutubePlus/dialogs.py:1276
 msgid "Content"
 msgstr "Содержимое"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1165
-#: globalPlugins/YoutubePlus/dialogs.py:2559
-#: globalPlugins/YoutubePlus/dialogs.py:4398
+#: globalPlugins/YoutubePlus/dialogs.py:1280
+#: globalPlugins/YoutubePlus/dialogs.py:2722
+#: globalPlugins/YoutubePlus/dialogs.py:4755
 #, python-brace-format
 msgid "Fetching {type} from {channel}..."
 msgstr "Получение {type} с канала {channel}..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1298
-#: globalPlugins/YoutubePlus/dialogs.py:1366
-#: globalPlugins/YoutubePlus/dialogs.py:3800
-#: globalPlugins/YoutubePlus/dialogs.py:4694
-msgid "Duration"
-msgstr "Длительность"
+#: globalPlugins/YoutubePlus/dialogs.py:1332
+msgid "This action isn't available for a channel result."
+msgstr "Это действие недоступно для результата поиска канала."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1299
+#: globalPlugins/YoutubePlus/dialogs.py:1441
+#: globalPlugins/YoutubePlus/dialogs.py:1509
+#: globalPlugins/YoutubePlus/dialogs.py:4152
+#: globalPlugins/YoutubePlus/dialogs.py:5051
+msgid "Duration"
+msgstr "Продолжительность"
+
+#: globalPlugins/YoutubePlus/dialogs.py:1442
 msgid "Uploaded Date"
 msgstr "Дата загрузки"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1300
-#: globalPlugins/YoutubePlus/dialogs.py:1368
-#: globalPlugins/YoutubePlus/dialogs.py:2640
-#: globalPlugins/YoutubePlus/dialogs.py:3091
+#: globalPlugins/YoutubePlus/dialogs.py:1443
+#: globalPlugins/YoutubePlus/dialogs.py:1511
+#: globalPlugins/YoutubePlus/dialogs.py:2803
+#: globalPlugins/YoutubePlus/dialogs.py:3254
 msgid "Date Added"
 msgstr "Дата добавления"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1334
-#: globalPlugins/YoutubePlus/dialogs.py:3804
-#: globalPlugins/YoutubePlus/dialogs.py:4698
+#: globalPlugins/YoutubePlus/dialogs.py:1477
+#: globalPlugins/YoutubePlus/dialogs.py:4156
+#: globalPlugins/YoutubePlus/dialogs.py:5055
 msgid "&Action..."
 msgstr "&Действие..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1335
-#: globalPlugins/YoutubePlus/dialogs.py:3805
-#: globalPlugins/YoutubePlus/dialogs.py:3945
-#: globalPlugins/YoutubePlus/dialogs.py:4700
+#: globalPlugins/YoutubePlus/dialogs.py:1478
+#: globalPlugins/YoutubePlus/dialogs.py:4157
+#: globalPlugins/YoutubePlus/dialogs.py:4299
+#: globalPlugins/YoutubePlus/dialogs.py:5057
 msgid "&Copy..."
 msgstr "&Копировать..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1337
-#: globalPlugins/YoutubePlus/dialogs.py:2314
-#: globalPlugins/YoutubePlus/dialogs.py:2810
-#: globalPlugins/YoutubePlus/dialogs.py:3465
+#: globalPlugins/YoutubePlus/dialogs.py:1480
+#: globalPlugins/YoutubePlus/dialogs.py:2459
+#: globalPlugins/YoutubePlus/dialogs.py:2973
+#: globalPlugins/YoutubePlus/dialogs.py:3628
 msgid "&Remove"
-msgstr "&Удалить"
+msgstr "У&далить"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1405
+#: globalPlugins/YoutubePlus/dialogs.py:1548
 msgid "Error: Could not save data."
-msgstr "Ошибка: Не удалось сохранить данные."
+msgstr "Ошибка: не удалось сохранить данные."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1533
+#: globalPlugins/YoutubePlus/dialogs.py:1676
 #, python-brace-format
 msgid "The default {label} category cannot be deleted."
 msgstr "Категорию по умолчанию «{label}» нельзя удалить."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1558
+#: globalPlugins/YoutubePlus/dialogs.py:1701
 msgid "&Add Category"
 msgstr "&Добавить категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1560
+#: globalPlugins/YoutubePlus/dialogs.py:1703
 msgid "&Rename Category"
 msgstr "&Переименовать категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1561
+#: globalPlugins/YoutubePlus/dialogs.py:1704
 msgid "&Delete Category"
 msgstr "&Удалить категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1563
+#: globalPlugins/YoutubePlus/dialogs.py:1706
 msgid "Move &Up"
-msgstr "Переместить в&верх"
+msgstr "Переместить &вверх"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1564
+#: globalPlugins/YoutubePlus/dialogs.py:1707
 msgid "Move &Down"
-msgstr "Переместить в&низ"
+msgstr "Переместить &вниз"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1579
+#: globalPlugins/YoutubePlus/dialogs.py:1722
 msgid "Category name:"
 msgstr "Название категории:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1579
-#: globalPlugins/YoutubePlus/dialogs.py:5061
+#: globalPlugins/YoutubePlus/dialogs.py:1722
+#: globalPlugins/YoutubePlus/dialogs.py:5418
 msgid "Add Category"
 msgstr "Добавить категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1593
+#: globalPlugins/YoutubePlus/dialogs.py:1736
 #, python-brace-format
 msgid "Category '{name}' added."
 msgstr "Категория «{name}» добавлена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1596
+#: globalPlugins/YoutubePlus/dialogs.py:1739
 msgid "New name:"
 msgstr "Новое название:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1596
-#: globalPlugins/YoutubePlus/dialogs.py:5097
+#: globalPlugins/YoutubePlus/dialogs.py:1739
+#: globalPlugins/YoutubePlus/dialogs.py:5454
 msgid "Rename Category"
 msgstr "Переименовать категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1608
+#: globalPlugins/YoutubePlus/dialogs.py:1751
 #, python-brace-format
 msgid "Renamed to '{name}'."
 msgstr "Переименовано в «{name}»."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1617
+#: globalPlugins/YoutubePlus/dialogs.py:1760
 #, python-brace-format
 msgid "Delete category '{name}'?"
 msgstr "Удалить категорию «{name}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1618
-#: globalPlugins/YoutubePlus/dialogs.py:3694
-#: globalPlugins/YoutubePlus/dialogs.py:4996
+#: globalPlugins/YoutubePlus/dialogs.py:1761
+#: globalPlugins/YoutubePlus/dialogs.py:3883
+#: globalPlugins/YoutubePlus/dialogs.py:5353
 msgid "Confirm"
 msgstr "Подтверждение"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1625
+#: globalPlugins/YoutubePlus/dialogs.py:1768
 #, python-brace-format
 msgid "Category '{name}' deleted."
 msgstr "Категория «{name}» удалена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1630
+#: globalPlugins/YoutubePlus/dialogs.py:1773
 #, python-brace-format
 msgid ""
 "Category '{name}' contains {count} item(s).\n"
@@ -1459,291 +1597,291 @@ msgstr ""
 "\n"
 "Переместить их в «{default}» или удалить вместе с категорией?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1633
+#: globalPlugins/YoutubePlus/dialogs.py:1776
 msgid "Delete Category"
 msgstr "Удалить категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1636
+#: globalPlugins/YoutubePlus/dialogs.py:1779
 #, python-brace-format
 msgid "&Move to {default}"
 msgstr "&Переместить в {default}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1637
+#: globalPlugins/YoutubePlus/dialogs.py:1780
 msgid "&Delete items too"
 msgstr "&Удалить элементы тоже"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1637
+#: globalPlugins/YoutubePlus/dialogs.py:1780
 msgid "Cancel"
-msgstr "Отмена"
+msgstr "Отменить"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1647
+#: globalPlugins/YoutubePlus/dialogs.py:1790
 #, python-brace-format
 msgid "Category '{name}' deleted. {count} item(s) moved to {default}."
 msgstr "Категория «{name}» удалена. {count} элементов перемещено в {default}."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1651
+#: globalPlugins/YoutubePlus/dialogs.py:1794
 #, python-brace-format
 msgid "Category '{name}' and its {count} item(s) deleted."
 msgstr "Категория «{name}» и её {count} элементов удалены."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1686
+#: globalPlugins/YoutubePlus/dialogs.py:1829
 msgid "Category"
 msgstr "Категория"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1833
-#: globalPlugins/YoutubePlus/dialogs.py:3850
-#: globalPlugins/YoutubePlus/dialogs.py:4035
-#: globalPlugins/YoutubePlus/dialogs.py:4819
+#: globalPlugins/YoutubePlus/dialogs.py:1976
+#: globalPlugins/YoutubePlus/dialogs.py:4202
+#: globalPlugins/YoutubePlus/dialogs.py:4389
+#: globalPlugins/YoutubePlus/dialogs.py:5176
 msgid "Copy &Title"
 msgstr "Копировать &название"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1834
-#: globalPlugins/YoutubePlus/dialogs.py:3852
-#: globalPlugins/YoutubePlus/dialogs.py:4821
+#: globalPlugins/YoutubePlus/dialogs.py:1977
+#: globalPlugins/YoutubePlus/dialogs.py:4204
+#: globalPlugins/YoutubePlus/dialogs.py:5178
 msgid "Copy Video &URL"
 msgstr "Копировать &URL-адрес видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1835
-#: globalPlugins/YoutubePlus/dialogs.py:3854
-#: globalPlugins/YoutubePlus/dialogs.py:4823
+#: globalPlugins/YoutubePlus/dialogs.py:1978
+#: globalPlugins/YoutubePlus/dialogs.py:4206
+#: globalPlugins/YoutubePlus/dialogs.py:5180
 msgid "Copy &Channel Name"
 msgstr "Копировать &название канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1836
-#: globalPlugins/YoutubePlus/dialogs.py:3856
-#: globalPlugins/YoutubePlus/dialogs.py:4825
+#: globalPlugins/YoutubePlus/dialogs.py:1979
+#: globalPlugins/YoutubePlus/dialogs.py:4208
+#: globalPlugins/YoutubePlus/dialogs.py:5182
 msgid "Copy C&hannel URL"
 msgstr "Копировать &URL-адрес канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1838
-#: globalPlugins/YoutubePlus/dialogs.py:3859
-#: globalPlugins/YoutubePlus/dialogs.py:4039
-#: globalPlugins/YoutubePlus/dialogs.py:4828
+#: globalPlugins/YoutubePlus/dialogs.py:1981
+#: globalPlugins/YoutubePlus/dialogs.py:4211
+#: globalPlugins/YoutubePlus/dialogs.py:4393
+#: globalPlugins/YoutubePlus/dialogs.py:5185
 msgid "Copy &Summary"
 msgstr "Копировать &описание"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1853
-#: globalPlugins/YoutubePlus/dialogs.py:2407
-#: globalPlugins/YoutubePlus/dialogs.py:4416
-#: globalPlugins/YoutubePlus/dialogs.py:4844
+#: globalPlugins/YoutubePlus/dialogs.py:1996
+#: globalPlugins/YoutubePlus/dialogs.py:2554
+#: globalPlugins/YoutubePlus/dialogs.py:4773
+#: globalPlugins/YoutubePlus/dialogs.py:5201
 msgid "No valid YouTube URL found in clipboard."
 msgstr "В буфере обмена не найден действительный URL-адрес YouTube."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1856
-#: globalPlugins/YoutubePlus/dialogs.py:2411
-#: globalPlugins/YoutubePlus/dialogs.py:2996
-#: globalPlugins/YoutubePlus/dialogs.py:4420
-#: globalPlugins/YoutubePlus/dialogs.py:4848
+#: globalPlugins/YoutubePlus/dialogs.py:1999
+#: globalPlugins/YoutubePlus/dialogs.py:2558
+#: globalPlugins/YoutubePlus/dialogs.py:3159
+#: globalPlugins/YoutubePlus/dialogs.py:4777
+#: globalPlugins/YoutubePlus/dialogs.py:5205
 msgid "Could not read from clipboard."
 msgstr "Не удалось прочитать данные из буфера обмена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1868
-#: globalPlugins/YoutubePlus/dialogs.py:2940
+#: globalPlugins/YoutubePlus/dialogs.py:2011
+#: globalPlugins/YoutubePlus/dialogs.py:3103
 #, python-brace-format
 msgid "Are you sure you want to remove '{title}'?"
 msgstr "Вы уверены, что хотите удалить «{title}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1870
+#: globalPlugins/YoutubePlus/dialogs.py:2013
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected items?"
 msgstr "Вы уверены, что хотите удалить {count} выбранных элементов?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1871
-#: globalPlugins/YoutubePlus/dialogs.py:2498
-#: globalPlugins/YoutubePlus/dialogs.py:2945
-#: globalPlugins/YoutubePlus/dialogs.py:5130
+#: globalPlugins/YoutubePlus/dialogs.py:2014
+#: globalPlugins/YoutubePlus/dialogs.py:2661
+#: globalPlugins/YoutubePlus/dialogs.py:3108
+#: globalPlugins/YoutubePlus/dialogs.py:5487
 msgid "Confirm Removal"
-msgstr "Подтверждение удаления"
+msgstr "Подтвердить удаление"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1883
+#: globalPlugins/YoutubePlus/dialogs.py:2026
 msgid "Item removed."
 msgstr "Элемент удалён."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1884
+#: globalPlugins/YoutubePlus/dialogs.py:2027
 #, python-brace-format
 msgid "{count} items removed."
 msgstr "{count} элементов удалено."
 
-#: globalPlugins/YoutubePlus/dialogs.py:1892
+#: globalPlugins/YoutubePlus/dialogs.py:2035
 msgid "Enter new title:"
 msgstr "Введите новое название:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1892
+#: globalPlugins/YoutubePlus/dialogs.py:2035
 msgid "Rename"
 msgstr "Переименовать"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1921
-#: globalPlugins/YoutubePlus/dialogs.py:2646
-#: globalPlugins/YoutubePlus/dialogs.py:3097
-#: globalPlugins/YoutubePlus/dialogs.py:3523
+#: globalPlugins/YoutubePlus/dialogs.py:2064
+#: globalPlugins/YoutubePlus/dialogs.py:2809
+#: globalPlugins/YoutubePlus/dialogs.py:3260
+#: globalPlugins/YoutubePlus/dialogs.py:3700
 msgid "Sort List"
 msgstr "Сортировка списка"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1923
-#: globalPlugins/YoutubePlus/dialogs.py:2649
-#: globalPlugins/YoutubePlus/dialogs.py:3100
-#: globalPlugins/YoutubePlus/dialogs.py:3526
+#: globalPlugins/YoutubePlus/dialogs.py:2066
+#: globalPlugins/YoutubePlus/dialogs.py:2812
+#: globalPlugins/YoutubePlus/dialogs.py:3263
+#: globalPlugins/YoutubePlus/dialogs.py:3703
 msgid "Sort by:"
 msgstr "Сортировать по:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1932
-#: globalPlugins/YoutubePlus/dialogs.py:2661
-#: globalPlugins/YoutubePlus/dialogs.py:3112
-#: globalPlugins/YoutubePlus/dialogs.py:3538
+#: globalPlugins/YoutubePlus/dialogs.py:2075
+#: globalPlugins/YoutubePlus/dialogs.py:2824
+#: globalPlugins/YoutubePlus/dialogs.py:3275
+#: globalPlugins/YoutubePlus/dialogs.py:3715
 msgid "&Ascending"
 msgstr "По &возрастанию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1933
-#: globalPlugins/YoutubePlus/dialogs.py:2663
-#: globalPlugins/YoutubePlus/dialogs.py:3114
-#: globalPlugins/YoutubePlus/dialogs.py:3540
+#: globalPlugins/YoutubePlus/dialogs.py:2076
+#: globalPlugins/YoutubePlus/dialogs.py:2826
+#: globalPlugins/YoutubePlus/dialogs.py:3277
+#: globalPlugins/YoutubePlus/dialogs.py:3717
 msgid "&Descending"
 msgstr "По &убыванию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1941
+#: globalPlugins/YoutubePlus/dialogs.py:2084
 msgid "Sort only the current &category"
 msgstr "Сортировать только &текущую категорию"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1944
-#: globalPlugins/YoutubePlus/dialogs.py:2671
-#: globalPlugins/YoutubePlus/dialogs.py:3122
+#: globalPlugins/YoutubePlus/dialogs.py:2087
+#: globalPlugins/YoutubePlus/dialogs.py:2834
+#: globalPlugins/YoutubePlus/dialogs.py:3285
 msgid "&Apply permanently (saves to file)"
 msgstr "&Применить постоянно (сохранить в файл)"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1951
-#: globalPlugins/YoutubePlus/dialogs.py:2677
-#: globalPlugins/YoutubePlus/dialogs.py:3128
-#: globalPlugins/YoutubePlus/dialogs.py:3551
+#: globalPlugins/YoutubePlus/dialogs.py:2094
+#: globalPlugins/YoutubePlus/dialogs.py:2840
+#: globalPlugins/YoutubePlus/dialogs.py:3291
+#: globalPlugins/YoutubePlus/dialogs.py:3728
 msgid "C&lear Sort"
 msgstr "С&бросить сортировку"
 
-#: globalPlugins/YoutubePlus/dialogs.py:1977
-#: globalPlugins/YoutubePlus/dialogs.py:2702
-#: globalPlugins/YoutubePlus/dialogs.py:3153
-#: globalPlugins/YoutubePlus/dialogs.py:3572
+#: globalPlugins/YoutubePlus/dialogs.py:2120
+#: globalPlugins/YoutubePlus/dialogs.py:2865
+#: globalPlugins/YoutubePlus/dialogs.py:3316
+#: globalPlugins/YoutubePlus/dialogs.py:3749
 msgid "Sort cleared."
 msgstr "Сортировка сброшена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2029
-#: globalPlugins/YoutubePlus/dialogs.py:2727
-#: globalPlugins/YoutubePlus/dialogs.py:3178
+#: globalPlugins/YoutubePlus/dialogs.py:2172
+#: globalPlugins/YoutubePlus/dialogs.py:2890
+#: globalPlugins/YoutubePlus/dialogs.py:3341
 msgid "List sorted and saved."
 msgstr "Список отсортирован и сохранён."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2039
-#: globalPlugins/YoutubePlus/dialogs.py:2732
-#: globalPlugins/YoutubePlus/dialogs.py:3183
+#: globalPlugins/YoutubePlus/dialogs.py:2182
+#: globalPlugins/YoutubePlus/dialogs.py:2895
+#: globalPlugins/YoutubePlus/dialogs.py:3346
 msgid "List sorted temporarily."
 msgstr "Список временно отсортирован."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2054
+#: globalPlugins/YoutubePlus/dialogs.py:2197
 #, python-brace-format
 msgid "{count} item(s) copied."
 msgstr "{count} элементов скопировано."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2063
+#: globalPlugins/YoutubePlus/dialogs.py:2206
 #, python-brace-format
 msgid "{count} item(s) cut."
 msgstr "{count} элементов вырезано."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2067
-#: globalPlugins/YoutubePlus/dialogs.py:2610
-#: globalPlugins/YoutubePlus/dialogs.py:2897
+#: globalPlugins/YoutubePlus/dialogs.py:2210
+#: globalPlugins/YoutubePlus/dialogs.py:2773
+#: globalPlugins/YoutubePlus/dialogs.py:3060
 msgid "Clipboard is empty."
 msgstr "Буфер обмена пуст."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2122
+#: globalPlugins/YoutubePlus/dialogs.py:2265
 msgid "Cut"
-msgstr "Вырезать"
+msgstr "Вырезание"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2122
+#: globalPlugins/YoutubePlus/dialogs.py:2265
 msgid "Copy"
-msgstr "Копировать"
+msgstr "Копирование"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2127
+#: globalPlugins/YoutubePlus/dialogs.py:2270
 #, python-brace-format
 msgid ""
 "{op} '{title}' from {src} to {dst} — this item already exists. Replace it?"
 msgstr ""
 "{op} «{title}» из {src} в {dst} — этот элемент уже существует. Заменить его?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2131
+#: globalPlugins/YoutubePlus/dialogs.py:2274
 #, python-brace-format
 msgid "{op} from {src} to {dst} — {count} item(s) already exist. Replace all?"
 msgstr ""
 "{op} из {src} в {dst} — {count} элементов уже существует. Заменить все?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2134
+#: globalPlugins/YoutubePlus/dialogs.py:2277
 msgid "Confirm Replace"
 msgstr "Подтверждение замены"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2199
+#: globalPlugins/YoutubePlus/dialogs.py:2342
 #, python-brace-format
 msgid "{count} item(s) pasted to {cat}."
 msgstr "{count} элементов вставлено в {cat}."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2201
+#: globalPlugins/YoutubePlus/dialogs.py:2344
 #, python-brace-format
 msgid "{done} item(s) pasted to {cat}, {skipped} skipped."
 msgstr "{done} элементов вставлено в {cat}, {skipped} пропущено."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2204
+#: globalPlugins/YoutubePlus/dialogs.py:2347
 msgid "All items already exist in this list."
 msgstr "Все элементы уже существуют в этом списке."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2232
+#: globalPlugins/YoutubePlus/dialogs.py:2375
 msgid "Favorite Videos"
 msgstr "Избранные видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2244
+#: globalPlugins/YoutubePlus/dialogs.py:2387
 msgid "Add &new favorite video from clipboard"
 msgstr "Добавить &новое избранное видео из буфера обмена"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2254
-#: globalPlugins/YoutubePlus/dialogs.py:2269
-#: globalPlugins/YoutubePlus/dialogs.py:3251
+#: globalPlugins/YoutubePlus/dialogs.py:2397
+#: globalPlugins/YoutubePlus/dialogs.py:2412
+#: globalPlugins/YoutubePlus/dialogs.py:3414
 msgid "Watch List"
 msgstr "Список просмотра"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2266
+#: globalPlugins/YoutubePlus/dialogs.py:2409
 msgid "Add &new watch list from clipboard"
 msgstr "Добавить &новый элемент в список просмотра из буфера обмена"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2296
-#: globalPlugins/YoutubePlus/dialogs.py:2638
+#: globalPlugins/YoutubePlus/dialogs.py:2439
+#: globalPlugins/YoutubePlus/dialogs.py:2801
 msgid "Subscribers"
 msgstr "Подписчики"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2299
+#: globalPlugins/YoutubePlus/dialogs.py:2442
 msgid "Channel Description"
 msgstr "Описание канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2306
+#: globalPlugins/YoutubePlus/dialogs.py:2449
 msgid "Open channel on &browser"
 msgstr "Открыть канал в &браузере"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2308
+#: globalPlugins/YoutubePlus/dialogs.py:2451
 msgid "View &channel Content..."
 msgstr "Просмотреть &содержимое канала..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2310
-msgid "&Describe Avatar (Be My Eyes)..."
-msgstr "&Описать аватар (Be My Eyes)..."
+#: globalPlugins/YoutubePlus/dialogs.py:2453
+msgid "S&earch in this channel..."
+msgstr "&Поиск в этом канале..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2312
+#: globalPlugins/YoutubePlus/dialogs.py:2457
 msgid "Add &new favorite channel from clipboard"
 msgstr "Добавить &новый избранный канал из буфера обмена"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2377
-#: globalPlugins/YoutubePlus/dialogs.py:2436
-#: globalPlugins/YoutubePlus/dialogs.py:3034
-#: globalPlugins/YoutubePlus/dialogs.py:3889
-#: globalPlugins/YoutubePlus/dialogs.py:3988
-#: globalPlugins/YoutubePlus/dialogs.py:4749
+#: globalPlugins/YoutubePlus/dialogs.py:2524
+#: globalPlugins/YoutubePlus/dialogs.py:2583
+#: globalPlugins/YoutubePlus/dialogs.py:3197
+#: globalPlugins/YoutubePlus/dialogs.py:4241
+#: globalPlugins/YoutubePlus/dialogs.py:4342
+#: globalPlugins/YoutubePlus/dialogs.py:5106
 msgid "N/A"
 msgstr "Н/Д"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2381
+#: globalPlugins/YoutubePlus/dialogs.py:2528
 #, python-brace-format
 msgid ""
 "Last synced: {time}\n"
@@ -1754,526 +1892,594 @@ msgstr ""
 "\n"
 "{description}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2491
+#: globalPlugins/YoutubePlus/dialogs.py:2654
 msgid "this channel"
 msgstr "этот канал"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2493
+#: globalPlugins/YoutubePlus/dialogs.py:2656
 #, python-brace-format
 msgid "Are you sure you want to remove '{name}'?"
 msgstr "Вы уверены, что хотите удалить «{name}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2496
+#: globalPlugins/YoutubePlus/dialogs.py:2659
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected channels?"
 msgstr "Вы уверены, что хотите удалить {count} выбранных каналов?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2518
+#: globalPlugins/YoutubePlus/dialogs.py:2681
 msgid "Channel removed."
 msgstr "Канал удалён."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2519
+#: globalPlugins/YoutubePlus/dialogs.py:2682
 #, python-brace-format
 msgid "{count} channels removed."
 msgstr "{count} каналов удалено."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2535
-#: globalPlugins/YoutubePlus/dialogs.py:2545
-#: globalPlugins/YoutubePlus/dialogs.py:4383
-msgid "Error: Channel URL not found."
-msgstr "Ошибка: URL-адрес канала не найден."
-
-#: globalPlugins/YoutubePlus/dialogs.py:2605
-#: globalPlugins/YoutubePlus/dialogs.py:2892
+#: globalPlugins/YoutubePlus/dialogs.py:2768
+#: globalPlugins/YoutubePlus/dialogs.py:3055
 msgid "Cut."
 msgstr "Вырезано."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2631
-#: globalPlugins/YoutubePlus/dialogs.py:2918
+#: globalPlugins/YoutubePlus/dialogs.py:2794
+#: globalPlugins/YoutubePlus/dialogs.py:3081
 msgid "Moved."
 msgstr "Перемещено."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2754
+#: globalPlugins/YoutubePlus/dialogs.py:2917
 msgid "Enter new channel name:"
 msgstr "Введите новое название канала:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2755
+#: globalPlugins/YoutubePlus/dialogs.py:2918
 msgid "Rename Channel"
 msgstr "Переименовать канал"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2793
-#: globalPlugins/YoutubePlus/dialogs.py:3931
+#: globalPlugins/YoutubePlus/dialogs.py:2956
+#: globalPlugins/YoutubePlus/dialogs.py:4283
 msgid "Playlist Title"
 msgstr "Название плейлиста"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2802
-#: globalPlugins/YoutubePlus/dialogs.py:3941
+#: globalPlugins/YoutubePlus/dialogs.py:2965
+#: globalPlugins/YoutubePlus/dialogs.py:4295
 msgid "Show &Videos..."
 msgstr "Показать &видео..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2804
+#: globalPlugins/YoutubePlus/dialogs.py:2967
 msgid "Open on &browser"
 msgstr "Открыть в &браузере"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2806
+#: globalPlugins/YoutubePlus/dialogs.py:2969
 msgid "&Describe Cover (Be My Eyes)..."
 msgstr "&Описать обложку (Be My Eyes)..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2808
+#: globalPlugins/YoutubePlus/dialogs.py:2971
 msgid "Add &new favorite playlist from clipboard"
 msgstr "Добавить &новый избранный плейлист из буфера обмена"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2938
+#: globalPlugins/YoutubePlus/dialogs.py:3101
 msgid "this playlist"
 msgstr "этот плейлист"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2943
+#: globalPlugins/YoutubePlus/dialogs.py:3106
 #, python-brace-format
 msgid "Are you sure you want to remove {count} selected playlists?"
 msgstr "Вы уверены, что хотите удалить {count} выбранных плейлистов?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:2965
+#: globalPlugins/YoutubePlus/dialogs.py:3128
 msgid "Playlist removed."
 msgstr "Плейлист удалён."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2966
+#: globalPlugins/YoutubePlus/dialogs.py:3129
 #, python-brace-format
 msgid "{count} playlists removed."
 msgstr "{count} плейлистов удалено."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2984
+#: globalPlugins/YoutubePlus/dialogs.py:3147
 msgid "Error: Could not save playlist list."
-msgstr "Ошибка: Не удалось сохранить список плейлистов."
+msgstr "Ошибка: не удалось сохранить список плейлистов."
 
-#: globalPlugins/YoutubePlus/dialogs.py:2992
+#: globalPlugins/YoutubePlus/dialogs.py:3155
 msgid "No valid YouTube playlist URL found in clipboard."
 msgstr "В буфере обмена не найден действительный URL-адрес плейлиста YouTube."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3049
+#: globalPlugins/YoutubePlus/dialogs.py:3212
 #, python-brace-format
 msgid "Fetching videos from '{playlist}'..."
 msgstr "Получение видео из плейлиста «{playlist}»..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3066
+#: globalPlugins/YoutubePlus/dialogs.py:3229
 msgid "Error: Playlist URL not found."
 msgstr "Ошибка: URL-адрес плейлиста не найден."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3205
+#: globalPlugins/YoutubePlus/dialogs.py:3368
 msgid "Enter new playlist title:"
 msgstr "Введите новое название плейлиста:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3206
+#: globalPlugins/YoutubePlus/dialogs.py:3369
 msgid "Rename Playlist"
 msgstr "Переименовать плейлист"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3242
+#: globalPlugins/YoutubePlus/dialogs.py:3405
 msgid "Favorites - YoutubePlus"
 msgstr "Избранное - YoutubePlus"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3249
+#: globalPlugins/YoutubePlus/dialogs.py:3412
+#: globalPlugins/YoutubePlus/dialogs.py:3951
 msgid "Channels"
 msgstr "Каналы"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3252
+#: globalPlugins/YoutubePlus/dialogs.py:3415
 msgid "Search History"
 msgstr "История поиска"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3275
+#: globalPlugins/YoutubePlus/dialogs.py:3438
 msgid "S&ort..."
 msgstr "С&ортировка..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3377
+#: globalPlugins/YoutubePlus/dialogs.py:3540
 #, python-brace-format
 msgid "{tab_name} - Favorites - YoutubePlus"
 msgstr "{tab_name} - Избранное - YoutubePlus"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3452
-#: globalPlugins/YoutubePlus/dialogs.py:3515
+#: globalPlugins/YoutubePlus/dialogs.py:3615
+#: globalPlugins/YoutubePlus/dialogs.py:3692
 msgid "Keyword"
 msgstr "Ключевое слово"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3454
-#: globalPlugins/YoutubePlus/dialogs.py:3516
+#: globalPlugins/YoutubePlus/dialogs.py:3617
+#: globalPlugins/YoutubePlus/dialogs.py:3693
 msgid "Results"
 msgstr "Результаты"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3456
-#: globalPlugins/YoutubePlus/dialogs.py:3517
+#: globalPlugins/YoutubePlus/dialogs.py:3619
+#: globalPlugins/YoutubePlus/dialogs.py:3694
 msgid "Searched At"
 msgstr "Время поиска"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3461
+#: globalPlugins/YoutubePlus/dialogs.py:3624
 msgid "Search &Again"
 msgstr "Искать &снова"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3463
+#: globalPlugins/YoutubePlus/dialogs.py:3626
 msgid "&New Search"
 msgstr "&Новый поиск"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3467
+#: globalPlugins/YoutubePlus/dialogs.py:3630
 msgid "&Clear All"
-msgstr "&Очистить всё"
+msgstr "&Очистить все"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3605
+#: globalPlugins/YoutubePlus/dialogs.py:3664
+#, python-brace-format
+msgid "{keyword} (in {channel})"
+msgstr "{keyword} (в канале {channel})"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3782
 msgid "List sorted."
 msgstr "Список отсортирован."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3687
+#: globalPlugins/YoutubePlus/dialogs.py:3876
 msgid "Search history entry removed."
 msgstr "Запись истории поиска удалена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3692
+#: globalPlugins/YoutubePlus/dialogs.py:3881
 msgid "Clear all search history?"
 msgstr "Очистить всю историю поиска?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3711
+#: globalPlugins/YoutubePlus/dialogs.py:3900
 msgid "Search YouTube"
-msgstr "Поиск на YouTube"
+msgstr "Поиск в YouTube"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3728
+#: globalPlugins/YoutubePlus/dialogs.py:3917
 msgid "&Search for:"
 msgstr "&Искать:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3738
-msgid "Number of &results to fetch:"
-msgstr "Количество &результатов для получения:"
+#: globalPlugins/YoutubePlus/dialogs.py:3927
+msgid "&Number of &results to fetch:"
+msgstr "&Количество результатов для &получения:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3744
+#: globalPlugins/YoutubePlus/dialogs.py:3932
+msgid "&Within channel (optional):"
+msgstr "&Внутри канала (необязательно):"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3939
+msgid ""
+"Searches only that channel's own videos. The filters below don't apply while "
+"a channel is set."
+msgstr ""
+"Ищет только собственные видео этого канала. Пока канал задан, фильтры ниже "
+"не применяются."
+
+#: globalPlugins/YoutubePlus/dialogs.py:3947
+msgid "Content &type:"
+msgstr "&Тип контента:"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3957
+msgid "&Duration:"
+msgstr "&Длительность:"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3961
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Any"
+msgstr "Любая"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Short (under 4 minutes)"
+msgstr "Короткая (менее 4 минут)"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Medium (4-20 minutes)"
+msgstr "Средняя (4–20 минут)"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3961
+msgid "Long (over 20 minutes)"
+msgstr "Длинная (более 20 минут)"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3967
+msgid "&Upload date:"
+msgstr "&Дата загрузки:"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Past hour"
+msgstr "Последний час"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "Today"
+msgstr "Сегодня"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This week"
+msgstr "На этой неделе"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This month"
+msgstr "В этом месяце"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3971
+msgid "This year"
+msgstr "В этом году"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3977
+msgid "S&ort by:"
+msgstr "С&ортировать по:"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Relevance"
+msgstr "Релевантность"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "Upload date"
+msgstr "Дата загрузки"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3981
+msgid "View count"
+msgstr "Количество просмотров"
+
+#: globalPlugins/YoutubePlus/dialogs.py:3988
 msgid "&Search"
-msgstr "&Найти"
+msgstr "&Поиск"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3773
+#: globalPlugins/YoutubePlus/dialogs.py:4076
 msgid "Please enter a search term."
 msgstr "Пожалуйста, введите поисковый запрос."
 
-#: globalPlugins/YoutubePlus/dialogs.py:3807
-#: globalPlugins/YoutubePlus/dialogs.py:3947
+#: globalPlugins/YoutubePlus/dialogs.py:4097
+#, python-brace-format
+msgid "Looking up channel '{name}'..."
+msgstr "Поиск канала «{name}»..."
+
+#: globalPlugins/YoutubePlus/dialogs.py:4159
+#: globalPlugins/YoutubePlus/dialogs.py:4301
 msgid "Load All"
 msgstr "Загрузить всё"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3939
+#: globalPlugins/YoutubePlus/dialogs.py:4293
 msgid "Add to &Favorites"
 msgstr "Добавить в &избранное"
 
-#: globalPlugins/YoutubePlus/dialogs.py:3943
+#: globalPlugins/YoutubePlus/dialogs.py:4297
 msgid "Open on &Browser"
 msgstr "Открыть в &браузере"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4011
-#: globalPlugins/YoutubePlus/dialogs.py:4080
-msgid "Playlist URL not found."
-msgstr "URL-адрес плейлиста не найден."
-
-#: globalPlugins/YoutubePlus/dialogs.py:4014
-#, python-brace-format
-msgid "Fetching videos from '{title}'..."
-msgstr "Получение видео из «{title}»..."
-
-#: globalPlugins/YoutubePlus/dialogs.py:4037
+#: globalPlugins/YoutubePlus/dialogs.py:4391
 msgid "Copy Playlist &URL"
 msgstr "Копировать &URL-адрес плейлиста"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4105
+#: globalPlugins/YoutubePlus/dialogs.py:4459
 msgid "Manage Subscriptions"
 msgstr "Управление подписками"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4122
+#: globalPlugins/YoutubePlus/dialogs.py:4476
 msgid "Subscribed &Channels:"
 msgstr "Подписанные &каналы:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4125
-#: globalPlugins/YoutubePlus/dialogs.py:4692
+#: globalPlugins/YoutubePlus/dialogs.py:4479
+#: globalPlugins/YoutubePlus/dialogs.py:5049
 msgid "Channel Name"
 msgstr "Название канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4130
+#: globalPlugins/YoutubePlus/dialogs.py:4484
 msgid "Filter by Category:"
 msgstr "Фильтр по категории:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4139
+#: globalPlugins/YoutubePlus/dialogs.py:4493
 msgid "Assign to Categories"
 msgstr "Назначить категориям"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4144
+#: globalPlugins/YoutubePlus/dialogs.py:4498
 msgid "Content Types to Fetch"
 msgstr "Типы контента для получения"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4150
+#: globalPlugins/YoutubePlus/dialogs.py:4504
 msgid "Actions"
 msgstr "Действия"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4153
+#: globalPlugins/YoutubePlus/dialogs.py:4507
 msgid "View &Content..."
 msgstr "Просмотреть &содержимое..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4155
+#: globalPlugins/YoutubePlus/dialogs.py:4509
 msgid "Add &new subscribe channel from Clipboard..."
 msgstr "Добавить &новый канал для подписки из буфера обмена..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4157
+#: globalPlugins/YoutubePlus/dialogs.py:4511
 msgid "&Unsubscribe from this Channel"
 msgstr "&Отписаться от этого канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4229
+#: globalPlugins/YoutubePlus/dialogs.py:4583
 msgid "Changes saved."
 msgstr "Изменения сохранены."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4261
+#: globalPlugins/YoutubePlus/dialogs.py:4615
 msgid "All Channels"
 msgstr "Все каналы"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4431
+#: globalPlugins/YoutubePlus/dialogs.py:4788
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{name}'?"
 msgstr "Вы уверены, что хотите отписаться от канала «{name}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4433
-#: globalPlugins/YoutubePlus/dialogs.py:5051
+#: globalPlugins/YoutubePlus/dialogs.py:4790
+#: globalPlugins/YoutubePlus/dialogs.py:5408
 msgid "Confirm Unsubscribe"
 msgstr "Подтверждение отписки"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4455
+#: globalPlugins/YoutubePlus/dialogs.py:4812
 msgid "Subscription Feed"
 msgstr "Лента подписок"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4473
+#: globalPlugins/YoutubePlus/dialogs.py:4830
 msgid "Add &new Subscription from clipboard URL."
 msgstr "Добавить &новую подписку из URL-адреса в буфере обмена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4475
+#: globalPlugins/YoutubePlus/dialogs.py:4832
 msgid "&Update Feed"
 msgstr "&Обновить ленту"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4477
+#: globalPlugins/YoutubePlus/dialogs.py:4834
 msgid "&More..."
 msgstr "&Ещё..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4574
+#: globalPlugins/YoutubePlus/dialogs.py:4931
 msgid "All"
 msgstr "Все"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4655
+#: globalPlugins/YoutubePlus/dialogs.py:5012
 msgid "Error reordering tabs."
 msgstr "Ошибка при изменении порядка вкладок."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4680
+#: globalPlugins/YoutubePlus/dialogs.py:5037
 #, python-brace-format
 msgid "Subscription Feed - {tab_name} - YoutubePlus"
 msgstr "Лента подписок - {tab_name} - YoutubePlus"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4688
+#: globalPlugins/YoutubePlus/dialogs.py:5045
 msgid "Video Title"
 msgstr "Название видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4690
-msgid "Type"
-msgstr "Тип"
-
-#: globalPlugins/YoutubePlus/dialogs.py:4702
+#: globalPlugins/YoutubePlus/dialogs.py:5059
 msgid "Mark as &Seen"
 msgstr "Пометить как &просмотренное"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4743
-#: globalPlugins/YoutubePlus/dialogs.py:4752
+#: globalPlugins/YoutubePlus/dialogs.py:5100
+#: globalPlugins/YoutubePlus/dialogs.py:5109
 msgid "Video"
 msgstr "Видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4808
-#: globalPlugins/YoutubePlus/dialogs.py:4963
+#: globalPlugins/YoutubePlus/dialogs.py:5165
+#: globalPlugins/YoutubePlus/dialogs.py:5320
 msgid "&Unsubscribe from this channel"
 msgstr "&Отписаться от этого канала"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4859
+#: globalPlugins/YoutubePlus/dialogs.py:5216
 msgid "Mark &all in current tab as seen (control+delete)"
 msgstr "Пометить &все на текущей вкладке как просмотренные (Control+Delete)"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4861
+#: globalPlugins/YoutubePlus/dialogs.py:5218
 msgid "Show all &videos (including seen)"
 msgstr "Показать все &видео (включая просмотренные)"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4861
+#: globalPlugins/YoutubePlus/dialogs.py:5218
 msgid "Show only &unseen videos"
 msgstr "Показать только &непросмотренные видео"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4864
+#: globalPlugins/YoutubePlus/dialogs.py:5221
 msgid "&Manage subscriptions..."
 msgstr "&Управление подписками..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4867
+#: globalPlugins/YoutubePlus/dialogs.py:5224
 msgid "Add New &Category...\tCtrl+="
 msgstr "Добавить новую &категорию...\tCtrl+="
 
-#: globalPlugins/YoutubePlus/dialogs.py:4869
+#: globalPlugins/YoutubePlus/dialogs.py:5226
 msgid "&Rename Current Category...\tF2"
 msgstr "&Переименовать текущую категорию...\tF2"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4871
+#: globalPlugins/YoutubePlus/dialogs.py:5228
 msgid "Remove Current Category...\tCtrl+-"
 msgstr "Удалить текущую категорию...\tCtrl+-"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4874
+#: globalPlugins/YoutubePlus/dialogs.py:5231
 msgid "Clear All Feed Videos..."
 msgstr "Очистить все видео ленты..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4912
+#: globalPlugins/YoutubePlus/dialogs.py:5269
 msgid "An update is already in progress."
 msgstr "Обновление уже выполняется."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4930
+#: globalPlugins/YoutubePlus/dialogs.py:5287
 #, python-brace-format
 msgid "Updating Feed ({count} channels)"
 msgstr "Обновление ленты ({count} каналов)"
 
-#: globalPlugins/YoutubePlus/dialogs.py:4932
+#: globalPlugins/YoutubePlus/dialogs.py:5289
 msgid "Starting..."
-msgstr "Начало..."
+msgstr "Запуск..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4983
+#: globalPlugins/YoutubePlus/dialogs.py:5340
 msgid "Marked as seen."
 msgstr "Помечено как просмотренное."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4991
+#: globalPlugins/YoutubePlus/dialogs.py:5348
 msgid "There are no videos in this tab to mark as seen."
 msgstr "На этой вкладке нет видео для пометки как просмотренных."
 
-#: globalPlugins/YoutubePlus/dialogs.py:4994
+#: globalPlugins/YoutubePlus/dialogs.py:5351
 #, python-brace-format
 msgid "Are you sure you want to mark all {count} videos in this tab as seen?"
 msgstr ""
 "Вы уверены, что хотите пометить все {count} видео на этой вкладке как "
 "просмотренные?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5002
+#: globalPlugins/YoutubePlus/dialogs.py:5359
 msgid "All videos in the current tab have been marked as seen."
 msgstr "Все видео на текущей вкладке были помечены как просмотренные."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5049
+#: globalPlugins/YoutubePlus/dialogs.py:5406
 #, python-brace-format
 msgid "Are you sure you want to unsubscribe from '{channel}'?"
 msgstr "Вы уверены, что хотите отписаться от канала «{channel}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5059
+#: globalPlugins/YoutubePlus/dialogs.py:5416
 msgid "Enter new category name:"
 msgstr "Введите новое название категории:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5078
-#: globalPlugins/YoutubePlus/dialogs.py:5111
+#: globalPlugins/YoutubePlus/dialogs.py:5435
+#: globalPlugins/YoutubePlus/dialogs.py:5468
 msgid "A category with this name already exists."
 msgstr "Категория с таким названием уже существует."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5082
+#: globalPlugins/YoutubePlus/dialogs.py:5439
 msgid "Error adding category."
 msgstr "Ошибка при добавлении категории."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5090
+#: globalPlugins/YoutubePlus/dialogs.py:5447
 msgid "This is a fixed tab and cannot be renamed."
 msgstr "Это фиксированная вкладка, её нельзя переименовать."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5095
+#: globalPlugins/YoutubePlus/dialogs.py:5452
 #, python-brace-format
 msgid "Enter new name for '{name}':"
 msgstr "Введите новое название для «{name}»:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5115
+#: globalPlugins/YoutubePlus/dialogs.py:5472
 msgid "Error renaming category."
 msgstr "Ошибка при переименовании категории."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5123
+#: globalPlugins/YoutubePlus/dialogs.py:5480
 msgid "This is a fixed tab and cannot be removed."
 msgstr "Это фиксированная вкладка, её нельзя удалить."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5128
+#: globalPlugins/YoutubePlus/dialogs.py:5485
 #, python-brace-format
 msgid "Are you sure you want to remove the '{name}' category?"
 msgstr "Вы уверены, что хотите удалить категорию «{name}»?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5141
+#: globalPlugins/YoutubePlus/dialogs.py:5498
 #, python-brace-format
 msgid "Category '{name}' removed."
 msgstr "Категория «{name}» удалена."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5145
+#: globalPlugins/YoutubePlus/dialogs.py:5502
 msgid "Error removing category."
 msgstr "Ошибка при удалении категории."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5152
+#: globalPlugins/YoutubePlus/dialogs.py:5509
 msgid "Manage User Profiles"
 msgstr "Управление профилями пользователя"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5164
+#: globalPlugins/YoutubePlus/dialogs.py:5521
 msgid "&Add"
 msgstr "&Добавить"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5166
+#: globalPlugins/YoutubePlus/dialogs.py:5523
 msgid "&Rename"
 msgstr "&Переименовать"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5168
+#: globalPlugins/YoutubePlus/dialogs.py:5525
 msgid "&Delete"
 msgstr "&Удалить"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5211
+#: globalPlugins/YoutubePlus/dialogs.py:5568
 msgid "Enter new profile name:"
 msgstr "Введите новое имя профиля:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5213
+#: globalPlugins/YoutubePlus/dialogs.py:5570
 msgid "Add Profile"
 msgstr "Добавить профиль"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5229
+#: globalPlugins/YoutubePlus/dialogs.py:5586
 msgid "Profile already exists."
 msgstr "Такой профиль уже существует."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5229
-#: globalPlugins/YoutubePlus/dialogs.py:5247
-#: globalPlugins/YoutubePlus/dialogs.py:5261
-#: globalPlugins/YoutubePlus/dialogs.py:5268
-#: globalPlugins/YoutubePlus/dialogs.py:5273
-#: globalPlugins/YoutubePlus/dialogs.py:5288
+#: globalPlugins/YoutubePlus/dialogs.py:5586
+#: globalPlugins/YoutubePlus/dialogs.py:5604
+#: globalPlugins/YoutubePlus/dialogs.py:5618
+#: globalPlugins/YoutubePlus/dialogs.py:5625
+#: globalPlugins/YoutubePlus/dialogs.py:5630
+#: globalPlugins/YoutubePlus/dialogs.py:5645
 msgid "Error"
 msgstr "Ошибка"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5235
+#: globalPlugins/YoutubePlus/dialogs.py:5592
 #, python-brace-format
 msgid "Rename profile '{name}' to:"
 msgstr "Переименовать профиль «{name}» в:"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5237
+#: globalPlugins/YoutubePlus/dialogs.py:5594
 msgid "Rename Profile"
 msgstr "Переименование профиля"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5247
+#: globalPlugins/YoutubePlus/dialogs.py:5604
 msgid "A profile with this name already exists."
 msgstr "Профиль с таким именем уже существует."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5261
+#: globalPlugins/YoutubePlus/dialogs.py:5618
 #, python-brace-format
 msgid "Failed to rename profile: {e}"
 msgstr "Не удалось переименовать профиль: {e}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5268
+#: globalPlugins/YoutubePlus/dialogs.py:5625
 msgid "The default profile cannot be deleted."
 msgstr "Профиль по умолчанию нельзя удалить."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5273
+#: globalPlugins/YoutubePlus/dialogs.py:5630
 msgid "Cannot delete the profile currently in use."
 msgstr "Нельзя удалить профиль, который используется в данный момент."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5276
+#: globalPlugins/YoutubePlus/dialogs.py:5633
 #, python-brace-format
 msgid "Delete profile '{name}' and all its data?"
 msgstr "Удалить профиль «{name}» и все его данные?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5278
+#: globalPlugins/YoutubePlus/dialogs.py:5635
 msgid "Confirm Delete"
 msgstr "Подтверждение удаления"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5288
+#: globalPlugins/YoutubePlus/dialogs.py:5645
 #, python-brace-format
 msgid "Failed to delete profile: {e}"
 msgstr "Не удалось удалить профиль: {e}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5297
+#: globalPlugins/YoutubePlus/dialogs.py:5654
 msgid ""
 "The active profile has been modified. NVDA must be restarted to apply "
 "changes. Restart now?"
@@ -2281,79 +2487,79 @@ msgstr ""
 "Активный профиль был изменён. Для применения изменений необходимо "
 "перезапустить NVDA. Перезапустить сейчас?"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5299
-#: globalPlugins/YoutubePlus/settings.py:387
+#: globalPlugins/YoutubePlus/dialogs.py:5656
+#: globalPlugins/YoutubePlus/settings.py:424
 msgid "Restart NVDA"
 msgstr "Перезапуск NVDA"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5314
+#: globalPlugins/YoutubePlus/dialogs.py:5671
 msgid "Downloading..."
 msgstr "Загрузка..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5328
+#: globalPlugins/YoutubePlus/dialogs.py:5685
 msgid "Field"
 msgstr "Поле"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5329
+#: globalPlugins/YoutubePlus/dialogs.py:5686
 msgid "Value"
 msgstr "Значение"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5332
+#: globalPlugins/YoutubePlus/dialogs.py:5689
 msgid "File"
 msgstr "Файл"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5333
+#: globalPlugins/YoutubePlus/dialogs.py:5690
 msgid "Progress"
-msgstr "Выполнение"
+msgstr "Прогресс"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5334
+#: globalPlugins/YoutubePlus/dialogs.py:5691
 msgid "Size"
 msgstr "Размер"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5335
+#: globalPlugins/YoutubePlus/dialogs.py:5692
 msgid "Speed"
 msgstr "Скорость"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5336
+#: globalPlugins/YoutubePlus/dialogs.py:5693
 msgid "ETA"
 msgstr "Осталось"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5337
+#: globalPlugins/YoutubePlus/dialogs.py:5694
 msgid "Status"
-msgstr "Статус"
+msgstr "Состояние"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5343
+#: globalPlugins/YoutubePlus/dialogs.py:5700
 msgid "Preparing..."
 msgstr "Подготовка..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5354
+#: globalPlugins/YoutubePlus/dialogs.py:5711
 msgid "&Cancel"
 msgstr "&Отмена"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5413
+#: globalPlugins/YoutubePlus/dialogs.py:5770
 #, python-brace-format
 msgid "Downloading: {title}"
 msgstr "Загрузка: {title}"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5434
+#: globalPlugins/YoutubePlus/dialogs.py:5791
 #, python-brace-format
 msgid "{pct}%"
 msgstr "{pct}%"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5441
-#: globalPlugins/YoutubePlus/dialogs.py:5452
+#: globalPlugins/YoutubePlus/dialogs.py:5798
+#: globalPlugins/YoutubePlus/dialogs.py:5809
 msgid "Downloading"
-msgstr "Загрузка"
+msgstr "Скачивание"
 
-#: globalPlugins/YoutubePlus/dialogs.py:5466
+#: globalPlugins/YoutubePlus/dialogs.py:5823
 msgid "Installing FFmpeg..."
 msgstr "Установка FFmpeg..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5474
+#: globalPlugins/YoutubePlus/dialogs.py:5831
 msgid "Finishing..."
 msgstr "Завершение..."
 
-#: globalPlugins/YoutubePlus/dialogs.py:5491
+#: globalPlugins/YoutubePlus/dialogs.py:5848
 msgid "Cancelling..."
 msgstr "Отмена..."
 
@@ -2427,376 +2633,396 @@ msgstr "опция %s не принимает значение"
 
 #: globalPlugins/YoutubePlus/lib/optparse.py:1602
 msgid "Options"
-msgstr "Опции"
+msgstr "Параметры"
 
-#: globalPlugins/YoutubePlus/settings.py:24
+#: globalPlugins/YoutubePlus/settings.py:25
 msgid "Youtube Plus"
 msgstr "Youtube Plus"
 
-#: globalPlugins/YoutubePlus/settings.py:30
+#: globalPlugins/YoutubePlus/settings.py:31
 msgid "Active &Profile (Requires Restart):"
 msgstr "&Активный профиль (требуется перезапуск):"
 
-#: globalPlugins/YoutubePlus/settings.py:36
-#: globalPlugins/YoutubePlus/settings.py:361
-#: globalPlugins/YoutubePlus/settings.py:366
+#: globalPlugins/YoutubePlus/settings.py:37
+#: globalPlugins/YoutubePlus/settings.py:398
+#: globalPlugins/YoutubePlus/settings.py:403
 msgid "default"
 msgstr "по умолчанию"
 
-#: globalPlugins/YoutubePlus/settings.py:41
+#: globalPlugins/YoutubePlus/settings.py:42
 msgid "&Manage Profiles..."
 msgstr "&Управление профилями..."
 
-#: globalPlugins/YoutubePlus/settings.py:45
+#: globalPlugins/YoutubePlus/settings.py:46
 msgid "&Quick Action (Space bar):"
 msgstr "&Быстрое действие (пробел):"
 
-#: globalPlugins/YoutubePlus/settings.py:48
+#: globalPlugins/YoutubePlus/settings.py:49
 msgid "Open video URL"
 msgstr "Открыть URL-адрес видео"
 
-#: globalPlugins/YoutubePlus/settings.py:50
+#: globalPlugins/YoutubePlus/settings.py:51
 msgid "View video info"
 msgstr "Просмотреть информацию о видео"
 
-#: globalPlugins/YoutubePlus/settings.py:52
+#: globalPlugins/YoutubePlus/settings.py:53
 msgid "View comments"
 msgstr "Просмотреть комментарии"
 
-#: globalPlugins/YoutubePlus/settings.py:54
+#: globalPlugins/YoutubePlus/settings.py:55
 msgid "View chapters"
 msgstr "Просмотреть разделы"
 
-#: globalPlugins/YoutubePlus/settings.py:56
+#: globalPlugins/YoutubePlus/settings.py:57
 msgid "Download video"
 msgstr "Загрузить видео"
 
-#: globalPlugins/YoutubePlus/settings.py:58
+#: globalPlugins/YoutubePlus/settings.py:59
 msgid "Download audio"
 msgstr "Загрузить аудио"
 
-#: globalPlugins/YoutubePlus/settings.py:60
+#: globalPlugins/YoutubePlus/settings.py:61
 msgid "Download subtitles"
 msgstr "Загрузить субтитры"
 
-#: globalPlugins/YoutubePlus/settings.py:62
+#: globalPlugins/YoutubePlus/settings.py:63
 msgid "Add to Favorites video"
-msgstr "Добавить в избранное видео"
+msgstr "Добавить видео в избранное"
 
-#: globalPlugins/YoutubePlus/settings.py:64
+#: globalPlugins/YoutubePlus/settings.py:65
 msgid "Add to Favorites channel"
-msgstr "Добавить в избранное канал"
+msgstr "Добавить канал в избранное"
 
-#: globalPlugins/YoutubePlus/settings.py:66
+#: globalPlugins/YoutubePlus/settings.py:67
 msgid "Add to Watch List"
 msgstr "Добавить в список просмотра"
 
-#: globalPlugins/YoutubePlus/settings.py:68
+#: globalPlugins/YoutubePlus/settings.py:69
 msgid "Copy video URL"
 msgstr "Копировать URL-адрес видео"
 
-#: globalPlugins/YoutubePlus/settings.py:70
+#: globalPlugins/YoutubePlus/settings.py:71
 msgid "Copy video title"
 msgstr "Копировать название видео"
 
-#: globalPlugins/YoutubePlus/settings.py:72
+#: globalPlugins/YoutubePlus/settings.py:73
 msgid "Copy channel name"
 msgstr "Копировать название канала"
 
-#: globalPlugins/YoutubePlus/settings.py:74
+#: globalPlugins/YoutubePlus/settings.py:75
 msgid "Copy channel URL"
 msgstr "Копировать URL-адрес канала"
 
-#: globalPlugins/YoutubePlus/settings.py:76
+#: globalPlugins/YoutubePlus/settings.py:77
 msgid "Copy video summary"
 msgstr "Копировать описание видео"
 
-#: globalPlugins/YoutubePlus/settings.py:78
+#: globalPlugins/YoutubePlus/settings.py:79
 msgid "Open video channel"
 msgstr "Открыть канал видео"
 
-#: globalPlugins/YoutubePlus/settings.py:80
+#: globalPlugins/YoutubePlus/settings.py:81
 msgid "Show channel videos"
 msgstr "Показать видео канала"
 
-#: globalPlugins/YoutubePlus/settings.py:82
+#: globalPlugins/YoutubePlus/settings.py:83
 msgid "Show channel shorts"
 msgstr "Показать shorts канала"
 
-#: globalPlugins/YoutubePlus/settings.py:84
+#: globalPlugins/YoutubePlus/settings.py:85
 msgid "Show channel lives"
 msgstr "Показать трансляции канала"
 
-#: globalPlugins/YoutubePlus/settings.py:86
+#: globalPlugins/YoutubePlus/settings.py:87
 msgid "Show channel playlists"
 msgstr "Показать плейлисты канала"
 
-#: globalPlugins/YoutubePlus/settings.py:88
+#: globalPlugins/YoutubePlus/settings.py:89
 msgid "Show channel podcasts"
 msgstr "Показать подкасты канала"
 
-#: globalPlugins/YoutubePlus/settings.py:90
+#: globalPlugins/YoutubePlus/settings.py:91
 msgid "Describe thumbnail (Be My Eyes)"
 msgstr "Описать миниатюру (Be My Eyes)"
 
-#: globalPlugins/YoutubePlus/settings.py:108
+#: globalPlugins/YoutubePlus/settings.py:109
 msgid "&Notification mode:"
 msgstr "&Режим уведомлений:"
 
-#: globalPlugins/YoutubePlus/settings.py:111
+#: globalPlugins/YoutubePlus/settings.py:112
 msgid "Beep"
-msgstr "Звуковой сигнал"
+msgstr "Воспроизводить звуковой сигнал"
 
-#: globalPlugins/YoutubePlus/settings.py:111
+#: globalPlugins/YoutubePlus/settings.py:112
 msgid "Sound"
 msgstr "Звук"
 
-#: globalPlugins/YoutubePlus/settings.py:111
+#: globalPlugins/YoutubePlus/settings.py:112
 msgid "Silent"
 msgstr "Без звука"
 
-#: globalPlugins/YoutubePlus/settings.py:118
+#: globalPlugins/YoutubePlus/settings.py:119
 msgid "Default &sort order:"
 msgstr "Порядок &сортировки по умолчанию:"
 
-#: globalPlugins/YoutubePlus/settings.py:120
+#: globalPlugins/YoutubePlus/settings.py:121
 msgid "Newest First"
 msgstr "Сначала новые"
 
-#: globalPlugins/YoutubePlus/settings.py:120
+#: globalPlugins/YoutubePlus/settings.py:121
 msgid "Oldest First"
 msgstr "Сначала старые"
 
-#: globalPlugins/YoutubePlus/settings.py:127
+#: globalPlugins/YoutubePlus/settings.py:128
 msgid "&Items to fetch for each content type:"
 msgstr "&Элементов для получения для каждого типа контента:"
 
-#: globalPlugins/YoutubePlus/settings.py:131
+#: globalPlugins/YoutubePlus/settings.py:132
 msgid "Default content &types for new subscriptions:"
 msgstr "&Типы контента по умолчанию для новых подписок:"
 
-#: globalPlugins/YoutubePlus/settings.py:146
+#: globalPlugins/YoutubePlus/settings.py:148
 msgid "Disabled"
 msgstr "Отключено"
 
-#: globalPlugins/YoutubePlus/settings.py:146
+#: globalPlugins/YoutubePlus/settings.py:148
 msgid "15 minutes"
 msgstr "15 минут"
 
-#: globalPlugins/YoutubePlus/settings.py:146
+#: globalPlugins/YoutubePlus/settings.py:148
 msgid "30 minutes"
 msgstr "30 минут"
 
-#: globalPlugins/YoutubePlus/settings.py:146
+#: globalPlugins/YoutubePlus/settings.py:148
 msgid "1 hour"
 msgstr "1 час"
 
-#: globalPlugins/YoutubePlus/settings.py:146
+#: globalPlugins/YoutubePlus/settings.py:148
 msgid "2 hours"
 msgstr "2 часа"
 
-#: globalPlugins/YoutubePlus/settings.py:147
+#: globalPlugins/YoutubePlus/settings.py:149
 msgid "4 hours"
 msgstr "4 часа"
 
-#: globalPlugins/YoutubePlus/settings.py:147
+#: globalPlugins/YoutubePlus/settings.py:149
 msgid "6 hours"
 msgstr "6 часов"
 
-#: globalPlugins/YoutubePlus/settings.py:147
+#: globalPlugins/YoutubePlus/settings.py:149
 msgid "12 hours"
 msgstr "12 часов"
 
-#: globalPlugins/YoutubePlus/settings.py:147
+#: globalPlugins/YoutubePlus/settings.py:149
 msgid "24 hours"
 msgstr "24 часа"
 
-#: globalPlugins/YoutubePlus/settings.py:151
+#: globalPlugins/YoutubePlus/settings.py:153
 msgid "Background &update interval:"
 msgstr "&Интервал фонового обновления:"
 
-#: globalPlugins/YoutubePlus/settings.py:162
+#: globalPlugins/YoutubePlus/settings.py:164
 msgid "&Automatically speak incoming live chat"
 msgstr "&Автоматически озвучивать входящие сообщения живого чата"
 
-#: globalPlugins/YoutubePlus/settings.py:166
+#: globalPlugins/YoutubePlus/settings.py:168
+msgid "&Voice profile:"
+msgstr "&Голосовой профиль:"
+
+#: globalPlugins/YoutubePlus/settings.py:173
+msgid "(None, keep the current voice)"
+msgstr "(Нет, сохранить текущий голос)"
+
+#: globalPlugins/YoutubePlus/settings.py:185
+msgid "Alert s&ounds for live chat:"
+msgstr "&Звуковые оповещения для живого чата:"
+
+#: globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Chat"
+msgstr "Супер-чат"
+
+#: globalPlugins/YoutubePlus/settings.py:188
+msgid "Super Sticker"
+msgstr "Супер-стикер"
+
+#: globalPlugins/YoutubePlus/settings.py:199
 msgid "&Live chat refresh interval (seconds):"
 msgstr "&Интервал обновления живого чата (секунды):"
 
-#: globalPlugins/YoutubePlus/settings.py:170
+#: globalPlugins/YoutubePlus/settings.py:203
 msgid "Message &history limit (live chat):"
 msgstr "&Лимит истории сообщений (живой чат):"
 
-#: globalPlugins/YoutubePlus/settings.py:198
+#: globalPlugins/YoutubePlus/settings.py:231
 msgid "&Cookie method (Experimental - may not work):"
 msgstr "&Метод Cookie (экспериментально — может не работать):"
 
-#: globalPlugins/YoutubePlus/settings.py:200
+#: globalPlugins/YoutubePlus/settings.py:233
 msgid "Do not use cookies (Default)"
 msgstr "Не использовать cookies (по умолчанию)"
 
-#: globalPlugins/YoutubePlus/settings.py:201
+#: globalPlugins/YoutubePlus/settings.py:234
 msgid "Chrome"
 msgstr "Chrome"
 
-#: globalPlugins/YoutubePlus/settings.py:202
+#: globalPlugins/YoutubePlus/settings.py:235
 msgid "Firefox"
 msgstr "Firefox"
 
-#: globalPlugins/YoutubePlus/settings.py:203
+#: globalPlugins/YoutubePlus/settings.py:236
 msgid "Edge"
 msgstr "Edge"
 
-#: globalPlugins/YoutubePlus/settings.py:204
+#: globalPlugins/YoutubePlus/settings.py:237
 msgid "Opera"
 msgstr "Opera"
 
-#: globalPlugins/YoutubePlus/settings.py:205
+#: globalPlugins/YoutubePlus/settings.py:238
 msgid "Brave"
 msgstr "Brave"
 
-#: globalPlugins/YoutubePlus/settings.py:206
+#: globalPlugins/YoutubePlus/settings.py:239
 msgid "Vivaldi"
 msgstr "Vivaldi"
 
-#: globalPlugins/YoutubePlus/settings.py:231
+#: globalPlugins/YoutubePlus/settings.py:264
 msgid "Preferred &video quality:"
 msgstr "Предпочитаемое &качество видео:"
 
-#: globalPlugins/YoutubePlus/settings.py:235
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:268
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "Best available"
 msgstr "Лучшее из доступных"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "2160p (4K)"
 msgstr "2160p (4K)"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "1440p (2K)"
 msgstr "1440p (2K)"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "1080p"
 msgstr "1080p"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "720p"
 msgstr "720p"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "480p"
 msgstr "480p"
 
-#: globalPlugins/YoutubePlus/settings.py:235
+#: globalPlugins/YoutubePlus/settings.py:268
 msgid "360p"
 msgstr "360p"
 
-#: globalPlugins/YoutubePlus/settings.py:245
+#: globalPlugins/YoutubePlus/settings.py:278
 msgid "Preferred video co&ntainer:"
 msgstr "Предпочитаемый ко&нтейнер видео:"
 
-#: globalPlugins/YoutubePlus/settings.py:249
+#: globalPlugins/YoutubePlus/settings.py:282
 msgid "MP4 (most compatible)"
 msgstr "MP4 (наиболее совместимый)"
 
-#: globalPlugins/YoutubePlus/settings.py:249
+#: globalPlugins/YoutubePlus/settings.py:282
 msgid "MKV (best quality, no re-encoding)"
 msgstr "MKV (лучшее качество, без перекодирования)"
 
-#: globalPlugins/YoutubePlus/settings.py:249
+#: globalPlugins/YoutubePlus/settings.py:282
 msgid "WebM"
 msgstr "WebM"
 
-#: globalPlugins/YoutubePlus/settings.py:259
+#: globalPlugins/YoutubePlus/settings.py:292
 msgid "Preferred audio q&uality (when converting):"
 msgstr "Предпочитаемое &качество аудио (при конвертации):"
 
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "320 kbps"
 msgstr "320 kbps"
 
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "256 kbps"
 msgstr "256 kbps"
 
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "192 kbps"
 msgstr "192 kbps"
 
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "128 kbps"
 msgstr "128 kbps"
 
-#: globalPlugins/YoutubePlus/settings.py:263
+#: globalPlugins/YoutubePlus/settings.py:296
 msgid "96 kbps"
 msgstr "96 kbps"
 
-#: globalPlugins/YoutubePlus/settings.py:273
+#: globalPlugins/YoutubePlus/settings.py:306
 msgid "Preferred audio for&mat:"
 msgstr "Предпочитаемый &формат аудио:"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "Best available (no conversion)"
 msgstr "Лучшее доступное (без конвертации)"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "MP3"
 msgstr "MP3"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "WAV"
 msgstr "WAV"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "M4A/AAC"
 msgstr "M4A/AAC"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "FLAC"
 msgstr "FLAC"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "Opus"
 msgstr "Opus"
 
-#: globalPlugins/YoutubePlus/settings.py:278
+#: globalPlugins/YoutubePlus/settings.py:311
 msgid "Vorbis (OGG)"
 msgstr "Vorbis (OGG)"
 
-#: globalPlugins/YoutubePlus/settings.py:295
+#: globalPlugins/YoutubePlus/settings.py:328
 msgid "Default subtitle &format:"
 msgstr "Формат субтитров по умолчанию:"
 
-#: globalPlugins/YoutubePlus/settings.py:305
+#: globalPlugins/YoutubePlus/settings.py:338
 msgid "Default download and &export folder path:"
 msgstr "Путь к папке загрузки и &экспорта по умолчанию:"
 
-#: globalPlugins/YoutubePlus/settings.py:310
+#: globalPlugins/YoutubePlus/settings.py:343
 msgid "&Browse..."
-msgstr "&Обзор..."
+msgstr "О&бзор..."
 
-#: globalPlugins/YoutubePlus/settings.py:316
+#: globalPlugins/YoutubePlus/settings.py:349
 msgid "Bac&kup data now"
 msgstr "Создать &резервную копию данных сейчас"
 
-#: globalPlugins/YoutubePlus/settings.py:320
+#: globalPlugins/YoutubePlus/settings.py:353
 msgid "&Restore data from backup..."
 msgstr "&Восстановить данные из резервной копии..."
 
-#: globalPlugins/YoutubePlus/settings.py:346
+#: globalPlugins/YoutubePlus/settings.py:383
 msgid "&Download Quality and Format Options"
 msgstr "Параметры качества и формата &загрузки"
 
-#: globalPlugins/YoutubePlus/settings.py:349
+#: globalPlugins/YoutubePlus/settings.py:386
 msgid " (expanded)"
 msgstr " (развёрнуто)"
 
-#: globalPlugins/YoutubePlus/settings.py:352
+#: globalPlugins/YoutubePlus/settings.py:389
 msgid " (collapsed)"
 msgstr " (свёрнуто)"
 
-#: globalPlugins/YoutubePlus/settings.py:385
+#: globalPlugins/YoutubePlus/settings.py:422
 #, python-brace-format
 msgid ""
 "The active profile has been changed to '{profile_name}'. NVDA must be "
@@ -2805,15 +3031,15 @@ msgstr ""
 "Активный профиль изменён на «{profile_name}». Для применения изменений "
 "необходимо перезапустить NVDA. Перезапустить сейчас?"
 
-#: globalPlugins/YoutubePlus/settings.py:455
+#: globalPlugins/YoutubePlus/settings.py:498
 msgid "Select cookies.txt file"
 msgstr "Выберите файл cookies.txt"
 
-#: globalPlugins/YoutubePlus/settings.py:466
+#: globalPlugins/YoutubePlus/settings.py:509
 msgid "Select default folder to export files"
 msgstr "Выберите папку по умолчанию для экспорта файлов"
 
-#: globalPlugins/YoutubePlus/settings.py:477
+#: globalPlugins/YoutubePlus/settings.py:520
 #, python-brace-format
 msgid ""
 "Backup completed successfully.\n"
@@ -2822,29 +3048,29 @@ msgstr ""
 "Резервное копирование успешно завершено.\n"
 "{filename}"
 
-#: globalPlugins/YoutubePlus/settings.py:479
+#: globalPlugins/YoutubePlus/settings.py:522
 msgid "Backup"
 msgstr "Резервная копия"
 
-#: globalPlugins/YoutubePlus/settings.py:485
+#: globalPlugins/YoutubePlus/settings.py:528
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "Не удалось создать резервную копию: {error}"
 
-#: globalPlugins/YoutubePlus/settings.py:487
+#: globalPlugins/YoutubePlus/settings.py:530
 msgid "Backup Error"
 msgstr "Ошибка резервного копирования"
 
-#: globalPlugins/YoutubePlus/settings.py:497
+#: globalPlugins/YoutubePlus/settings.py:540
 #, python-brace-format
 msgid "No backup files found for profile '{profile}'."
 msgstr "Не найдено файлов резервных копий для профиля «{profile}»."
 
-#: globalPlugins/YoutubePlus/settings.py:499
+#: globalPlugins/YoutubePlus/settings.py:542
 msgid "Restore"
 msgstr "Восстановить"
 
-#: globalPlugins/YoutubePlus/settings.py:517
+#: globalPlugins/YoutubePlus/settings.py:560
 #, python-brace-format
 msgid ""
 "Restore data from {date} for profile '{profile}'?\n"
@@ -2853,11 +3079,11 @@ msgstr ""
 "Восстановить данные от {date} для профиля «{profile}»?\n"
 "Это перезапишет все текущие данные и потребует перезапуска."
 
-#: globalPlugins/YoutubePlus/settings.py:520
+#: globalPlugins/YoutubePlus/settings.py:563
 msgid "Confirm Restore"
 msgstr "Подтверждение восстановления"
 
-#: globalPlugins/YoutubePlus/settings.py:527
+#: globalPlugins/YoutubePlus/settings.py:570
 msgid ""
 "YoutubePlus Data restored successfully. NVDA must be restarted to apply the "
 "changes. Restart now?"
@@ -2865,12 +3091,12 @@ msgstr ""
 "Данные YoutubePlus успешно восстановлены. Для применения изменений "
 "необходимо перезапустить NVDA. Перезапустить сейчас?"
 
-#: globalPlugins/YoutubePlus/settings.py:532
+#: globalPlugins/YoutubePlus/settings.py:575
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "Не удалось восстановить данные: {error}"
 
-#: globalPlugins/YoutubePlus/settings.py:534
+#: globalPlugins/YoutubePlus/settings.py:577
 msgid "Restore Error"
 msgstr "Ошибка восстановления"
 
@@ -2897,7 +3123,9 @@ msgid ""
 "that searches instantly using selected text or clipboard content.\n"
 "• Browse a channel's videos, shorts, streams, playlists, and podcasts "
 "directly, without leaving the accessible interface.\n"
-"• Read comments and follow live chat replays.\n"
+"• Read comments and live chat replays, and follow a live chat as it happens: "
+"read it aloud in a separate voice of your choice, with alert sounds for "
+"Super Chats, Super Stickers and new channel members.\n"
 "• Send a video's thumbnail straight to the Be My Eyes app for a live "
 "description (Be My Eyes must be installed)\n"
 "• Download videos, audio, or subtitles (with multiple format options) for "
@@ -2905,33 +3133,148 @@ msgid ""
 "• Supports multiple user profiles, with backup and restore built in."
 msgstr ""
 "YoutubePlus — это дополнение для тех, кто любит YouTube, но считает многие "
-"функции сайта труднодоступными, например, чтение комментариев или живого "
+"функции сайта труднодоступными, например чтение комментариев или живого "
 "чата.\n"
 "Мы предоставляем эти функции через интерфейс NVDA в доступной, управляемой с "
-"помощью горячих клавиш и настраиваемой форме.\n"
-"Пользователям не нужно разбираться с ключами API или связывать какие-либо "
-"личные данные с дополнением.\n"
+"помощью сочетаний клавиш и настраиваемой форме.\n"
+"Пользователям не нужно работать с API-ключами или привязывать какие-либо "
+"личные данные к дополнению.\n"
 "\n"
 "Возможности:\n"
-"• Отслеживайте любимые каналы и будьте уверены, что увидите каждое их видео, "
-"без фильтрации алгоритмами YouTube.\n"
+"• Следите за любимыми каналами и будьте уверены, что увидите каждое "
+"опубликованное ими видео, не отфильтрованное алгоритмом YouTube.\n"
 "• Полноценная система избранного для видео, каналов и плейлистов, а также "
-"список «Посмотреть позже» для видео, которые вы хотите посмотреть позднее — "
-"с категориями, сортировкой и фоновыми обновлениями для поддержания "
+"список просмотра для видео, которые вы хотите посмотреть позже, — с "
+"категориями, сортировкой и фоновыми обновлениями для поддержания "
 "актуальности информации о каналах и плейлистах.\n"
-"• Встроенный поиск с сохранённой историей, а также быстрый поиск, который "
-"мгновенно ищет по выделенному тексту или содержимому буфера обмена.\n"
-"• Просматривайте видео, короткие видео, трансляции, плейлисты и подкасты "
-"канала напрямую, не покидая доступный интерфейс.\n"
-"• Читайте комментарии и следите за повторами живого чата.\n"
+"• Встроенный поиск с сохранённой историей поиска, а также быстрое действие "
+"«Быстрый поиск», которое мгновенно ищет по выделенному тексту или "
+"содержимому буфера обмена.\n"
+"• Просматривайте видео, shorts, трансляции, плейлисты и подкасты канала "
+"напрямую, не покидая доступный интерфейс.\n"
+"• Читайте комментарии и повторы живого чата, а также следите за живым чатом "
+"в реальном времени: слушайте его отдельным голосом на ваш выбор со звуковыми "
+"оповещениями для супер-чатов, супер-стикеров и новых участников канала.\n"
 "• Отправляйте миниатюру видео прямо в приложение Be My Eyes для живого "
-"описания (требуется отдельная установка Be My Eyes).\n"
+"описания (требуется установка Be My Eyes).\n"
 "• Загружайте видео, аудио или субтитры (с поддержкой нескольких форматов) "
-"для просмотра офлайн.\n"
-"• Поддерживает несколько пользовательских профилей со встроенными функциями "
-"резервного копирования и восстановления.\n"
-"Все функциональные возможности дополнения и сочетания клавиш описаны в "
-"справочном руководстве."
+"для использования офлайн.\n"
+"• Поддерживает несколько профилей пользователей со встроенными функциями "
+"резервного копирования и восстановления."
+
+#: globalPlugins/buildVars.py:39
+msgid ""
+"### New Features and Improvements\n"
+"\n"
+"* Added a **Voice profile** setting that lets you select an NVDA "
+"configuration profile for incoming live chat messages. Chat uses the "
+"selected profile's synthesizer, voice, rate, pitch, and volume, while NVDA's "
+"regular speech remains unchanged. A separate synthesizer runs alongside "
+"NVDA, allowing chat to use a different synthesizer (such as SAPI 5) without "
+"being interrupted by key presses or NVDA speech. Available when "
+"**Automatically speak incoming live chat** is enabled. Suggested by "
+"@MichalSuchy (#13).\n"
+"* Added configurable sound alerts for Super Chats, Super Stickers, and new "
+"member events. Each event type can have its own alert sound, selected from "
+"the `.wav` files in the add-on's `sounds` folder. Alerts work independently "
+"of automatic chat speech.\n"
+"* New member events now appear in the live chat window and exported chat. "
+"Super Chats, Super Stickers, and new member events are prioritized over "
+"regular messages and are no longer skipped during periods of heavy chat "
+"activity.\n"
+"* Added a connection announcement when starting to monitor a live stream, "
+"replacing the progress sound as the only indication that the add-on is "
+"connecting to live chat.\n"
+"* Search results can now be filtered by content type (videos, channels, or "
+"playlists), duration, upload date, and sort order. Filters can be combined.\n"
+"* Search History now saves the filters used for each search, allowing "
+"**Search Again** to reproduce the same filtered results.\n"
+"* Selecting a channel or playlist in search results now correctly opens, "
+"copies, and expands it instead of treating it as a video.\n"
+"* Added a **Within channel** option to the search dialog for searching "
+"videos from a specific channel. Channel names are suggested from Search "
+"History, Favorite Channels, and Subscribed Channels. If the entered name "
+"doesn't match any suggestions, the add-on looks up the channel on YouTube "
+"and asks you to confirm the intended channel.\n"
+"* Checkbox lists in the settings dialog and Manage Subscriptions now "
+"automatically select their first item.\n"
+"* Added Vietnamese (`vi`) interface translation and documentation, "
+"contributed by @ninhhoang205.\n"
+"\n"
+"### Bug Fixes\n"
+"\n"
+"* Pressing **L** on a stream that is already being monitored now opens its "
+"live chat window without restarting the monitoring session.\n"
+"* When switching to a different live stream while monitoring another, the "
+"add-on now asks for confirmation, offers to save the chat being replaced, "
+"and fully replaces the existing session. Previously, the old session could "
+"continue running alongside the new one, resulting in duplicate or mixed "
+"messages.\n"
+"* Fixed URLs without a scheme (e.g. `youtube.com/watch?v=...` or `youtu."
+"be/...`) failing across commands and **Add from clipboard** actions that "
+"read URLs from the clipboard. These URLs are now handled correctly even "
+"without an `https://` prefix.\n"
+"\n"
+"### Dependencies\n"
+"\n"
+"* Updated yt-dlp to 2026.10.26."
+msgstr ""
+"### Новые возможности и улучшения\n"
+"\n"
+"* Добавлена настройка **Голосовой профиль**, позволяющая выбрать профиль "
+"конфигурации NVDA для входящих сообщений живого чата. Чат использует "
+"синтезатор, голос, скорость, высоту тона и громкость выбранного профиля, при "
+"этом обычная речь NVDA остаётся неизменной. Отдельный синтезатор работает "
+"параллельно с NVDA, позволяя чату использовать другой синтезатор (например, "
+"SAPI 5) без прерывания нажатиями клавиш или речью NVDA. Доступно при "
+"включённой настройке **Автоматически озвучивать входящие сообщения живого "
+"чата**. Предложено @MichalSuchy (#13).\n"
+"* Добавлены настраиваемые звуковые оповещения для супер-чатов, супер-"
+"стикеров и событий новых участников. Каждый тип события может иметь свой "
+"звук оповещения, выбираемый из файлов `.wav` в папке `sounds` дополнения. "
+"Оповещения работают независимо от автоматического озвучивания чата.\n"
+"* События новых участников теперь отображаются в окне живого чата и в "
+"экспортированном чате. Супер-чаты, супер-стикеры и события новых участников "
+"имеют приоритет над обычными сообщениями и больше не пропускаются в периоды "
+"высокой активности чата.\n"
+"* Добавлено объявление о подключении при начале мониторинга прямой "
+"трансляции, заменяющее звук выполнения как единственный признак того, что "
+"дополнение подключается к живому чату.\n"
+"* Результаты поиска теперь можно фильтровать по типу контента (видео, каналы "
+"или плейлисты), длительности, дате загрузки и порядку сортировки. Фильтры "
+"можно комбинировать.\n"
+"* История поиска теперь сохраняет фильтры, использованные для каждого "
+"поиска, что позволяет кнопке **Искать снова** воспроизводить те же "
+"отфильтрованные результаты.\n"
+"* Выбор канала или плейлиста в результатах поиска теперь корректно "
+"открывает, копирует и разворачивает его вместо обработки как видео.\n"
+"* Добавлена опция **Внутри канала** в диалог поиска для поиска видео "
+"определённого канала. Названия каналов предлагаются из истории поиска, "
+"избранных каналов и каналов с подпиской. Если введённое название не "
+"совпадает ни с одним из предложений, дополнение ищет канал на YouTube и "
+"просит вас подтвердить нужный канал.\n"
+"* Списки с флажками в диалоге настроек и в управлении подписками теперь "
+"автоматически выбирают свой первый элемент.\n"
+"* Добавлен вьетнамский (`vi`) перевод интерфейса и документации, "
+"предоставленный @ninhhoang205.\n"
+"\n"
+"### Исправления ошибок\n"
+"\n"
+"* Нажатие **L** на трансляции, которая уже отслеживается, теперь открывает "
+"её окно живого чата без перезапуска сеанса мониторинга.\n"
+"* При переключении на другую прямую трансляцию во время мониторинга другой "
+"дополнение теперь запрашивает подтверждение, предлагает сохранить заменяемый "
+"чат и полностью заменяет существующий сеанс. Ранее старый сеанс мог "
+"продолжать работать параллельно с новым, что приводило к дублированию или "
+"смешиванию сообщений.\n"
+"* Исправлена ошибка с URL-адресами без схемы (например, `youtube.com/watch?"
+"v=...` или `youtu.be/...`) во всех командах и действиях **Добавить из буфера "
+"обмена**, которые читают URL-адреса из буфера обмена. Теперь эти URL-адреса "
+"корректно обрабатываются даже без префикса `https://`.\n"
+"\n"
+"### Зависимости\n"
+"\n"
+"* yt-dlp обновлён до версии 2026.10.26."
 
 #: installTasks.py:46
 #, python-brace-format
