@@ -13,8 +13,9 @@ import sys
 import subprocess
 import shutil
 
-# Add-on localization exchange facility requires Python 3.10+.
-EnsurePythonVersion(3, 10)
+# Add-on localization exchange facility requires Python 3.10+; yt-dlp 2026.10.26 and
+# later require 3.11+ (pip would silently pick an older yt-dlp on 3.10).
+EnsurePythonVersion(3, 11)
 sys.dont_write_bytecode = True
 import buildVars
 from SCons.Script import Variables, BoolVariable, Environment, Builder, Copy
@@ -315,6 +316,7 @@ def buildPot(target, source, env):
         "--language=Python",
         "--keyword=_",
         "--from-code=UTF-8",
+        "--add-comments=Translators:",
         f"--package-name={buildVars.addon_info['addon_name']}",
         f"--package-version={buildVars.addon_info['addon_version']}",
         "-o", str(target[0]),
