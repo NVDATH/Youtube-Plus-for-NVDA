@@ -1,0 +1,45 @@
+name: Test Build Add-on (manual)
+
+# Builds the add-on and the .pot file to check that the build works. It never runs by itself, and it makes no release.
+#
+# How to run this (no need to push a tag / no need to make a release):
+#   1. Open the repo on GitHub
+#   2. Go to the "Actions" tab (top menu bar of the repo)
+#   3. Click this workflow's name on the left: "Test Build Add-on (manual)"
+#   4. A green "Run workflow" button appears on the right -> click it
+#   5. Pick the branch to build -> click "Run workflow" again
+#   6. Wait for the run to finish, then open it. At the bottom of the summary page, under "Artifacts",
+#      download "YoutubePlus-addon". It is a zip with the .nvda-addon and the .pot file inside.
+#      The artifact is kept for 14 days.
+on:
+  workflow_dispatch: {}   # lets this be triggered manually from the Actions tab, as above
+
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y gettext
+          pip install scons markdown
+
+      - name: Build Add-on and Pot file
+        run: scons && scons pot
+
+      - name: Keep the built add-on
+        uses: actions/upload-artifact@v4
+        with:
+          name: YoutubePlus-addon
+          path: |
+            *.nvda-addon
+            *.pot
+          retention-days: 14

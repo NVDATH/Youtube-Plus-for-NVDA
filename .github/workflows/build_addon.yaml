@@ -1,8 +1,11 @@
-name: Release NVDA Add-on
+name: Build NVDA Add-on
 
 on:
   push:
     tags: ['v*.*.*']
+  # Run manually from the Actions tab to get a test build as a downloadable
+  # artifact, without creating a release.
+  workflow_dispatch:
 
 jobs:
   build_and_release:
@@ -36,7 +39,19 @@ jobs:
       - name: Build Add-on and Pot file
         run: scons && scons pot
 
+      - name: Upload test build (manual run only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvda-addon-test-build-${{ github.run_number }}
+          path: |
+            *.nvda-addon
+            *.pot
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Extract Changelog
+        if: github.event_name == 'push'
         id: extract_changelog
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
@@ -48,6 +63,7 @@ jobs:
           fi
 
       - name: Create GitHub Release
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
           body_path: release_notes.md
