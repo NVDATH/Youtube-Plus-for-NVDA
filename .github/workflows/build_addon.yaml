@@ -3,8 +3,8 @@ name: Build NVDA Add-on
 on:
   push:
     tags: ['v*.*.*']
-  # Run manually from the Actions tab to get a test build as a downloadable
-  # artifact, without creating a release.
+  # Run manually from the Actions tab to get a test build as downloadable
+  # files, without creating a release.
   workflow_dispatch:
 
 jobs:
@@ -39,14 +39,23 @@ jobs:
       - name: Build Add-on and Pot file
         run: scons && scons pot
 
-      - name: Upload test build (manual run only)
+      # archive: false uploads a single file as it is (not zipped). The artifact takes the
+      # file's own name, and each pattern must match exactly one file.
+      - name: Upload test build - add-on file (manual run only)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: nvda-addon-test-build-${{ github.run_number }}
-          path: |
-            *.nvda-addon
-            *.pot
+          path: "*.nvda-addon"
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload test build - pot file (manual run only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          path: "*.pot"
+          archive: false
           if-no-files-found: error
           retention-days: 14
 
